@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model RoomType {
+  id            Int            @id @default(autoincrement())
+  name          String         @unique
+  slug          String         @unique
+  description   String?
+  basePrice     Float
+  size          Int?
+  maxAdults     Int            @default(2)
+  maxChildren   Int            @default(1)
+  allowChildren Boolean        @default(true)
+  bedType       String?
+  bedCount      Int            @default(1)
+  amenities     Amenity[]
+  rooms         Room[]
+  images        RoomTypeImage[]
+  videos        RoomTypeVideo[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("room_types")
+}
+
+model Room {
+  id          Int       @id @default(autoincrement())
+  roomNumber  String    @unique
+  roomTypeId  Int
+  roomType    RoomType  @relation(fields: [roomTypeId], references: [id])
+  floor       Int?
+  status      RoomStatus @default(AVAILABLE)
+  description String?
+  images      Image[]
+  videos      Video[]
+  bookings    Booking[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([roomTypeId, roomNumber])
+  @@index([status])
+  @@map("rooms")
+}
+
+enum RoomStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+  RESERVED
+  HOUSEKEEPING
+}
+
+model Amenity {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  icon        String?
+  category    String?
+  description String?
+  roomTypes   RoomType[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("amenities")
+}
+
+model Image {
+  id          Int      @id @default(autoincrement())
+  url         String
+  alt         String?
+  caption     String?
+  sortOrder   Int      @default(0)
+  isPrimary   Boolean  @default(false)
+  roomId      Int?
+  room        Room?    @relation(fields: [roomId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([roomId])
+  @@map("images")
+}
+
+model Video {
+  id          Int      @id @default(autoincrement())
+  url         String
+  thumbnail   String?
+  title       String?
+  description String?
+  sortOrder   Int      @default(0)
+  roomId      Int?
+  room        Room?    @relation(fields: [roomId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("videos")
+}
+
+model RoomTypeImage {
+  id          Int      @id @default(autoincrement())
+  url         String
+  alt         String?
+  caption     String?
+  sortOrder   Int      @default(0)
+  isPrimary   Boolean  @default(false)
+  roomTypeId  Int
+  roomType    RoomType @relation(fields: [roomTypeId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([roomTypeId])
+  @@map("room_type_images")
+}
+
+model RoomTypeVideo {
+  id          Int      @id @default(autoincrement())
+  url         String
+  thumbnail   String?
+  title       String?
+  description String?
+  sortOrder   Int      @default(0)
+  roomTypeId  Int
+  roomType    RoomType @relation(fields: [roomTypeId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("room_type_videos")
+}
+
+model Guest {
+  id        Int       @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String    @unique
+  phone     String?
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("guests")
+}
+
+model Booking {
+  id          Int           @id @default(autoincrement())
+  bookingRef  String        @unique
+  guestId     Int
+  guest       Guest         @relation(fields: [guestId], references: [id])
+  roomId      Int
+  room        Room          @relation(fields: [roomId], references: [id])
+  checkIn     DateTime
+  checkOut    DateTime
+  adults      Int           @default(1)
+  children    Int           @default(0)
+  totalAmount Float
+  status      BookingStatus @default(PENDING)
+  source      String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([checkIn])
+  @@index([checkOut])
+  @@index([status])
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  NO_SHOW
+}

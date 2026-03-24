@@ -17,6 +17,7 @@ model RoomType {
   updatedAt   DateTime @updatedAt
   
   rooms       Room[]
+  reviews     Review[]
   
   @@map("room_types")
 }
@@ -118,6 +119,7 @@ model Booking {
   payments      Payment[]
   workflowLogs  BookingWorkflowLog[]
   serviceOrders ServiceOrder[]
+  review        Review?
   
   @@index([guestId])
   @@index([roomId])
@@ -145,6 +147,7 @@ model Guest {
   updatedAt   DateTime @updatedAt
   
   bookings    Booking[]
+  reviews     Review[]
   
   @@index([email])
   @@index([phone])
@@ -439,6 +442,38 @@ enum HousekeepingType {
   turn_down
   
   @@map("housekeeping_type")
+}
+
+// Reviews
+model Review {
+  id          Int      @id @default(autoincrement())
+  guestId     Int
+  bookingId   Int?     @unique
+  roomTypeId  Int?
+  rating      Int      @default(5)
+  comment     String?  @db.Text
+  staffReply  String?  @db.Text
+  status      ReviewStatus @default(pending)
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  guest       Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  booking     Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  roomType    RoomType? @relation(fields: [roomTypeId], references: [id], onDelete: SetNull)
+  
+  @@index([guestId])
+  @@index([roomTypeId])
+  @@map("reviews")
+}
+
+enum ReviewStatus {
+  pending
+  approved
+  rejected
+  hidden
+  
+  @@map("review_status")
 }
 
 enum FacilityStatus {

@@ -17,6 +17,7 @@ import serviceCategoryRoutes from './routes/serviceCategoryRoute';
 import serviceOrderRoutes from './routes/serviceOrderRoute';
 import frontofficeRoutes from './routes/frontofficeRoute';
 import housekeepingRoutes from './routes/housekeepingRoute';
+import reviewRoutes from './routes/reviewRoute';
 // import guestRoutes from './routes/guestRoute';
 // import facilityRoutes from './routes/facilityRoute';
 
@@ -65,6 +66,7 @@ app.use('/api/service-categories', serviceCategoryRoutes);
 app.use('/api/service-orders', serviceOrderRoutes);
 app.use('/api/frontoffice', frontofficeRoutes);
 app.use('/api/housekeeping', housekeepingRoutes);
+app.use('/api/reviews', reviewRoutes);
 // app.use('/api/guests', guestRoutes);
 // app.use('/api/facilities', facilityRoutes);
 

@@ -1,176 +1,192 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  Bell,
-  Search,
-  Menu,
-  ChevronDown,
-  User,
-  Settings,
-  LogOut,
-  Sparkles,
-  Command
-} from 'lucide-react';
+import { useState } from "react";
+import { Bell, Search, ChevronDown, Settings, LogOut, User, MessageSquare, Zap } from "lucide-react";
+import { MobileMenuButton } from "./Sidebar";
+
+const notifications = [
+  { id: 1, text: "New booking: Room 204 – Rajesh Sharma", time: "2 min ago", type: "booking", unread: true },
+  { id: 2, text: "Check-in completed: Room 105 – Sita Devi", time: "15 min ago", type: "checkin", unread: true },
+  { id: 3, text: "Payment received: $150 – Room 302", time: "1 hr ago", type: "payment", unread: false },
+  { id: 4, text: "Booking cancelled: Room 401 – Hari Prasad", time: "2 hrs ago", type: "cancel", unread: false },
+];
 
 interface HeaderProps {
-  onMenuClick: () => void;
-  title?: string;
+  title: string;
+  onMobileMenuClick: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick, title = 'Dashboard' }) => {
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
-
-  const notifRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdowns on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setShowNotifications(false);
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) setShowProfile(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const notifications = [
-    { id: 1, text: 'New booking — Mr. Rahul Tharu, Deluxe 204', time: '2 min ago', type: 'booking' as const },
-    { id: 2, text: 'Check-in completed — Room 301',              time: '15 min ago', type: 'checkin' as const },
-    { id: 3, text: 'Payment received — NPR 45,000',              time: '1 hr ago', type: 'payment' as const },
-  ];
-
-  const dotColor = { booking: 'bg-[#1F7A3A]', checkin: 'bg-[#F59E0B]', payment: 'bg-[#F97316]' };
+export function Header({ title, onMobileMenuClick }: HeaderProps) {
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   return (
-    <header className="h-[76px] bg-white border-b border-gray-100 sticky top-0 z-30 shrink-0">
-      <div className="h-full px-5 sm:px-6 lg:px-8 flex items-center gap-5">
-        
-        {/* Mobile Hamburger */}
-        <button
-          onClick={onMenuClick}
-          className="lg:hidden p-2 -ml-2 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
-        >
-          <Menu size={22} />
-        </button>
+    <header className="sticky top-0 z-[40] transition-all duration-300 px-10 h-24 flex items-center gap-10 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+      <MobileMenuButton onClick={onMobileMenuClick} />
 
-        {/* Page Title (breadcrumb style) */}
-        <div className="mr-auto hidden sm:block">
-          <h1 className="text-lg font-bold text-[#111827] leading-tight flex items-center gap-2.5">
-            {title}
-            {title === 'Dashboard' && <Sparkles size={16} className="text-[#F59E0B]" />}
-          </h1>
-          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-400 mt-1">
-            <span>Front Office</span>
-            <span className="text-gray-300">/</span>
-            <span className="text-[#1F7A3A]">{title}</span>
+      {/* Title & Page Status */}
+      <div className="flex flex-col h-full justify-center">
+        <div className="flex items-center gap-2">
+          <h2 className="font-black text-xl text-[#111827] tracking-tight">{title}</h2>
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#1F7A3A]/5 text-[#1F7A3A] text-[10px] font-black uppercase tracking-widest border border-[#1F7A3A]/10">
+            <div className="w-1 h-1 rounded-full bg-[#1F7A3A] animate-pulse" />
+            Live System
           </div>
         </div>
+        <p className="hidden md:block text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Management Workspace</p>
+      </div>
 
-        {/* Global Search */}
-        <div className="hidden md:flex flex-1 max-w-[360px] items-center relative group">
-          <Search size={16} className="absolute left-3.5 text-gray-400 group-focus-within:text-[#1F7A3A] transition-colors" />
+      {/* Central Search with premium field */}
+      <div className="flex-1 max-w-xl hidden lg:block">
+        <div className="group relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-transform duration-300 group-focus-within:scale-110">
+            <Search className="h-4 w-4 text-gray-400 group-focus-within:text-[#1F7A3A]" strokeWidth={2.5} />
+          </div>
           <input
             type="text"
-            placeholder="Search bookings, guests, rooms..."
-            className="w-full h-10 pl-10 pr-12 text-[13px] font-medium bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:bg-white focus:border-[#1F7A3A]/30 focus:ring-4 focus:ring-[#1F7A3A]/5 transition-all"
+            placeholder="Search bookings, guests, room numbers..."
+            className="block w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/20 focus:bg-white transition-all duration-300"
           />
-          <div className="absolute right-3 flex items-center gap-1 text-[10px] font-bold text-gray-400 bg-white border border-gray-100 px-1.5 py-0.5 rounded-md shadow-sm">
-            <Command size={10} /> K
+          <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+            <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-lg border border-gray-200 bg-white text-[10px] font-black tracking-widest text-gray-400 uppercase">
+              ⌘ K
+            </kbd>
           </div>
         </div>
+      </div>
 
-        {/* Actions Context */}
-        <div className="flex items-center gap-3 sm:gap-4 ml-auto sm:ml-0 border-l border-gray-100 pl-4 sm:pl-6">
-          
-          {/* Notifications */}
-          <div ref={notifRef} className="relative">
-            <button
-              onClick={() => { setShowNotifications(!showNotifications); setShowProfile(false); }}
-              className="relative w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 hover:text-[#1F7A3A] hover:bg-[#1F7A3A]/5 transition-all border border-transparent hover:border-[#1F7A3A]/10"
-            >
-              <Bell size={18} strokeWidth={2.5} />
-              <div className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#F59E0B] rounded-full border-2 border-white" />
-            </button>
+      {/* Action Icons */}
+      <div className="flex items-center gap-3 ml-auto">
+        {/* Quick Help / AI Suggestion (Premium Touch) */}
+        <button 
+          className="hidden sm:flex w-10 h-10 items-center justify-center rounded-xl text-gray-400 hover:text-[#1F7A3A] hover:bg-[#1F7A3A]/5 transition-all relative group"
+          aria-label="Quick Insights"
+          title="View quick insights"
+        >
+          <Zap size={18} strokeWidth={2.5} />
+          <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-gray-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-2xl">
+            Quick Insights
+          </div>
+        </button>
 
-            {/* Notification Dropdown */}
-            <div className={`absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-[0_12px_40px_-12px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden z-50 transition-all origin-top-right ${showNotifications ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-              <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
-                <span className="text-[13px] font-bold text-[#111827]">Notifications</span>
-                <span className="text-[9px] font-black uppercase tracking-widest text-white bg-[#1F7A3A] px-2 py-1 rounded-md shadow-sm shadow-green-900/10">
-                  {notifications.length} New
-                </span>
+        {/* Notifications */}
+        <div className="relative">
+          <button
+            onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }}
+            aria-label="Toggle notifications"
+            title="Toggle notifications"
+            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all relative group ${
+              notifOpen ? "bg-[#1F7A3A] text-white shadow-xl shadow-[#1F7A3A]/20" : "text-gray-400 hover:text-[#1F7A3A] hover:bg-[#1F7A3A]/5"
+            }`}
+          >
+            <Bell size={18} strokeWidth={2.5} className={notifOpen ? "animate-none" : "group-hover:rotate-12 transition-transform"} />
+            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white shadow-sm" />
+          </button>
+
+          {notifOpen && (
+            <div className="absolute right-0 mt-4 w-[380px] bg-white rounded-[32px] shadow-2xl border border-gray-100 overflow-hidden animate-fade-down z-[60]">
+              <div className="p-6 border-b border-gray-50 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-black uppercase tracking-[0.2em] text-[#111827]">Notifications</h3>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">2 New Updates</p>
+                </div>
+                <button 
+                  className="text-[10px] font-black uppercase tracking-widest text-[#1F7A3A] hover:text-[#14532D]"
+                  title="Mark all notifications as read"
+                >
+                  Mark all as read
+                </button>
               </div>
-              <div className="max-h-[300px] overflow-y-auto divide-y divide-gray-50">
+              <div className="max-h-[400px] overflow-y-auto px-2 py-2 py-4 space-y-2 custom-scrollbar">
                 {notifications.map((n) => (
-                  <button key={n.id} className="w-full px-5 py-3.5 text-left hover:bg-gray-50/80 transition-colors flex gap-3.5 group">
-                    <div className="mt-1 flex items-center justify-center relative">
-                       <span className={`absolute w-3 h-3 rounded-full opacity-20 group-hover:animate-ping ${dotColor[n.type]}`} />
-                       <span className={`w-2 h-2 rounded-full relative z-10 ${dotColor[n.type]}`} />
+                  <div 
+                    key={n.id} 
+                    className={`p-4 rounded-2xl transition-all flex gap-4 group cursor-pointer ${n.unread ? "bg-[#1F7A3A]/5 border border-[#1F7A3A]/10" : "hover:bg-gray-50 border border-transparent"}`}
+                  >
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                      n.unread ? "bg-[#F59E0B]/20 text-[#D97706]" : "bg-gray-100 text-gray-400"
+                    }`}>
+                      {n.type === 'booking' ? <Zap size={16} /> : <MessageSquare size={16} />}
                     </div>
                     <div>
-                      <p className="text-[13px] text-gray-700 font-medium leading-relaxed group-hover:text-[#111827]">{n.text}</p>
-                      <span className="text-[10px] font-bold text-gray-400 mt-1 block uppercase tracking-widest">{n.time}</span>
+                      <p className={`text-[13px] leading-relaxed ${n.unread ? "text-[#111827] font-bold" : "text-gray-500 font-medium"}`}>
+                        {n.text}
+                      </p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1.5">{n.time}</p>
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
-              <button className="w-full px-5 py-3 text-[11px] font-bold text-[#1F7A3A] bg-gray-50/50 hover:bg-gray-100 transition-colors border-t border-gray-50 uppercase tracking-widest text-center">
-                View All Activity
-              </button>
+              <div className="p-4 border-t border-gray-50 bg-gray-50/50">
+                <button 
+                  className="w-full py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-[#111827] transition-colors"
+                  title="Show all notifications in a separate page"
+                >
+                  View All Notifications
+                </button>
+              </div>
             </div>
-          </div>
+          )}
+        </div>
 
-          {/* User Profile */}
-          <div ref={profileRef} className="relative">
-            <button
-              onClick={() => { setShowProfile(!showProfile); setShowNotifications(false); }}
-              className="flex items-center gap-3 p-1 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100"
-            >
-              <div className="w-9 h-9 rounded-[10px] bg-gradient-to-br from-[#1F7A3A] to-[#14532D] flex items-center justify-center shadow-inner shadow-white/20">
-                <span className="text-xs font-black text-white uppercase">AD</span>
+        {/* User Profile */}
+        <div className="relative ml-2">
+          <button
+            onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false); }}
+            aria-label="Toggle user menu"
+            title="Toggle user menu"
+            className={`flex items-center gap-3 p-1 rounded-2xl transition-all ${
+              profileOpen ? "bg-gray-100 shadow-inner" : "hover:bg-gray-50"
+            }`}
+          >
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1F7A3A] to-[#14532D] p-0.5 shadow-lg group-hover:scale-105 transition-all">
+              <div className="w-full h-full rounded-[10px] overflow-hidden border-2 border-white/20">
+                <img src="/avatar-placeholder.png" alt="Profile" className="w-full h-full object-cover" />
               </div>
-              <div className="hidden lg:block text-left mr-1">
-                <p className="text-[13px] font-bold text-[#111827] leading-none mb-1">Admin</p>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider leading-none">Receptionist</p>
-              </div>
-              <ChevronDown
-                size={14}
-                className={`hidden lg:block text-gray-400 transition-transform duration-300 ${showProfile ? 'rotate-180' : ''}`}
-                strokeWidth={3}
-              />
-            </button>
+            </div>
+            <div className="text-left hidden sm:block pr-2">
+              <p className="text-[12px] font-black text-[#111827] leading-none">Namuna Admin</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#F59E0B] mt-1 opacity-80">Full Access</p>
+            </div>
+            <ChevronDown size={14} className={`text-gray-400 transition-transform hidden sm:block duration-500 ${profileOpen ? "rotate-180" : ""}`} />
+          </button>
 
-            {/* Profile Dropdown */}
-            <div className={`absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-[0_12px_40px_-12px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden z-50 p-2 transition-all origin-top-right ${showProfile ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-              <div className="px-3 py-3 mb-1 border-b border-gray-50 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1F7A3A] to-[#14532D] flex items-center justify-center text-white font-black">AD</div>
-                <div className="flex-1 min-w-0">
-                   <p className="text-[13px] font-bold text-[#111827] truncate">Admin User</p>
-                   <p className="text-[11px] font-medium text-gray-400 truncate">admin@hotel.com</p>
+          {profileOpen && (
+            <div className="absolute right-0 mt-4 w-64 bg-white rounded-[32px] shadow-2xl border border-gray-100 overflow-hidden animate-fade-down z-[60]">
+              <div className="p-6 border-b border-gray-50 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#F59E0B]/10 flex items-center justify-center text-[#F59E0B]">
+                  <User size={24} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-black text-[#111827]">Account Settings</h4>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Personalize profile</p>
                 </div>
               </div>
-              
-              <div className="space-y-0.5">
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-gray-600 hover:text-[#111827] hover:bg-gray-50 rounded-xl transition-colors">
-                  <User size={16} className="text-gray-400" /> My Profile
-                </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-gray-600 hover:text-[#111827] hover:bg-gray-50 rounded-xl transition-colors">
-                  <Settings size={16} className="text-gray-400" /> Account Settings
+              <div className="p-2">
+                {[
+                  { label: "My Profile", icon: User },
+                  { label: "Settings", icon: Settings },
+                ].map((item) => (
+                  <button 
+                    key={item.label} 
+                    className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-bold text-gray-500 hover:text-[#111827] hover:bg-gray-50 rounded-2xl transition-all"
+                    title={`Go to ${item.label}`}
+                  >
+                    <item.icon size={16} strokeWidth={2.5} />
+                    {item.label}
+                  </button>
+                ))}
+                <div className="h-px bg-gray-50 my-2 mx-4" />
+                <button 
+                  className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all"
+                  title="Sign out of the system"
+                >
+                  <LogOut size={16} strokeWidth={2.5} />
+                  Logout Session
                 </button>
               </div>
-
-              <div className="border-t border-gray-50 my-1 font-bold" />
-              
-              <button className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-red-600 hover:bg-red-50 rounded-xl transition-colors">
-                <LogOut size={16} className="text-red-500" /> Sign Out
-              </button>
             </div>
-          </div>
-          
+          )}
         </div>
       </div>
     </header>
   );
-};
-
-export default Header;
+}

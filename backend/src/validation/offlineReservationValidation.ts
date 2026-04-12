@@ -13,8 +13,9 @@ export const createOfflineReservationSchema = z.object({
       address: z.string().optional(),
       city: z.string().optional(),
       country: z.string().optional(),
-      idType: z.enum(['passport', 'driving_license', 'national_id']).optional(),
+      idType: z.enum(['passport', 'driving_license', 'national_id', 'citizenship', 'other']).optional(),
       idNumber: z.string().optional(),
+      idProofImage: z.string().regex(/^data:image\/(jpeg|png|webp);base64,/, 'Identification must be a valid image (JPG, PNG, WEBP)').optional(),
     }).optional(),
 
     // Booking information

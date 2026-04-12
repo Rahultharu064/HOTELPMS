@@ -1,137 +1,165 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MoreVertical,
   Search,
   Filter,
   ArrowRight,
+  FileText,
+  Loader2,
+  CheckCircle2,
   Clock,
-  BedDouble,
-  FileText
+  XCircle,
+  Users,
+  ChevronRight
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { bookingService } from '../../../services/bookingService';
+import type { Booking } from '../../../services/bookingService';
+import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
-const bookings = [
-  { id: 'BK-1001', guest: 'Rahul Tharu',       room: 'Deluxe 204',    date: '2026-03-24', time: '12:00 PM', status: 'Confirmed' as const, price: 'Rs. 22,000' },
-  { id: 'BK-1002', guest: 'Maya Sharma',        room: 'Suite 301',     date: '2026-03-24', time: '2:00 PM',  status: 'Pending'   as const, price: 'Rs. 45,000' },
-  { id: 'BK-1003', guest: 'Siddharth Khanal',   room: 'Standard 102',  date: '2026-03-25', time: '11:00 AM', status: 'Cancelled' as const, price: 'Rs. 12,000' },
-  { id: 'BK-1004', guest: 'Anjali Pandey',      room: 'Deluxe 205',    date: '2026-03-25', time: '1:00 PM',  status: 'Confirmed' as const, price: 'Rs. 22,000' },
-  { id: 'BK-1005', guest: 'Bibek Magar',        room: 'Standard 105',  date: '2026-03-26', time: '3:00 PM',  status: 'Confirmed' as const, price: 'Rs. 12,000' },
-];
-
-const statusStyles = {
-  Confirmed: 'bg-[#1F7A3A]/10 text-[#1F7A3A] border-[#1F7A3A]/20',
-  Pending:   'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/20',
-  Cancelled: 'bg-red-50 text-red-600 border-red-100',
+const statusStylesSelectors = {
+  confirmed: 'bg-green-100 text-green-700 border-green-200',
+  pending: 'bg-orange-100 text-orange-700 border-orange-200',
+  cancelled: 'bg-red-100 text-red-700 border-red-200',
+  checked_in: 'bg-blue-100 text-blue-700 border-blue-200',
+  checked_out: 'bg-gray-100 text-gray-700 border-gray-200',
 };
 
 const BookingsTable: React.FC = () => {
+  const [data, setData] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const navigate = useNavigate();
+
+  const fetchRecent = async () => {
+    try {
+      setLoading(true);
+      const res = await bookingService.getAllBookings({ limit: 5 });
+      if (res.success) {
+        setData(res.data.bookings);
+      }
+    } catch (error) {
+      toast.error('Failed to sync live reservation feed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecent();
+  }, []);
+
+  const filteredBookings = data.filter(b => 
+    b.bookingNumber.toLowerCase().includes(search.toLowerCase()) ||
+    (b as any).guest?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
+    (b as any).guest?.lastName?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div className="bg-white rounded-[24px] border border-gray-100 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col">
-      {/* ── Header ── */}
-      <div className="px-6 py-5 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
+      <div className="p-10 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-50/30">
         <div>
-          <h3 className="text-base font-extrabold text-[#111827] flex items-center gap-2">
-             <FileText size={16} className="text-[#1F7A3A]" />
-             Recent Bookings
+          <h3 className="text-xl font-black text-[#111827] flex items-center gap-3 uppercase tracking-tight">
+            <div className="w-10 h-10 rounded-2xl bg-primary-green/10 flex items-center justify-center text-primary-green">
+              <FileText size={20} strokeWidth={3} />
+            </div>
+            Recent Reservations
           </h3>
-          <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mt-1">Showing latest 5 of 24 entries</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mt-2">LIVE RESV FEED — UPDATED REAL-TIME</p>
         </div>
-        <div className="flex items-center gap-2.5">
+
+        <div className="flex items-center gap-4">
           <div className="relative group">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#1F7A3A]" />
+            <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary-green transition-colors" strokeWidth={3} />
             <input
               type="text"
-              placeholder="Search..."
-              className="h-10 w-full sm:w-56 pl-8 pr-4 text-[13px] font-medium bg-gray-50 border border-gray-100 rounded-xl
-                         focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/30 transition-all"
+              placeholder="Search Guest or Folio..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-14 pr-6 py-4 bg-white border border-gray-100 rounded-2xl text-[13px] font-medium outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green/20 transition-all w-64 shadow-inner"
             />
           </div>
-          <button
-            type="button"
-            className="h-10 px-3.5 flex items-center justify-center gap-1.5 text-[12px] font-bold text-gray-500 bg-white border border-gray-100 rounded-xl hover:text-[#111827] hover:bg-gray-50 transition-colors shadow-sm cursor-pointer"
-          >
-            <Filter size={14} />
-            <span className="hidden sm:inline uppercase tracking-wider">Filter</span>
+          <button title="Refine results" className="w-12 h-12 flex items-center justify-center border border-gray-100 rounded-2xl text-gray-400 hover:text-primary-green hover:bg-gray-50 transition-all shadow-sm">
+            <Filter size={20} strokeWidth={3} />
           </button>
         </div>
       </div>
 
-      {/* ── Table ── */}
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[750px]">
+      <div className="overflow-x-auto no-scrollbar flex-1">
+        {loading ? (
+             <div className="h-64 flex flex-col items-center justify-center gap-4">
+                <Loader2 size={32} className="text-primary-green animate-spin" />
+                <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 animate-pulse">Accessing Data Ledger...</p>
+             </div>
+        ) : (
+        <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-50/50 border-b border-gray-50">
-              {['Guest Details', 'Room Assigned', 'Date & Time', 'Total Amount', 'Status', ''].map((h) => (
-                <th
-                  key={h}
-                  className="px-6 py-3.5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest"
-                >
-                  {h}
-                </th>
-              ))}
+            <tr className="bg-gray-50/50">
+              <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Guest Identity</th>
+              <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Accomodation</th>
+              <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Folio Number</th>
+              <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
+              <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Ops</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {bookings.map((b) => (
-              <tr key={b.id} className="group hover:bg-gray-50/50 transition-colors">
-                {/* Guest */}
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1F7A3A]/10 to-[#1F7A3A]/5 text-[#1F7A3A] flex items-center justify-center text-[12px] font-black border border-[#1F7A3A]/10 shrink-0">
-                      {b.guest.split(' ').map((n) => n[0]).join('')}
+            <AnimatePresence mode="popLayout">
+            {filteredBookings.map((b, i) => (
+              <motion.tr
+                key={b.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ delay: i * 0.05 }}
+                className="hover:bg-gray-50/50 transition-all group cursor-pointer"
+                onClick={() => navigate(`/frontoffice/bookings/${b.id}`)}
+              >
+                <td className="px-10 py-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-primary-dark text-white flex items-center justify-center text-[10px] font-black uppercase tracking-widest shadow-lg shadow-black/10 transition-transform group-hover:scale-110">
+                      {(b as any).guest?.firstName?.charAt(0)}{(b as any).guest?.lastName?.charAt(0)}
                     </div>
-                    <div>
-                      <p className="text-[13px] font-bold text-[#111827] group-hover:text-[#1F7A3A] transition-colors">{b.guest}</p>
-                      <p className="text-[10px] font-bold text-gray-400 mt-0.5 tracking-wider uppercase">{b.id}</p>
+                    <div className="flex flex-col">
+                       <span className="text-[14px] font-black text-[#111827] uppercase tracking-tight">{(b as any).guest?.firstName} {(b as any).guest?.lastName}</span>
+                       <span className="text-[10px] font-medium text-gray-400">{(b as any).guest?.email}</span>
                     </div>
                   </div>
                 </td>
-                {/* Room */}
-                <td className="px-6 py-4">
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-100 rounded-xl text-[12px] font-semibold text-gray-600 shadow-sm">
-                    <BedDouble size={14} className="text-[#1F7A3A]" />
-                    {b.room}
+                <td className="px-10 py-8">
+                  <div className="flex flex-col">
+                     <span className="text-[12px] font-black text-primary-dark uppercase tracking-widest">{(b as any).room?.name}</span>
+                     <span className="text-[10px] font-bold text-gray-500 uppercase">Room {(b as any).room?.roomNumber}</span>
                   </div>
                 </td>
-                {/* Date */}
-                <td className="px-6 py-4">
-                  <p className="text-[13px] font-bold text-[#111827]">{b.date}</p>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1.5 mt-1">
-                    <Clock size={12} className="text-[#1F7A3A]/60" /> {b.time}
-                  </p>
+                <td className="px-10 py-8">
+                  <span className="text-[12px] font-black text-primary-gold uppercase tracking-[0.15em]">{b.bookingNumber}</span>
                 </td>
-                {/* Amount */}
-                <td className="px-6 py-4">
-                  <span className="text-[14px] font-black text-[#1F7A3A]">{b.price}</span>
+                <td className="px-10 py-8">
+                   <div className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border-2 inline-flex items-center gap-2 ${statusStylesSelectors[b.status as keyof typeof statusStylesSelectors] || 'bg-gray-50 text-gray-500'}`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${b.status === 'confirmed' ? 'bg-green-500' : b.status === 'pending' ? 'bg-orange-500' : 'bg-blue-500'}`} />
+                      {b.status.replace('_', ' ')}
+                   </div>
                 </td>
-                {/* Status */}
-                <td className="px-6 py-4">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-1 rounded-[8px] border text-[10px] font-black uppercase tracking-widest ${statusStyles[b.status]}`}
-                  >
-                    {b.status}
-                  </span>
-                </td>
-                {/* Actions */}
-                <td className="px-6 py-4 text-right">
-                  <button
-                    type="button"
-                    title="More options"
-                    className="p-2 rounded-xl text-gray-400 hover:text-[#111827] hover:bg-gray-100 transition-colors bg-white border border-gray-100 cursor-pointer shadow-sm"
-                  >
-                    <MoreVertical size={16} />
+                <td className="px-10 py-8 text-right">
+                  <button title="View Folio Details" className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-300 hover:text-primary-dark hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-gray-100">
+                    <ChevronRight size={18} strokeWidth={3} />
                   </button>
                 </td>
-              </tr>
+              </motion.tr>
             ))}
+            </AnimatePresence>
           </tbody>
         </table>
+        )}
       </div>
 
-      {/* ── Footer ── */}
-      <div className="px-6 py-4 border-t border-gray-50 flex items-center justify-between bg-gray-50/30">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Total 24 Bookings today</span>
-        <button className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-gray-100 text-[11px] font-black uppercase tracking-widest text-[#111827] hover:border-[#1F7A3A] transition-colors group cursor-pointer shadow-sm">
-          View All Records <ArrowRight size={14} className="text-[#1F7A3A] group-hover:translate-x-1 transition-transform" />
+      <div className="p-8 bg-gray-50/30 border-t border-gray-50 flex items-center justify-center">
+        <button 
+           onClick={() => navigate('/frontoffice/bookings')}
+           className="text-primary-dark text-[11px] font-black flex items-center gap-2 hover:gap-4 transition-all uppercase tracking-[0.2em] group"
+        >
+          View Master Folio List <ArrowRight size={14} strokeWidth={3} className="text-primary-gold group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
     </div>

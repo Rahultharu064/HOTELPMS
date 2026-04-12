@@ -26,11 +26,11 @@ const FacilitiesSection: React.FC = () => {
   }, []);
 
   return (
-    <section id="facilities" ref={ref} className="section-py-lg bg-gray-50/30 relative overflow-hidden">
+    <section id="facilities" ref={ref} className="section-padding bg-gray-50/50 border-y border-neutral-border/50">
       {/* Background Decor */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-green-50/50 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
-      <div className="site-container relative z-10">
+      <div className="container-custom relative z-10">
         
         <div
           className={`text-center mb-20 max-w-3xl mx-auto transition-all duration-1000 ease-out ${
@@ -38,8 +38,8 @@ const FacilitiesSection: React.FC = () => {
           }`}
         >
           <span className="text-[10px] font-bold tracking-[0.4em] text-[#1F7A3A] uppercase mb-4 block">Premium Experience</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold text-[#111827] mb-6 leading-tight tracking-tight">
-            Superior <span className="text-[#1F7A3A]">Facilities</span>
+          <h2 className="text-3xl md:text-5xl font-extrabold text-primary-dark mb-4 leading-tight tracking-tight">
+            Superior <span className="text-primary-green">Facilities</span>
           </h2>
           <div className="h-1.5 w-16 bg-[#F59E0B] mx-auto rounded-full mb-6" />
           <p className="text-base text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">

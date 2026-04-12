@@ -2,6 +2,9 @@ import { prisma } from '../config/database';
 import { Prisma, BookingStatus, PaymentMethod, IdType } from '@prisma/client';
 import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
+import fs from 'fs';
+import path from 'path';
+import { encryptFile, validateBase64Image } from '../utils/security';
 
 interface OfflineReservationData {
   existingGuestId?: number;
@@ -16,6 +19,7 @@ interface OfflineReservationData {
     postalCode?: string;
     idType?: IdType;
     idNumber?: string;
+    idProofImage?: string;
   };
   roomId: number;
   checkIn: Date;
@@ -41,20 +45,53 @@ export class OfflineReservationService {
       if (!guest) throw new ApiError(HttpStatus.NOT_FOUND, 'Existing guest not found');
       guestId = guest.id;
     } else if (data.newGuestDetails) {
+      let idProofImagePath;
+      if (data.newGuestDetails.idProofImage) {
+        const validation = validateBase64Image(data.newGuestDetails.idProofImage);
+        if (validation.isValid && validation.buffer) {
+          try {
+            const ext = (validation.mimeType?.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+            // Secure document with AES-256-GCM before storage
+            const encryptedBuffer = encryptFile(validation.buffer);
+            const fileName = `id_proof_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}.enc`;
+            const uploadPath = path.join(process.cwd(), 'uploads', fileName);
+            fs.writeFileSync(uploadPath, encryptedBuffer);
+            idProofImagePath = `/uploads/${fileName}`;
+          } catch(err) { 
+            console.error('Error encrypting and saving offline id proof:', err);
+            throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, 'High-security document processing failed.');
+          }
+        } else if (data.newGuestDetails.idProofImage) {
+           throw new ApiError(HttpStatus.BAD_REQUEST, validation.error || 'Identity document verification failed.');
+        }
+      }
+
       // Create guest
       const existingEmail = await prisma.guest.findFirst({
         where: { OR: [{ email: data.newGuestDetails.email }, { phone: data.newGuestDetails.phone }] }
       });
       if (existingEmail) {
         guestId = existingEmail.id;
-        // Optionally update details? For now, just use it
+        if (data.newGuestDetails.idType || data.newGuestDetails.idNumber || idProofImagePath) {
+            await prisma.guest.update({
+               where: { id: guestId },
+               data: {
+                  idType: data.newGuestDetails.idType || existingEmail.idType,
+                  idNumber: data.newGuestDetails.idNumber || existingEmail.idNumber,
+                  idProofImage: idProofImagePath || (existingEmail as any).idProofImage
+               }
+            });
+        }
       } else {
+        const { idProofImage, ...restDetails } = data.newGuestDetails;
+        const guestData: any = {
+           ...restDetails,
+           idProofImage: idProofImagePath,
+           totalBookings: 0,
+           totalSpent: new Prisma.Decimal(0)
+        };
         const guest = await prisma.guest.create({
-          data: {
-            ...data.newGuestDetails,
-            totalBookings: 0,
-            totalSpent: new Prisma.Decimal(0)
-          }
+          data: guestData
         });
         guestId = guest.id;
       }
@@ -74,14 +111,17 @@ export class OfflineReservationService {
       throw new ApiError(HttpStatus.BAD_REQUEST, 'Room capacity exceeded');
     }
 
+    const checkInDate = new Date(data.checkIn);
+    const checkOutDate = new Date(data.checkOut);
+
     // 3. Check room availability
     const conflictingBookings = await prisma.booking.findMany({
       where: {
         roomId: data.roomId,
         status: { not: 'cancelled' },
         AND: [
-          { checkIn: { lt: data.checkOut } },
-          { checkOut: { gt: data.checkIn } },
+          { checkIn: { lt: checkOutDate } },
+          { checkOut: { gt: checkInDate } },
         ],
       },
     });
@@ -92,7 +132,7 @@ export class OfflineReservationService {
 
     // 4. Calculate amount
     const nights = Math.ceil(
-      (data.checkOut.getTime() - data.checkIn.getTime()) / (1000 * 60 * 60 * 24)
+      (checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24)
     );
     const totalAmount = new Prisma.Decimal(Number(room.basePrice) * nights);
 
@@ -106,8 +146,8 @@ export class OfflineReservationService {
           bookingNumber,
           guestId,
           roomId: data.roomId,
-          checkIn: data.checkIn,
-          checkOut: data.checkOut,
+          checkIn: checkInDate,
+          checkOut: checkOutDate,
           adults: data.adults || 1,
           children: data.children || 0,
           totalAmount,
@@ -155,10 +195,10 @@ export class OfflineReservationService {
        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
        const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 
-       if (data.checkIn < endOfToday && data.checkOut > startOfToday) {
+       if (checkInDate < endOfToday && checkOutDate > startOfToday) {
          if (data.status === 'checked_in') {
            await tx.room.update({ where: { id: data.roomId }, data: { status: 'occupied' } });
-         } else if (data.status === 'confirmed') {
+         } else if (data.status === 'confirmed' || data.status === 'pending') {
            await tx.room.update({ where: { id: data.roomId }, data: { status: 'reserved' } });
          }
        }

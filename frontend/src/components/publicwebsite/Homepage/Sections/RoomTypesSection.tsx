@@ -13,12 +13,12 @@ const roomTypes = [
 ];
 
 const RoomTypesSection = () => (
-  <section className="section-py-lg bg-gray-50/50 border-y border-gray-100">
-    <div className="site-container relative z-10">
+  <section className="section-padding bg-gray-50/50 border-y border-neutral-border/50">
+    <div className="container-custom relative z-10">
       <ScrollReveal className="text-center mb-20 max-w-2xl mx-auto">
-        <span className="text-[10px] font-bold tracking-[0.3em] text-[#1F7A3A] uppercase mb-3 block opacity-80">Our Collection</span>
-        <h2 className="text-3xl md:text-4xl font-extrabold text-[#111827] mb-4 leading-tight tracking-tight">
-          Browse by <span className="text-[#1F7A3A]">Room Type</span>
+        <span className="text-[10px] font-bold tracking-[0.3em] text-primary-green uppercase mb-3 block opacity-80">Our Collection</span>
+        <h2 className="text-3xl md:text-4xl font-extrabold text-primary-dark mb-4 leading-tight tracking-tight">
+          Browse by <span className="text-primary-green">Room Type</span>
         </h2>
         <div className="h-1 w-12 bg-[#F59E0B] mx-auto mb-4 rounded-full" />
         <p className="text-base text-gray-500 font-medium">

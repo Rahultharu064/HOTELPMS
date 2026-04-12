@@ -32,7 +32,14 @@ export class RoomTypeController {
   });
 
   createRoomType = asyncHandler(async (req: Request, res: Response) => {
-    const roomType = await roomTypeService.createRoomType(req.body);
+    // req.body will contain form-data text fields
+    // req.file will contain the uploaded image
+    const data = {
+      ...req.body,
+      image: req.file ? `/uploads/${req.file.filename}` : undefined,
+    };
+
+    const roomType = await roomTypeService.createRoomType(data);
 
     // Emit socket event
     const io = req.app.get('io');
@@ -45,7 +52,12 @@ export class RoomTypeController {
 
   updateRoomType = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const roomType = await roomTypeService.updateRoomType(Number(id), req.body);
+    const data = {
+      ...req.body,
+      image: req.file ? `/uploads/${req.file.filename}` : undefined,
+    };
+
+    const roomType = await roomTypeService.updateRoomType(Number(id), data);
 
     // Emit socket event
     const io = req.app.get('io');

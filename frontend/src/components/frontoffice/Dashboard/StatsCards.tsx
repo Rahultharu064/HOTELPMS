@@ -4,94 +4,62 @@ import {
   UserPlus,
   DoorOpen,
   TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const stats = [
   {
-    label: 'Total Bookings',
+    label: 'Total Bookings Today',
     value: '24',
-    change: '+12%',
-    isUp: true,
     icon: CalendarDays,
-    color: '#1F7A3A',
-    bg: 'bg-[#1F7A3A]/10',
+    color: 'text-primary-green',
+    bg: 'bg-primary-green/10',
   },
   {
     label: 'Check-ins Today',
     value: '18',
-    change: '+4%',
-    isUp: true,
     icon: UserPlus,
-    color: '#F59E0B',
-    bg: 'bg-[#F59E0B]/10',
+    color: 'text-primary-gold',
+    bg: 'bg-primary-gold/10',
   },
   {
     label: 'Available Rooms',
     value: '35',
-    change: '-2',
-    isUp: false,
     icon: DoorOpen,
-    color: '#3B82F6',
-    bg: 'bg-blue-50',
+    color: 'text-primary-orange',
+    bg: 'bg-primary-orange/10',
   },
   {
     label: 'Revenue Today',
-    value: 'Rs.45,000',
-    change: '+8%',
-    isUp: true,
+    value: 'Rs. 45,500',
     icon: TrendingUp,
-    color: '#8B5CF6',
-    bg: 'bg-purple-50',
+    color: 'text-primary-green',
+    bg: 'bg-primary-green/10',
   },
 ];
 
 const StatsCards: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 lg:gap-7 mb-8">
-      {stats.map((stat, idx) => {
-        const Icon = stat.icon;
-        return (
-          <div
-            key={idx}
-            className="group bg-white rounded-[24px] border border-gray-100 p-6 lg:p-7 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-500 relative overflow-hidden"
-          >
-            {/* Background decorative glow */}
-            <div
-              className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-[0.03] group-hover:scale-150 transition-transform duration-700"
-              style={{ backgroundColor: stat.color }}
-            />
-
-            {/* Top row: icon + badge */}
-            <div className="flex items-start justify-between mb-5 relative z-10">
-              <div
-                className={`w-12 h-12 rounded-[14px] ${stat.bg} flex items-center justify-center 
-                            group-hover:scale-110 transition-transform duration-500`}
-                style={{ color: stat.color }}
-              >
-                <Icon size={22} strokeWidth={2.5} />
-              </div>
-              <span
-                className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg ${
-                  stat.isUp ? 'text-[#1F7A3A] bg-[#1F7A3A]/10' : 'text-red-600 bg-red-50'
-                }`}
-              >
-                {stat.isUp ? <ArrowUpRight size={12} strokeWidth={3} /> : <ArrowDownRight size={12} strokeWidth={3} />}
-                {stat.change}
-              </span>
-            </div>
-
-            {/* Value + label */}
-            <div className="relative z-10">
-              <h3 className="text-3xl lg:text-[32px] font-black text-[#111827] tracking-tight leading-none mb-2">
-                {stat.value}
-              </h3>
-              <p className="text-[12px] text-gray-400 font-bold uppercase tracking-wider">{stat.label}</p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      {stats.map((stat, idx) => (
+        <motion.div
+          key={idx}
+          whileHover={{ y: -8, scale: 1.02 }}
+          className="bg-white rounded-[40px] p-10 border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 relative overflow-hidden group"
+        >
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gray-50 rounded-bl-[40px] pointer-events-none group-hover:bg-primary-green/5 transition-colors duration-500" />
+          
+          <div className="flex items-center justify-between mb-8 relative z-10">
+            <div className={`w-14 h-14 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center shadow-lg shadow-black/5 group-hover:scale-110 transition-transform duration-500`}>
+              <stat.icon size={26} strokeWidth={3} />
             </div>
           </div>
-        );
-      })}
+          <div className="relative z-10">
+            <h3 className="text-3xl font-black text-[#111827] tracking-tighter mb-1">{stat.value}</h3>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">{stat.label}</p>
+          </div>
+        </motion.div>
+      ))}
     </div>
   );
 };

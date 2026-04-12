@@ -141,6 +141,7 @@ model Guest {
   postalCode  String?  @db.VarChar(20)
   idType      IdType?  @default(passport)
   idNumber    String?  @db.VarChar(100)
+  idProofImage String?  @db.VarChar(500)
   totalBookings Int    @default(0)
   totalSpent   Decimal @default(0) @db.Decimal(10,2)
   createdAt   DateTime @default(now())
@@ -414,6 +415,8 @@ enum IdType {
   passport
   driving_license
   national_id
+  citizenship
+  other
   
   @@map("id_type")
 }

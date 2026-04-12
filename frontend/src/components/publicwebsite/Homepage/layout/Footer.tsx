@@ -1,101 +1,54 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { Building2, Phone, Mail, MapPin, Globe, MessageCircle, Share2, Play } from "lucide-react";
+import { Phone, Mail, MapPin } from "lucide-react";
+import { FaFacebookF, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa6";
 
-const NAV = ["Home", "Our Rooms", "Facilities", "About Us", "Contact"];
-const STORY = ["Our Story", "Press Kit", "Careers", "Privacy Policy", "Terms of Use"];
-
-const Footer: React.FC = () => {
-  const year = new Date().getFullYear();
+const Footer = () => {
+  const socials = [
+    { Icon: FaFacebookF, href: "#" },
+    { Icon: FaInstagram, href: "#" },
+    { Icon: FaTwitter, href: "#" },
+    { Icon: FaYoutube, href: "#" },
+  ];
 
   return (
-    <footer className="bg-[#0C2012]">
-
-      {/* ── NEWSLETTER BAND ── */}
-      <div className="border-b border-white/6">
-        <div className="site-container section-py">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
-            {/* Copy */}
-            <div style={{ maxWidth: 520 }}>
-              <h3 className="heading-lg text-white mb-4" style={{ fontSize: "clamp(1.75rem, 3vw, 2.5rem)" }}>
-                Stay for a night,<br />
-                <span className="text-[#F59E0B]">remember for a lifetime.</span>
-              </h3>
-              <p className="body-lg text-white/45">
-                Subscribe to receive exclusive member offers, seasonal packages, and priority booking access.
-              </p>
-            </div>
-
-            {/* Subscribe bar */}
-            <div className="flex w-full lg:w-auto" style={{ minWidth: 360, maxWidth: 440 }}>
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="flex-1 px-5 py-4 rounded-l-xl bg-white/6 border border-white/10 border-r-0 text-white text-sm font-medium placeholder-white/30 outline-none focus:bg-white/9 transition-colors"
-              />
-              <button className="px-6 py-4 rounded-r-xl bg-[#F59E0B] hover:bg-[#D97706] text-[#14532D] text-[12px] font-black tracking-widest uppercase transition-colors duration-200 whitespace-nowrap">
-                Subscribe
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── MAIN FOOTER COLUMNS ── */}
-      <div className="site-container section-py">
+    <footer className="bg-primary-dark text-primary-foreground">
+      <div className="container-custom py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-
-          {/* Brand */}
-          <div>
-            <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F59E0B] to-[#F97316] flex items-center justify-center">
-                <Building2 size={17} className="text-white" strokeWidth={2.5} />
-              </div>
-              <div>
-                <p className="text-white font-extrabold leading-none" style={{ fontSize: 15 }}>Itahari Namuna</p>
-                <p className="label-sm text-[#F59E0B] mt-0.5" style={{ fontSize: 8.5, letterSpacing: "0.32em" }}>College PMS</p>
-              </div>
-            </Link>
-            <p className="text-white/40 text-sm font-medium leading-relaxed mb-7" style={{ maxWidth: 240 }}>
-              Setting the standard for premium property management and student hospitality in Nepal.
+          {/* About */}
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-bold text-xl mb-1 tracking-tight">Itahari Namuna</h3>
+              <p className="text-primary-gold font-black uppercase text-[10px] tracking-[0.3em]">Property Management</p>
+            </div>
+            <p className="text-sm text-primary-foreground/70 leading-relaxed max-w-xs">
+              Experience premium hospitality with modern property management. Your comfort is our priority, and excellence is our standard.
             </p>
-            <div className="flex items-center gap-2.5">
-              {[Globe, MessageCircle, Share2, Play].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  aria-label={`social ${i + 1}`}
-                  className="w-9 h-9 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center text-white/35 hover:text-white hover:bg-white/10 transition-all duration-200"
+            <div className="flex gap-3">
+              {socials.map(({ Icon, href }, i) => (
+                <a 
+                  key={i} 
+                  href={href} 
+                  className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-primary-green hover:scale-110 transition-all duration-300 border border-white/5 shadow-lg"
                 >
-                  <Icon size={14} />
+                  <Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* Quick Links */}
           <div>
-            <p className="label-sm text-[#F59E0B]/55 mb-6" style={{ fontSize: 10 }}>Navigation</p>
-            <ul className="flex flex-col gap-3.5">
-              {NAV.map(n => (
-                <li key={n}>
-                  <a href="#" className="text-white/40 hover:text-white text-sm font-medium transition-colors duration-200">
-                    {n}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Our Story */}
-          <div>
-            <p className="label-sm text-[#F59E0B]/55 mb-6" style={{ fontSize: 10 }}>Our Story</p>
-            <ul className="flex flex-col gap-3.5">
-              {STORY.map(s => (
-                <li key={s}>
-                  <a href="#" className="text-white/40 hover:text-white text-sm font-medium transition-colors duration-200">
-                    {s}
-                  </a>
+            <h4 className="font-bold text-lg mb-6 relative inline-block">
+              Quick Links
+              <span className="absolute -bottom-1.5 left-0 w-8 h-1 bg-primary-gold rounded-full"></span>
+            </h4>
+            <ul className="space-y-3 text-sm text-primary-foreground/70">
+              {["Home", "Rooms", "Facilities", "Offers", "About", "Contact"].map((l) => (
+                <li key={l}>
+                  <Link to={l === "Home" ? "/" : `/${l.toLowerCase()}`} className="hover:text-primary-gold transition-colors flex items-center group">
+                    <span className="w-0 group-hover:w-4 overflow-hidden transition-all duration-300 text-primary-gold">→</span>
+                    {l}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -103,43 +56,63 @@ const Footer: React.FC = () => {
 
           {/* Contact */}
           <div>
-            <p className="label-sm text-[#F59E0B]/55 mb-6" style={{ fontSize: 10 }}>Contact</p>
-            <div className="flex flex-col gap-5">
-              <div className="flex items-start gap-3.5">
-                <MapPin size={15} className="text-[#F59E0B] shrink-0 mt-0.5" strokeWidth={2} />
-                <p className="text-white/40 text-sm font-medium leading-relaxed">
-                  Itahari-6, Sunsari, Koshi Province, Nepal
-                </p>
+            <h4 className="font-bold text-lg mb-6 relative inline-block">
+              Contact Us
+              <span className="absolute -bottom-1.5 left-0 w-8 h-1 bg-primary-gold rounded-full"></span>
+            </h4>
+            <ul className="space-y-4 text-sm text-primary-foreground/70">
+              <li className="flex items-start gap-3 group">
+                <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary-green transition-colors">
+                  <MapPin className="h-4 w-4 shrink-0" />
+                </div>
+                <span className="pt-0.5">Itahari-6, Sunsari, Nepal</span>
+              </li>
+              <li className="flex items-center gap-3 group">
+                <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary-green transition-colors">
+                  <Phone className="h-4 w-4 shrink-0" />
+                </div>
+                <span>+977-25-585000</span>
+              </li>
+              <li className="flex items-center gap-3 group">
+                <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary-green transition-colors">
+                  <Mail className="h-4 w-4 shrink-0" />
+                </div>
+                <span>info@itaharipms.com</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Newsletter */}
+          <div>
+            <h4 className="font-bold text-lg mb-6 relative inline-block">
+              Newsletter
+              <span className="absolute -bottom-1.5 left-0 w-8 h-1 bg-primary-gold rounded-full"></span>
+            </h4>
+            <p className="text-sm text-primary-foreground/70 mb-6 font-medium">Subscribe for exclusive deals and updates delivered to your inbox.</p>
+            <div className="space-y-3">
+              <div className="flex group">
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  className="flex-1 h-11 px-4 rounded-l-xl text-sm bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all"
+                />
+                <button className="h-11 px-5 rounded-r-xl bg-primary-green text-white text-sm font-bold hover:bg-dark-green transition-all btn-active-scale shadow-lg">
+                  JOIN
+                </button>
               </div>
-              <div className="flex items-center gap-3.5">
-                <Phone size={15} className="text-[#F59E0B] shrink-0" strokeWidth={2} />
-                <a href="tel:+977025123456" className="text-white/40 hover:text-white text-sm font-medium transition-colors">
-                  +977 025 123456
-                </a>
-              </div>
-              <div className="flex items-center gap-3.5">
-                <Mail size={15} className="text-[#F59E0B] shrink-0" strokeWidth={2} />
-                <a href="mailto:info@itaharinamuna.edu.np" className="text-white/40 hover:text-white text-sm font-medium transition-colors break-all">
-                  info@itaharinamuna.edu.np
-                </a>
-              </div>
+              <p className="text-[10px] text-primary-foreground/40 italic">We respect your privacy. Unsubscribe at any time.</p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* ── BOTTOM BAR ── */}
-      <div className="border-t border-white/5">
-        <div className="site-container py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-white/25 text-xs font-medium">
-            © {year} Itahari Namuna College PMS. All rights reserved.
-          </p>
-          <div className="flex items-center gap-7">
-            {["Privacy Policy", "Terms of Service", "Sitemap"].map(t => (
-              <a key={t} href="#" className="text-white/25 hover:text-white/60 text-xs font-medium transition-colors">
-                {t}
-              </a>
-            ))}
+      
+      <div className="border-t border-white/5 bg-black/10">
+        <div className="container-custom py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-primary-foreground/40 font-medium">
+          <p>© 2026 Itahari Namuna College PMS. All rights reserved.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-primary-gold transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-primary-gold transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-primary-gold transition-colors">Cookie Policy</a>
           </div>
         </div>
       </div>

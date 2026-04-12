@@ -3,6 +3,9 @@ import { Prisma, BookingStatus, PaymentMethod } from '@prisma/client';
 import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
+import path from 'path';
+import { encryptFile, validateBase64Image } from '../utils/security';
 
 export class BookingService {
   async getAllBookings(filters: {
@@ -135,10 +138,20 @@ export class BookingService {
   }
 
   async createBooking(data: {
-    guestId: number;
+    guestId?: number;
+    guestDetails?: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      nationality?: string;
+      idType?: string;
+      idNumber?: string;
+      idProofImage?: string;
+    };
     roomId: number;
-    checkIn: Date;
-    checkOut: Date;
+    checkIn: Date | string;
+    checkOut: Date | string;
     adults?: number;
     children?: number;
     status?: BookingStatus;
@@ -150,13 +163,82 @@ export class BookingService {
       transactionId?: string;
     };
   }, userId?: number) {
-    // Check if guest exists
-    const guest = await prisma.guest.findUnique({ where: { id: data.guestId } });
+    const checkInDate = new Date(data.checkIn);
+    const checkOutDate = new Date(data.checkOut);
+
+    let finalGuestId = data.guestId;
+
+    // Handle guest creation/finding if no guestId provided
+    if (!finalGuestId && data.guestDetails) {
+      let idProofImagePath;
+      if (data.guestDetails.idProofImage) {
+        const validation = validateBase64Image(data.guestDetails.idProofImage);
+        if (validation.isValid && validation.buffer) {
+          try {
+            const ext = (validation.mimeType?.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+            // Encrypt document before saving to disk
+            const encryptedBuffer = encryptFile(validation.buffer);
+            const fileName = `id_proof_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}.enc`;
+            const uploadPath = path.join(process.cwd(), 'uploads', fileName);
+            fs.writeFileSync(uploadPath, encryptedBuffer);
+            idProofImagePath = `/uploads/${fileName}`;
+          } catch (err) {
+            console.error('Error encrypting and saving id proof:', err);
+            throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to process sensitive identification document securely.');
+          }
+        } else if (data.guestDetails.idProofImage) {
+          throw new ApiError(HttpStatus.BAD_REQUEST, validation.error || 'Invalid identification document format.');
+        }
+      }
+
+      const existingGuest = await prisma.guest.findFirst({
+        where: {
+          OR: [
+            { email: data.guestDetails.email },
+            { phone: data.guestDetails.phone }
+          ]
+        }
+      });
+
+      if (existingGuest) {
+        finalGuestId = existingGuest.id;
+        if (data.guestDetails.idType || data.guestDetails.idNumber || idProofImagePath) {
+          await prisma.guest.update({
+            where: { id: existingGuest.id },
+            data: {
+              idType: (data.guestDetails.idType as any) || existingGuest.idType,
+              idNumber: data.guestDetails.idNumber || existingGuest.idNumber,
+              idProofImage: idProofImagePath || existingGuest.idProofImage,
+            }
+          });
+        }
+      } else {
+        const newGuest = await prisma.guest.create({
+          data: {
+            firstName: data.guestDetails.firstName,
+            lastName: data.guestDetails.lastName,
+            email: data.guestDetails.email,
+            phone: data.guestDetails.phone,
+            country: data.guestDetails.nationality,
+            idType: data.guestDetails.idType as any,
+            idNumber: data.guestDetails.idNumber,
+            idProofImage: idProofImagePath,
+          }
+        });
+        finalGuestId = newGuest.id;
+      }
+    }
+
+    if (!finalGuestId) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'Guest information is required');
+    }
+
+    // Check if guest exists (double check)
+    const guest = await prisma.guest.findUnique({ where: { id: finalGuestId } });
     if (!guest) {
       throw new ApiError(HttpStatus.NOT_FOUND, 'Guest not found');
     }
 
-    // Check if room exists and has capacity
     const room = await prisma.room.findUnique({
       where: { id: data.roomId },
       include: { roomType: true },
@@ -164,6 +246,10 @@ export class BookingService {
 
     if (!room) {
       throw new ApiError(HttpStatus.NOT_FOUND, 'Room not found');
+    }
+
+    if (['maintenance', 'out_of_service'].includes(room.status)) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, `Room is currently under ${room.status}`);
     }
 
     const totalPersons = (data.adults || 1) + (data.children || 0);
@@ -177,8 +263,8 @@ export class BookingService {
         roomId: data.roomId,
         status: { not: 'cancelled' },
         AND: [
-          { checkIn: { lt: data.checkOut } },
-          { checkOut: { gt: data.checkIn } },
+          { checkIn: { lt: checkOutDate } },
+          { checkOut: { gt: checkInDate } },
         ],
       },
     });
@@ -189,7 +275,7 @@ export class BookingService {
 
     // Calculate total amount
     const nights = Math.ceil(
-      (data.checkOut.getTime() - data.checkIn.getTime()) / (1000 * 60 * 60 * 24)
+      (checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24)
     );
     const totalAmount = Number(room.basePrice) * nights;
 
@@ -201,10 +287,10 @@ export class BookingService {
       const newBooking = await tx.booking.create({
         data: {
           bookingNumber,
-          guestId: data.guestId,
+          guestId: finalGuestId!,
           roomId: data.roomId,
-          checkIn: data.checkIn,
-          checkOut: data.checkOut,
+          checkIn: checkInDate,
+          checkOut: checkOutDate,
           adults: data.adults || 1,
           children: data.children || 0,
           totalAmount,
@@ -216,12 +302,13 @@ export class BookingService {
 
       // Process payment if provided
       if (data.payment) {
+        const isOnline = ['esewa', 'khalti'].includes(data.payment.method);
         await tx.payment.create({
           data: {
             bookingId: newBooking.id,
             amount: data.payment.amount,
             method: data.payment.method,
-            status: 'completed',
+            status: isOnline ? 'pending' : 'completed',
             transactionId: data.payment.transactionId || uuidv4(),
           },
         });
@@ -237,12 +324,11 @@ export class BookingService {
         },
       });
 
-      // Update room status if dates are today
       const today = new Date();
-      if (data.checkIn <= today && data.checkOut > today) {
+      if (checkInDate <= today && checkOutDate > today) {
         await tx.room.update({
           where: { id: data.roomId },
-          data: { status: 'occupied' }, // or reserved
+          data: { status: 'reserved' },
         });
       }
 
@@ -254,8 +340,8 @@ export class BookingService {
 
   async updateBooking(id: number, data: {
     roomId?: number;
-    checkIn?: Date;
-    checkOut?: Date;
+    checkIn?: Date | string;
+    checkOut?: Date | string;
     adults?: number;
     children?: number;
     specialRequests?: string;
@@ -271,11 +357,12 @@ export class BookingService {
       throw new ApiError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
 
+    const targetCheckInDate = data.checkIn ? new Date(data.checkIn) : booking.checkIn;
+    const targetCheckOutDate = data.checkOut ? new Date(data.checkOut) : booking.checkOut;
+
     // Checking dates/room changes availability
     if (data.roomId || data.checkIn || data.checkOut) {
       const targetRoomId = data.roomId || booking.roomId;
-      const targetCheckIn = data.checkIn || booking.checkIn;
-      const targetCheckOut = data.checkOut || booking.checkOut;
 
       const conflictingBookings = await prisma.booking.findMany({
         where: {
@@ -283,8 +370,8 @@ export class BookingService {
           id: { not: id },
           status: { not: 'cancelled' },
           AND: [
-            { checkIn: { lt: targetCheckOut } },
-            { checkOut: { gt: targetCheckIn } },
+            { checkIn: { lt: targetCheckOutDate } },
+            { checkOut: { gt: targetCheckInDate } },
           ],
         },
       });
@@ -297,26 +384,24 @@ export class BookingService {
     await prisma.$transaction(async (tx) => {
       let totalAmount = booking.totalAmount;
       if (data.roomId || data.checkIn || data.checkOut) {
-         const targetRoomId = data.roomId || booking.roomId;
-         const targetCheckIn = data.checkIn || booking.checkIn;
-         const targetCheckOut = data.checkOut || booking.checkOut;
+        const targetRoomId = data.roomId || booking.roomId;
 
-         const room = await tx.room.findUnique({
-           where: { id: targetRoomId },
-         });
- 
-          const nights = Math.ceil(
-            (targetCheckOut.getTime() - targetCheckIn.getTime()) / (1000 * 60 * 60 * 24)
-          );
-          totalAmount = new Prisma.Decimal(Number(room!.basePrice) * nights);
+        const room = await tx.room.findUnique({
+          where: { id: targetRoomId },
+        });
+
+        const nights = Math.ceil(
+          (targetCheckOutDate.getTime() - targetCheckInDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        totalAmount = new Prisma.Decimal(Number(room!.basePrice) * nights);
       }
 
       const res = await tx.booking.update({
         where: { id },
         data: {
           roomId: data.roomId,
-          checkIn: data.checkIn,
-          checkOut: data.checkOut,
+          checkIn: targetCheckInDate,
+          checkOut: targetCheckOutDate,
           adults: data.adults,
           children: data.children,
           totalAmount: totalAmount,

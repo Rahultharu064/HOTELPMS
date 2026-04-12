@@ -1,36 +1,26 @@
 import React from 'react';
-import { cn } from '../../lib/utils';
+import { motion } from 'framer-motion';
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'white' | 'glass' | 'green';
-  isHoverable?: boolean;
+interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+  hover?: boolean;
+  onClick?: () => void;
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = 'white', isHoverable = true, children, ...props }, ref) => {
-    const variants = {
-      white: 'bg-white border border-[#E5E7EB]',
-      glass: 'bg-white/70 backdrop-blur-xl border border-white/20',
-      green: 'bg-[#14532D] border border-[#1F7A3A]/20 text-white',
-    };
-
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          'rounded-2xl p-6 transition-all duration-300 shadow-sm',
-          variants[variant],
-          isHoverable && 'hover:shadow-xl hover:-translate-y-1',
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </div>
-    );
-  }
-);
-
-Card.displayName = 'Card';
-
-export default Card;
+export const Card: React.FC<CardProps> = ({ 
+  children, 
+  className = '', 
+  hover = true,
+  onClick 
+}) => {
+  return (
+    <motion.div
+      whileHover={hover ? { y: -8, transition: { duration: 0.3 } } : {}}
+      className={`bg-white rounded-2xl shadow-md overflow-hidden ${hover ? 'hover:shadow-xl' : ''} ${className}`}
+      onClick={onClick}
+    >
+      {children}
+    </motion.div>
+  );
+};

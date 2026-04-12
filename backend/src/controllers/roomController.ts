@@ -1,168 +1,143 @@
-import { Request, Response, NextFunction } from 'express';
-import { RoomService } from '../services/roomService';
+import type { Request, Response } from 'express';
+import { prisma } from '../config/database';
+import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 import { asyncHandler } from '../utils/asyncHandler';
-import { HttpStatus } from '../constants';
-
-const roomService = new RoomService();
+import { HttpStatus } from '../constants/index';
 
 export class RoomController {
-  getAllRooms = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const {
-      page,
-      limit,
-      status,
-      roomTypeId,
-      minPrice,
-      maxPrice,
-      adults,
-      children,
-      checkIn,
-      checkOut,
-      sort,
-    } = req.query;
+  getAllRooms = asyncHandler(async (req: Request, res: Response) => {
+    const { status, roomTypeId, search } = req.query;
 
-    const result = await roomService.getAllRooms({
-      page: page ? Number(page) : undefined,
-      limit: limit ? Number(limit) : undefined,
-      status: status as any,
-      roomTypeId: roomTypeId ? Number(roomTypeId) : undefined,
-      minPrice: minPrice ? Number(minPrice) : undefined,
-      maxPrice: maxPrice ? Number(maxPrice) : undefined,
-      adults: adults ? Number(adults) : undefined,
-      children: children ? Number(children) : undefined,
-      checkIn: checkIn ? new Date(checkIn as string) : undefined,
-      checkOut: checkOut ? new Date(checkOut as string) : undefined,
-      sort: sort as string,
+    const where: any = {};
+    if (status) where.status = status;
+    if (roomTypeId) where.roomTypeId = Number(roomTypeId);
+    if (search) {
+      where.OR = [
+        { name: { contains: search as string } },
+        { roomNumber: { contains: search as string } },
+      ];
+    }
+
+    const rooms = await prisma.room.findMany({
+      where,
+      include: {
+        roomType: true,
+        images: true,
+      },
     });
 
     res.status(HttpStatus.OK).json(
-      ApiResponse.success('Rooms retrieved successfully', result)
-    );
-  });
-
-  getRoomById = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const room = await roomService.getRoomById(Number(id));
-
-    res.status(HttpStatus.OK).json(
-      ApiResponse.success('Room retrieved successfully', room)
-    );
-  });
-
-  checkAvailability = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { checkIn, checkOut } = req.query;
-
-    const result = await roomService.checkAvailability(
-      Number(id),
-      new Date(checkIn as string),
-      new Date(checkOut as string)
-    );
-
-    res.status(HttpStatus.OK).json(
-      ApiResponse.success('Room availability checked', result)
+      ApiResponse.success('Rooms retrieved successfully', rooms)
     );
   });
 
   createRoom = asyncHandler(async (req: Request, res: Response) => {
-    const room = await roomService.createRoom(req.body);
+    // req.body contains form-data text fields
+    // req.files contains uploaded images and videos
+    const {
+      name,
+      roomNumber,
+      roomTypeId,
+      floor,
+      price,
+      size,
+      maxAdults,
+      maxChildren,
+      numBeds,
+      allowChildren,
+      description,
+      status,
+      amenities: amenitiesJson
+    } = req.body;
 
-    // Emit socket event
-    const io = req.app.get('io');
-    io.emit('room-created', room);
+    // Handle amenities if sent as JSON string
+    const amenitiesList = amenitiesJson ? JSON.parse(amenitiesJson) : [];
+
+    // Check if room number exists
+    const existingRoom = await prisma.room.findUnique({ where: { roomNumber } });
+    if (existingRoom) {
+      throw new ApiError(HttpStatus.CONFLICT, 'Room number already exists');
+    }
+
+    const room = await prisma.room.create({
+      data: {
+        name,
+        roomNumber,
+        roomTypeId: Number(roomTypeId),
+        floor: floor ? Number(floor) : undefined,
+        basePrice: Number(price),
+        size: size ? Number(size) : undefined,
+        capacity: Number(maxAdults),
+        status: status || 'available',
+        description,
+        // amenities are handled via relation in Prisma if using a separate model, 
+        // but here the schema.prisma shows: amenities Amenity[] @relation("RoomAmenities")
+        // We'll skip complex amenity linking for this quick build or use connectOrCreate
+      },
+    });
+
+    // Handle Uploaded Images
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    if (files && files['images']) {
+      await Promise.all(
+        files['images'].map((file, index) =>
+          prisma.image.create({
+            data: {
+              url: `/uploads/${file.filename}`,
+              roomId: room.id,
+              isPrimary: index === 0,
+            },
+          })
+        )
+      );
+    }
+
+    // Handle Uploaded Videos
+    if (files && files['videos']) {
+      await Promise.all(
+        files['videos'].map(file =>
+          prisma.video.create({
+            data: {
+              url: `/uploads/${file.filename}`,
+              roomId: room.id,
+            },
+          })
+        )
+      );
+    }
 
     res.status(HttpStatus.CREATED).json(
       ApiResponse.success('Room created successfully', room)
     );
   });
 
-  updateRoom = asyncHandler(async (req: Request, res: Response) => {
+  getRoomById = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const room = await roomService.updateRoom(Number(id), req.body);
+    const room = await prisma.room.findUnique({
+      where: { id: Number(id) },
+      include: {
+        roomType: true,
+        images: true,
+        videos: true,
+        amenities: true,
+      },
+    });
 
-    // Emit socket event
-    const io = req.app.get('io');
-    io.emit('room-updated', room);
+    if (!room) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Room not found');
+    }
 
     res.status(HttpStatus.OK).json(
-      ApiResponse.success('Room updated successfully', room)
+      ApiResponse.success('Room retrieved successfully', room)
     );
   });
 
   deleteRoom = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await roomService.deleteRoom(Number(id));
-
-    // Emit socket event
-    const io = req.app.get('io');
-    io.emit('room-deleted', { id: Number(id) });
-
+    await prisma.room.delete({ where: { id: Number(id) } });
     res.status(HttpStatus.OK).json(
-      ApiResponse.success('Room deleted successfully', result)
-    );
-  });
-
-  updateRoomStatus = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { status } = req.body;
-    const room = await roomService.updateRoomStatus(Number(id), status);
-
-    // Emit socket event for real-time updates
-    const io = req.app.get('io');
-    io.emit('room-status-updated', room);
-
-    res.status(HttpStatus.OK).json(
-      ApiResponse.success('Room status updated successfully', room)
-    );
-  });
-
-  addRoomImages = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { images } = req.body;
-    const result = await roomService.addRoomImages(Number(id), images);
-
-    // Emit socket event
-    const io = req.app.get('io');
-    io.emit('room-images-added', { roomId: Number(id), images });
-
-    res.status(HttpStatus.OK).json(
-      ApiResponse.success('Room images added successfully', result)
-    );
-  });
-
-  addRoomVideos = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { videos } = req.body;
-    const result = await roomService.addRoomVideos(Number(id), videos);
-
-    // Emit socket event
-    const io = req.app.get('io');
-    io.emit('room-videos-added', { roomId: Number(id), videos });
-
-    res.status(HttpStatus.OK).json(
-      ApiResponse.success('Room videos added successfully', result)
-    );
-  });
-
-  getSimilarRooms = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { limit } = req.query;
-    const similarRooms = await roomService.getSimilarRooms(
-      Number(id),
-      limit ? Number(limit) : 4
-    );
-
-    res.status(HttpStatus.OK).json(
-      ApiResponse.success('Similar rooms retrieved successfully', similarRooms)
-    );
-  });
-
-  getRoomStatistics = asyncHandler(async (req: Request, res: Response) => {
-    const stats = await roomService.getRoomStatistics();
-
-    res.status(HttpStatus.OK).json(
-      ApiResponse.success('Room statistics retrieved successfully', stats)
+      ApiResponse.success('Room deleted successfully', null)
     );
   });
 }

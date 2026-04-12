@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const createRoomTypeSchema = z.object({
   body: z.object({
     name: z.string().min(2).max(100),
-    image: z.string().url().optional().or(z.string().length(0)), // Allow URL or empty string
+    image: z.string().optional(),
     description: z.string().optional(),
   }),
 });
@@ -14,7 +14,7 @@ export const updateRoomTypeSchema = z.object({
   }),
   body: z.object({
     name: z.string().min(2).max(100).optional(),
-    image: z.string().url().optional().or(z.string().length(0)),
+    image: z.string().optional(),
     description: z.string().optional(),
   }),
 });

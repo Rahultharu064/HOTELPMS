@@ -1,73 +1,51 @@
 import { Router } from 'express';
 import { RoomController } from '../controllers/roomController';
-import { validate } from '../middlewares/validateMiddleware';
-import {
-  createRoomSchema,
-  updateRoomSchema,
-  getRoomsSchema,
-  roomAvailabilitySchema,
-  roomImagesSchema,
-  roomVideosSchema,
-} from '../validation/roomValidation';
+import multer from 'multer';
+import path from 'path';
 
 const router = Router();
 const roomController = new RoomController();
 
-// Get room statistics
-router.get('/statistics', roomController.getRoomStatistics);
+// Configure Multer for multi-file uploads (images & videos)
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (_req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
 
-// Get all rooms with filters
-router.get(
-  '/',
-  validate(getRoomsSchema),
-  roomController.getAllRooms
-);
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB limit
+});
 
-// Check room availability
-router.get(
-  '/:id/availability',
-  validate(roomAvailabilitySchema),
-  roomController.checkAvailability
-);
+router.get('/', roomController.getAllRooms);
+router.post('/', (req, res, next) => {
+  const uploadHandler = upload.fields([
+    { name: 'images', maxCount: 10 },
+    { name: 'videos', maxCount: 3 },
+  ]);
 
-// Get similar rooms
-router.get('/:id/similar', roomController.getSimilarRooms);
+  uploadHandler(req, res, (err: any): void => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        res.status(400).json({ success: false, message: 'File is too large. Max size is 500MB.' });
+        return;
+      }
+      res.status(400).json({ success: false, message: err.message });
+      return;
+    } else if (err) {
+      res.status(500).json({ success: false, message: err.message || 'Unknown upload error' });
+      return;
+    }
+    next();
+  });
+}, roomController.createRoom);
 
-// Get room by ID
 router.get('/:id', roomController.getRoomById);
-
-// Create room
-router.post(
-  '/',
-  validate(createRoomSchema),
-  roomController.createRoom
-);
-
-// Update room
-router.put(
-  '/:id',
-  validate(updateRoomSchema),
-  roomController.updateRoom
-);
-
-// Delete room
 router.delete('/:id', roomController.deleteRoom);
-
-// Update room status
-router.patch('/:id/status', roomController.updateRoomStatus);
-
-// Add room images
-router.post(
-  '/:id/images',
-  validate(roomImagesSchema),
-  roomController.addRoomImages
-);
-
-// Add room videos
-router.post(
-  '/:id/videos',
-  validate(roomVideosSchema),
-  roomController.addRoomVideos
-);
 
 export default router;

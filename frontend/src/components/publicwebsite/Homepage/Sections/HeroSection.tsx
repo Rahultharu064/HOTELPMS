@@ -1,276 +1,158 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Star, Award, Users, Calendar } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Button } from "../../../ui/Button";
+import { ChevronDown, ChevronLeft, ChevronRight, CalendarDays, Users, Baby } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const SLIDES = [
-  {
-    id: 1,
-    src: "/hero1.png",
-    thumb: "/hero1.png",
-    label: "Luxury Exterior",
-    badge: "Welcome to Luxury",
-    line1: "Experience Luxury",
-    line2: "At Itahari Namuna",
-    sub: "Nepal's premier College Property Management destination — where world-class hospitality meets modern comfort in the heart of Sunsari.",
-  },
-  {
-    id: 2,
-    src: "/hero2.png",
-    thumb: "/hero2.png",
-    label: "Grand Lobby",
-    badge: "Personalized Service",
-    line1: "A Grand Welcome",
-    line2: "Awaits You",
-    sub: "Step into our magnificent reception — a seamless blend of traditional Nepali artistry and contemporary luxury design.",
-  },
-  {
-    id: 3,
-    src: "/hero3.png",
-    thumb: "/hero3.png",
-    label: "Infinity Pool",
-    badge: "Wellness & Relaxation",
-    line1: "Dive Into",
-    line2: "Pure Serenity",
-    sub: "Rejuvenate in our world-class infinity pool with breathtaking panoramic views of the lush Sunsari valley.",
-  },
+import { Input } from "../../../ui/Input";
+import { Select } from "../../../ui/Select";
+const slides = [
+  { image: "/hero1.png", title: "Experience Luxury & Comfort", subtitle: "Book your perfect stay with modern PMS experience" },
+  { image: "/hero2.png", title: "Elegant Rooms & Suites", subtitle: "Unwind in beautifully designed spaces with panoramic views" },
+  { image: "/hero3.png", title: "World-Class Amenities", subtitle: "From poolside relaxation to fine dining excellence" },
 ];
 
-const STATS = [
-  { icon: Star,     value: "4.9 / 5",  label: "Guest Rating" },
-  { icon: Award,    value: "12 Years", label: "Of Excellence" },
-  { icon: Users,    value: "50,000+",  label: "Happy Guests" },
-  { icon: Calendar, value: "365 Days", label: "Always Open" },
-];
+const HeroSection = () => {
+  const [current, setCurrent] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-const TOTAL = SLIDES.length;
-const INTERVAL = 7000;
-
-const HeroSection: React.FC = () => {
-  const [idx, setIdx]       = useState(0);
-  const [visible, setVisible] = useState(true);
-  const [hoverPrev, setHoverPrev] = useState(false);
-  const [hoverNext, setHoverNext] = useState(false);
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const go = useCallback((next: number) => {
-    setVisible(false);
-    setTimeout(() => { setIdx(next); setVisible(true); }, 450);
+  const goTo = useCallback((idx: number) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrent(idx);
+      setIsTransitioning(false);
+    }, 400);
   }, []);
 
-  const next = useCallback(() => go((idx + 1) % TOTAL), [idx, go]);
-  const prev = () => go((idx - 1 + TOTAL) % TOTAL);
+  const goPrev = useCallback(() => {
+    goTo((current - 1 + slides.length) % slides.length);
+  }, [current, goTo]);
 
-  // Reset auto-play whenever idx changes
-  useEffect(() => {
-    if (timer.current) clearInterval(timer.current);
-    timer.current = setInterval(next, INTERVAL);
-    return () => { if (timer.current) clearInterval(timer.current); };
-  }, [next]);
+  const goNext = useCallback(() => {
+    goTo((current + 1) % slides.length);
+  }, [current, goTo]);
 
-  const S          = SLIDES[idx];
-  const prevSlide  = SLIDES[(idx - 1 + TOTAL) % TOTAL];
-  const nextSlide  = SLIDES[(idx + 1) % TOTAL];
+  const prevIndex = (current - 1 + slides.length) % slides.length;
+  const nextIndex = (current + 1) % slides.length;
 
   return (
-    <section
-      className="relative w-full overflow-hidden bg-[#0a1a10]"
-      style={{ height: "calc(100vh - 116px)", minHeight: 600 }}
-    >
-      {/* ── Background images ── */}
-      {SLIDES.map((sl, i) => (
+    <section className="relative h-[78vh] min-h-[550px] overflow-hidden">
+      {/* Background */}
+      {slides.map((slide, i) => (
         <div
-          key={sl.id}
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${sl.src})`,
-            opacity: i === idx ? 1 : 0,
-            transition: "opacity 1.2s ease",
-            zIndex: 0,
-          }}
-        />
+          key={i}
+          className={`absolute inset-0 transition-opacity duration-1000 ${i === current ? "opacity-100" : "opacity-0"}`}
+        >
+          <img
+            src={slide.image}
+            alt={slide.title}
+            className="w-full h-full object-cover"
+            style={{ animation: i === current ? "kenBurns 15s ease-out forwards" : "none" }}
+          />
+          <div className="absolute inset-0 hero-overlay" />
+        </div>
       ))}
 
-      {/* Dark-green left overlay — keeps text readable */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: "linear-gradient(108deg, rgba(20,83,45,0.93) 0%, rgba(20,83,45,0.76) 32%, rgba(20,83,45,0.28) 62%, rgba(0,0,0,0.04) 100%)",
-          zIndex: 1,
-        }}
-      />
-      {/* Bottom vignette */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-40"
-        style={{ background: "linear-gradient(to top, rgba(10,26,16,0.6), transparent)", zIndex: 1 }}
-      />
-
-      {/* ── MAIN CONTENT ── */}
-      <div className="absolute inset-0 flex items-center" style={{ zIndex: 2 }}>
-        <div className="site-container w-full">
-          <div style={{ maxWidth: 600 }}>
-
-            {/* Badge */}
-            <div
-              className={`flex items-center gap-3 mb-6 transition-all duration-500 ${
-                visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              }`}
-            >
-              <span className="block w-7 h-px bg-[#F59E0B]" />
-              <span className="text-[#F59E0B] text-[11px] font-black tracking-[0.28em] uppercase">
-                {S.badge}
-              </span>
-            </div>
-
-            {/* Headline */}
-            <h1
-              className={`heading-xl text-white mb-5 transition-all duration-500 ${
-                visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-              }`}
-              style={{ transitionDelay: "80ms" }}
-            >
-              {S.line1}
-              <br />
-              <span className="text-[#F59E0B]">{S.line2}</span>
-            </h1>
-
-            {/* Sub-text */}
-            <p
-              className={`text-white/70 font-medium mb-10 transition-all duration-500 ${
-                visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-              }`}
-              style={{ maxWidth: 480, fontSize: "1.05rem", lineHeight: 1.75, transitionDelay: "160ms" }}
-            >
-              {S.sub}
-            </p>
-
-            {/* CTAs */}
-            <div
-              className={`flex flex-wrap gap-4 transition-all duration-500 ${
-                visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-              }`}
-              style={{ transitionDelay: "240ms" }}
-            >
-              <Link
-                to="/booking"
-                className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-[#F59E0B] hover:bg-[#D97706] text-[#14532D] text-[13px] font-black tracking-widest uppercase shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-200"
-              >
-                Book Your Stay
-              </Link>
-              <Link
-                to="/rooms"
-                className="inline-flex items-center justify-center px-8 py-4 rounded-xl border-2 border-white/30 text-white text-[13px] font-black tracking-widest uppercase hover:border-white/60 hover:bg-white/8 transition-all duration-200"
-              >
-                Explore Rooms
-              </Link>
-            </div>
+      {/* Content */}
+      <div className="relative z-10 container-custom h-full flex flex-col justify-center pb-24">
+        <div className={`max-w-2xl transition-all duration-500 ${isTransitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2.5"
+              style={{ color: "white", textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
+            {slides[current].title}
+          </h1>
+          <p className="text-sm md:text-lg mb-7 text-white/90 font-medium">
+            {slides[current].subtitle}
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <Button variant="hero" size="lg" asChild to="/rooms">
+              <span>Book Now</span>
+            </Button>
+            <Button variant="hero-outline" size="lg" asChild to="/rooms">
+              <span>Explore Rooms</span>
+            </Button>
           </div>
+        </div>
+
+        {/* Dots */}
+        <div className="absolute bottom-40 left-1/2 -translate-x-1/2 flex gap-3">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? "w-10 bg-primary-gold" : "w-2.5 bg-white/40 hover:bg-white/70"}`}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
         </div>
       </div>
 
-      {/* ── STATS BAR (bottom-left) ── */}
-      <div className="absolute inset-x-0 bottom-10 hidden lg:block" style={{ zIndex: 3 }}>
-        <div className="site-container">
-          <div className="flex items-center gap-10">
-            {STATS.map((st, i) => (
-              <div key={i}>
-                <p className="text-white font-black tabular-nums leading-none" style={{ fontSize: "1.6rem" }}>
-                  {st.value}
-                </p>
-                <p className="text-[#F59E0B] text-[10px] font-black uppercase tracking-[0.2em] mt-1.5 opacity-85">
-                  {st.label}
-                </p>
+      {/* Arrow Buttons at both ends */}
+      <Button
+        onClick={goPrev}
+        className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 z-20 h-14 w-14 rounded-full overflow-hidden border border-white/20 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group shadow-2xl"
+        aria-label="Previous slide"
+      >
+        <img src={slides[prevIndex].image} alt={slides[prevIndex].title} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 bg-black/20" />
+        <ChevronLeft className="relative z-10 h-5 w-5 text-white drop-shadow-md" />
+      </Button>
+
+      <Button
+        onClick={goNext}
+        className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-20 h-14 w-14 rounded-full overflow-hidden border border-white/20 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group shadow-2xl"
+        aria-label="Next slide"
+      >
+        <img src={slides[nextIndex].image} alt={slides[nextIndex].title} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 bg-black/20" />
+        <ChevronRight className="relative z-10 h-5 w-5 text-white drop-shadow-md" />
+      </Button>
+
+      {/* Quick Booking Card */}
+      <div className="absolute bottom-5 left-0 right-0 z-20">
+        <div className="container-custom">
+          <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-4 max-w-5xl mx-auto border border-white/20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 items-end">
+              <div className="space-y-1">
+                <label className="text-[9px] font-black uppercase tracking-widest text-[#14532D]/60 block">Check-in</label>
+                <div className="flex items-center gap-2 h-9 px-3 rounded-lg border border-gray-200/50 bg-white/50 text-sm focus-within:border-primary-green transition-colors">
+                  <CalendarDays className="h-3 w-3 text-primary-green" />
+                  <Input type="date" className="flex-1 bg-transparent outline-none font-bold text-[#14532D] text-[11px]" />
+                </div>
               </div>
-            ))}
+              <div className="space-y-1">
+                <label className="text-[9px] font-black uppercase tracking-widest text-[#14532D]/60 block">Check-out</label>
+                <div className="flex items-center gap-2 h-9 px-3 rounded-lg border border-gray-200/50 bg-white/50 text-sm focus-within:border-primary-green transition-colors">
+                  <CalendarDays className="h-3 w-3 text-primary-green" />
+                  <Input type="date" className="flex-1 bg-transparent outline-none font-bold text-[#14532D] text-[11px]" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[9px] font-black uppercase tracking-widest text-[#14532D]/60 block">Adults</label>
+                <div className="flex items-center gap-2 h-9 px-3 rounded-lg border border-gray-200/50 bg-white/50 text-sm focus-within:border-primary-green transition-colors">
+                  <Users className="h-3 w-3 text-primary-green" />
+                  <Select className="flex-1 bg-transparent outline-none font-bold text-[#14532D] text-[11px]">
+                    <option>1 Adult</option><option>2 Adults</option><option>3 Adults</option>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[9px] font-black uppercase tracking-widest text-[#14532D]/60 block">Children</label>
+                <div className="flex items-center gap-2 h-9 px-3 rounded-lg border border-gray-200/50 bg-white/50 text-sm focus-within:border-primary-green transition-colors">
+                  <Baby className="h-3 w-3 text-primary-green" />
+                  <Select className="flex-1 bg-transparent outline-none font-bold text-[#14532D] text-[11px]">
+                    <option>0 Child</option><option>1 Child</option>
+                  </Select>
+                </div>
+              </div>
+              <Button size="sm" className="h-9 w-full rounded-lg bg-primary-green hover:bg-primary-dark shadow-lg shadow-primary-green/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                <span className="font-bold text-[11px]">Check Availability</span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ══ LEFT ARROW with image PREVIEW on hover ══ */}
-      <div
-        className="absolute left-5 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-3"
-        onMouseEnter={() => setHoverPrev(true)}
-        onMouseLeave={() => setHoverPrev(false)}
-      >
-        {/* Thumbnail preview — appears ABOVE the arrow on hover */}
-        <div
-          className={`w-28 h-18 rounded-xl overflow-hidden border-2 border-[#F59E0B] shadow-2xl transition-all duration-300 ${
-            hoverPrev ? "opacity-100 scale-100 -translate-y-1" : "opacity-0 scale-95 translate-y-2 pointer-events-none"
-          }`}
-          style={{ height: 72 }}
-        >
-          <img
-            src={prevSlide.src}
-            alt={prevSlide.label}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/20 flex items-end p-1.5">
-            <span className="text-white text-[9px] font-black truncate">{prevSlide.label}</span>
-          </div>
-        </div>
-
-        {/* Arrow button */}
-        <button
-          onClick={prev}
-          title="Previous slide"
-          className={`w-14 h-14 rounded-full flex items-center justify-center text-white border border-white/25 backdrop-blur-sm transition-all duration-200 ${
-            hoverPrev
-              ? "bg-[#F59E0B] border-[#F59E0B] text-[#14532D] scale-110 shadow-2xl"
-              : "bg-black/25 hover:bg-[#F59E0B] hover:border-[#F59E0B] hover:text-[#14532D]"
-          }`}
-        >
-          <ChevronLeft size={24} />
-        </button>
-      </div>
-
-      {/* ══ RIGHT ARROW with image PREVIEW on hover ══ */}
-      <div
-        className="absolute right-5 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-3"
-        onMouseEnter={() => setHoverNext(true)}
-        onMouseLeave={() => setHoverNext(false)}
-      >
-        {/* Thumbnail preview — appears ABOVE the arrow on hover */}
-        <div
-          className={`w-28 rounded-xl overflow-hidden border-2 border-[#F59E0B] shadow-2xl transition-all duration-300 relative ${
-            hoverNext ? "opacity-100 scale-100 -translate-y-1" : "opacity-0 scale-95 translate-y-2 pointer-events-none"
-          }`}
-          style={{ height: 72 }}
-        >
-          <img
-            src={nextSlide.src}
-            alt={nextSlide.label}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/20 flex items-end p-1.5">
-            <span className="text-white text-[9px] font-black truncate">{nextSlide.label}</span>
-          </div>
-        </div>
-
-        {/* Arrow button */}
-        <button
-          onClick={next}
-          title="Next slide"
-          className={`w-14 h-14 rounded-full flex items-center justify-center text-white border border-white/25 backdrop-blur-sm transition-all duration-200 ${
-            hoverNext
-              ? "bg-[#F59E0B] border-[#F59E0B] text-[#14532D] scale-110 shadow-2xl"
-              : "bg-black/25 hover:bg-[#F59E0B] hover:border-[#F59E0B] hover:text-[#14532D]"
-          }`}
-        >
-          <ChevronRight size={24} />
-        </button>
-      </div>
-
-      {/* ══ DOT INDICATORS — centered at bottom ══ */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2.5">
-        {SLIDES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => go(i)}
-            title={`Slide ${i + 1}`}
-            className={`rounded-full transition-all duration-400 ${
-              i === idx ? "w-8 h-2 bg-[#F59E0B]" : "w-2 h-2 bg-white/40 hover:bg-white/70"
-            }`}
-          />
-        ))}
+      {/* Scroll indicator */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden lg:block">
+        <ChevronDown className="h-8 w-8 animate-scroll-arrow text-white/80" />
       </div>
     </section>
   );

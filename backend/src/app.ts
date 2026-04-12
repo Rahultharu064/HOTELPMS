@@ -18,15 +18,22 @@ import serviceOrderRoutes from './routes/serviceOrderRoute';
 import frontofficeRoutes from './routes/frontofficeRoute';
 import housekeepingRoutes from './routes/housekeepingRoute';
 import reviewRoutes from './routes/reviewRoute';
-// import guestRoutes from './routes/guestRoute';
+import guestRoutes from './routes/guestRoute';
+import checkInOutRoutes from './routes/checkInOutRoute';
+// import facilityRoutes from './routes/facilityRoute';
 // import facilityRoutes from './routes/facilityRoute';
 
 const app: Express = express();
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(cors({
-  origin: config.corsOrigin,
+  origin: [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+  ],
   credentials: true,
 }));
 
@@ -45,7 +52,9 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static files
-app.use('/uploads', express.static(path.join(process.cwd(), config.uploadDir)));
+const uploadsPath = path.join(process.cwd(), config.uploadDir);
+console.log('Serving static files from:', uploadsPath);
+app.use('/uploads', express.static(uploadsPath));
 
 // Health check
 app.get('/health', (_req: Request, res: Response) => {
@@ -58,16 +67,18 @@ app.get('/health', (_req: Request, res: Response) => {
 
 // API Routes
 app.use('/api/room-types', roomTypeRoutes);
-app.use('/api/rooms', roomRoutes);
+app.use('/api/rooms', roomRoutes as any);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/offline-reservations', offlineReservationRoutes);
 app.use('/api/service-categories', serviceCategoryRoutes);
 app.use('/api/service-orders', serviceOrderRoutes);
 app.use('/api/frontoffice', frontofficeRoutes);
+app.use('/api/frontoffice', checkInOutRoutes);
 app.use('/api/housekeeping', housekeepingRoutes);
 app.use('/api/reviews', reviewRoutes);
-// app.use('/api/guests', guestRoutes);
+app.use('/api/guests', guestRoutes);
+// app.use('/api/facilities', facilityRoutes);
 // app.use('/api/facilities', facilityRoutes);
 
 // 404 handler

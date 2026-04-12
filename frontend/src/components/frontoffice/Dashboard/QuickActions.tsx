@@ -1,45 +1,37 @@
 import React from 'react';
-import { PlusCircle, UserPlus, UserMinus, Bed, Zap } from 'lucide-react';
+import { PlusCircle, UserPlus, UserMinus, Command } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const actions = [
-  { label: 'New Booking',    Icon: PlusCircle, variant: 'primary' as const },
-  { label: 'Check-in Guest', Icon: UserPlus,   variant: 'secondary' as const },
-  { label: 'Check-out',      Icon: UserMinus,  variant: 'outline' as const },
-  { label: 'View Rooms',     Icon: Bed,        variant: 'outline'  as const },
+  { label: 'New Booking', Icon: PlusCircle, bg: 'bg-primary-green', hoverBg: 'hover:bg-primary-dark' },
+  { label: 'Check-in Guest', Icon: UserPlus, bg: 'bg-primary-orange', hoverBg: 'hover:bg-primary-dark' },
+  { label: 'Check-out Guest', Icon: UserMinus, bg: 'bg-primary-gold', hoverBg: 'hover:bg-primary-dark' },
 ];
-
-const variantClasses = {
-  primary: 'bg-[#1F7A3A] text-white hover:bg-[#14532D] shadow-lg shadow-green-900/10 border border-[#14532D]/20',
-  secondary: 'bg-[#F59E0B] text-white hover:bg-[#D97706] shadow-lg shadow-orange-900/10 border border-[#D97706]/20',
-  outline: 'bg-white text-gray-600 border border-gray-100 hover:border-gray-200 hover:bg-gray-50 hover:text-gray-900 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.02)]',
-};
 
 const QuickActions: React.FC = () => {
   return (
-    <div className="bg-white rounded-[24px] border border-gray-100 p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.04)]">
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-sm font-extrabold text-[#111827] flex items-center gap-2">
-          <Zap size={16} className="text-[#F59E0B] fill-[#F59E0B]/20" />
-          Quick Actions
+    <div className="bg-white rounded-[40px] border border-gray-100 p-10 shadow-sm overflow-hidden relative group">
+      <div className="flex items-center justify-between mb-8">
+        <h3 className="text-xl font-black text-neutral-text-primary flex items-center gap-3 uppercase tracking-tight">
+          <div className="w-10 h-10 rounded-2xl bg-primary-green/10 flex items-center justify-center text-primary-green">
+            <Command size={20} strokeWidth={3} />
+          </div>
+          Operational Fast-Track
         </h3>
-        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest hidden sm:block">Shortcut panel</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {actions.map((action, idx) => {
-          const Icon = action.Icon;
-          return (
-            <button
-              key={idx}
-              className={`flex flex-col items-center justify-center gap-3 h-24 rounded-[16px] text-xs font-bold transition-all duration-300 active:scale-[0.97] group cursor-pointer ${variantClasses[action.variant]}`}
-            >
-              <div className={`p-2 rounded-xl bg-black/5 group-hover:scale-110 transition-transform ${action.variant === 'outline' ? 'bg-gray-50' : ''}`}>
-                 <Icon size={20} strokeWidth={2.5} />
-              </div>
-              <span>{action.label}</span>
-            </button>
-          );
-        })}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+        {actions.map((action, idx) => (
+          <motion.button
+            key={idx}
+            whileHover={{ y: -5, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`flex items-center justify-center gap-4 px-8 py-5 rounded-[24px] text-white font-black uppercase tracking-widest text-[11px] transition-all shadow-xl shadow-black/10 ${action.bg} ${action.hoverBg}`}
+          >
+            <action.Icon size={18} strokeWidth={3} />
+            <span>{action.label}</span>
+          </motion.button>
+        ))}
       </div>
     </div>
   );

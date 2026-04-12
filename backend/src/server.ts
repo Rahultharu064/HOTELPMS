@@ -1,4 +1,5 @@
 import app from './app';
+console.log('App initialized and starting server...');
 import http from 'http';
 import { Server } from 'socket.io';
 import { config } from './config';

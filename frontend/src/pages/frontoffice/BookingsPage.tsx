@@ -1,263 +1,275 @@
-import React, { useState } from 'react';
-import FrontOfficeLayout from '../../components/frontoffice/Layout/FrontOfficeLayout';
-import {
-  Search,
-  Filter,
-  Download,
-  Plus,
-  MoreVertical,
-  Calendar,
-  CheckCircle2,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
-  Eye,
-  Edit,
-  Trash2,
-  CalendarDays
-} from 'lucide-react';
+import React, { useState } from "react";
+import { 
+  Search, Plus, Calendar, 
+  CheckCircle2, Clock, 
+  AlertCircle, MoreVertical, Download,
+  LayoutGrid, List, ChevronRight,
+  BedDouble, CreditCard
+} from "lucide-react";
+import { CreateOfflineReservationModal } from "../../components/Admin/Dashboard/CreateOfflineReservationModal";
+import { AnimatePresence } from "framer-motion";
 
-const bookingsData = [
-  { id: 'BK-1001', guest: 'Rahul Tharu',       room: 'Deluxe 204',    checkIn: 'Mar 24', checkOut: 'Mar 26', status: 'Confirmed', payment: 'Paid',       amount: 'Rs.22,000' },
-  { id: 'BK-1002', guest: 'Maya Sharma',        room: 'Suite 301',     checkIn: 'Mar 24', checkOut: 'Mar 25', status: 'Pending',   payment: 'Unpaid',     amount: 'Rs.45,000' },
-  { id: 'BK-1003', guest: 'Siddharth Khanal',   room: 'Standard 102',  checkIn: 'Mar 25', checkOut: 'Mar 28', status: 'Checked In',payment: 'Partial',    amount: 'Rs.12,000' },
-  { id: 'BK-1004', guest: 'Anjali Pandey',      room: 'Deluxe 205',    checkIn: 'Mar 25', checkOut: 'Mar 26', status: 'Confirmed', payment: 'Paid',       amount: 'Rs.22,000' },
-  { id: 'BK-1005', guest: 'Bibek Magar',        room: 'Standard 105',  checkIn: 'Mar 26', checkOut: 'Mar 27', status: 'Checked Out',payment: 'Paid',      amount: 'Rs.12,000' },
-  { id: 'BK-1006', guest: 'Sneha Thapa',        room: 'Suite 302',     checkIn: 'Mar 27', checkOut: 'Mar 29', status: 'Confirmed', payment: 'Paid',       amount: 'Rs.55,000' },
-  { id: 'BK-1007', guest: 'Rohan Adhikari',     room: 'Family 401',    checkIn: 'Mar 28', checkOut: 'Mar 30', status: 'Pending',   payment: 'Unpaid',     amount: 'Rs.32,000' },
-  { id: 'BK-1008', guest: 'Priya Karki',        room: 'Deluxe 201',    checkIn: 'Mar 28', checkOut: 'Mar 29', status: 'Confirmed', payment: 'Partial',    amount: 'Rs.22,000' },
+const allBookings = [
+  { id: "BK0102", guest: "Rajesh Sharma", type: "Standard", room: "204", checkIn: "Mar 24, 2026", checkOut: "Mar 26, 2026", status: "Confirmed", amount: "$240", avatar: "RS" },
+  { id: "BK0103", guest: "Sita Devi", type: "Deluxe", room: "105", checkIn: "Mar 24, 2026", checkOut: "Mar 25, 2026", status: "Pending", amount: "$150", avatar: "SD" },
+  { id: "BK0104", guest: "Hari Prasad", type: "Suite", room: "401", checkIn: "Mar 25, 2026", checkOut: "Mar 28, 2026", status: "Cancelled", amount: "$1,350", avatar: "HP" },
+  { id: "BK0105", guest: "Anita Gurung", type: "Standard", room: "302", checkIn: "Mar 24, 2026", checkOut: "Mar 27, 2026", status: "Confirmed", amount: "$360", avatar: "AG" },
+  { id: "BK0106", guest: "Bikash Thapa", type: "Deluxe", room: "108", checkIn: "Mar 25, 2026", checkOut: "Mar 26, 2026", status: "Pending", amount: "$150", avatar: "BT" },
+  { id: "BK0107", guest: "Meena Karki", room: "210", checkIn: "Mar 25, 2026", checkOut: "Mar 29, 2026", status: "Confirmed", amount: "$1,800", avatar: "MK" },
 ];
 
-const statusStyles: Record<string, string> = {
-  'Confirmed':   'bg-[#1F7A3A]/10 text-[#1F7A3A] border-[#1F7A3A]/20',
-  'Pending':     'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/20',
-  'Checked In':  'bg-blue-50 text-blue-600 border-blue-200',
-  'Checked Out': 'bg-gray-100 text-gray-500 border-gray-200',
+const statusStyles: Record<string, { bg: string, text: string, icon: any, dot: string }> = {
+  Confirmed: { bg: "bg-green-100", text: "text-green-700", icon: CheckCircle2, dot: "bg-green-600" },
+  Pending: { bg: "bg-orange-100", text: "text-[#D97706]", icon: Clock, dot: "bg-[#F59E0B]" },
+  Cancelled: { bg: "bg-red-50", text: "text-red-700", icon: AlertCircle, dot: "bg-red-500" },
 };
-
-const paymentStyles: Record<string, string> = {
-  'Paid':    'text-[#1F7A3A]',
-  'Unpaid':  'text-red-500',
-  'Partial': 'text-[#F59E0B]',
-};
-
-const tabs = ['All Bookings', 'Confirmed', 'Pending', 'Checked In'];
 
 const BookingsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('All Bookings');
-  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [filter, setFilter] = useState("All");
+  const [view, setView] = useState<"grid" | "list">("list");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const filtered = allBookings.filter(b => {
+    const matchesFilter = filter === "All" || b.status === filter;
+    const matchesSearch = b.guest.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          b.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          b.room.includes(searchQuery);
+    return matchesFilter && matchesSearch;
+  });
 
   return (
-    <FrontOfficeLayout>
-      {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div className="space-y-8 animate-fade-in pb-10">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl lg:text-[28px] font-extrabold text-[#111827] leading-tight flex items-center gap-2 mb-1.5">
-            <CalendarDays size={24} className="text-[#1F7A3A]" />
-            Manage Bookings
-          </h1>
-          <p className="text-[13px] font-bold text-gray-400 uppercase tracking-widest">
-            Front Office • 128 Total Reservations
-          </p>
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-3xl font-black text-[#111827] tracking-tight">Reservations</h1>
+            <span className="px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 text-[10px] font-black uppercase tracking-widest">
+              {filtered.length} Totals
+            </span>
+          </div>
+          <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Manage and track all guest stays</p>
         </div>
-
         <div className="flex items-center gap-3">
-          <button className="h-11 px-4 flex items-center gap-2 text-[13px] font-bold text-gray-600 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow hover:border-gray-200 transition-all cursor-pointer">
-            <Download size={16} /> Export
+          <button className="hidden sm:flex px-5 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-[#111827] hover:bg-gray-50 transition-all shadow-sm gap-2 items-center">
+            <Download size={14} strokeWidth={3} /> Export CSV
           </button>
-          <button className="h-11 px-5 flex items-center gap-2 text-[13px] font-bold text-white bg-[#1F7A3A] hover:bg-[#14532D] rounded-xl shadow-lg shadow-green-900/10 transition-all cursor-pointer active:scale-95">
-            <Plus size={16} /> New Booking
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="px-6 py-3 bg-[#111827] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#1F7A3A] transition-all shadow-xl shadow-[#1F7A3A]/20 flex items-center gap-2"
+          >
+            <Plus size={16} strokeWidth={3} />
+            Add Reservation
           </button>
         </div>
       </div>
 
-      {/* ── Main Card Wrapper ── */}
-      <div className="bg-white rounded-[24px] border border-gray-100 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col h-full min-h-[600px]">
-        
-        {/* Top Filter Bar */}
-        <div className="px-6 py-5 border-b border-gray-50 flex flex-col lg:flex-row lg:items-center gap-5 justify-between bg-gray-50/30">
-          
-          {/* Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white border border-gray-100 rounded-[14px] shadow-sm">
-            {tabs.map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-[10px] text-[12px] font-bold transition-all cursor-pointer ${
-                  activeTab === tab 
-                    ? 'bg-gray-100 text-[#111827] shadow-sm' 
-                    : 'text-gray-400 hover:text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+      {/* Filters & Controls */}
+      <div className="bg-white p-4 rounded-[32px] border border-gray-100 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 lg:pb-0 w-full lg:w-auto custom-scrollbar">
+          {["All", "Confirmed", "Pending", "Cancelled"].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-6 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 ${
+                filter === f 
+                  ? "bg-[#111827] text-white shadow-lg shadow-black/10" 
+                  : "text-gray-400 hover:text-[#111827] hover:bg-gray-50"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
 
-          <div className="flex items-center gap-3 w-full lg:w-auto">
-            {/* Search */}
-            <div className="relative group flex-1 lg:w-64">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#1F7A3A] transition-colors" />
-              <input
-                type="text"
-                placeholder="Search guest, ID, room..."
-                className="w-full h-11 pl-[38px] pr-4 text-[13px] font-bold bg-white border border-gray-100 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/30 transition-all shadow-sm"
-              />
-            </div>
-            
-            {/* Filter */}
-            <button className="h-11 px-4 flex items-center gap-2 text-[13px] font-bold text-gray-600 bg-white border border-gray-100 rounded-xl shadow-sm hover:bg-gray-50 transition-colors cursor-pointer shrink-0">
-              <Filter size={16} /> <span className="hidden sm:block">Filters</span>
+        <div className="flex items-center gap-4 w-full lg:w-auto">
+          <div className="relative flex-1 lg:w-80">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" strokeWidth={2.5} />
+            <input 
+              placeholder="Search by name, ID or room..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-gray-50/50 border border-transparent rounded-[20px] text-[13px] font-medium placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/20 focus:bg-white transition-all" 
+            />
+          </div>
+          
+          <div className="flex items-center bg-gray-100 p-1.5 rounded-2xl">
+            <button 
+              onClick={() => setView("list")}
+              aria-label="List view"
+              title="Switch to list view"
+              className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${view === "list" ? "bg-white text-[#111827] shadow-md" : "text-gray-400 hover:text-gray-600"}`}
+            >
+              <List size={18} strokeWidth={2.5} />
+            </button>
+            <button 
+              onClick={() => setView("grid")}
+              aria-label="Grid view"
+              title="Switch to grid view"
+              className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${view === "grid" ? "bg-white text-[#111827] shadow-md" : "text-gray-400 hover:text-gray-600"}`}
+            >
+              <LayoutGrid size={18} strokeWidth={2.5} />
             </button>
           </div>
         </div>
+      </div>
 
-        {/* ── Data Table ── */}
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1000px]">
-            <thead>
-              <tr className="bg-gray-50/50 border-b border-gray-50">
-                <th className="w-12 px-6 py-4">
-                  <input type="checkbox" className="min-w-4 h-4 rounded-[4px] border-gray-300 text-[#1F7A3A] focus:ring-[#1F7A3A]" />
-                </th>
-                {['Reservation', 'Room', 'Stay Dates', 'Status', 'Payment', 'Amount', ''].map((h, i) => (
-                  <th key={i} className="px-4 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {bookingsData.map((b) => (
-                <tr key={b.id} className="group hover:bg-gray-50/40 transition-colors bg-white">
-                  <td className="px-6 py-5">
-                    <input type="checkbox" className="w-4 h-4 rounded-[4px] border-gray-200 text-[#1F7A3A] focus:ring-[#1F7A3A] cursor-pointer" />
-                  </td>
-                  
-                  {/* Reservation (Guest + ID) */}
-                  <td className="px-4 py-5 min-w-[200px]">
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1F7A3A]/10 to-[#1F7A3A]/5 text-[#1F7A3A] flex items-center justify-center text-[13px] font-black border border-[#1F7A3A]/10 shrink-0 group-hover:bg-[#1F7A3A] group-hover:text-white transition-colors duration-300">
-                        {b.guest.split(' ').map((n) => n[0]).join('')}
-                      </div>
-                      <div>
-                        <p className="text-[14px] font-bold text-[#111827] group-hover:text-[#1F7A3A] transition-colors">{b.guest}</p>
-                        <p className="text-[10px] font-black text-gray-400 mt-0.5 tracking-widest uppercase">{b.id}</p>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* Room */}
-                  <td className="px-4 py-5">
-                    <span className="inline-flex items-center px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-xl text-[12px] font-bold text-gray-700 shadow-sm whitespace-nowrap">
-                      {b.room}
-                    </span>
-                  </td>
-
-                  {/* Stay Dates */}
-                  <td className="px-4 py-5 font-bold whitespace-nowrap">
-                    <div className="flex items-center gap-2 text-[13px] text-[#111827]">
-                      {b.checkIn} <ArrowRight size={14} className="text-gray-300 mx-0.5" /> {b.checkOut}
-                    </div>
-                    <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1 flex items-center gap-1">
-                      <Clock size={12} className="text-[#F59E0B]" /> 2 Nights
-                    </div>
-                  </td>
-
-                  {/* Status */}
-                  <td className="px-4 py-5">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-[8px] border text-[10px] font-black uppercase tracking-widest whitespace-nowrap ${statusStyles[b.status]}`}>
-                      {b.status}
-                    </span>
-                  </td>
-
-                  {/* Payment */}
-                  <td className="px-4 py-5">
-                     <span className={`text-[12px] font-black uppercase tracking-wider flex items-center gap-1.5 ${paymentStyles[b.payment]}`}>
-                       {b.payment === 'Paid' && <CheckCircle2 size={14} />}
-                       {b.payment}
-                     </span>
-                  </td>
-
-                  {/* Amount */}
-                  <td className="px-4 py-5">
-                    <span className="text-[14px] font-black text-[#1F7A3A]">{b.amount}</span>
-                  </td>
-
-                  {/* Actions (Dropdown Menu) */}
-                  <td className="px-6 py-5 text-right relative">
-                    <button 
-                      onClick={() => setActiveMenu(activeMenu === b.id ? null : b.id)}
-                      className="p-2 rounded-xl text-gray-400 hover:text-[#111827] bg-white border border-transparent hover:border-gray-100 hover:shadow-sm transition-all focus:outline-none"
-                    >
-                      <MoreVertical size={18} />
-                    </button>
-
-                    {/* Action Dropdown Menu */}
-                    {activeMenu === b.id && (
-                      <>
-                        <div className="fixed inset-0 z-10" onClick={() => setActiveMenu(null)} />
-                        <div className="absolute right-8 top-12 w-48 bg-white rounded-2xl shadow-[0_12px_40px_-12px_rgba(0,0,0,0.15)] border border-gray-100 p-2 z-20 animate-fade-slide-up origin-top-right">
-                          <button className="w-full flex items-center gap-3 px-3 py-2 text-[12px] font-bold text-gray-600 hover:bg-gray-50 hover:text-[#111827] rounded-xl transition-colors text-left uppercase tracking-wider">
-                            <Eye size={14} className="text-[#1F7A3A]" /> View Details
-                          </button>
-                          <button className="w-full flex items-center gap-3 px-3 py-2 text-[12px] font-bold text-gray-600 hover:bg-gray-50 hover:text-[#111827] rounded-xl transition-colors text-left uppercase tracking-wider">
-                            <Calendar size={14} className="text-[#F59E0B]" /> Modify Stay
-                          </button>
-                          <button className="w-full flex items-center gap-3 px-3 py-2 text-[12px] font-bold text-gray-600 hover:bg-gray-50 hover:text-[#111827] rounded-xl transition-colors text-left uppercase tracking-wider">
-                            <Edit size={14} className="text-gray-400" /> Edit Guest
-                          </button>
-                          <div className="border-t border-gray-50 my-1 mx-2" />
-                          <button className="w-full flex items-center gap-3 px-3 py-2 text-[12px] font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors text-left uppercase tracking-wider">
-                            <Trash2 size={14} /> Cancel Booking
+      {/* Main Content Areas */}
+      {view === "list" ? (
+        <div className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50/50">
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Guest Details</th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Room Info</th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Check In/Out</th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Total Price</th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {filtered.map((b, i) => {
+                  const style = statusStyles[b.status];
+                  return (
+                    <tr key={i} className="hover:bg-gray-50/50 transition-all duration-300 group">
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-11 h-11 rounded-2xl bg-[#14532D] text-white flex items-center justify-center text-[11px] font-black uppercase tracking-widest shadow-xl shadow-black/10 group-hover:scale-110 transition-transform">
+                            {b.avatar}
+                          </div>
+                          <div>
+                            <p className="text-sm font-black text-[#111827] leading-none mb-1">{b.guest}</p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ORDER #{b.id}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-[#1F7A3A] transition-colors">
+                            <BedDouble size={16} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-black text-[#111827]">Room {b.room}</p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tier Level</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400">
+                            <Calendar size={16} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-[#111827] truncate max-w-[150px]">{b.checkIn} - {b.checkOut}</p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Business Stay</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-2 text-[#1F7A3A]">
+                          <CreditCard size={14} strokeWidth={2.5} />
+                          <p className="text-base font-black tracking-tight">{b.amount}</p>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6">
+                        <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest ${style.bg} ${style.text}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+                          {b.status}
+                        </span>
+                      </td>
+                      <td className="px-8 py-6 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button className="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-[#1F7A3A] hover:bg-[#1F7A3A]/5 transition-all">Details</button>
+                          <button 
+                            className="w-9 h-9 rounded-xl hover:bg-[#0C2012] group/btn flex items-center justify-center text-gray-400 transition-all"
+                            aria-label="More actions"
+                            title="More actions"
+                          >
+                            <MoreVertical size={16} className="group-hover/btn:text-white" />
                           </button>
                         </div>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* ── Pagination ── */}
-        <div className="mt-auto px-6 py-4 border-t border-gray-50 flex items-center justify-between bg-gray-50/30">
-          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-            Showing <span className="text-[#111827]">1-8</span> of <span className="text-[#111827]">128</span> entries
-          </p>
-          <div className="flex items-center gap-2">
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 bg-white hover:bg-gray-50 hover:text-[#111827] transition-colors disabled:opacity-50">
-              <ChevronLeft size={16} />
-            </button>
-            <div className="flex items-center gap-1">
-              {['1', '2', '3', '...', '16'].map((p, i) => (
-                <button
-                  key={i}
-                  className={`min-w-8 h-8 flex items-center justify-center rounded-lg text-[12px] font-black transition-colors ${
-                    p === '1' 
-                      ? 'bg-[#1F7A3A] text-white shadow-md shadow-green-900/10' 
-                      : 'text-gray-500 hover:bg-gray-100 hover:text-[#111827]'
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 bg-white hover:bg-gray-50 hover:text-[#111827] transition-colors">
-              <ChevronRight size={16} />
-            </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((b, i) => {
+            const style = statusStyles[b.status];
+            return (
+              <div key={i} className="group bg-white p-8 rounded-[40px] border border-gray-100 hover:border-[#1F7A3A]/20 shadow-sm hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] transition-all duration-500 relative overflow-hidden flex flex-col">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-[#14532D] text-white flex items-center justify-center text-[12px] font-black uppercase tracking-widest shadow-xl shadow-black/10">
+                      {b.avatar}
+                    </div>
+                    <div>
+                      <h3 className="text-base font-black text-[#111827]">{b.guest}</h3>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">#{b.id}</p>
+                    </div>
+                  </div>
+                  <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest ${style.bg} ${style.text}`}>
+                    <div className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+                    {b.status}
+                  </span>
+                </div>
 
-      </div>
-    </FrontOfficeLayout>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between p-4 rounded-3xl bg-gray-50/50 border border-gray-100/50">
+                    <div className="flex items-center gap-3">
+                      <BedDouble size={18} className="text-[#F59E0B]" strokeWidth={2.5} />
+                      <p className="text-sm font-black text-[#111827]">Room {b.room}</p>
+                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Premium Tier</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-3xl border border-gray-100 group-hover:bg-gray-50 transition-colors">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">Check In</p>
+                      <p className="text-sm font-black text-[#111827]">{b.checkIn}</p>
+                    </div>
+                    <div className="p-4 rounded-3xl border border-gray-100 group-hover:bg-gray-50 transition-colors">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">Check Out</p>
+                      <p className="text-sm font-black text-[#111827]">{b.checkOut}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-gray-50 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Net Payable</span>
+                    <span className="text-xl font-black text-[#1F7A3A] tracking-tighter">{b.amount}</span>
+                  </div>
+                  <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#111827] hover:text-[#1F7A3A] transition-all group/btn">
+                    Manage Booking <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <AnimatePresence>
+        {isModalOpen && (
+          <CreateOfflineReservationModal 
+            isOpen={isModalOpen} 
+            onClose={() => setIsModalOpen(false)} 
+            onSuccess={() => {
+               // In a real app we'd refresh the list
+            }} 
+          />
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 
 export default BookingsPage;
-
-// Helper to make ArrowRight accessible from react-router in a non-component file
-const ArrowRight = ({ size, className }: { size: number, className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-);

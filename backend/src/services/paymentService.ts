@@ -7,7 +7,10 @@ import crypto from 'crypto';
 
 export class PaymentService {
   async initiatePayment(data: { bookingId: number; amount: number; method: string; returnUrl?: string }) {
-    const booking = await prisma.booking.findUnique({ where: { id: data.bookingId } });
+    const booking = await prisma.booking.findUnique({ 
+      where: { id: data.bookingId },
+      include: { guest: true }
+    });
     if (!booking) throw new ApiError(HttpStatus.NOT_FOUND, 'Booking not found');
 
     const amountDecimal = new Prisma.Decimal(data.amount);
@@ -47,6 +50,7 @@ export class PaymentService {
         payment,
         method: 'esewa',
         paymentPayload: {
+          url: 'https://rc-epay.esewa.com.np/api/epay/main/v2/form',
           amount: data.amount,
           tax_amount: 0,
           total_amount: data.amount,
@@ -63,17 +67,48 @@ export class PaymentService {
     }
 
     if (data.method === 'khalti') {
-      return {
-        payment,
-        method: 'khalti',
-        paymentPayload: {
-          publicKey: 'test_public_key', // Handled by frontend config usually
-          productIdentity: transactionId,
-          productName: `Booking-${booking.bookingNumber}`,
-          productUrl: 'http://localhost:5173/bookings',
-          amount: data.amount * 100 // Khalti expects paisa
+      const secretKey = config.payment.khalti.secretKey || 'BhwIWQQADhIYSxILExMcAgFXFhcOBwAKBgAXEQ==';
+      
+      const payloadObj = {
+        return_url: `${data.returnUrl || 'http://localhost:5173'}/payment/success`,
+        website_url: data.returnUrl || 'http://localhost:5173',
+        amount: Math.round(data.amount * 100), // Khalti dictates paisa and hates decimals
+        purchase_order_id: transactionId,
+        purchase_order_name: `Booking-${booking.bookingNumber}`,
+        customer_info: {
+           name: booking.guest?.firstName ? `${booking.guest.firstName} ${booking.guest.lastName}` : 'Guest',
+           email: booking.guest?.email || 'guest@example.com',
+           phone: booking.guest?.phone || '9800000000'
         }
       };
+
+      try {
+        const response = await fetch('https://a.khalti.com/api/v2/epayment/initiate/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Key ${secretKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payloadObj)
+        });
+
+        const khaltiRes = await response.json() as any;
+        
+        if (!response.ok) {
+          throw new ApiError(HttpStatus.BAD_REQUEST, `Khalti Initialization Failed: ${khaltiRes.detail || 'Unknown error'}`);
+        }
+
+        return {
+          payment,
+          method: 'khalti',
+          paymentPayload: {
+            url: khaltiRes.payment_url,
+            pidx: khaltiRes.pidx
+          }
+        };
+      } catch (err: any) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, `Khalti connection failed: ${err.message}`);
+      }
     }
 
     throw new ApiError(HttpStatus.BAD_REQUEST, 'Unsupported payment method');
@@ -86,6 +121,24 @@ export class PaymentService {
 
       if (payload.status !== 'COMPLETE') {
         throw new ApiError(HttpStatus.BAD_REQUEST, 'eSewa payment not completed');
+      }
+
+      const secretKey = config.payment.esewa.secretKey || '8gBm/:&EnhH.1/q';
+      
+      // Strict eSewa v2 Signature Verification
+      if (!payload.signed_field_names || !payload.signature) {
+          throw new ApiError(HttpStatus.BAD_REQUEST, 'Invalid eSewa callback response structure');
+      }
+
+      const signedFieldNames = payload.signed_field_names.split(',');
+      const signaturePayloadStr = signedFieldNames.map((field: string) => `${field}=${payload[field] || ''}`).join(',');
+      
+      const generatedSignature = crypto.createHmac('sha256', secretKey)
+                                       .update(signaturePayloadStr)
+                                       .digest('base64');
+                                      
+      if (generatedSignature !== payload.signature) {
+          throw new ApiError(HttpStatus.BAD_REQUEST, 'Invalid cryptographic payment signature (tampering detected)');
       }
 
       await prisma.payment.updateMany({
@@ -104,41 +157,35 @@ export class PaymentService {
     }
   }
 
-  async verifyKhalti(data: { idx?: string, amount: number, transaction_id?: string, status?: string }) {
-    const secretKey = config.payment.khalti.secretKey;
-    const targetTransactionId = data.transaction_id;
+  async verifyKhalti(data: { pidx: string, transaction_id?: string, purchase_order_id?: string }) {
+    const secretKey = config.payment.khalti.secretKey || 'BhwIWQQADhIYSxILExMcAgFXFhcOBwAKBgAXEQ==';
+    const pidx = data.pidx;
 
-    if (!data.idx) {
-      // Direct pass mode
-      await this.markPaymentCompleted(targetTransactionId, data);
-      return { success: true, message: 'Khalti manual verification successful' };
+    if (!pidx) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'Missing pidx for Khalti verification');
     }
 
     try {
-      const response = await fetch('https://khalti.com/api/v2/payment/verify/', {
+      const response = await fetch('https://a.khalti.com/api/v2/epayment/lookup/', {
         method: 'POST',
         headers: {
           'Authorization': `Key ${secretKey}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          token: data.idx,
-          amount: data.amount * 100
-        })
+        body: JSON.stringify({ pidx })
       });
 
-      const verifyData = await response.json();
+      const verifyData = await response.json() as any;
 
-      if (response.ok) {
-        await this.markPaymentCompleted((verifyData as any).product_identity || targetTransactionId, verifyData);
+      if (response.ok && verifyData.status === 'Completed') {
+        const targetTransactionId = verifyData.purchase_order_id || data.purchase_order_id;
+        await this.markPaymentCompleted(targetTransactionId, verifyData);
         return { success: true, data: verifyData };
       } else {
-        await this.markPaymentCompleted(targetTransactionId, data);
-        return { success: true, message: 'Khalti bypassed verification successful' };
+        throw new ApiError(HttpStatus.BAD_REQUEST, `Khalti Payment ${verifyData.status || 'Failed'}`);
       }
-    } catch(err) {
-      await this.markPaymentCompleted(targetTransactionId, data);
-      return { success: true, message: 'Khalti bypassed verification successful' };
+    } catch(err: any) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, `Khalti verification failed: ${err.message}`);
     }
   }
 

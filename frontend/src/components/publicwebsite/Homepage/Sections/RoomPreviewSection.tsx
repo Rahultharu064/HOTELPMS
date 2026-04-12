@@ -1,111 +1,143 @@
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Button from "../../../ui/Button";
-import { Users, BedDouble, Maximize, Star, ChevronRight } from "lucide-react";
-import ScrollReveal from "./ScrollReveal";
-import room1 from "../../../../assets/Standard Room1.png";
-import room2 from "../../../../assets/Suite.png"
-import room3 from "../../../../assets/Standard Room4.png"
+import { motion } from "framer-motion";
+import { Star, Users, BedDouble, Maximize, ArrowRight } from "lucide-react";
+import { roomService } from "../../../../services/roomService";
+import type { Room } from "../../../../services/roomService";
+import { Button } from "../../../ui/Button";
 
-const rooms = [
-  { id: "1", name: "Deluxe Twin Room", price: 4500, image: room1, guests: 2, beds: 2, size: "32m²", rating: 4.8, desc: "Spacious room with city skyline views and modern amenities." },
-  { id: "2", name: "Executive Suite", price: 8500, image: room2, guests: 3, beds: 1, size: "58m²", rating: 4.9, desc: "Premium suite with separate living area and panoramic views." },
-  { id: "3", name: "Family Room", price: 6200, image: room3, guests: 4, beds: 2, size: "45m²", rating: 4.7, desc: "Comfortable room perfect for families with mountain views." },
-];
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const getImageUrl = (path?: string) => {
+    if (!path) return "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&h=600&fit=crop";
+    return path.startsWith('http') ? path : `${API_URL}${path}`;
+};
 
-const RoomsPreview = () => (
-  <section className="section-py-lg bg-white relative overflow-hidden">
-    {/* Animated Background Decor */}
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-50/20 rounded-full blur-[140px] pointer-events-none" />
-
-    <div className="site-container relative z-10">
-      <ScrollReveal className="text-center mb-24 max-w-3xl mx-auto">
-        <span className="text-[10px] font-bold tracking-[0.4em] text-[#1F7A3A] uppercase mb-4 block">Exclusive Accommodations</span>
-        <h2 className="text-3xl md:text-5xl font-extrabold text-[#111827] mb-6 leading-tight tracking-tight">
-          Our Special <span className="text-[#1F7A3A]">Rooms & Suites</span>
-        </h2>
-        <div className="h-1.5 w-16 bg-[#F59E0B] mx-auto rounded-full mb-6" />
-        <p className="text-base text-gray-500 font-medium leading-relaxed max-w-2xl mx-auto">
-          Experience the pinnacle of hospitality with our handpicked selection of premium accommodations designed for absolute comfort.
-        </p>
-      </ScrollReveal>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {rooms.map((room, i) => (
-          <ScrollReveal key={room.id} delay={i * 150}>
-            <div className="group bg-white rounded-[40px] border border-gray-100/80 overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] transition-all duration-700 flex flex-col h-full transform transition-transform">
-              <div className="relative overflow-hidden aspect-[16/10]">
-                <img 
-                  src={room.image} 
-                  alt={room.name} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" 
-                />
-                
-                {/* Status Badges */}
-                <div className="absolute top-5 left-5">
-                  <div className="bg-[#111827]/30 backdrop-blur-md px-3 py-1.5 rounded-2xl flex items-center gap-1.5 border border-white/20">
-                    <Star className="h-3.5 w-3.5 text-[#F59E0B] fill-[#F59E0B]" />
-                    <span className="text-white text-[11px] font-black">{room.rating}</span>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-5 right-5">
-                   <div className="bg-white/95 backdrop-blur-sm px-4 py-2.5 rounded-3xl shadow-lg border border-gray-100 transition-transform group-hover:translate-y-[-4px]">
-                      <span className="text-[9px] text-gray-400 block leading-none font-extrabold uppercase tracking-widest mb-1.5">Nightly Rate</span>
-                      <span className="text-xl font-black text-[#1F7A3A]">Rs.{room.price.toLocaleString()}</span>
-                   </div>
-                </div>
-              </div>
-
-              <div className="p-9 flex flex-col flex-1">
-                <h3 className="text-xl font-bold text-[#111827] mb-3 group-hover:text-[#1F7A3A] transition-colors">{room.name}</h3>
-                <p className="text-gray-400 text-sm mb-8 line-clamp-2 font-medium leading-relaxed">
-                  {room.desc}
-                </p>
-                
-                <div className="grid grid-cols-3 gap-1 py-6 border-y border-gray-50 mb-8 items-center text-center">
-                  <div className="flex flex-col items-center gap-1.5 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500">
-                    <Users className="h-5 w-5 text-[#1F7A3A]" />
-                    <span className="text-[10px] uppercase tracking-widest font-black text-gray-500">{room.guests} Pax</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1.5 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 delay-75">
-                    <BedDouble className="h-5 w-5 text-[#1F7A3A]" />
-                    <span className="text-[10px] uppercase tracking-widest font-black text-gray-500">{room.beds} Beds</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1.5 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 delay-150">
-                    <Maximize className="h-5 w-5 text-[#1F7A3A]" />
-                    <span className="text-[10px] uppercase tracking-widest font-black text-gray-500">{room.size}</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 mt-auto">
-                  <Link to={`/rooms/${room.id}`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full rounded-[20px] border-gray-100 text-[11px] font-black uppercase tracking-widest hover:border-[#1F7A3A] transition-all">
-                      Preview
-                    </Button>
-                  </Link>
-                  <Link to={`/booking/${room.id}`} className="flex-1">
-                    <Button size="sm" className="w-full rounded-[20px] text-[11px] font-black uppercase tracking-widest shadow-lg shadow-green-900/10">
-                      Reserve
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-        ))}
-      </div>
-
-      <ScrollReveal className="text-center mt-16">
-        <Link 
-          to="/rooms" 
-          className="inline-flex items-center gap-3 text-[#1F7A3A] text-[13px] font-black uppercase tracking-[0.2em] hover:gap-5 transition-all duration-300 group"
-        >
-          View More Suites
-          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </Link>
-      </ScrollReveal>
-    </div>
-  </section>
+const ScrollReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+        viewport={{ once: true }}
+        className={className}
+    >
+        {children}
+    </motion.div>
 );
 
-export default RoomsPreview;
+export const RoomPreviewSection: React.FC = () => {
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchRooms = async () => {
+            try {
+                const res = await roomService.getAllRooms();
+                if (res.success) {
+                    // Take first 3 rooms for preview
+                    setRooms(res.data.slice(0, 3));
+                }
+            } catch (error) {
+                console.error("Failed to fetch rooms:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchRooms();
+    }, []);
+
+    return (
+        <section className="section-padding bg-neutral-light overflow-hidden relative">
+             <div className="absolute top-0 right-0 w-96 h-96 bg-primary-gold/5 rounded-full blur-3xl -mr-48 -mt-48 pointer-events-none" />
+             <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary-green/5 rounded-full blur-3xl -ml-48 -mb-48 pointer-events-none" />
+             
+            <div className="container-custom relative z-10">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                    <ScrollReveal className="max-w-2xl">
+                        <span className="text-primary-gold font-extrabold text-xs uppercase tracking-[0.2em] block mb-3 drop-shadow-sm">Exceptional Stays</span>
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-primary-dark tracking-tighter mb-4 leading-tight">Featured Collections</h2>
+                        <p className="text-lg text-neutral-text-secondary font-medium max-w-lg leading-relaxed">Discover our most requested sanctuaries, where architectural elegance meets ultimate comfort.</p>
+                    </ScrollReveal>
+                    <ScrollReveal delay={0.2}>
+                        <Button variant="outline" className="rounded-full px-8 h-12 font-bold group border-neutral-border hover:border-primary-green transition-all" asChild>
+                            <Link to="/rooms" className="flex items-center gap-2">
+                                View All Rooms <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                        </Button>
+                    </ScrollReveal>
+                </div>
+
+                {loading ? (
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="bg-white rounded-[40px] aspect-[4/5] animate-pulse shadow-sm" />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+                        {rooms.map((room, i) => {
+                            const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url;
+                            return (
+                                <ScrollReveal key={room.id} delay={i * 0.15}>
+                                    <div className="group flex flex-col h-full rounded-[40px] bg-white overflow-hidden shadow-soft hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-3 border border-neutral-border/20">
+                                        <div className="relative overflow-hidden aspect-[4/3] bg-neutral-light">
+                                            <img 
+                                                src={getImageUrl(primaryImage)} 
+                                                alt={room.name} 
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" 
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                                            
+                                            <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl text-xs font-black text-primary-dark shadow-xl flex items-center gap-1.5 border border-white/20">
+                                                <Star className="h-3.5 w-3.5 text-primary-gold fill-primary-gold" /> 4.8
+                                            </div>
+                                            
+                                            <div className="absolute bottom-6 left-8 right-8">
+                                                <span className="text-[10px] text-primary-gold font-black uppercase tracking-[0.2em] mb-1.5 block drop-shadow-md">{room.roomType?.name}</span>
+                                                <h3 className="font-black text-3xl text-white drop-shadow-xl leading-tight mb-2 group-hover:text-primary-green transition-colors">{room.name}</h3>
+                                                <div className="flex items-center gap-2">
+                                                     <span className="text-xl font-black text-white px-3 py-1 bg-primary-green/30 backdrop-blur-md rounded-xl border border-white/20">Rs. {Number(room.basePrice).toLocaleString()}</span>
+                                                     <span className="text-[10px] text-white/70 font-bold uppercase tracking-widest">/ Night</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="p-8 flex flex-col flex-1">
+                                            <p className="text-sm text-neutral-text-secondary mb-8 line-clamp-2 leading-relaxed flex-1 font-medium italic opacity-80">"{room.description}"</p>
+                                            
+                                            <div className="grid grid-cols-3 gap-3 mb-8">
+                                                <div className="flex flex-col items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary-dark bg-neutral-light/50 p-3 rounded-2xl border border-neutral-border/50 group-hover:bg-primary-green/5 transition-colors">
+                                                    <Users className="h-4 w-4 text-primary-green" /> 
+                                                    <span>{room.capacity} Guests</span>
+                                                </div>
+                                                <div className="flex flex-col items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary-dark bg-neutral-light/50 p-3 rounded-2xl border border-neutral-border/50 group-hover:bg-primary-gold/5 transition-colors">
+                                                    <BedDouble className="h-4 w-4 text-primary-gold" /> 
+                                                    <span className="truncate w-full text-center" title={room.bedType}>{room.bedType || 'Queen'}</span>
+                                                </div>
+                                                <div className="flex flex-col items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary-dark bg-neutral-light/50 p-3 rounded-2xl border border-neutral-border/50 group-hover:bg-primary-green/5 transition-colors">
+                                                    <Maximize className="h-4 w-4 text-primary-dark" /> 
+                                                    <span>{room.size || 35}m²</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="flex gap-4">
+                                                <Button variant="primary" size="md" className="flex-1 font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary-green/20 rounded-2xl h-12" asChild>
+                                                    <Link to={`/rooms/${room.id}`}>View Details</Link>
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ScrollReveal>
+                            );
+                        })}
+                    </div>
+                )}
+                
+                {!loading && rooms.length === 0 && (
+                     <div className="text-center py-20 bg-white rounded-[40px] border-2 border-dashed border-neutral-border/30">
+                        <p className="text-neutral-text-secondary font-bold uppercase tracking-widest text-xs">No rooms available for preview yet.</p>
+                     </div>
+                )}
+            </div>
+        </section>
+    );
+};

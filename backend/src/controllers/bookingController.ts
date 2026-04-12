@@ -37,7 +37,13 @@ export class BookingController {
 
   getBookingById = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const booking = await bookingService.getBookingById(Number(id));
+    const bookingId = Number(id);
+
+    if (isNaN(bookingId)) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'Invalid booking ID format');
+    }
+
+    const booking = await bookingService.getBookingById(bookingId);
 
     res.status(HttpStatus.OK).json(
       ApiResponse.success('Booking retrieved successfully', booking)

@@ -14,6 +14,7 @@ export const config = {
     expire: process.env.JWT_EXPIRE || '7d',
     refreshExpire: process.env.JWT_REFRESH_EXPIRE || '30d',
   },
+  documentEncryptionKey: process.env.DOCUMENT_ENCRYPTION_KEY || 'default-enc-key',
   email: {
     host: process.env.SMTP_HOST,
     port: parseInt(process.env.SMTP_PORT || '587', 10),
@@ -22,7 +23,7 @@ export const config = {
   },
   payment: {
     esewa: {
-      merchantCode: process.env.ESEWA_MERCHANT_CODE,
+      merchantCode: process.env.ESEWA_MERCHANT_CODE || process.env.ESEWA_MERCHANT_ID,
       secretKey: process.env.ESEWA_SECRET_KEY,
     },
     khalti: {

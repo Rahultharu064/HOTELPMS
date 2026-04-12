@@ -6,6 +6,7 @@ import {
   updateRoomTypeSchema,
   getRoomTypesSchema,
 } from '../validation/roomTypeValidation';
+import { upload } from '../middlewares/uploadMiddleware';
 
 const router = Router();
 const roomTypeController = new RoomTypeController();
@@ -23,6 +24,7 @@ router.get('/:id', roomTypeController.getRoomTypeById);
 // Create room type
 router.post(
   '/',
+  upload.single('image'),
   validate(createRoomTypeSchema),
   roomTypeController.createRoomType
 );
@@ -30,6 +32,7 @@ router.post(
 // Update room type
 router.put(
   '/:id',
+  upload.single('image'),
   validate(updateRoomTypeSchema),
   roomTypeController.updateRoomType
 );

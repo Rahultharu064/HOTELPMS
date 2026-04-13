@@ -20,6 +20,7 @@ import ReportsPage from '../pages/frontoffice/ReportsPage';
 import SettingsPage from '../pages/frontoffice/SettingsPage';
 import NotificationsPage from '../pages/frontoffice/NotificationsPage';
 import ProfilePage from '../pages/frontoffice/ProfilePage';
+import ServicePOSPage from '../pages/frontoffice/ServicePOSPage';
 
 // Housekeeping
 import { HousekeepingLayout } from '../components/Housekeeping/Layout/HousekeepingLayout';
@@ -115,6 +116,10 @@ const routes: RouteObject[] = [
       {
         path: 'rooms',
         element: <RoomsPageFO />,
+      },
+      {
+        path: 'services-pos',
+        element: <ServicePOSPage />,
       },
       {
         path: 'payments',

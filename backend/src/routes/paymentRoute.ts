@@ -31,6 +31,10 @@ router.post(
   '/verify-khalti',
   paymentController.verifyKhalti
 );
+router.get(
+  '/verify-khalti',
+  paymentController.verifyKhalti
+);
 
 // Get All Payments
 router.get(

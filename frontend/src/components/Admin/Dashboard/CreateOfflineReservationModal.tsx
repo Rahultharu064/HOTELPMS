@@ -17,6 +17,7 @@ interface CreateOfflineReservationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  initialRoomId?: number;
 }
 
 const ID_TYPES = [
@@ -27,7 +28,7 @@ const ID_TYPES = [
   { value: 'other', label: 'Other' }
 ];
 
-export const CreateOfflineReservationModal: React.FC<CreateOfflineReservationModalProps> = ({ isOpen, onClose, onSuccess }) => {
+export const CreateOfflineReservationModal: React.FC<CreateOfflineReservationModalProps> = ({ isOpen, onClose, onSuccess, initialRoomId }) => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState(1);
@@ -55,6 +56,9 @@ export const CreateOfflineReservationModal: React.FC<CreateOfflineReservationMod
 
   useEffect(() => {
     if (isOpen) {
+      if (initialRoomId) {
+        setFormData(prev => ({ ...prev, roomId: String(initialRoomId) }));
+      }
       const fetchRooms = async () => {
         try {
           const res = await roomService.getAllRooms();
@@ -66,8 +70,12 @@ export const CreateOfflineReservationModal: React.FC<CreateOfflineReservationMod
         }
       };
       fetchRooms();
+    } else {
+        // Reset form on close
+        setFormData(prev => ({ ...prev, roomId: '', firstName: '', lastName: '', email: '', phone: '', checkIn: '', checkOut: '' }));
+        setStep(1);
     }
-  }, [isOpen]);
+  }, [isOpen, initialRoomId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

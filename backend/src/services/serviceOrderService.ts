@@ -25,6 +25,9 @@ export class ServiceOrderService {
       where.OR = [
         { orderNumber: { contains: search } },
         { room: { roomNumber: { contains: search } } },
+        { guest: { firstName: { contains: search } } },
+        { guest: { lastName: { contains: search } } },
+        { requestedBy: { contains: search } }
       ];
     }
 
@@ -34,7 +37,12 @@ export class ServiceOrderService {
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
-        include: { room: true, booking: { include: { guest: true } }, items: { include: { service: true } } }
+        include: { 
+            room: true, 
+            guest: true,
+            booking: { include: { guest: true } }, 
+            items: { include: { service: true } } 
+        }
       }),
       prisma.serviceOrder.count({ where })
     ]);
@@ -53,15 +61,23 @@ export class ServiceOrderService {
 
   async createOrder(data: {
     bookingId?: number;
-    roomId: number;
+    guestId?: number;
+    roomId?: number;
     notes?: string;
     priority?: ServicePriority;
     requestedBy?: string;
     items: Array<{ serviceId: number; quantity: number; notes?: string }>;
   }) {
-    // 1. Verify availability: room must exist
-    const room = await prisma.room.findUnique({ where: { id: data.roomId } });
-    if (!room) throw new ApiError(HttpStatus.NOT_FOUND, 'Room not found');
+    // 1. Verify existence if provided
+    if (data.roomId) {
+        const room = await prisma.room.findUnique({ where: { id: data.roomId } });
+        if (!room) throw new ApiError(HttpStatus.NOT_FOUND, 'Room not found');
+    }
+
+    if (data.guestId) {
+        const guest = await prisma.guest.findUnique({ where: { id: data.guestId } });
+        if (!guest) throw new ApiError(HttpStatus.NOT_FOUND, 'Guest not found');
+    }
 
     // 2. Fetch all service items to verify existence and get current prices
     const serviceIds = data.items.map(item => item.serviceId);
@@ -89,6 +105,7 @@ export class ServiceOrderService {
         data: {
           orderNumber,
           bookingId: data.bookingId,
+          guestId: data.guestId,
           roomId: data.roomId,
           totalAmount: new Prisma.Decimal(totalAmount),
           priority: data.priority || 'normal',
@@ -98,7 +115,7 @@ export class ServiceOrderService {
             create: orderItemsData
           }
         },
-        include: { items: { include: { service: true } }, room: true }
+        include: { items: { include: { service: true } }, room: true, guest: true }
       });
 
       return order;

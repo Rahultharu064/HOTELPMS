@@ -149,6 +149,7 @@ model Guest {
   
   bookings    Booking[]
   reviews     Review[]
+  serviceOrders ServiceOrder[]
   
   @@index([email])
   @@index([phone])
@@ -158,7 +159,8 @@ model Guest {
 // Payments
 model Payment {
   id          Int          @id @default(autoincrement())
-  bookingId   Int
+  bookingId   Int?
+  serviceOrderId Int?
   amount      Decimal      @db.Decimal(10,2)
   method      PaymentMethod
   status      PaymentStatus @default(pending)
@@ -166,9 +168,11 @@ model Payment {
   paymentData Json?        @db.Json
   createdAt   DateTime     @default(now())
   
-  booking     Booking      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  booking       Booking?      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  serviceOrder  ServiceOrder? @relation(fields: [serviceOrderId], references: [id], onDelete: SetNull)
   
   @@index([bookingId])
+  @@index([serviceOrderId])
   @@index([status])
   @@map("payments")
 }
@@ -280,7 +284,8 @@ model ServiceOrder {
   id            Int               @id @default(autoincrement())
   orderNumber   String            @unique @db.VarChar(50)
   bookingId     Int?
-  roomId        Int
+  guestId       Int?
+  roomId        Int?
   totalAmount   Decimal           @db.Decimal(10,2) @default(0)
   status        ServiceOrderStatus @default(pending)
   priority      ServicePriority   @default(normal)
@@ -291,10 +296,13 @@ model ServiceOrder {
   updatedAt     DateTime          @updatedAt
   
   booking       Booking?          @relation(fields: [bookingId], references: [id], onDelete: SetNull)
-  room          Room              @relation(fields: [roomId], references: [id])
+  guest         Guest?            @relation(fields: [guestId], references: [id], onDelete: SetNull)
+  room          Room?             @relation(fields: [roomId], references: [id])
   items         ServiceOrderItem[]
+  payments      Payment[]
   
   @@index([bookingId])
+  @@index([guestId])
   @@index([roomId])
   @@index([status])
   @@map("service_orders")

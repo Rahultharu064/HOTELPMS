@@ -6,39 +6,28 @@ import { config } from '../config';
 import crypto from 'crypto';
 
 export class PaymentService {
-  async initiatePayment(data: { bookingId: number; amount: number; method: string; returnUrl?: string }) {
-    const booking = await prisma.booking.findUnique({ 
-      where: { id: data.bookingId },
-      include: { guest: true }
-    });
-    if (!booking) throw new ApiError(HttpStatus.NOT_FOUND, 'Booking not found');
-
-    const amountDecimal = new Prisma.Decimal(data.amount);
-
-    if (data.method === 'cash' || data.method === 'cod') {
-      const payment = await prisma.payment.create({
-        data: {
-          bookingId: data.bookingId,
-          amount: amountDecimal,
-          method: 'cash',
-          status: 'completed', // Assuming COD/Cash is confirmed on spot or frontdesk
-          transactionId: `CASH-${Date.now()}`
-        }
-      });
-      return { payment, method: 'cash', message: 'Cash payment recorded' };
+  async initiatePayment(data: { bookingId?: number; serviceOrderId?: number; amount: number; method: string; returnUrl?: string }) {
+    if (!data.bookingId && !data.serviceOrderId) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Reference ID (Booking or Service) required');
     }
 
+    const amountDecimal = new Prisma.Decimal(data.amount);
     const transactionId = `TXN-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-    const payment = await prisma.payment.create({
-      data: {
-        bookingId: data.bookingId,
-        amount: amountDecimal,
-        method: data.method as PaymentMethod,
-        status: 'pending',
-        transactionId
-      }
-    });
+    const payData: any = {
+      amount: amountDecimal,
+      method: data.method === 'cod' ? 'cash' : data.method as PaymentMethod,
+      status: (data.method === 'cash' || data.method === 'cod') ? 'completed' : 'pending',
+      transactionId: (data.method === 'cash' || data.method === 'cod') ? `CASH-${Date.now()}` : transactionId,
+      bookingId: data.bookingId,
+      serviceOrderId: data.serviceOrderId
+    };
+
+    const payment = await prisma.payment.create({ data: payData });
+
+    if (data.method === 'cash' || data.method === 'cod') {
+        return { payment, method: 'cash', message: 'Cash settlement confirmed' };
+    }
 
     if (data.method === 'esewa') {
       const merchantCode = config.payment.esewa.merchantCode || 'EPAYTEST';
@@ -148,7 +137,12 @@ export class PaymentService {
 
       const payment = await prisma.payment.findFirst({ where: { transactionId: payload.transaction_uuid } });
       if (payment) {
-         await prisma.booking.update({ where: { id: payment.bookingId }, data: { status: 'confirmed' } });
+         if (payment.bookingId) {
+            await prisma.booking.update({ where: { id: payment.bookingId }, data: { status: 'confirmed' } });
+         }
+         if (payment.serviceOrderId) {
+             await prisma.serviceOrder.update({ where: { id: payment.serviceOrderId }, data: { status: 'confirmed' } });
+         }
       }
 
       return { success: true, message: 'eSewa Payment verified successfully' };
@@ -197,26 +191,37 @@ export class PaymentService {
     });
     const payment = await prisma.payment.findFirst({ where: { transactionId } });
     if (payment) {
-       await prisma.booking.update({ where: { id: payment.bookingId }, data: { status: 'confirmed' } });
+       if (payment.bookingId) {
+          await prisma.booking.update({ where: { id: payment.bookingId }, data: { status: 'confirmed' } });
+       }
+       if (payment.serviceOrderId) {
+          await prisma.serviceOrder.update({ where: { id: payment.serviceOrderId }, data: { status: 'confirmed' } });
+       }
     }
   }
 
-  async getAllPayments(filters: { page?: number; limit?: number; bookingId?: number; status?: string; method?: string; startDate?: Date; endDate?: Date }) {
-    const { page = 1, limit = 10, bookingId, status, method, startDate, endDate } = filters;
+  async getAllPayments(filters: { 
+    page?: number; 
+    limit?: number; 
+    bookingId?: number; 
+    serviceOrderId?: number; 
+    status?: string; 
+    method?: string; 
+    startDate?: Date; 
+    endDate?: Date;
+    type?: 'booking' | 'service' 
+  }) {
+    const { page = 1, limit = 10, bookingId, serviceOrderId, status, method, startDate, endDate, type } = filters;
     const skip = (page - 1) * limit;
 
     const where: Prisma.PaymentWhereInput = {};
     if (bookingId) where.bookingId = bookingId;
+    if (serviceOrderId) where.serviceOrderId = serviceOrderId;
     if (status) where.status = status as PaymentStatus;
     if (method) where.method = method as PaymentMethod;
     
-    if (startDate && endDate) {
-      where.createdAt = { gte: startDate, lte: endDate };
-    } else if (startDate) {
-      where.createdAt = { gte: startDate };
-    } else if (endDate) {
-      where.createdAt = { lte: endDate };
-    }
+    if (type === 'booking') where.bookingId = { not: null };
+    if (type === 'service') where.serviceOrderId = { not: null };
 
     const [payments, total] = await Promise.all([
       prisma.payment.findMany({ 
@@ -224,7 +229,10 @@ export class PaymentService {
         skip, 
         take: limit, 
         orderBy: { createdAt: 'desc' }, 
-        include: { booking: { select: { bookingNumber: true, guest: true } } } 
+        include: { 
+            booking: { select: { bookingNumber: true, guest: true } },
+            serviceOrder: { select: { orderNumber: true, requestedBy: true } }
+        } 
       }),
       prisma.payment.count({ where })
     ]);

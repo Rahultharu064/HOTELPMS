@@ -21,6 +21,8 @@ import SettingsPage from '../pages/frontoffice/SettingsPage';
 import NotificationsPage from '../pages/frontoffice/NotificationsPage';
 import ProfilePage from '../pages/frontoffice/ProfilePage';
 import ServicePOSPage from '../pages/frontoffice/ServicePOSPage';
+import GuestFolioPage from '../pages/frontoffice/GuestFolioPage';
+
 
 // Housekeeping
 import { HousekeepingLayout } from '../components/Housekeeping/Layout/HousekeepingLayout';
@@ -141,6 +143,11 @@ const routes: RouteObject[] = [
         path: 'profile',
         element: <ProfilePage />,
       },
+      {
+        path: 'folio',
+        element: <GuestFolioPage />,
+      },
+
     ],
   },
 

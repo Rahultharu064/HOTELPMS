@@ -1,6 +1,4 @@
 import React from 'react';
-import { Button } from '../../ui/Button';
-
 import { ArrowRight, Star, MoreHorizontal, Users, ShieldCheck } from 'lucide-react';
 
 const guests = [
@@ -24,9 +22,9 @@ const GuestManagement: React.FC = () => {
           </h3>
           <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-6">Recent profiles</p>
         </div>
-        <Button className="p-2 rounded-xl text-gray-400 bg-gray-50 border border-gray-100 hover:text-[#111827] hover:bg-white shadow-sm transition-colors cursor-pointer group">
+        <button className="p-2 rounded-xl text-gray-400 bg-gray-50 border border-gray-100 hover:text-[#111827] hover:bg-white shadow-sm transition-colors cursor-pointer group">
           <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-        </Button>
+        </button>
       </div>
 
       {/* Guest list */}

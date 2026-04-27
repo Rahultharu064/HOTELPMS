@@ -11,7 +11,8 @@ import {
   Menu,
   Building2,
   LogOut,
-  ShoppingBag
+  ShoppingBag,
+  MonitorPlay
 } from "lucide-react";
 import { Button } from "../../ui/Button";
 

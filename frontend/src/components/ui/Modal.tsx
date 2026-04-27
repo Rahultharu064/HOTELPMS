@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
-import { Button } from './Button';
 
 interface ModalProps {
   isOpen: boolean;
@@ -12,12 +11,12 @@ interface ModalProps {
 }
 
 const sizeClasses = {
-  sm: 'max-w-md',
-  md: 'max-w-2xl',
-  lg: 'max-w-4xl',
-  xl: 'max-w-6xl',
-  '2xl': 'max-w-7xl',
-  full: 'max-w-[95vw]'
+  sm:   'max-w-md',
+  md:   'max-w-2xl',
+  lg:   'max-w-4xl',
+  xl:   'max-w-6xl',
+  '2xl':'max-w-7xl',
+  full: 'max-w-full',
 };
 
 export const Modal: React.FC<ModalProps> = ({
@@ -25,38 +24,63 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   children,
   title,
-  size = 'sm'
+  size = 'sm',
 }) => {
   return (
     <AnimatePresence>
       {isOpen && (
         <>
+          {/* ── Backdrop ── 
+              Offsets: Sidebar (280px), Header (96px)
+          */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
             onClick={onClose}
+            className="fixed inset-0 lg:left-[280px] lg:top-[96px] bg-black/40 backdrop-blur-[2px] z-[200]"
           />
+
+          {/* ── Dialog wrapper ── 
+              p-8 ensures a consistent margin on all sides (including bottom) 
+          */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-              bg-white rounded-[32px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)] z-50 w-[95%] ${sizeClasses[size]} max-h-[95vh] flex flex-col overflow-hidden`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 lg:left-[280px] lg:top-[96px] z-[201] flex items-center justify-center p-8 pointer-events-none"
           >
-            <div className="bg-white border-b border-gray-100 p-6 flex justify-between items-center shrink-0">
-              {title && <h3 className="text-xl font-black uppercase tracking-widest text-[#111827]">{title}</h3>}
-              <button
-                onClick={onClose}
-                className="w-10 h-10 rounded-2xl bg-gray-50 text-gray-400 hover:bg-[#111827] hover:text-white flex items-center justify-center transition-all duration-300"
-              >
-                <FaTimes />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
-              {children}
-            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: 10 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 40 }}
+              className={`pointer-events-auto bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] w-full ${sizeClasses[size]} flex flex-col overflow-hidden border border-gray-100`}
+              style={{ maxHeight: 'calc(100vh - 96px - 64px)' }} // 96px (header) + 64px (p-8 * 2 for top/bottom margins)
+            >
+              {/* Header */}
+              <div className="bg-white border-b border-gray-100/80 px-6 py-3.5 flex justify-between items-center shrink-0">
+                {title && (
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-[3px] h-4 bg-[#14532D] rounded-full" />
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.25em] text-[#111827]">
+                      {title}
+                    </h3>
+                  </div>
+                )}
+                <button
+                  onClick={onClose}
+                  className="w-7 h-7 rounded-lg bg-gray-50 text-gray-400 hover:bg-[#111827] hover:text-white flex items-center justify-center transition-all duration-300 ml-auto"
+                >
+                  <FaTimes size={10} />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar">
+                {children}
+              </div>
+            </motion.div>
           </motion.div>
         </>
       )}

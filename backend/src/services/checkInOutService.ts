@@ -151,7 +151,7 @@ export class CheckInOutService {
    * Complete Check-out Logic
    * Includes: Folio balance verification, pending service orders, room cleaning transition
    */
-  async checkOut(bookingId: number, performedBy: string = 'system', force: boolean = false) {
+  async checkOut(bookingId: number, performedBy: string = 'system', force: boolean = false, paymentMethod?: string) {
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: { 
@@ -166,7 +166,7 @@ export class CheckInOutService {
     }
 
     // Folio Verification
-    const folio = await this.calculateFolio(bookingId);
+    const folio = await this.getFolio(bookingId);
     if (folio.balance > 0 && !force) {
         throw new ApiError(HttpStatus.BAD_REQUEST, `Outstanding balance of Rs. ${folio.balance.toLocaleString()} detected.`);
     }
@@ -188,7 +188,20 @@ export class CheckInOutService {
         data: { status: 'cleaning' }
       });
 
-      // 3. Audit
+      // 3. Auto-Settlement Payment if balance remains
+      if (folio.balance > 0 && paymentMethod) {
+          await tx.payment.create({
+              data: {
+                  bookingId,
+                  amount: folio.balance,
+                  method: paymentMethod as any,
+                  status: 'completed',
+                  paymentData: { note: 'Final settlement at check-out' }
+              }
+          });
+      }
+
+      // 4. Audit
       await tx.bookingWorkflowLog.create({
         data: {
           bookingId,
@@ -200,6 +213,55 @@ export class CheckInOutService {
 
       return updated;
     });
+  }
+
+  async getFolio(bookingId: number) {
+      const booking = await prisma.booking.findUnique({
+          where: { id: bookingId },
+          include: {
+              room: { include: { roomType: true } },
+              guest: true,
+              payments: { where: { status: 'completed' } },
+              serviceOrders: {
+                  include: { items: { include: { service: true } } }
+              },
+              extraServices: {
+                  include: { extraService: true }
+              }
+          }
+      });
+
+      if (!booking) throw new ApiError(HttpStatus.NOT_FOUND, 'Booking not found');
+
+      // Room Charges (Base amount stored in booking)
+      // Note: extraService increments totalAmount, so we need to separate them for the bill
+      const extraServicesTotal = booking.extraServices.reduce((sum, s) => sum + Number(s.totalPrice), 0);
+      const stayCharges = Number(booking.totalAmount) - extraServicesTotal;
+      
+      const posServiceCharges = booking.serviceOrders.reduce((sum, order) => sum + Number(order.totalAmount), 0);
+      const totalPayments = booking.payments.reduce((sum, p) => sum + Number(p.amount), 0);
+
+      const totalCharges = Number(booking.totalAmount) + posServiceCharges;
+      const balance = totalCharges - totalPayments;
+
+      return {
+          bookingNumber: booking.bookingNumber,
+          guestName: `${booking.guest.firstName} ${booking.guest.lastName}`,
+          roomNumber: booking.room.roomNumber,
+          roomType: booking.room.roomType.name,
+          checkIn: booking.checkIn,
+          checkOut: booking.checkOut,
+          stayCharges,
+          extraServices: booking.extraServices,
+          extraServicesTotal,
+          posServiceOrders: booking.serviceOrders,
+          posServiceCharges,
+          totalCharges,
+          totalPayments,
+          balance,
+          isSettled: balance <= 0,
+          paymentHistory: booking.payments
+      };
   }
 
   /**
@@ -271,24 +333,5 @@ export class CheckInOutService {
       }
   }
 
-  private async calculateFolio(bookingId: number) {
-      const booking = await prisma.booking.findUnique({
-          where: { id: bookingId },
-          include: {
-              payments: { where: { status: 'completed' } },
-              serviceOrders: {
-                  where: { status: 'completed' },
-                  include: { items: true }
-              }
-          }
-      });
-      if (!booking) return { balance: 0 };
 
-      const roomCharges = Number(booking.totalAmount);
-      const serviceCharges = booking.serviceOrders.reduce((sum, order) => sum + Number(order.totalAmount), 0);
-      const totalPayments = booking.payments.reduce((sum, p) => sum + Number(p.amount), 0);
-
-      const balance = (roomCharges + serviceCharges) - totalPayments;
-      return { balance, isSettled: balance <= 0 };
-  }
 }

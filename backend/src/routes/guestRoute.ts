@@ -6,8 +6,21 @@ import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
 import { asyncHandler } from '../utils/asyncHandler';
 import { prisma } from '../config/database';
+import { GuestController } from '../controllers/guestController';
 
 const router = Router();
+const controller = new GuestController();
+
+/**
+ * Standard Guest CRUD Operations
+ */
+router.get('/', controller.getAllGuests);
+router.get('/statistics', controller.getGuestStats);
+router.get('/:id', controller.getGuestById);
+router.get('/:id/bookings', controller.getGuestBookings);
+router.post('/', controller.createGuest);
+router.put('/:id', controller.updateGuest);
+router.delete('/:id', controller.deleteGuest);
 
 /**
  * SECURE ENDPOINT: Get decrypted guest document

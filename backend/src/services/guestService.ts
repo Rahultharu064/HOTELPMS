@@ -42,13 +42,13 @@ export class GuestService {
       where.phone = phone;
     }
 
-    let orderBy: Prisma.GuestOrderByWithRelationInput = {};
+    let orderBy: Prisma.GuestOrderByWithRelationInput | Prisma.GuestOrderByWithRelationInput[] = {};
     switch (sort) {
       case 'name_asc':
-        orderBy = { firstName: 'asc', lastName: 'asc' };
+        orderBy = [{ firstName: 'asc' }, { lastName: 'asc' }];
         break;
       case 'name_desc':
-        orderBy = { firstName: 'desc', lastName: 'desc' };
+        orderBy = [{ firstName: 'desc' }, { lastName: 'desc' }];
         break;
       case 'bookings_desc':
         orderBy = { totalBookings: 'desc' };
@@ -57,46 +57,51 @@ export class GuestService {
         orderBy = { totalSpent: 'desc' };
         break;
       default:
-        orderBy = { firstName: 'asc', lastName: 'asc' };
+        orderBy = [{ firstName: 'asc' }, { lastName: 'asc' }];
     }
 
-    const [guests, total] = await Promise.all([
-      prisma.guest.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy,
-        include: {
-          bookings: {
-            take: 3,
-            orderBy: { createdAt: 'desc' },
-            include: {
-              room: {
-                include: {
-                  roomType: true,
+    try {
+      const [guests, total] = await Promise.all([
+        prisma.guest.findMany({
+          where,
+          skip,
+          take: limit,
+          orderBy,
+          include: {
+            bookings: {
+              take: 3,
+              orderBy: { createdAt: 'desc' },
+              include: {
+                room: {
+                  include: {
+                    roomType: true,
+                  },
                 },
               },
             },
-          },
-          _count: {
-            select: {
-              bookings: true,
+            _count: {
+              select: {
+                bookings: true,
+              },
             },
           },
-        },
-      }),
-      prisma.guest.count({ where }),
-    ]);
+        }),
+        prisma.guest.count({ where }),
+      ]);
 
-    return {
-      guests,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
+      return {
+        guests,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      console.error('Error in getAllGuests:', error);
+      throw error;
+    }
   }
 
   async getGuestById(id: number) {

@@ -12,6 +12,7 @@ import { toast } from "react-hot-toast";
 import { CreateOfflineReservationModal } from "../../components/Admin/Dashboard/CreateOfflineReservationModal";
 import { QuickCheckInModal } from "../../components/frontoffice/QuickCheckInModal";
 import { OrderExtraServiceModal } from "../../components/frontoffice/OrderExtraServiceModal";
+import { QuickCheckOutModal } from "../../components/frontoffice/QuickCheckOutModal";
 
 const CheckInOutPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"checkin" | "checkout">("checkin");
@@ -23,6 +24,7 @@ const CheckInOutPage: React.FC = () => {
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [isCheckInModalOpen, setIsCheckInModalOpen] = useState(false);
   const [isOrderServiceModalOpen, setIsOrderServiceModalOpen] = useState(false);
+  const [isCheckOutModalOpen, setIsCheckOutModalOpen] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -69,19 +71,9 @@ const CheckInOutPage: React.FC = () => {
     setIsOrderServiceModalOpen(true);
   };
 
-  const handleCheckOut = async (bookingId: number) => {
-    try {
-      setProcessingId(bookingId);
-      const res = await frontOfficeService.checkOut(bookingId);
-      if (res.success) {
-        toast.success("Guest successfully checked out. Room set to cleaning.");
-        fetchData(); 
-      }
-    } catch (error: any) {
-      toast.error(error.message || "Check-out operation failed");
-    } finally {
-      setProcessingId(null);
-    }
+  const handleOpenCheckOut = (booking: any) => {
+    setSelectedBooking(booking);
+    setIsCheckOutModalOpen(true);
   };
 
   return (
@@ -196,7 +188,7 @@ const CheckInOutPage: React.FC = () => {
                       )}
                       <Button
                         disabled={processingId === booking.id || (activeTab === 'checkin' && booking.status === 'checked_in') || (activeTab === 'checkout' && booking.status === 'checked_out')}
-                        onClick={() => activeTab === 'checkin' ? handleOpenCheckIn(booking) : handleCheckOut(booking.id)}
+                        onClick={() => activeTab === 'checkin' ? handleOpenCheckIn(booking) : handleOpenCheckOut(booking)}
                         className="flex-1 py-4 text-[11px] font-black uppercase tracking-widest rounded-[24px] shadow-lg transition-all flex items-center justify-center gap-2 bg-[#111827] text-white hover:bg-[#F59E0B] hover:text-white shadow-[#F59E0B]/20 border-none disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {processingId === booking.id ? (
@@ -278,6 +270,16 @@ const CheckInOutPage: React.FC = () => {
         booking={selectedBooking}
         onSuccess={() => {
           setIsOrderServiceModalOpen(false);
+          fetchData();
+        }}
+      />
+
+      <QuickCheckOutModal
+        isOpen={isCheckOutModalOpen}
+        onClose={() => setIsCheckOutModalOpen(false)}
+        booking={selectedBooking}
+        onSuccess={() => {
+          setIsCheckOutModalOpen(false);
           fetchData();
         }}
       />

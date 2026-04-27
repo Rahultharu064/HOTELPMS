@@ -100,6 +100,7 @@ export class ExtraServiceService {
     bookingId: number;
     extraServiceId: number;
     quantity: number;
+    paymentMethod?: string;
   }) {
     const service = await prisma.extraService.findUnique({
       where: { id: data.extraServiceId }
@@ -167,6 +168,18 @@ export class ExtraServiceService {
           }
         }
       });
+
+      if (data.paymentMethod && data.paymentMethod !== 'pay_later') {
+        await tx.payment.create({
+          data: {
+            bookingId: data.bookingId,
+            amount: new Prisma.Decimal(totalPrice),
+            method: data.paymentMethod as any,
+            status: 'completed',
+            paymentData: { note: 'Paid for extra service at time of order' }
+          }
+        });
+      }
 
       return bookingExtraService;
     });

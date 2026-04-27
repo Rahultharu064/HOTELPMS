@@ -35,10 +35,10 @@ export class CheckInOutController {
 
   checkOut = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { force } = req.body;
+    const { force, paymentMethod } = req.body;
     const userId = (req as any).user?.id ? `user_${(req as any).user.id}` : 'system';
 
-    const booking = await checkInOutService.checkOut(Number(id), userId, force);
+    const booking = await checkInOutService.checkOut(Number(id), userId, force, paymentMethod);
 
     const io = req.app.get('io');
     if (io) {
@@ -79,5 +79,11 @@ export class CheckInOutController {
     res.status(HttpStatus.OK).json(
       ApiResponse.success(result.message, result)
     );
+  });
+
+  getFolio = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const folio = await checkInOutService.getFolio(Number(id));
+    res.status(HttpStatus.OK).json(ApiResponse.success('Folio retrieved successfully', folio));
   });
 }

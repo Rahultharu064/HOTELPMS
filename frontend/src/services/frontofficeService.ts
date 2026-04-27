@@ -30,8 +30,8 @@ export const frontOfficeService = {
     return await api.get<ApiResponse<any>>('/frontoffice/guest/active-bookings', { params: { guestId, excludeBookingId } });
   },
 
-  checkOut: async (bookingId: number): Promise<ApiResponse<any>> => {
-    return await api.post<ApiResponse<any>>(`/frontoffice/booking/${bookingId}/checkout`, {});
+  checkOut: async (bookingId: number, paymentMethod?: string): Promise<ApiResponse<any>> => {
+    return await api.post<ApiResponse<any>>(`/frontoffice/booking/${bookingId}/checkout`, { paymentMethod, force: !!paymentMethod });
   },
 
   getTodayArrivals: async (): Promise<ApiResponse<any>> => {
@@ -44,5 +44,9 @@ export const frontOfficeService = {
 
   verifyIdentity: async (bookingId: number, formData: any): Promise<ApiResponse<any>> => {
     return await api.post<ApiResponse<any>>(`/frontoffice/booking/${bookingId}/verify-identity`, { formData });
+  },
+  
+  getFolio: async (bookingId: number): Promise<ApiResponse<any>> => {
+    return await api.get<ApiResponse<any>>(`/frontoffice/booking/${bookingId}/folio`);
   }
 };

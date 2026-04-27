@@ -55,7 +55,7 @@ export const extraServiceManagement = {
     return await api.get<ApiResponse<BookingExtraService[]>>(`/extra-services/booking/${bookingId}`);
   },
 
-  addToBooking: async (data: { bookingId: number; extraServiceId: number; quantity: number }): Promise<ApiResponse<BookingExtraService>> => {
+  addToBooking: async (data: { bookingId: number; extraServiceId: number; quantity: number; paymentMethod?: string }): Promise<ApiResponse<BookingExtraService>> => {
     return await api.post<ApiResponse<BookingExtraService>>('/extra-services/booking', data);
   },
 

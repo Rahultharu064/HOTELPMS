@@ -164,7 +164,7 @@ export class FrontOfficeService {
     return await prisma.booking.findMany({
       where: {
         checkIn: { lte: endOfDay },
-        status: { in: ['confirmed', 'pending', 'checked_in'] }
+        status: { in: ['confirmed', 'pending'] }
       },
       include: {
         guest: true,
@@ -180,8 +180,13 @@ export class FrontOfficeService {
 
     return await prisma.booking.findMany({
       where: {
-        checkOut: { lte: endOfDay },
-        status: { in: ['checked_in', 'checked_out'] }
+        OR: [
+          { status: 'checked_in' },
+          { 
+            status: 'checked_out',
+            checkOut: { lte: endOfDay }
+          }
+        ]
       },
       include: {
         guest: true,

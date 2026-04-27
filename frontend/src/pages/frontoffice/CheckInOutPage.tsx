@@ -11,6 +11,7 @@ import { frontOfficeService } from "../../services/frontofficeService";
 import { toast } from "react-hot-toast";
 import { CreateOfflineReservationModal } from "../../components/Admin/Dashboard/CreateOfflineReservationModal";
 import { QuickCheckInModal } from "../../components/frontoffice/QuickCheckInModal";
+import { OrderExtraServiceModal } from "../../components/frontoffice/OrderExtraServiceModal";
 
 const CheckInOutPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"checkin" | "checkout">("checkin");
@@ -21,6 +22,7 @@ const CheckInOutPage: React.FC = () => {
   const [isOfflineModalOpen, setIsOfflineModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [isCheckInModalOpen, setIsCheckInModalOpen] = useState(false);
+  const [isOrderServiceModalOpen, setIsOrderServiceModalOpen] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -62,6 +64,11 @@ const CheckInOutPage: React.FC = () => {
     setIsCheckInModalOpen(true);
   };
 
+  const handleOpenOrderService = (booking: any) => {
+    setSelectedBooking(booking);
+    setIsOrderServiceModalOpen(true);
+  };
+
   const handleCheckOut = async (bookingId: number) => {
     try {
       setProcessingId(bookingId);
@@ -87,7 +94,7 @@ const CheckInOutPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => setIsOfflineModalOpen(true)}
-            className="h-12 px-6 bg-white border border-gray-200 text-[#111827] rounded-2xl flex items-center gap-2 text-[11px] font-black uppercase tracking-widest hover:bg-[#F59E0B] hover:text-white hover:border-[#F59E0B] transition-all shadow-sm"
+            className="h-12 px-6 bg-gradient-to-br from-[#1F7A3A] to-[#2e9a50] border border-gray-200 text-[#111827] rounded-2xl flex items-center gap-2 text-[11px] font-black uppercase tracking-widest hover:bg-[#F59E0B] hover:text-white hover:border-[#F59E0B] transition-all shadow-sm"
           >
             <Plus size={16} strokeWidth={3} /> Walk-in Registry
           </Button>
@@ -176,25 +183,37 @@ const CheckInOutPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <Button
-                      disabled={processingId === booking.id}
-                      onClick={() => activeTab === 'checkin' ? handleOpenCheckIn(booking) : handleCheckOut(booking.id)}
-                      className="w-full py-4 text-[11px] font-black uppercase tracking-widest rounded-[24px] shadow-lg transition-all flex items-center justify-center gap-2 bg-[#111827] text-white hover:bg-[#F59E0B] hover:text-white shadow-[#F59E0B]/20 border-none"
-                    >
-                      {processingId === booking.id ? (
-                        <Loader2 className="animate-spin" size={16} />
-                      ) : activeTab === 'checkin' ? (
-                        <>
-                          <ShieldCheck size={16} strokeWidth={3} />
-                          Complete Check-in
-                        </>
-                      ) : (
-                        <>
-                          <CreditCard size={16} strokeWidth={3} />
-                          Settle & Check-out
-                        </>
+                    <div className="flex gap-2">
+                      {activeTab === 'checkout' && (
+                        <Button
+                          disabled={processingId === booking.id}
+                          onClick={(e) => { e.stopPropagation(); handleOpenOrderService(booking); }}
+                          className="flex-1 py-4 text-[11px] font-black uppercase tracking-widest rounded-[24px] shadow-lg transition-all flex items-center justify-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 border-none"
+                        >
+                          <Plus size={16} strokeWidth={3} />
+                          Order Service
+                        </Button>
                       )}
-                    </Button>
+                      <Button
+                        disabled={processingId === booking.id || (activeTab === 'checkin' && booking.status === 'checked_in') || (activeTab === 'checkout' && booking.status === 'checked_out')}
+                        onClick={() => activeTab === 'checkin' ? handleOpenCheckIn(booking) : handleCheckOut(booking.id)}
+                        className="flex-1 py-4 text-[11px] font-black uppercase tracking-widest rounded-[24px] shadow-lg transition-all flex items-center justify-center gap-2 bg-[#111827] text-white hover:bg-[#F59E0B] hover:text-white shadow-[#F59E0B]/20 border-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {processingId === booking.id ? (
+                          <Loader2 className="animate-spin" size={16} />
+                        ) : activeTab === 'checkin' ? (
+                          <>
+                            <ShieldCheck size={16} strokeWidth={3} />
+                            {booking.status === 'checked_in' ? 'Checked In' : 'Complete Check-in'}
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard size={16} strokeWidth={3} />
+                            {booking.status === 'checked_out' ? 'Checked Out' : 'Settle & Check-out'}
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -249,6 +268,16 @@ const CheckInOutPage: React.FC = () => {
         booking={selectedBooking}
         onSuccess={() => {
           setIsCheckInModalOpen(false);
+          setActiveTab("checkout");
+        }}
+      />
+
+      <OrderExtraServiceModal
+        isOpen={isOrderServiceModalOpen}
+        onClose={() => setIsOrderServiceModalOpen(false)}
+        booking={selectedBooking}
+        onSuccess={() => {
+          setIsOrderServiceModalOpen(false);
           fetchData();
         }}
       />

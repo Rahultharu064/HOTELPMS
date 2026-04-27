@@ -21,7 +21,6 @@ const menuItems = [
   { title: "Check-in / Out", url: "/frontoffice/checkin", icon: LogIn },
   { title: "Guests", url: "/frontoffice/guests", icon: Users },
   { title: "Rooms Availability", url: "/frontoffice/rooms", icon: BedDouble },
-  { title: "Extra Services", url: "/frontoffice/services-pos", icon: ShoppingBag },
   { title: "Payments", url: "/frontoffice/payments", icon: CreditCard },
   { title: "Reports", url: "/frontoffice/reports", icon: BarChart3 },
 ];

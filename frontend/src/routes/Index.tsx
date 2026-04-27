@@ -40,6 +40,7 @@ import RoomTypesPage from '../pages/Admin/RoomTypesPage';
 import RoomsPage from '../pages/Admin/RoomsPage';
 import AdminBookingsPage from '../pages/Admin/BookingsPage';
 import AdminGuestsPage from '../pages/Admin/GuestsPage';
+import ExtraServicesPage from '../pages/Admin/ExtraServicesPage';
 
 const routes: RouteObject[] = [
   // Public Website
@@ -215,6 +216,10 @@ const routes: RouteObject[] = [
       {
         path: 'guests',
         element: <AdminGuestsPage />,
+      },
+      {
+        path: 'extra-services',
+        element: <ExtraServicesPage />,
       },
     ],
   },

@@ -20,7 +20,11 @@ export interface ServiceOrderData {
 
 export const extraService = {
   getServiceCategories: async (): Promise<ApiResponse<any>> => {
-    return await api.get<ApiResponse<any>>('/service-categories');
+    return await api.get<ApiResponse<any>>('/service-categories/categories');
+  },
+
+  createCategory: async (data: { name: string, description: string }): Promise<ApiResponse<any>> => {
+    return await api.post<ApiResponse<any>>('/service-categories/categories', data);
   },
 
   getServices: async (categoryId?: number): Promise<ApiResponse<any>> => {

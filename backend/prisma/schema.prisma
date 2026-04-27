@@ -119,6 +119,7 @@ model Booking {
   payments      Payment[]
   workflowLogs  BookingWorkflowLog[]
   serviceOrders ServiceOrder[]
+  extraServices BookingExtraService[]
   review        Review?
   
   @@index([guestId])
@@ -126,6 +127,58 @@ model Booking {
   @@index([status])
   @@index([checkIn, checkOut])
   @@map("bookings")
+}
+
+// Extra Services
+model ExtraService {
+  id                Int      @id @default(autoincrement())
+  name              String   @db.VarChar(100)
+  description       String?  @db.Text
+  price             Decimal  @db.Decimal(10,2)
+  categoryId        Int
+  image             String?  @db.VarChar(500)
+  discountPercentage Float   @default(0)
+  discountAllowed   Boolean  @default(false)
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  category          ServiceCategory @relation(fields: [categoryId], references: [id])
+  bookings          BookingExtraService[]
+
+  @@map("extra_services")
+}
+
+// Booking Extra Services (Link table)
+model BookingExtraService {
+  id                   Int      @id @default(autoincrement())
+  bookingId            Int
+  extraServiceId       Int
+  quantity             Int      @default(1)
+  unitPrice            Decimal  @db.Decimal(10,2)
+  basePrice            Decimal  @db.Decimal(10,2)
+  discountAmount       Decimal  @db.Decimal(10,2) @default(0)
+  serviceChargeAmount  Decimal  @db.Decimal(10,2) @default(0)
+  totalPrice           Decimal  @db.Decimal(10,2)
+  createdAt            DateTime @default(now())
+
+  booking              Booking      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  extraService         ExtraService @relation(fields: [extraServiceId], references: [id])
+
+  @@index([bookingId])
+  @@index([extraServiceId])
+  @@map("booking_extra_services")
+}
+
+// App Settings
+model AppSetting {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique @db.VarChar(100)
+  value       String   @db.Text
+  description String?  @db.Text
+  updatedAt   DateTime @updatedAt
+
+  @@map("app_settings")
 }
 
 // Guests
@@ -255,6 +308,7 @@ model ServiceCategory {
   updatedAt   DateTime  @updatedAt
   
   services    Service[]
+  extraServices ExtraService[]
   
   @@map("service_categories")
 }

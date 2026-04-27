@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   CreditCard,
   Warehouse,
+  Zap,
 } from "lucide-react";
 import { Button } from "../../ui/Button";
 
@@ -22,6 +23,7 @@ const menuItems = [
   { title: "Financials", url: "/admin/financials", icon: CreditCard },
   { title: "System Analytics", url: "/admin/reports", icon: BarChart3 },
   { title: "Configuration", url: "/admin/settings", icon: Settings },
+  { title: "Extra Services", url: "/admin/extra-services", icon: Zap },
 ];
 
 interface AppSidebarProps {

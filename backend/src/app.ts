@@ -20,6 +20,7 @@ import housekeepingRoutes from './routes/housekeepingRoute';
 import reviewRoutes from './routes/reviewRoute';
 import guestRoutes from './routes/guestRoute';
 import checkInOutRoutes from './routes/checkInOutRoute';
+import extraServiceRoutes from './routes/extraServiceRoute';
 // import facilityRoutes from './routes/facilityRoute';
 // import facilityRoutes from './routes/facilityRoute';
 
@@ -78,6 +79,7 @@ app.use('/api/frontoffice', checkInOutRoutes);
 app.use('/api/housekeeping', housekeepingRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/guests', guestRoutes);
+app.use('/api/extra-services', extraServiceRoutes);
 // app.use('/api/facilities', facilityRoutes);
 // app.use('/api/facilities', facilityRoutes);
 

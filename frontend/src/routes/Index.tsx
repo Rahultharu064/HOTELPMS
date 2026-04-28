@@ -30,7 +30,7 @@ import HKDashboardPage from '../pages/Housekeeping/DashboardPage';
 import RoomStatusPage from '../pages/Housekeeping/RoomStatusPage';
 import CleaningTasksPage from '../pages/Housekeeping/CleaningTasksPage';
 import StaffAssignmentPage from '../pages/Housekeeping/StaffAssignmentPage';
-import RoomDetailsPage from '../pages/Housekeeping/RoomDetailsPage';
+import HousekeepingRoomDetailsPage from '../pages/Housekeeping/RoomDetailsPage';
 
 // Admin
 import { AdminLayout } from '../components/Admin/Layout/AdminLayout';
@@ -41,6 +41,32 @@ import RoomsPage from '../pages/Admin/RoomsPage';
 import AdminBookingsPage from '../pages/Admin/BookingsPage';
 import AdminGuestsPage from '../pages/Admin/GuestsPage';
 import ExtraServicesPage from '../pages/Admin/ExtraServicesPage';
+import AdminUsersPage from '../pages/Admin/UsersPage';
+import RoomEditPage from '../pages/Admin/RoomEditPage';
+import AdminRoomDetailsPage from '../pages/Admin/RoomDetailsPage';
+
+// Simple placeholder components for missing routes
+const FinancialsPage = () => (
+  <div className="py-20 text-center space-y-4">
+    <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto shadow-sm">
+      <CreditCard size={40} />
+    </div>
+    <h1 className="text-2xl font-black text-[#111827] uppercase tracking-tight">Financial Ledger</h1>
+    <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Financial records and auditing tools currently in development</p>
+  </div>
+);
+
+const AdminReportsPage = () => (
+  <div className="py-20 text-center space-y-4">
+    <div className="w-20 h-20 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center mx-auto shadow-sm">
+      <BarChart3 size={40} />
+    </div>
+    <h1 className="text-2xl font-black text-[#111827] uppercase tracking-tight">System Analytics</h1>
+    <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Reporting and performance tools currently in development</p>
+  </div>
+);
+
+import { CreditCard, BarChart3 } from 'lucide-react';
 
 const routes: RouteObject[] = [
   // Public Website
@@ -179,7 +205,7 @@ const routes: RouteObject[] = [
       },
       {
         path: 'rooms/:id',
-        element: <RoomDetailsPage />,
+        element: <HousekeepingRoomDetailsPage />,
       },
     ],
   },
@@ -198,6 +224,10 @@ const routes: RouteObject[] = [
         element: <AdminDashboardPage />,
       },
       {
+        path: 'users',
+        element: <AdminUsersPage />,
+      },
+      {
         path: 'settings',
         element: <AdminSettingsPage />,
       },
@@ -210,6 +240,14 @@ const routes: RouteObject[] = [
         element: <RoomsPage />,
       },
       {
+        path: 'rooms/edit/:id',
+        element: <RoomEditPage />,
+      },
+      {
+        path: 'rooms/:id',
+        element: <AdminRoomDetailsPage />,
+      },
+      {
         path: 'bookings',
         element: <AdminBookingsPage />,
       },
@@ -220,6 +258,14 @@ const routes: RouteObject[] = [
       {
         path: 'extra-services',
         element: <ExtraServicesPage />,
+      },
+      {
+        path: 'financials',
+        element: <FinancialsPage />,
+      },
+      {
+        path: 'reports',
+        element: <AdminReportsPage />,
       },
     ],
   },

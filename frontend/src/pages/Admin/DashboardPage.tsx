@@ -92,8 +92,8 @@ const AdminDashboard: React.FC = () => {
       <div className="min-h-[80vh] flex flex-col items-center justify-center gap-6">
          <Loader2 size={48} className="text-[#14532D] animate-spin" />
          <p className="text-[11px] font-black uppercase tracking-[0.4em] text-gray-400 animate-pulse text-center">
-            Initializing Sovereign Oversight<br />
-            <span className="opacity-40 text-[#F59E0B]">Synchronizing Global Root Protocols</span>
+            Loading Dashboard Data<br />
+            <span className="opacity-40 text-[#F59E0B]">Synchronizing with server...</span>
          </p>
       </div>
     );
@@ -105,16 +105,16 @@ const AdminDashboard: React.FC = () => {
         <div>
           <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
             <div className="w-2 h-8 bg-[#14532D] rounded-full" />
-            Global Oversight
+            Admin Dashboard
           </h1>
-          <p className="text-neutral-text-secondary text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Real-time Enterprise Intelligence & Control</p>
+          <p className="text-neutral-text-secondary text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Hotel Overview & Management</p>
         </div>
         <div className="flex items-center gap-4">
           <button onClick={fetchDashboardData} className="px-6 py-4 bg-white border border-gray-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:text-[#14532D] hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2">
-            <Activity size={16} /> Sync Live Signal
+            <Activity size={16} /> Refresh Data
           </button>
           <button className="px-6 py-4 bg-[#14532D] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#111827] transition-all shadow-xl shadow-[#14532D]/10 flex items-center gap-2">
-            <Plus size={16} strokeWidth={3} /> Create Administrative Node
+            <Plus size={16} strokeWidth={3} /> Add New Entry
           </button>
         </div>
       </div>
@@ -151,19 +151,19 @@ const AdminDashboard: React.FC = () => {
         <div className="lg:col-span-2 space-y-8">
            <div className="flex items-center justify-between">
               <h2 className="text-xl font-black text-[#111827] tracking-tighter uppercase flex items-center gap-3">
-                 <TrendingUp className="text-[#F59E0B]" size={24} /> Sovereign Transaction Log
+                 <TrendingUp className="text-[#F59E0B]" size={24} /> Recent Bookings
               </h2>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">LATEST 5 PROTOCOLS</p>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">LATEST 5 ENTRIES</p>
            </div>
            <div className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                    <thead>
                       <tr className="bg-gray-50/50">
-                         <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Patron Entity</th>
-                         <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Room Link</th>
-                         <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Valuation</th>
-                         <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Verification</th>
+                         <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Guest Name</th>
+                         <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Room Info</th>
+                         <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Amount</th>
+                         <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Status</th>
                       </tr>
                    </thead>
                    <tbody className="divide-y divide-gray-50">
@@ -195,7 +195,7 @@ const AdminDashboard: React.FC = () => {
                       {recentLogs.length === 0 && !loading && (
                         <tr>
                            <td colSpan={4} className="px-10 py-20 text-center text-[10px] font-black uppercase tracking-widest text-gray-300">
-                              System Idle — No Live Activity Detected
+                              No recent activity found
                            </td>
                         </tr>
                       )}
@@ -210,10 +210,10 @@ const AdminDashboard: React.FC = () => {
            <div className="bg-gradient-to-br from-[#14532D] to-[#111827] p-12 rounded-[48px] text-white relative overflow-hidden group border border-white/5 shadow-2xl">
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#F59E0B]/10 rounded-full blur-[100px] pointer-events-none group-hover:scale-150 transition-transform duration-[2000ms]" />
               <ShieldCheck className="text-[#F59E0B] mb-8" size={32} />
-              <h3 className="text-3xl font-black mb-4 leading-tight">Sovereign Node<br /><span className="text-white/40 italic font-medium text-xl">Control Protocol</span></h3>
-              <p className="text-white/40 text-[11px] font-black uppercase tracking-widest leading-relaxed mb-12">Authentication required for global override and root-level modifications.</p>
+              <h3 className="text-3xl font-black mb-4 leading-tight">Admin Portal<br /><span className="text-white/40 italic font-medium text-xl">Quick Access</span></h3>
+              <p className="text-white/40 text-[11px] font-black uppercase tracking-widest leading-relaxed mb-12">Authorized access required for system modifications and settings.</p>
               <button className="w-full py-5 bg-[#F59E0B] text-[#14532D] rounded-[24px] text-[12px] font-black uppercase tracking-widest hover:bg-white hover:text-[#14532D] transition-all shadow-2xl shadow-black/20 active:scale-95">
-                 Engage Master Auth
+                 Verify Identity
               </button>
            </div>
            
@@ -222,15 +222,15 @@ const AdminDashboard: React.FC = () => {
                  <div className="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center text-[#111827]">
                     <Search size={18} strokeWidth={3} />
                  </div>
-                 <h4 className="text-sm font-black uppercase tracking-tighter">Instance Search</h4>
+                 <h4 className="text-sm font-black uppercase tracking-tighter">Quick Search</h4>
               </div>
               <div className="space-y-4">
                  <input 
-                    placeholder="Folio No. or Guest ID..." 
+                    placeholder="Search by ID or Name..." 
                     className="w-full px-6 py-4 bg-gray-50 border border-transparent focus:border-[#14532D]/20 focus:bg-white rounded-2xl text-[12px] font-medium outline-none transition-all shadow-inner"
                  />
                  <button className="w-full py-4 text-[10px] font-black uppercase tracking-widest text-[#14532D] hover:bg-[#14532D]/5 transition-colors rounded-2xl">
-                    Query Data Core
+                    Search Records
                  </button>
               </div>
            </div>

@@ -49,7 +49,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         {!collapsed && (
           <div className="overflow-hidden relative z-10 transition-all duration-500 delay-100">
             <h1 className="font-black text-[13px] leading-none tracking-tight uppercase">Itahari Namuna</h1>
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-[#F59E0B] mt-1.5 opacity-90">Admin Control</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-[#F59E0B] mt-1.5 opacity-90">Management Panel</p>
           </div>
         )}
       </div>
@@ -57,7 +57,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
       {/* Main Navigation */}
       <div className="flex-1 overflow-y-auto px-6 py-10 space-y-2 custom-scrollbar">
         {!collapsed && (
-          <p className="px-4 text-[9px] font-black uppercase tracking-[0.4em] text-white/20 mb-8">System Oversight</p>
+          <p className="px-4 text-[9px] font-black uppercase tracking-[0.4em] text-white/20 mb-8">Navigation Menu</p>
         )}
         
         <nav className="space-y-1.5">
@@ -106,7 +106,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
               </div>
               <div className="overflow-hidden">
                 <h4 className="text-[12px] font-bold text-white leading-none">Super Admin</h4>
-                <p className="text-[10px] font-bold text-[#F59E0B]/80 uppercase mt-1 tracking-wider opacity-80">Root Access</p>
+                <p className="text-[10px] font-bold text-[#F59E0B]/80 uppercase mt-1 tracking-wider opacity-80">Online</p>
               </div>
             </div>
             <button 
@@ -132,7 +132,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         <Link 
           to="/logout"
           className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl bg-[#DC2626]/10 text-red-400 hover:bg-[#DC2626] hover:text-white transition-all duration-300 group ${collapsed ? "justify-center" : ""}`}
-          title="Logout session"
+          title="Logout"
         >
           <LogOut size={20} className="shrink-0 transition-transform group-hover:-translate-x-1" />
           {!collapsed && <span className="text-[11px] font-black uppercase tracking-[0.2em]">Logout</span>}

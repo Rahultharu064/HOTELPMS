@@ -133,6 +133,66 @@ export class RoomController {
     );
   });
 
+  updateRoom = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const {
+      name,
+      roomNumber,
+      roomTypeId,
+      floor,
+      basePrice, // Accepting basePrice from frontend
+      price,     // Also accepting price for compatibility
+      size,
+      capacity,
+      description,
+      status,
+      amenities: amenitiesJson
+    } = req.body;
+
+    const currentRoom = await prisma.room.findUnique({ where: { id: Number(id) } });
+    if (!currentRoom) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Room not found');
+    }
+
+    // Handle amenities if sent as JSON string
+    const amenitiesList = amenitiesJson ? JSON.parse(amenitiesJson) : [];
+
+    const updatedRoom = await prisma.room.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        roomNumber,
+        roomTypeId: roomTypeId ? Number(roomTypeId) : undefined,
+        floor: floor ? Number(floor) : undefined,
+        basePrice: (basePrice || price) ? Number(basePrice || price) : undefined,
+        size: size ? Number(size) : undefined,
+        capacity: capacity ? Number(capacity) : undefined,
+        status,
+        description,
+      },
+    });
+
+    // Handle Uploaded Images
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    if (files && files['images']) {
+      await Promise.all(
+        files['images'].map((file, index) =>
+          prisma.image.create({
+            data: {
+              url: `/uploads/${file.filename}`,
+              roomId: updatedRoom.id,
+              isPrimary: index === 0 && !currentRoom.id, // simplified logic
+            },
+          })
+        )
+      );
+    }
+
+    res.status(HttpStatus.OK).json(
+      ApiResponse.success('Room updated successfully', updatedRoom)
+    );
+  });
+
   deleteRoom = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     await prisma.room.delete({ where: { id: Number(id) } });

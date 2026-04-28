@@ -46,6 +46,27 @@ router.post('/', (req, res, next) => {
 }, roomController.createRoom);
 
 router.get('/:id', roomController.getRoomById);
+router.put('/:id', (req, res, next) => {
+  const uploadHandler = upload.fields([
+    { name: 'images', maxCount: 10 },
+    { name: 'videos', maxCount: 3 },
+  ]);
+
+  uploadHandler(req, res, (err: any): void => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        res.status(400).json({ success: false, message: 'File is too large. Max size is 500MB.' });
+        return;
+      }
+      res.status(400).json({ success: false, message: err.message });
+      return;
+    } else if (err) {
+      res.status(500).json({ success: false, message: err.message || 'Unknown upload error' });
+      return;
+    }
+    next();
+  });
+}, roomController.updateRoom);
 router.delete('/:id', roomController.deleteRoom);
 
 export default router;

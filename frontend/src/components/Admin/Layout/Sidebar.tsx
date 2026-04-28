@@ -37,12 +37,12 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
   const location = useLocation();
 
   const sidebarContent = (
-    <div className={`flex flex-col h-full bg-[#111827] text-white transition-all duration-300 ${collapsed ? "w-[80px]" : "w-[280px]"}`}>
+    <div className={`flex flex-col h-full bg-[#14532D] text-white transition-all duration-300 ${collapsed ? "w-[80px]" : "w-[280px]"}`}>
       {/* Brand Section */}
       <div className="flex items-center gap-4 px-8 py-10 border-b border-white/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-24 h-24 bg-[#F59E0B]/10 rounded-full blur-[40px] -mr-12 -mt-12 transition-all duration-500 group-hover:scale-150 group-hover:bg-[#F59E0B]/20" />
         
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1F2937] via-[#111827] to-[#1F2937] flex items-center justify-center shadow-lg flex-shrink-0 relative z-10 border border-white/10">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1F7A3A] via-[#14532D] to-[#1F7A3A] flex items-center justify-center shadow-lg flex-shrink-0 relative z-10 border border-white/10">
           <ShieldCheck size={24} className="text-[#F59E0B]" strokeWidth={3} />
         </div>
         
@@ -70,7 +70,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
                 onClick={onMobileClose}
                 className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl text-[13px] font-bold transition-all duration-300 relative group
                   ${active
-                    ? "bg-[#1F2937] text-white shadow-xl shadow-black/10 translate-x-1"
+                    ? "bg-[#1F7A3A] text-white shadow-xl shadow-black/10 translate-x-1"
                     : "text-white/60 hover:text-white hover:bg-white/5"
                   }`}
               >
@@ -97,7 +97,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
       </div>
 
       {/* Logout / Bottom Action */}
-      <div className="p-6 border-t border-white/5 bg-black/40">
+      <div className="p-6 border-t border-white/5 bg-black/20">
         {!collapsed && (
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">

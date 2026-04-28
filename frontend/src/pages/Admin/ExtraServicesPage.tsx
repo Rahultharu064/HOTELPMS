@@ -91,29 +91,21 @@ export default function ExtraServicesPage() {
   );
 
   return (
-    <div className="flex flex-col gap-10 p-2 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-3">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-primary-dark flex items-center justify-center shadow-2xl shadow-primary-dark/20 text-white">
-              <Zap size={32} strokeWidth={2.5} />
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-black text-neutral-text-primary tracking-tight">Extra Services</h1>
-              <p className="text-sm font-bold text-neutral-text-secondary uppercase tracking-[0.2em] mt-1.5 opacity-80">
-                Manage additional guest offerings & pricing
-              </p>
-            </div>
-          </div>
+    <div className="flex flex-col gap-10 p-2 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+        <div>
+          <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
+            <div className="w-2 h-8 bg-[#14532D] rounded-full" />
+            Extra Services
+          </h1>
+          <p className="text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Manage additional guest offerings & pricing</p>
         </div>
 
         <Button
           onClick={() => handleOpenModal()}
-          className="bg-primary-dark hover:bg-black text-white px-8 h-14 rounded-2xl text-sm font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary-dark/20 flex items-center gap-3 overflow-hidden relative group"
+          className="bg-[#14532D] hover:bg-[#111827] text-white px-8 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-[#14532D]/10 flex items-center gap-3"
         >
-          <div className="absolute top-0 right-0 w-12 h-12 bg-white/10 rounded-full -mr-6 -mt-6 transition-all duration-500 group-hover:scale-150 group-hover:bg-white/20" />
-          <Plus size={20} className="relative z-10 stroke-[3]" />
-          <span className="relative z-10 transition-transform group-hover:translate-x-1">Create Service</span>
+          <Plus size={20} strokeWidth={3} /> Create Service Node
         </Button>
       </div>
 
@@ -144,7 +136,7 @@ export default function ExtraServicesPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredServices.map((service) => (
-            <Card key={service.id} className="group overflow-hidden border-none shadow-soft hover:shadow-premium transition-all duration-500 flex flex-col h-full bg-white rounded-[32px]">
+            <Card key={service.id} className="group overflow-hidden border-none shadow-soft hover:shadow-premium transition-all duration-500 flex flex-col h-full bg-white rounded-[40px]">
               <div className="relative h-48 overflow-hidden">
                 {service.image ? (
                   <img 

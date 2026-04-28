@@ -70,8 +70,11 @@ export default function AdminBookingsPage() {
     <div className="space-y-10 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-primary-dark tracking-tight uppercase">Reservation Ledger</h1>
-          <p className="text-[11px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] mt-2">Global booking management & operational flow</p>
+          <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
+            <div className="w-2 h-8 bg-[#14532D] rounded-full" />
+            Reservation Ledger
+          </h1>
+          <p className="text-[11px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] mt-2 ml-6">Global booking management & operational flow</p>
         </div>
         <div className="flex items-center gap-3">
           <button className="h-14 px-6 bg-white border border-neutral-border/50 rounded-2xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:bg-neutral-light transition-all shadow-sm">
@@ -112,7 +115,7 @@ export default function AdminBookingsPage() {
       </div>
 
       {/* Content */}
-      <div className="bg-white rounded-[48px] border border-neutral-border/40 shadow-soft overflow-hidden">
+      <div className="bg-white rounded-[40px] border border-neutral-border/40 shadow-soft overflow-hidden">
         {loading ? (
           <div className="py-40 flex flex-col items-center justify-center gap-4">
             <Loader2 className="h-12 w-12 text-primary-green animate-spin" />

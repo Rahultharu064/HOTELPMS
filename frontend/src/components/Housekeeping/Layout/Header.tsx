@@ -56,7 +56,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
       {/* Action Icons */}
       <div className="flex items-center gap-3 ml-auto">
         {/* Quick Help / AI Suggestion (Premium Touch) */}
-        <button 
+        <button
           className="hidden sm:flex w-10 h-10 items-center justify-center rounded-xl text-gray-400 hover:text-[#1F7A3A] hover:bg-[#1F7A3A]/5 transition-all relative group"
           aria-label="Quick Insights"
           title="View quick insights"
@@ -73,9 +73,8 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
             onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }}
             aria-label="Toggle notifications"
             title="Toggle notifications"
-            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all relative group ${
-              notifOpen ? "bg-[#1F7A3A] text-white shadow-xl shadow-[#1F7A3A]/20" : "text-gray-400 hover:text-[#1F7A3A] hover:bg-[#1F7A3A]/5"
-            }`}
+            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all relative group ${notifOpen ? "bg-[#1F7A3A] text-white shadow-xl shadow-[#1F7A3A]/20" : "text-gray-400 hover:text-[#1F7A3A] hover:bg-[#1F7A3A]/5"
+              }`}
           >
             <Bell size={18} strokeWidth={2.5} className={notifOpen ? "animate-none" : "group-hover:rotate-12 transition-transform"} />
             <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white shadow-sm" />
@@ -88,7 +87,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
                   <h3 className="text-sm font-black uppercase tracking-[0.2em] text-[#111827]">Notifications</h3>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">2 New Updates</p>
                 </div>
-                <button 
+                <button
                   className="text-[10px] font-black uppercase tracking-widest text-[#1F7A3A] hover:text-[#14532D]"
                   title="Mark all notifications as read"
                 >
@@ -97,13 +96,12 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
               </div>
               <div className="max-h-[400px] overflow-y-auto px-2 py-4 space-y-2 custom-scrollbar">
                 {notifications.map((n) => (
-                  <div 
-                    key={n.id} 
+                  <div
+                    key={n.id}
                     className={`p-4 rounded-2xl transition-all flex gap-4 group cursor-pointer ${n.unread ? "bg-[#1F7A3A]/5 border border-[#1F7A3A]/10" : "hover:bg-gray-50 border border-transparent"}`}
                   >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                      n.unread ? "bg-[#F59E0B]/20 text-[#D97706]" : "bg-gray-100 text-gray-400"
-                    }`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${n.unread ? "bg-[#F59E0B]/20 text-[#D97706]" : "bg-gray-100 text-gray-400"
+                      }`}>
                       {n.type === 'dirty' ? <Zap size={16} /> : <MessageSquare size={16} />}
                     </div>
                     <div>
@@ -116,7 +114,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
                 ))}
               </div>
               <div className="p-4 border-t border-gray-50 bg-gray-50/50">
-                <button 
+                <button
                   className="w-full py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-[#111827] transition-colors"
                   title="Show all notifications in a separate page"
                 >
@@ -133,9 +131,8 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
             onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false); }}
             aria-label="Toggle user menu"
             title="Toggle user menu"
-            className={`flex items-center gap-3 p-1 rounded-2xl transition-all ${
-              profileOpen ? "bg-gray-100 shadow-inner" : "hover:bg-gray-50"
-            }`}
+            className={`flex items-center gap-3 p-1 rounded-2xl transition-all ${profileOpen ? "bg-gray-100 shadow-inner" : "hover:bg-gray-50"
+              }`}
           >
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1F7A3A] to-[#14532D] p-0.5 shadow-lg group-hover:scale-105 transition-all">
               <div className="w-full h-full rounded-[10px] overflow-hidden border-2 border-white/20">
@@ -165,8 +162,8 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
                   { label: "My Profile", icon: User },
                   { label: "Settings", icon: Settings },
                 ].map((item) => (
-                  <button 
-                    key={item.label} 
+                  <button
+                    key={item.label}
                     className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-bold text-gray-500 hover:text-[#111827] hover:bg-gray-50 rounded-2xl transition-all"
                     title={`Go to ${item.label}`}
                   >
@@ -175,7 +172,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
                   </button>
                 ))}
                 <div className="h-px bg-gray-50 my-2 mx-4" />
-                <button 
+                <button
                   className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all"
                   title="Sign out of the system"
                 >

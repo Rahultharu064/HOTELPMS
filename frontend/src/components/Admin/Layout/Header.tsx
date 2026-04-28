@@ -26,8 +26,8 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
       <div className="flex flex-col h-full justify-center">
         <div className="flex items-center gap-2">
           <h2 className="font-black text-xl text-[#111827] tracking-tight">{title}</h2>
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest border border-blue-100">
-            <div className="w-1 h-1 rounded-full bg-blue-600 animate-pulse" />
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#1F7A3A]/5 text-[#1F7A3A] text-[10px] font-black uppercase tracking-widest border border-[#1F7A3A]/10">
+            <div className="w-1 h-1 rounded-full bg-[#1F7A3A] animate-pulse" />
             Superuser Mode
           </div>
         </div>
@@ -38,12 +38,12 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
       <div className="flex-1 max-w-xl hidden lg:block">
         <div className="group relative">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-transform duration-300 group-focus-within:scale-110">
-            <Search className="h-4 w-4 text-gray-400 group-focus-within:text-blue-600" strokeWidth={2.5} />
+            <Search className="h-4 w-4 text-gray-400 group-focus-within:text-[#1F7A3A]" strokeWidth={2.5} />
           </div>
           <input
             type="text"
             placeholder="Search users, audit logs, system settings..."
-            className="block w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500/20 focus:bg-white transition-all duration-300"
+            className="block w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/20 focus:bg-white transition-all duration-300"
           />
           <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
             <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-lg border border-gray-200 bg-white text-[10px] font-black tracking-widest text-gray-400 uppercase">
@@ -57,7 +57,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
       <div className="flex items-center gap-3 ml-auto">
         {/* Quick Help / AI Suggestion (Premium Touch) */}
         <button
-          className="hidden sm:flex w-10 h-10 items-center justify-center rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all relative group"
+          className="hidden sm:flex w-10 h-10 items-center justify-center rounded-xl text-gray-400 hover:text-[#1F7A3A] hover:bg-[#1F7A3A]/5 transition-all relative group"
           aria-label="System Health"
           title="View system health"
         >
@@ -73,7 +73,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
             onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }}
             aria-label="Toggle notifications"
             title="Toggle notifications"
-            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all relative group ${notifOpen ? "bg-blue-600 text-white shadow-xl shadow-blue-600/20" : "text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all relative group ${notifOpen ? "bg-[#1F7A3A] text-white shadow-xl shadow-[#1F7A3A]/20" : "text-gray-400 hover:text-[#1F7A3A] hover:bg-[#1F7A3A]/5"
               }`}
           >
             <Bell size={18} strokeWidth={2.5} className={notifOpen ? "animate-none" : "group-hover:rotate-12 transition-transform"} />
@@ -88,7 +88,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">2 New High Priority</p>
                 </div>
                 <button
-                  className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-800"
+                  className="text-[10px] font-black uppercase tracking-widest text-[#1F7A3A] hover:text-[#14532D]"
                   title="Mark all notifications as read"
                 >
                   Mark all as read
@@ -98,7 +98,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
                 {notifications.map((n) => (
                   <div
                     key={n.id}
-                    className={`p-4 rounded-2xl transition-all flex gap-4 group cursor-pointer ${n.unread ? "bg-blue-50/50 border border-blue-100" : "hover:bg-gray-50 border border-transparent"}`}
+                    className={`p-4 rounded-2xl transition-all flex gap-4 group cursor-pointer ${n.unread ? "bg-[#1F7A3A]/5 border border-[#1F7A3A]/10" : "hover:bg-gray-50 border border-transparent"}`}
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${n.unread ? "bg-red-50 text-red-600" : "bg-gray-100 text-gray-400"
                       }`}>
@@ -134,14 +134,14 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
             className={`flex items-center gap-3 p-1 rounded-2xl transition-all ${profileOpen ? "bg-gray-100 shadow-inner" : "hover:bg-gray-50"
               }`}
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gray-900 to-black p-0.5 shadow-lg group-hover:scale-105 transition-all">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1F7A3A] to-[#14532D] p-0.5 shadow-lg group-hover:scale-105 transition-all">
               <div className="w-full h-full rounded-[10px] overflow-hidden border-2 border-white/20">
                 <img src="/avatar-placeholder.png" alt="Profile" className="w-full h-full object-cover" />
               </div>
             </div>
             <div className="text-left hidden sm:block pr-2">
               <p className="text-[12px] font-black text-[#111827] leading-none">Super Admin</p>
-              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#F59EB0] transition-colors group-hover:text-blue-600 mt-1 opacity-80">Full Access</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#F59E0B] mt-1 opacity-80">Full Access</p>
             </div>
             <ChevronDown size={14} className={`text-gray-400 transition-transform hidden sm:block duration-500 ${profileOpen ? "rotate-180" : ""}`} />
           </button>
@@ -149,7 +149,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
           {profileOpen && (
             <div className="absolute right-0 mt-4 w-64 bg-white rounded-[32px] shadow-2xl border border-gray-100 overflow-hidden animate-fade-down z-[60]">
               <div className="p-6 border-b border-gray-50 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
+                <div className="w-12 h-12 rounded-2xl bg-[#F59E0B]/10 flex items-center justify-center text-[#F59E0B]">
                   <User size={24} />
                 </div>
                 <div>

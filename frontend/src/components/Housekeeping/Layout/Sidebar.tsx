@@ -34,11 +34,11 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
       {/* Brand Section */}
       <div className="flex items-center gap-4 px-8 py-10 border-b border-white/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-24 h-24 bg-[#F59E0B]/10 rounded-full blur-[40px] -mr-12 -mt-12 transition-all duration-500 group-hover:scale-150 group-hover:bg-[#F59E0B]/20" />
-        
+
         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1F7A3A] via-[#14532D] to-[#1F7A3A] flex items-center justify-center shadow-lg flex-shrink-0 relative z-10 border border-white/10">
           <Building2 size={24} className="text-white" strokeWidth={3} />
         </div>
-        
+
         {!collapsed && (
           <div className="overflow-hidden relative z-10 transition-all duration-500 delay-100">
             <h1 className="font-black text-[13px] leading-none tracking-tight uppercase">Itahari Namuna</h1>
@@ -52,7 +52,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         {!collapsed && (
           <p className="px-4 text-[9px] font-black uppercase tracking-[0.4em] text-white/20 mb-8">Operations Unit</p>
         )}
-        
+
         <nav className="space-y-1.5">
           {menuItems.map((item) => {
             const active = location.pathname === item.url || (item.url === "/housekeeping" && location.pathname === "/housekeeping/dashboard");
@@ -76,7 +76,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
                 {!collapsed && (
                   <span className="truncate">{item.title}</span>
                 )}
-                
+
                 {/* Tooltip for collapsed mode */}
                 {collapsed && (
                   <div className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 px-3 py-2 bg-[#111827] text-white text-[10px] font-bold uppercase tracking-widest rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] shadow-2xl whitespace-nowrap">
@@ -91,7 +91,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         {/* Quick Action in Sidebar */}
         {!collapsed && (
           <div className="mt-10 px-4">
-            <button 
+            <button
               onClick={() => window.dispatchEvent(new CustomEvent('trigger-global-assignment'))}
               className="w-full flex items-center gap-3 p-4 bg-[#F59E0B] text-[#14532D] rounded-2xl hover:bg-white transition-all group shadow-xl shadow-black/10"
             >
@@ -116,7 +116,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
                 <p className="text-[10px] font-bold text-[#F59E0B]/80 uppercase mt-1 tracking-wider opacity-80">Housekeeping</p>
               </div>
             </div>
-            <button 
+            <button
               onClick={onToggle}
               className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/40 hover:text-[#F59E0B] hover:bg-white/10 transition-all"
               title="Collapse sidebar"
@@ -125,9 +125,9 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
             </button>
           </div>
         )}
-        
+
         {collapsed && (
-          <button 
+          <button
             onClick={onToggle}
             className="w-full h-10 mb-4 rounded-xl bg-white/5 flex items-center justify-center text-white/40 hover:text-[#F59E0B] hover:bg-white/10 transition-all"
             title="Expand sidebar"
@@ -135,8 +135,8 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
             <ChevronLeft className={`w-5 h-5 transition-transform duration-500 rotate-180`} />
           </button>
         )}
-        
-        <Link 
+
+        <Link
           to="/logout"
           className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl bg-[#DC2626]/10 text-red-400 hover:bg-[#DC2626] hover:text-white transition-all duration-300 group ${collapsed ? "justify-center" : ""}`}
           title="Logout session"

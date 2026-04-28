@@ -21,4 +21,9 @@ router.patch('/room/:id', validate(updateRoomStatusSchema), housekeepingControll
 // Housekeeping history logs
 router.get('/logs', validate(getHousekeepingLogsSchema), housekeepingController.getLogs);
 
+// Staff management
+router.get('/staff', housekeepingController.getStaff);
+router.post('/staff', housekeepingController.addStaff);
+
 export default router;
+

@@ -32,25 +32,31 @@ export class HousekeepingService {
       const room = await prisma.room.findUnique({ where: { id: data.roomId } });
       if (!room) throw new ApiError(HttpStatus.NOT_FOUND, 'Room not found');
 
-      // Update in transaction to ensure log creation
+      console.log(`Updating housekeeping for Room ${room.roomNumber} to ${data.status} by ${data.staffId || 'system'}`);
+
       return await prisma.$transaction(async (tx) => {
+          // 1. Update room status
           const updatedRoom = await tx.room.update({
               where: { id: data.roomId },
               data: { status: data.status }
           });
 
+          // 2. Create history log
           const log = await tx.housekeepingLog.create({
               data: {
                   roomId: data.roomId,
-                  staffId: data.staffId,
-                  type: data.type,
-                  status: data.status,
-                  notes: data.notes
+                  staffId: data.staffId || null,
+                  type: data.type || 'general',
+                  status: String(data.status), // Ensure string for varchar field
+                  notes: data.notes || `Room status updated to ${data.status}`
               }
           });
 
           return { room: updatedRoom, log };
+      }, {
+          timeout: 10000 // 10s timeout for stability
       });
+
   }
 
   async getLogs(filters: {
@@ -95,4 +101,33 @@ export class HousekeepingService {
           dirty: stats['cleaning'] || 0, // In this model 'cleaning' represents dirty/dirtying
       };
   }
+
+  // Staff Management
+  async getStaff() {
+      return await prisma.housekeepingStaff.findMany({
+          orderBy: { name: 'asc' }
+      });
+  }
+
+  async addStaff(data: {
+      staffId: string;
+      name: string;
+      role?: string;
+      phone?: string;
+  }) {
+      return await prisma.housekeepingStaff.create({
+          data: {
+              ...data,
+              status: 'on_duty'
+          }
+      });
+  }
+
+  async updateStaffStatus(id: number, status: string) {
+      return await prisma.housekeepingStaff.update({
+          where: { id },
+          data: { status }
+      });
+  }
 }
+

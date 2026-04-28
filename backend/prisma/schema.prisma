@@ -560,3 +560,17 @@ enum FacilityCategory {
   
   @@map("facility_category")
 }
+
+// Housekeeping Staff
+model HousekeepingStaff {
+  id          Int      @id @default(autoincrement())
+  staffId     String   @unique @db.VarChar(50)
+  name        String   @db.VarChar(100)
+  role        String?  @db.VarChar(100)
+  phone       String?  @db.VarChar(20)
+  status      String   @default("on_duty") @db.VarChar(20)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("housekeeping_staff")
+}

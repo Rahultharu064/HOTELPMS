@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
+import { GlobalAssignmentModal } from "../GlobalAssignmentModal";
 
 const pageTitles: Record<string, string> = {
   "/housekeeping": "Operations Dashboard",
@@ -56,6 +57,10 @@ export function HousekeepingLayout() {
           </div>
         </footer>
       </div>
+
+      {/* Global Modals */}
+      <GlobalAssignmentModal />
     </div>
   );
 }
+

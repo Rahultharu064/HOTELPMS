@@ -51,4 +51,15 @@ export class HousekeepingController {
     const stats = await housekeepingService.getHousekeepingStats();
     res.status(HttpStatus.OK).json(ApiResponse.success('Housekeeping stats retrieved successfully', stats));
   });
+
+  getStaff = asyncHandler(async (_req: Request, res: Response) => {
+    const staff = await housekeepingService.getStaff();
+    res.status(HttpStatus.OK).json(ApiResponse.success('Housekeeping staff retrieved', staff));
+  });
+
+  addStaff = asyncHandler(async (req: Request, res: Response) => {
+    const staff = await housekeepingService.addStaff(req.body);
+    res.status(HttpStatus.CREATED).json(ApiResponse.success('Staff added successfully', staff));
+  });
 }
+

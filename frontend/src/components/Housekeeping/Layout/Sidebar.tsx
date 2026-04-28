@@ -91,12 +91,16 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         {/* Quick Action in Sidebar */}
         {!collapsed && (
           <div className="mt-10 px-4">
-            <button className="w-full flex items-center gap-3 p-4 bg-[#F59E0B] text-[#14532D] rounded-2xl hover:bg-white transition-all group shadow-xl shadow-black/10">
+            <button 
+              onClick={() => window.dispatchEvent(new CustomEvent('trigger-global-assignment'))}
+              className="w-full flex items-center gap-3 p-4 bg-[#F59E0B] text-[#14532D] rounded-2xl hover:bg-white transition-all group shadow-xl shadow-black/10"
+            >
               <Plus size={18} className="group-hover:rotate-90 transition-transform duration-500" strokeWidth={3} />
               <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">Assign Task</span>
             </button>
           </div>
         )}
+
       </div>
 
       {/* Logout / Bottom Action */}

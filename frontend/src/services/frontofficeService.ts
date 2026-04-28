@@ -26,8 +26,8 @@ export const frontOfficeService = {
     return await api.get<ApiResponse<any>>(`/frontoffice/booking/${bookingId}/alternatives`);
   },
 
-  getGuestActiveBookings: async (guestId: number, excludeBookingId: number): Promise<ApiResponse<any>> => {
-    return await api.get<ApiResponse<any>>('/frontoffice/guest/active-bookings', { params: { guestId, excludeBookingId } });
+  getGuestActiveBookings: async (guestId: number, currentBookingId: number): Promise<ApiResponse<any>> => {
+    return await api.get<ApiResponse<any>>('/frontoffice/guest/active-bookings', { params: { guestId, currentBookingId } });
   },
 
   checkOut: async (bookingId: number, paymentMethod?: string): Promise<ApiResponse<any>> => {

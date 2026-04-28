@@ -4,10 +4,13 @@ import { frontOfficeService } from '../../services/frontofficeService';
 import { toast } from 'react-hot-toast';
 import {
   Loader2, ShieldCheck, CheckCircle2,
-  Calendar, Bed, Printer, Wallet, Zap, CreditCard,
-  LogOut, ArrowRight, ShoppingCart, Utensils, ArrowUpRight
+  Calendar, Bed, FileText, Wallet, Zap, CreditCard,
+  LogOut, ArrowRight, ShoppingCart, Utensils, ArrowUpRight,
+  Download
 } from 'lucide-react';
-import { ThermalReceipt } from './ThermalReceipt';
+import { ProfessionalInvoice } from './ProfessionalInvoice';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface Props {
   isOpen: boolean;
@@ -24,18 +27,55 @@ export const QuickCheckOutModal: React.FC<Props> = ({
   const [isSettling, setIsSettling] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'esewa' | 'khalti'>('cash');
 
-  const handlePrint = () => {
-    const printContent = document.getElementById('thermal-receipt');
-    if (!printContent) return;
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-    printWindow.document.write('<html><head><title>Receipt</title>');
-    printWindow.document.write('<script src="https://cdn.tailwindcss.com"></script>');
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printContent.innerHTML);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    setTimeout(() => { printWindow.focus(); printWindow.print(); printWindow.close(); }, 1000);
+  const handleSaveAsPDF = async () => {
+    const element = document.getElementById('professional-invoice');
+    if (!element) return;
+
+    try {
+      toast.loading('Generating Professional PDF...', { id: 'pdf-gen' });
+      
+      // Temporary style to ensure it's visible to html2canvas but not to user
+      const originalStyle = element.style.display;
+      const originalOpacity = element.style.opacity;
+      element.style.display = 'block';
+      element.style.opacity = '1';
+      element.style.position = 'absolute';
+      element.style.left = '-9999px';
+      element.style.top = '0';
+
+      const canvas = await html2canvas(element, {
+        scale: 2, // Higher quality
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        windowWidth: 794, // Approx width of A4 in pixels at 96dpi (210mm)
+      });
+
+      // Restore style
+      element.style.display = originalStyle;
+      element.style.opacity = originalOpacity;
+      element.style.position = '';
+      element.style.left = '';
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Invoice_${folio.bookingNumber || folio.id}.pdf`);
+      
+      toast.success('Invoice saved successfully', { id: 'pdf-gen' });
+    } catch (error) {
+      console.error('PDF Generation Error:', error);
+      toast.error('Failed to generate PDF', { id: 'pdf-gen' });
+    }
   };
 
   useEffect(() => {
@@ -159,9 +199,9 @@ export const QuickCheckOutModal: React.FC<Props> = ({
                   </span>
                 </div>
               </div>
-              <button onClick={handlePrint}
-                className="shrink-0 flex items-center gap-1.5 px-3 py-2 bg-[#111827] text-white rounded-lg text-[8px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-colors duration-300 shadow-sm">
-                <Printer size={11} /> Export
+              <button onClick={handleSaveAsPDF}
+                className="shrink-0 flex items-center gap-1.5 px-3 py-2 bg-[#111827] text-white rounded-lg text-[8px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all duration-300 shadow-sm group">
+                <Download size={11} className="group-hover:translate-y-0.5 transition-transform" /> Save PDF
               </button>
             </div>
 
@@ -379,9 +419,9 @@ export const QuickCheckOutModal: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Hidden thermal receipt for printing */}
-      <div className="hidden">
-        <ThermalReceipt folio={folio} />
+      {/* Hidden professional invoice for PDF generation */}
+      <div className="fixed -left-[9999px] top-0 pointer-events-none opacity-0">
+        <ProfessionalInvoice folio={folio} />
       </div>
     </Modal>
   );

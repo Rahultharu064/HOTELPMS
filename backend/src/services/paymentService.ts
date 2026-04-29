@@ -29,6 +29,15 @@ export class PaymentService {
         return { payment, method: 'cash', message: 'Cash settlement confirmed' };
     }
 
+    // Fetch booking details for online payment gateways if needed
+    let bookingData = null;
+    if (data.bookingId) {
+      bookingData = await prisma.booking.findUnique({ 
+        where: { id: data.bookingId },
+        include: { guest: true }
+      });
+    }
+
     if (data.method === 'esewa') {
       const merchantCode = config.payment.esewa.merchantCode || 'EPAYTEST';
       const secretKey = config.payment.esewa.secretKey || '8gBm/:&EnhH.1/q';
@@ -63,11 +72,11 @@ export class PaymentService {
         website_url: data.returnUrl || 'http://localhost:5173',
         amount: Math.round(data.amount * 100), // Khalti dictates paisa and hates decimals
         purchase_order_id: transactionId,
-        purchase_order_name: `Booking-${booking.bookingNumber}`,
+        purchase_order_name: bookingData ? `Booking-${bookingData.bookingNumber}` : 'Hotel Payment',
         customer_info: {
-           name: booking.guest?.firstName ? `${booking.guest.firstName} ${booking.guest.lastName}` : 'Guest',
-           email: booking.guest?.email || 'guest@example.com',
-           phone: booking.guest?.phone || '9800000000'
+           name: bookingData?.guest?.firstName ? `${bookingData.guest.firstName} ${bookingData.guest.lastName}` : 'Guest',
+           email: bookingData?.guest?.email || 'guest@example.com',
+           phone: bookingData?.guest?.phone || '9800000000'
         }
       };
 

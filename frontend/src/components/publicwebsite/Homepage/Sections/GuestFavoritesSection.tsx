@@ -1,0 +1,127 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Heart, Star, Users, ArrowRight, TrendingUp } from "lucide-react";
+import { roomService } from "../../../../services/roomService";
+import type { Room } from "../../../../services/roomService";
+import { Button } from "../../../ui/Button";
+
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const getImageUrl = (path?: string) => {
+    if (!path) return "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&h=600&fit=crop";
+    return path.startsWith('http') ? path : `${API_URL}${path}`;
+};
+
+const ScrollReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
+    <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+        viewport={{ once: true }}
+        className={className}
+    >
+        {children}
+    </motion.div>
+);
+
+export const GuestFavoritesSection: React.FC = () => {
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchFavorites = async () => {
+            try {
+                const res = await roomService.getGuestFavorites();
+                if (res.success) {
+                    setRooms(res.data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch guest favorites:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchFavorites();
+    }, []);
+
+    if (!loading && rooms.length === 0) return null;
+
+    return (
+        <section className="section-padding bg-white relative overflow-hidden">
+             {/* Decorative Background Elements */}
+            <div className="absolute -left-20 top-1/2 -translate-y-1/2 w-96 h-96 bg-primary-gold/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute -right-20 top-1/4 w-72 h-72 bg-primary-green/5 rounded-full blur-[80px] pointer-events-none" />
+
+            <div className="container-custom relative z-10">
+                <ScrollReveal className="text-center mb-16">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-gold/10 rounded-full mb-4">
+                        <TrendingUp className="h-4 w-4 text-primary-gold" />
+                        <span className="text-primary-gold font-bold text-[10px] uppercase tracking-widest">Most Loved by Guests</span>
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-black text-primary-dark tracking-tight mb-4">Guest <span className="gradient-text">Favorites</span></h2>
+                    <p className="text-neutral-text-secondary font-medium max-w-2xl mx-auto">Discover the rooms that our guests can't stop talking about. Based on real booking data and glowing reviews.</p>
+                </ScrollReveal>
+
+                {loading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="h-48 bg-neutral-light rounded-3xl animate-pulse" />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                        {rooms.map((room, i) => {
+                            const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url;
+                            return (
+                                <ScrollReveal key={room.id} delay={i * 0.1}>
+                                    <Link to={`/rooms/${room.slug}`} className="group relative block bg-neutral-light/50 rounded-3xl overflow-hidden border border-neutral-border/50 hover:border-primary-green/30 transition-all duration-500 hover:shadow-xl">
+                                        <div className="flex gap-4 p-4">
+                                            <div className="relative h-24 w-24 shrink-0 rounded-2xl overflow-hidden shadow-md">
+                                                <img 
+                                                    src={getImageUrl(primaryImage)} 
+                                                    alt={room.name} 
+                                                    className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                                />
+                                                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                                            </div>
+                                            
+                                            <div className="flex flex-col justify-center flex-1 min-w-0">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <span className="text-[9px] font-black text-primary-gold uppercase tracking-widest truncate">{room.roomType?.name}</span>
+                                                    <div className="flex items-center gap-1 text-primary-green font-bold text-[10px]">
+                                                        <Heart className="h-3 w-3 fill-primary-green" />
+                                                        <span>{room._count?.bookings || 0}</span>
+                                                    </div>
+                                                </div>
+                                                <h3 className="font-bold text-lg text-primary-dark mb-1 group-hover:text-primary-green transition-colors truncate">{room.name}</h3>
+                                                <div className="flex items-center gap-1 text-[10px] text-neutral-text-secondary">
+                                                    <Star className="h-3 w-3 text-primary-gold fill-primary-gold" />
+                                                    <span className="font-bold">4.9</span>
+                                                    <span className="mx-1 opacity-30">•</span>
+                                                    <Users className="h-3 w-3" />
+                                                    <span className="font-bold">{room.capacity} Guests</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="flex items-center justify-center p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="h-10 w-10 rounded-full bg-primary-green text-white flex items-center justify-center shadow-lg shadow-primary-green/20">
+                                                    <ArrowRight className="h-5 w-5" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </ScrollReveal>
+                            );
+                        })}
+                    </div>
+                )}
+
+                <div className="mt-12 text-center">
+                    <Button variant="secondary" size="lg" className="rounded-full px-10 shadow-lg shadow-primary-dark/10" asChild>
+                        <Link to="/rooms">Discover All Sanctuaries</Link>
+                    </Button>
+                </div>
+            </div>
+        </section>
+    );
+};

@@ -45,6 +45,7 @@ router.post('/', (req, res, next) => {
   });
 }, roomController.createRoom);
 
+router.get('/guest-favorites', roomController.getGuestFavorites);
 router.get('/:id', roomController.getRoomById);
 router.put('/:id', (req, res, next) => {
   const uploadHandler = upload.fields([

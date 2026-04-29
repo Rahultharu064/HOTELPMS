@@ -58,4 +58,9 @@ router.get(
   frontOfficeController.getDepartures
 );
 
+router.get(
+  '/booking/:id/folio',
+  frontOfficeController.getFolio
+);
+
 export default router;

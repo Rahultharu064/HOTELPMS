@@ -7,11 +7,12 @@ import { HttpStatus } from '../constants/index';
 
 export class RoomController {
   getAllRooms = asyncHandler(async (req: Request, res: Response) => {
-    const { status, roomTypeId, search } = req.query;
+    const { status, roomTypeId, search, isFeatured } = req.query;
 
     const where: any = {};
     if (status) where.status = status;
     if (roomTypeId) where.roomTypeId = Number(roomTypeId);
+    if (isFeatured) where.isFeatured = isFeatured === 'true';
     if (search) {
       where.OR = [
         { name: { contains: search as string } },
@@ -24,6 +25,7 @@ export class RoomController {
       include: {
         roomType: true,
         images: true,
+        amenities: true,
       },
     });
 
@@ -113,11 +115,24 @@ export class RoomController {
   });
 
   getRoomById = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const { id: idOrSlug } = req.params;
+    
+    const isId = !isNaN(Number(idOrSlug));
+    const where = isId ? { id: Number(idOrSlug) } : { slug: idOrSlug };
+
     const room = await prisma.room.findUnique({
-      where: { id: Number(id) },
+      where,
       include: {
-        roomType: true,
+        roomType: {
+          include: {
+            reviews: {
+              where: { status: 'approved' },
+              include: { guest: true },
+              orderBy: { createdAt: 'desc' },
+              take: 5
+            }
+          }
+        },
         images: true,
         videos: true,
         amenities: true,
@@ -128,8 +143,24 @@ export class RoomController {
       throw new ApiError(HttpStatus.NOT_FOUND, 'Room not found');
     }
 
+    // Calculate average rating
+    const ratingSummary = await prisma.review.aggregate({
+      where: { 
+        roomTypeId: room.roomTypeId,
+        status: 'approved' 
+      },
+      _avg: { rating: true },
+      _count: { id: true }
+    });
+
     res.status(HttpStatus.OK).json(
-      ApiResponse.success('Room retrieved successfully', room)
+      ApiResponse.success('Room retrieved successfully', {
+        ...room,
+        ratingSummary: {
+          averageRating: ratingSummary._avg.rating || 0,
+          totalReviews: ratingSummary._count.id
+        }
+      })
     );
   });
 
@@ -198,6 +229,33 @@ export class RoomController {
     await prisma.room.delete({ where: { id: Number(id) } });
     res.status(HttpStatus.OK).json(
       ApiResponse.success('Room deleted successfully', null)
+    );
+  });
+
+  getGuestFavorites = asyncHandler(async (req: Request, res: Response) => {
+    // Algorithm: Calculate favorites based on booking count and average rating
+    // 1. Get room booking counts
+    const roomsWithBookingCounts = await prisma.room.findMany({
+      include: {
+        _count: {
+          select: { bookings: true }
+        },
+        roomType: true,
+        images: {
+          where: { isPrimary: true }
+        },
+        amenities: true
+      },
+      orderBy: {
+        bookings: {
+          _count: 'desc'
+        }
+      },
+      take: 6
+    });
+
+    res.status(HttpStatus.OK).json(
+      ApiResponse.success('Guest favorites retrieved successfully', roomsWithBookingCounts)
     );
   });
 }

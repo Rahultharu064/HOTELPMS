@@ -55,7 +55,7 @@ export const RoomTypeSection: React.FC = () => {
                         {roomTypes.slice(0, 4).map((rt, i) => (
                             <ScrollReveal key={rt.id} delay={i * 0.1}>
                                 <Link
-                                    to={`/rooms?type=${rt.name.toLowerCase()}`}
+                                    to={`/rooms?type=${rt.name}`}
                                     className="group block rounded-3xl overflow-hidden relative aspect-[3/4] hover:-translate-y-2 transition-all duration-500 shadow-sm hover:shadow-2xl"
                                 >
                                     <img

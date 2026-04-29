@@ -4,7 +4,7 @@ export const initiatePaymentSchema = z.object({
   body: z.object({
     bookingId: z.number().int().positive(),
     amount: z.number().positive(),
-    method: z.enum(['esewa', 'khalti', 'card', 'bank_transfer']),
+    method: z.enum(['esewa', 'khalti', 'card', 'bank_transfer', 'cash', 'cod']),
     returnUrl: z.string().url().optional(),
   }),
 });

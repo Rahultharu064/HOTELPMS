@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import HeroSection from '../../components/publicwebsite/Homepage/Sections/HeroSection';
 import { RoomTypeSection } from '../../components/publicwebsite/Homepage/Sections/RoomTypeSection';
-import RoomTypesSection from '../../components/publicwebsite/Homepage/Sections/RoomTypesSection';
+import { FeaturedRoomsSection } from '../../components/publicwebsite/Homepage/Sections/FeaturedRoomsSection';
+import { GuestFavoritesSection } from '../../components/publicwebsite/Homepage/Sections/GuestFavoritesSection';
 import { TestimonialsSlider } from '../../components/publicwebsite/Homepage/Sections/TestimonialSliderSection';
 import FacilitiesSection from '../../components/publicwebsite/Homepage/Sections/FacilitiesSection';
 import { Button } from '../../components/ui/Button';
@@ -22,7 +23,8 @@ export const Homepage: React.FC = () => {
       <HeroSection />
       <FacilitiesSection />
       <RoomTypeSection />
-      <RoomTypesSection />
+      <FeaturedRoomsSection />
+      <GuestFavoritesSection />
       
       {/* About Section */}
       <section className="section-padding bg-gradient-to-br from-white via-neutral-light to-white">

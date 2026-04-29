@@ -56,4 +56,10 @@ export class FrontOfficeController {
     const departures = await frontOfficeService.getTodayDepartures();
     res.status(HttpStatus.OK).json(ApiResponse.success('Today departures retrieved', departures));
   });
+
+  getFolio = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const folio = await frontOfficeService.getFolio(Number(id));
+    res.status(HttpStatus.OK).json(ApiResponse.success('Guest folio retrieved', folio));
+  });
 }

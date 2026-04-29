@@ -26,6 +26,7 @@ model RoomType {
 model Room {
   id          Int      @id @default(autoincrement())
   name        String   @db.VarChar(100)
+  slug        String    @unique @db.VarChar(150)
   roomNumber  String   @unique @db.VarChar(20)
   roomTypeId  Int
   capacity    Int      @default(2)
@@ -36,6 +37,7 @@ model Room {
   size        Int?
   bedType     BedType?   @default(double)
   view        String?    @db.VarChar(100)
+  isFeatured  Boolean    @default(false)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   
@@ -49,6 +51,7 @@ model Room {
   
   @@index([status])
   @@index([roomTypeId])
+  @@index([isFeatured])
   @@map("rooms")
 }
 

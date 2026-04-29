@@ -253,7 +253,7 @@ export const Roompage: React.FC = () => {
                         
                         <div className="flex gap-2.5 mt-auto">
                           <Button variant="outline" size="sm" className="flex-1 font-bold shadow-sm rounded-lg border-neutral-border text-primary-dark hover:bg-neutral-light text-xs" asChild>
-                            <Link to={`/rooms/${room.id}`}>Preview</Link>
+                            <Link to={`/rooms/${room.slug}`}>Preview</Link>
                           </Button>
                           <Button variant="primary" size="sm" className="flex-1 font-extrabold shadow-md shadow-primary-green/20 rounded-lg text-xs" asChild>
                             <Link to={`/booking?room=${room.id}`}>Reserve</Link>

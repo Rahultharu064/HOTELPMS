@@ -42,7 +42,7 @@ const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNode, dela
 );
 
 export const RoomDetailspage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
@@ -58,10 +58,10 @@ export const RoomDetailspage = () => {
 
   useEffect(() => {
     const fetchRoom = async () => {
-      if (!id) return;
+      if (!slug) return;
       try {
         setLoading(true);
-        const res = await roomService.getRoomById(Number(id));
+        const res = await roomService.getRoomById(slug);
         if (res.success) {
           setRoom(res.data);
         }
@@ -74,7 +74,7 @@ export const RoomDetailspage = () => {
     };
     fetchRoom();
     window.scrollTo(0, 0);
-  }, [id]);
+  }, [slug]);
 
   const images = useMemo(() => {
     if (!room?.images?.length) return ["https://images.unsplash.com/photo-1566665797739-1674de7a421a"];
@@ -115,11 +115,8 @@ export const RoomDetailspage = () => {
     );
   }
 
-  const reviewsList = [
-    { name: "Suman Rai", rating: 5, text: "Absolutely wonderful stay! The room was pristine." },
-    { name: "Priya Tamang", rating: 4, text: "Great value for money. The staff was incredibly helpful." },
-    { name: "David Wilson", rating: 5, text: "One of the best hotel experiences in Nepal." },
-  ];
+  const reviewsList = room.roomType?.reviews || [];
+  const ratingSummary = room.ratingSummary || { averageRating: 0, totalReviews: 0 };
 
   const defaultAmenities = [
     { name: 'Free Wi-Fi' }, { name: 'Smart TV' }, { name: 'Air Conditioning' }, 
@@ -240,10 +237,12 @@ export const RoomDetailspage = () => {
                     <Maximize size={20} className="text-primary-green" />
                     <span className="text-sm font-bold">{room.size} sq. m</span>
                  </div>
-                 <div className="flex items-center gap-1.5 text-primary-gold">
+                  <div className="flex items-center gap-1.5 text-primary-gold">
                     <Star size={20} className="fill-current" />
-                    <span className="text-sm font-bold text-primary-dark">4.9 (12 verified visits)</span>
-                 </div>
+                    <span className="text-sm font-bold text-primary-dark">
+                      {ratingSummary.averageRating.toFixed(1)} ({ratingSummary.totalReviews} verified reviews)
+                    </span>
+                  </div>
               </div>
             </ScrollReveal>
 
@@ -279,19 +278,30 @@ export const RoomDetailspage = () => {
                        </div>
                     )}
                     {activeTab === "reviews" && (
-                       <div className="space-y-4">
-                          {reviewsList.map(r => (
-                             <div key={r.name} className="p-5 rounded-2xl bg-neutral-light border border-neutral-border/30">
-                                <div className="flex items-center gap-3 mb-2">
-                                   <div className="h-8 w-8 rounded-full bg-primary-dark text-white flex items-center justify-center text-[10px] font-black">
-                                      {r.name.split(" ").map(n => n[0]).join("")}
-                                   </div>
-                                   <span className="text-sm font-bold text-primary-dark">{r.name}</span>
-                                </div>
-                                <p className="text-sm text-neutral-text-secondary italic">"{r.text}"</p>
-                             </div>
-                          ))}
-                       </div>
+                        <div className="space-y-4">
+                           {reviewsList.length > 0 ? reviewsList.map(r => (
+                              <div key={r.id} className="p-5 rounded-2xl bg-neutral-light border border-neutral-border/30">
+                                 <div className="flex items-center gap-3 mb-2">
+                                    <div className="h-8 w-8 rounded-full bg-primary-dark text-white flex items-center justify-center text-[10px] font-black uppercase">
+                                       {r.guest?.firstName.charAt(0)}{r.guest?.lastName.charAt(0)}
+                                    </div>
+                                    <div className="flex flex-col">
+                                       <span className="text-sm font-bold text-primary-dark">{r.guest?.firstName} {r.guest?.lastName}</span>
+                                       <div className="flex gap-0.5">
+                                          {[...Array(5)].map((_, i) => (
+                                             <Star key={i} size={10} className={i < r.rating ? "text-primary-gold fill-primary-gold" : "text-neutral-border"} />
+                                          ))}
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <p className="text-sm text-neutral-text-secondary italic">"{r.comment || 'A wonderful experience!'}"</p>
+                              </div>
+                           )) : (
+                              <div className="text-center py-8 bg-neutral-light rounded-2xl border border-dashed border-neutral-border/50">
+                                 <p className="text-xs font-bold text-neutral-text-secondary uppercase tracking-widest">No reviews yet for this room type.</p>
+                              </div>
+                           )}
+                        </div>
                     )}
                  </div>
               </div>

@@ -6,6 +6,7 @@ export type RoomStatus = 'available' | 'occupied' | 'maintenance' | 'out_of_serv
 export type Room = {
   id: number;
   name: string;
+  slug: string;
   roomNumber: string;
   roomTypeId: number;
   capacity: number;
@@ -16,20 +17,36 @@ export type Room = {
   size?: number;
   bedType?: string;
   view?: string;
+  isFeatured?: boolean;
   createdAt?: string;
   updatedAt?: string;
   images?: { id: number; url: string; isPrimary: boolean }[];
   videos?: { id: number; url: string; title?: string }[];
   amenities?: { id: number; name: string; icon?: string }[];
-  roomType?: { id: number; name: string };
+  roomType?: { 
+    id: number; 
+    name: string; 
+    reviews?: { 
+      id: number; 
+      rating: number; 
+      comment: string; 
+      guest?: { firstName: string; lastName: string } 
+    }[] 
+  };
+  ratingSummary?: { averageRating: number; totalReviews: number };
+  _count?: { bookings: number };
 };
 
 export const roomService = {
-  async getAllRooms(): Promise<ApiResponse<Room[]>> {
-    return api.get<ApiResponse<Room[]>>('/rooms');
+  async getAllRooms(params?: { isFeatured?: boolean; roomTypeId?: number }): Promise<ApiResponse<Room[]>> {
+    return api.get<ApiResponse<Room[]>>('/rooms', { params });
   },
 
-  async getRoomById(id: number): Promise<ApiResponse<Room>> {
+  async getGuestFavorites(): Promise<ApiResponse<Room[]>> {
+    return api.get<ApiResponse<Room[]>>('/rooms/guest-favorites');
+  },
+
+  async getRoomById(id: number | string): Promise<ApiResponse<Room>> {
     return api.get<ApiResponse<Room>>(`/rooms/${id}`);
   },
 

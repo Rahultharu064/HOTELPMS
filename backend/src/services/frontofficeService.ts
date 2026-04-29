@@ -1,8 +1,7 @@
-import { PrismaClient, RoomStatus } from '@prisma/client';
+import { RoomStatus } from '@prisma/client';
+import { prisma } from '../config/database';
 import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
-
-const prisma = new PrismaClient();
 
 export class FrontOfficeService {
   async getDashboardOverview(date: Date = new Date()) {
@@ -241,5 +240,71 @@ export class FrontOfficeService {
           },
           orderBy: { checkIn: 'desc' }
       });
+  }
+
+  async getFolio(bookingId: number) {
+    if (!bookingId || isNaN(bookingId)) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'Invalid booking ID');
+    }
+
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      include: {
+        guest: true,
+        room: { include: { roomType: true } },
+        payments: true,
+        serviceOrders: {
+          include: { items: { include: { service: true } } }
+        }
+      }
+    });
+
+    if (!booking) throw new ApiError(HttpStatus.NOT_FOUND, 'Booking not found');
+
+    // Calculate Charges
+    const charges: any[] = [];
+    
+    // 1. Room Charge
+    const checkIn = new Date(booking.checkIn);
+    const checkOut = new Date(booking.checkOut);
+    
+    let nights = 1;
+    if (!isNaN(checkIn.getTime()) && !isNaN(checkOut.getTime())) {
+      nights = Math.max(1, Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)));
+    }
+    
+    charges.push({
+      date: booking.checkIn,
+      description: `Room Charge (${nights} Nights)`,
+      category: 'accommodation',
+      amount: Number(booking.totalAmount || 0)
+    });
+
+    // 2. Service Orders
+    if (booking.serviceOrders && Array.isArray(booking.serviceOrders)) {
+      booking.serviceOrders.forEach(order => {
+        charges.push({
+          date: order.createdAt,
+          description: `Service Order: ${order.orderNumber}`,
+          category: 'service',
+          amount: Number(order.totalAmount || 0)
+        });
+      });
+    }
+
+    const totalPaid = booking.payments
+      ? booking.payments
+          .filter(p => p.status === 'completed')
+          .reduce((sum, p) => sum + Number(p.amount || 0), 0)
+      : 0;
+
+    return {
+      booking,
+      charges,
+      paymentsSummary: {
+        totalPaid,
+        pendingPayments: booking.payments ? booking.payments.filter(p => p.status === 'pending').length : 0
+      }
+    };
   }
 }

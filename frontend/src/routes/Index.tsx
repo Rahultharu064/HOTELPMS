@@ -91,7 +91,7 @@ const routes: RouteObject[] = [
         element: <Roompage />,
       },
       {
-        path: 'rooms/:id',
+        path: 'rooms/:slug',
         element: <RoomDetailspage />,
       },
       {

@@ -212,7 +212,7 @@ export const Roompage: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
                         
                         <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-extrabold text-primary-dark shadow-xl flex items-center gap-1.5">
-                          <Star className="h-3 w-3 text-primary-gold fill-primary-gold" /> 4.8
+                          <Star className="h-3 w-3 text-primary-gold fill-primary-gold" /> {room.ratingSummary?.averageRating ? room.ratingSummary.averageRating.toFixed(1) : "5.0"}
                         </div>
                         
                         {Number(room.basePrice) >= 5000 && (

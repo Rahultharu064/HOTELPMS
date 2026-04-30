@@ -1,13 +1,15 @@
 import { useState, useCallback } from "react";
 import { Button } from "../../../ui/Button";
 import { ChevronDown, ChevronLeft, ChevronRight, CalendarDays, Users, Baby } from "lucide-react";
+import hero1 from "../../../../assets/Hero.webp"
+
 import { Link } from "react-router-dom";
 import { Input } from "../../../ui/Input";
 import { Select } from "../../../ui/Select";
 const slides = [
-  { image: "/hero1.png", title: "Experience Luxury & Comfort", subtitle: "Book your perfect stay with modern PMS experience" },
-  { image: "/hero2.png", title: "Elegant Rooms & Suites", subtitle: "Unwind in beautifully designed spaces with panoramic views" },
-  { image: "/hero3.png", title: "World-Class Amenities", subtitle: "From poolside relaxation to fine dining excellence" },
+  { image: hero1, title: "Experience Luxury & Comfort", subtitle: "Book your perfect stay with modern PMS experience" },
+  { image: hero1, title: "Elegant Rooms & Suites", subtitle: "Unwind in beautifully designed spaces with panoramic views" },
+  { image: hero1, title: "World-Class Amenities", subtitle: "From poolside relaxation to fine dining excellence" },
 ];
 
 const HeroSection = () => {

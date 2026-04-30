@@ -8,7 +8,14 @@ import { BookingsPage as PublicBookingsPage } from '../pages/publicwebsite/Booki
 import { FacilitiesPage } from '../pages/publicwebsite/FacilitiesPage';
 import { PaymentSuccessPage } from '../pages/publicwebsite/PaymentSuccessPage';
 import { PaymentFailurePage } from '../pages/publicwebsite/PaymentFailurePage';
+import { LoginPage } from '../pages/publicwebsite/Auth/LoginPage';
+import { SignupPage } from '../pages/publicwebsite/Auth/SignupPage';
+import { ForgotPasswordPage } from '../pages/publicwebsite/Auth/ForgotPasswordPage';
+import { ResetPasswordPage } from '../pages/publicwebsite/Auth/ResetPasswordPage';
+import { VerifyOTPPage } from '../pages/publicwebsite/Auth/VerifyOTPPage';
+import { GuestProfilePage } from '../pages/publicwebsite/Guest/GuestProfilePage';
 import PublicLayout from '../components/publicwebsite/Homepage/Sections/PublicLayout';
+import { AuthGuard } from '../components/auth/AuthGuard';
 
 // Front Office
 import { FrontOfficeLayout } from '../components/frontoffice/Layout/FrontOfficeLayout';
@@ -96,11 +103,11 @@ const routes: RouteObject[] = [
       },
       {
         path: 'booking/:id',
-        element: <PublicBookingsPage />,
+        element: <AuthGuard><PublicBookingsPage /></AuthGuard>,
       },
       {
         path: 'booking',
-        element: <PublicBookingsPage />,
+        element: <AuthGuard><PublicBookingsPage /></AuthGuard>,
       },
       {
         path: 'facilities',
@@ -113,6 +120,30 @@ const routes: RouteObject[] = [
       {
         path: 'payment/failure',
         element: <PaymentFailurePage />,
+      },
+      {
+        path: 'login',
+        element: <LoginPage />,
+      },
+      {
+        path: 'signup',
+        element: <SignupPage />,
+      },
+      {
+        path: 'forgot-password',
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPasswordPage />,
+      },
+      {
+        path: 'verify-otp',
+        element: <VerifyOTPPage />,
+      },
+      {
+        path: 'profile',
+        element: <AuthGuard><GuestProfilePage /></AuthGuard>,
       },
     ],
   },

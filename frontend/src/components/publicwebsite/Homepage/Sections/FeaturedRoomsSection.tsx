@@ -101,7 +101,7 @@ export const FeaturedRoomsSection: React.FC = () => {
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                                             
                                             <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl text-xs font-black text-primary-dark shadow-xl flex items-center gap-1.5 border border-white/20">
-                                                <Star className="h-3.5 w-3.5 text-primary-gold fill-primary-gold" /> 4.9
+                                                <Star className="h-3.5 w-3.5 text-primary-gold fill-primary-gold" /> {room.ratingSummary?.averageRating ? room.ratingSummary.averageRating.toFixed(1) : "5.0"}
                                             </div>
                                             
                                             <div className="absolute bottom-6 left-8 right-8">

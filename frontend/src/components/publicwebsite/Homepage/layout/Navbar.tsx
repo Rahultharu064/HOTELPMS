@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "../../../ui/Button";
-import { Menu, X, Building } from "lucide-react";
+import { Menu, X, Building, User, LogOut } from "lucide-react";
+import { useAuth } from "../../../../context/AuthContext";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -15,6 +16,7 @@ const navItems = [
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { pathname } = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
@@ -47,12 +49,32 @@ const Navbar = () => {
 
         {/* Action buttons */}
         <div className="hidden lg:flex items-center gap-2">
-          <Button variant="ghost" size="sm" asChild to="/login">
-            <span>Login</span>
-          </Button>
-          <Button size="sm" asChild to="/register">
-            <span>Register</span>
-          </Button>
+          {!isAuthenticated ? (
+            <>
+              <Button variant="ghost" size="sm" asChild to="/login">
+                <span>Login</span>
+              </Button>
+              <Button size="sm" asChild to="/signup">
+                <span>Sign Up</span>
+              </Button>
+            </>
+          ) : (
+            <div className="flex items-center gap-4">
+              <Link to="/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-all">
+                <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold">
+                  {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+                </div>
+                <span className="text-xs font-bold text-gray-700">{user?.firstName}</span>
+              </Link>
+              <button 
+                onClick={logout}
+                className="p-2 text-gray-500 hover:text-red-600 transition-colors"
+                title="Logout"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -81,13 +103,41 @@ const Navbar = () => {
                 {item.label}
               </Link>
             ))}
-            <div className="flex gap-2 pt-2 border-t">
-              <Button variant="ghost" size="sm" className="flex-1" asChild to="/login">
-                <span>Login</span>
-              </Button>
-              <Button size="sm" className="flex-1" asChild to="/register">
-                <span>Register</span>
-              </Button>
+            <div className="flex flex-col gap-2 pt-2 border-t">
+              {!isAuthenticated ? (
+                <>
+                  <Button variant="ghost" size="sm" className="w-full" asChild to="/login" onClick={() => setMobileOpen(false)}>
+                    <span>Login</span>
+                  </Button>
+                  <Button size="sm" className="w-full" asChild to="/signup" onClick={() => setMobileOpen(false)}>
+                    <span>Sign Up</span>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                      {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-gray-900">{user?.firstName} {user?.lastName}</span>
+                      <span className="text-[10px] text-gray-500">{user?.email}</span>
+                    </div>
+                  </div>
+                  <Button variant="outline" size="sm" className="w-full justify-start gap-2" asChild to="/profile" onClick={() => setMobileOpen(false)}>
+                    <>
+                      <User size={16} />
+                      <span>My Profile</span>
+                    </>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => { logout(); setMobileOpen(false); }}>
+                    <>
+                      <LogOut size={16} />
+                      <span>Logout</span>
+                    </>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

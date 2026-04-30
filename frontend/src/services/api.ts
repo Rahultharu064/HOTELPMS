@@ -6,6 +6,21 @@ export interface ApiResponse<T> {
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000') + '/api';
 
+const getHeaders = (isFormData: boolean = false) => {
+  const token = localStorage.getItem('guest_token');
+  const headers: Record<string, string> = {};
+  
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return headers;
+};
+
 export const api = {
   async get<T>(endpoint: string, options?: { params?: Record<string, any> }): Promise<T> {
     let url = `${API_BASE_URL}${endpoint}`;
@@ -21,69 +36,68 @@ export const api = {
         url += `?${queryString}`;
       }
     }
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: getHeaders(),
+    });
+    const result = await response.json();
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Something went wrong');
+      throw { response: { data: result } };
     }
-    return response.json();
+    return result;
   },
 
   async post<T>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers: isFormData ? {} : {
-        'Content-Type': 'application/json',
-      },
+      headers: getHeaders(isFormData),
       body: isFormData ? data : JSON.stringify(data),
     });
+    const result = await response.json();
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Something went wrong');
+      throw { response: { data: result } };
     }
-    return response.json();
+    return result;
   },
 
   async put<T>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
-      headers: isFormData ? {} : {
-        'Content-Type': 'application/json',
-      },
+      headers: getHeaders(isFormData),
       body: isFormData ? data : JSON.stringify(data),
     });
+    const result = await response.json();
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Something went wrong');
+      throw { response: { data: result } };
     }
-    return response.json();
+    return result;
   },
 
   async patch<T>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'PATCH',
-      headers: isFormData ? {} : {
-        'Content-Type': 'application/json',
-      },
+      headers: getHeaders(isFormData),
       body: isFormData ? data : JSON.stringify(data),
     });
+    const result = await response.json();
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Something went wrong');
+      throw { response: { data: result } };
     }
-    return response.json();
+    return result;
   },
 
   async delete(endpoint: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
+      headers: getHeaders(),
     });
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Something went wrong');
+      const result = await response.json();
+      throw { response: { data: result } };
     }
   },
 };
+
+export default api;

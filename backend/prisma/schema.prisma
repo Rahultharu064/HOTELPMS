@@ -189,6 +189,7 @@ model Guest {
   id          Int      @id @default(autoincrement())
   email       String   @unique @db.VarChar(255)
   phone       String   @unique @db.VarChar(20)
+  password    String?  @db.VarChar(255)
   firstName   String   @db.VarChar(100)
   lastName    String   @db.VarChar(100)
   address     String?  @db.Text
@@ -198,6 +199,16 @@ model Guest {
   idType      IdType?  @default(passport)
   idNumber    String?  @db.VarChar(100)
   idProofImage String?  @db.VarChar(500)
+  profileImage String?  @db.VarChar(500)
+  
+  // Auth fields
+  googleId    String?  @unique @db.VarChar(255)
+  otp         String?  @db.VarChar(10)
+  otpExpires  DateTime?
+  resetToken  String?  @db.VarChar(255)
+  resetTokenExpires DateTime?
+  isVerified  Boolean  @default(false)
+  
   totalBookings Int    @default(0)
   totalSpent   Decimal @default(0) @db.Decimal(10,2)
   createdAt   DateTime @default(now())

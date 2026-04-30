@@ -29,8 +29,27 @@ export class RoomController {
       },
     });
 
+    // Fetch average ratings for all rooms at once
+    const ratings = await prisma.review.groupBy({
+      by: ['roomTypeId'],
+      where: { status: 'approved' },
+      _avg: { rating: true },
+      _count: { id: true },
+    });
+
+    const roomsWithRatings = rooms.map(room => {
+      const rating = ratings.find(r => r.roomTypeId === room.roomTypeId);
+      return {
+        ...room,
+        ratingSummary: {
+          averageRating: rating?._avg.rating || 0,
+          totalReviews: rating?._count.id || 0
+        }
+      };
+    });
+
     res.status(HttpStatus.OK).json(
-      ApiResponse.success('Rooms retrieved successfully', rooms)
+      ApiResponse.success('Rooms retrieved successfully', roomsWithRatings)
     );
   });
 
@@ -254,8 +273,27 @@ export class RoomController {
       take: 6
     });
 
+    // Fetch average ratings for these rooms
+    const ratings = await prisma.review.groupBy({
+      by: ['roomTypeId'],
+      where: { status: 'approved' },
+      _avg: { rating: true },
+      _count: { id: true },
+    });
+
+    const roomsWithRatings = roomsWithBookingCounts.map(room => {
+      const rating = ratings.find(r => r.roomTypeId === room.roomTypeId);
+      return {
+        ...room,
+        ratingSummary: {
+          averageRating: rating?._avg.rating || 0,
+          totalReviews: rating?._count.id || 0
+        }
+      };
+    });
+
     res.status(HttpStatus.OK).json(
-      ApiResponse.success('Guest favorites retrieved successfully', roomsWithBookingCounts)
+      ApiResponse.success('Guest favorites retrieved successfully', roomsWithRatings)
     );
   });
 }

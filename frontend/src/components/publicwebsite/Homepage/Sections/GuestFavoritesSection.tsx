@@ -96,7 +96,7 @@ export const GuestFavoritesSection: React.FC = () => {
                                                 <h3 className="font-bold text-lg text-primary-dark mb-1 group-hover:text-primary-green transition-colors truncate">{room.name}</h3>
                                                 <div className="flex items-center gap-1 text-[10px] text-neutral-text-secondary">
                                                     <Star className="h-3 w-3 text-primary-gold fill-primary-gold" />
-                                                    <span className="font-bold">4.9</span>
+                                                    <span className="font-bold">{room.ratingSummary?.averageRating ? room.ratingSummary.averageRating.toFixed(1) : "5.0"}</span>
                                                     <span className="mx-1 opacity-30">•</span>
                                                     <Users className="h-3 w-3" />
                                                     <span className="font-bold">{room.capacity} Guests</span>

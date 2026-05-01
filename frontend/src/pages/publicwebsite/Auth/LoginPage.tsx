@@ -124,7 +124,6 @@ export const LoginPage: React.FC = () => {
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={() => toast.error('Google Login Failed')}
-              useOneTap
               theme="outline"
               shape="pill"
             />

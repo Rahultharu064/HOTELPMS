@@ -19,7 +19,14 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     const socketInstance = io(SOCKET_URL, {
       withCredentials: true,
-      transports: ['websocket', 'polling']
+      // Start with polling first for a reliable HTTP handshake,
+      // then Socket.IO auto-upgrades to WebSocket.
+      // Reversing this (websocket first) causes "closed before established" errors.
+      transports: ['polling', 'websocket'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 2000,
+      timeout: 10000,
     });
 
     socketInstance.on('connect', () => {
@@ -27,8 +34,14 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setIsConnected(true);
     });
 
-    socketInstance.on('disconnect', () => {
-      console.log('Socket disconnected');
+    socketInstance.on('disconnect', (reason) => {
+      console.log('Socket disconnected:', reason);
+      setIsConnected(false);
+    });
+
+    socketInstance.on('connect_error', (err) => {
+      // Only warn, don't crash — the app works without real-time features
+      console.warn('Socket connection error:', err.message);
       setIsConnected(false);
     });
 

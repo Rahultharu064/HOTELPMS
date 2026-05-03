@@ -20,6 +20,7 @@ import housekeepingRoutes from './routes/housekeepingRoute';
 import reviewRoutes from './routes/reviewRoute';
 import guestRoutes from './routes/guestRoute';
 import authRoutes from './routes/authRoute';
+import adminAuthRoutes from './routes/adminAuthRoute';
 import checkInOutRoutes from './routes/checkInOutRoute';
 import extraServiceRoutes from './routes/extraServiceRoute';
 // import facilityRoutes from './routes/facilityRoute';
@@ -32,10 +33,7 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-  ],
+  origin: config.corsOrigin,
   credentials: true,
 }));
 
@@ -81,6 +79,7 @@ app.use('/api/housekeeping', housekeepingRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/guests', guestRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/extra-services', extraServiceRoutes);
 // app.use('/api/facilities', facilityRoutes);
 // app.use('/api/facilities', facilityRoutes);

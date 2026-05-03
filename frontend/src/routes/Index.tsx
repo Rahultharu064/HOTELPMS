@@ -51,6 +51,7 @@ import ExtraServicesPage from '../pages/Admin/ExtraServicesPage';
 import AdminUsersPage from '../pages/Admin/UsersPage';
 import RoomEditPage from '../pages/Admin/RoomEditPage';
 import AdminRoomDetailsPage from '../pages/Admin/RoomDetailsPage';
+import { AdminLoginPage } from '../pages/Admin/Auth/AdminLoginPage';
 
 // Simple placeholder components for missing routes
 const FinancialsPage = () => (
@@ -242,6 +243,10 @@ const routes: RouteObject[] = [
   },
 
   // Admin Management
+  {
+    path: '/admin/login',
+    element: <AdminLoginPage />,
+  },
   {
     path: '/admin',
     element: <AdminLayout />,

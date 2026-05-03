@@ -16,7 +16,7 @@ export const VerifyOTPPage: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const state = location.state as { email?: string };
+    const state = location.state as { email?: string; devOtp?: string };
     const savedEmail = localStorage.getItem('pending_verify_email');
     
     if (state?.email) {
@@ -27,6 +27,11 @@ export const VerifyOTPPage: React.FC = () => {
     } else {
       toast.error('Session expired. Please try logging in.');
       navigate('/login');
+    }
+
+    // Dev mode: auto-fill OTP if backend returned it
+    if (state?.devOtp) {
+      setOtp(state.devOtp);
     }
   }, [location, navigate]);
 
@@ -63,8 +68,14 @@ export const VerifyOTPPage: React.FC = () => {
   const handleResend = async () => {
     setResending(true);
     try {
-      await authService.resendOTP(email);
-      toast.success('A new code has been sent to your email');
+      const response: any = await authService.resendOTP(email);
+      // Dev mode: auto-fill the new OTP
+      if (response?.otp) {
+        setOtp(response.otp);
+        toast.success('New OTP auto-filled (dev mode)');
+      } else {
+        toast.success('A new code has been sent to your email');
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to resend code');
     } finally {
@@ -85,6 +96,11 @@ export const VerifyOTPPage: React.FC = () => {
           <p className="mt-2 text-sm text-gray-600">
             We've sent a 6-digit code to <span className="font-bold text-gray-900">{email}</span>
           </p>
+          {otp.length === 6 && (
+            <div className="mt-3 text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+              🛠 Dev mode — OTP auto-filled from server response
+            </div>
+          )}
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleVerify}>

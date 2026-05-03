@@ -35,7 +35,7 @@ export class AuthController {
 
     await prisma.guest.create({
       data: {
-        email,
+        email: normalizedEmail,
         phone,
         password: hashedPassword,
         firstName,
@@ -46,11 +46,16 @@ export class AuthController {
       },
     });
 
-    await sendOTPEmail(email, otp);
+    // Send OTP email — non-blocking, failure does NOT crash the endpoint
+    sendOTPEmail(normalizedEmail, otp).catch(() => {});
+
+    const isDev = process.env.NODE_ENV === 'development';
 
     res.status(HttpStatus.CREATED).json({
       message: 'Registration successful. Please verify your email with the OTP sent.',
-      email,
+      email: normalizedEmail,
+      // Expose OTP in dev mode since SMTP may not be configured
+      ...(isDev && { otp }),
     });
   });
 
@@ -184,9 +189,14 @@ export class AuthController {
       data: { otp, otpExpires },
     });
 
-    await sendOTPEmail(email, otp);
+    // Non-blocking — don't crash if SMTP is down
+    sendOTPEmail(email, otp).catch(() => {});
 
-    res.json({ message: 'A new OTP has been sent to your email' });
+    const isDev = process.env.NODE_ENV === 'development';
+    res.json({
+      message: 'A new OTP has been sent to your email',
+      ...(isDev && { otp }),
+    });
   });
 
   /**

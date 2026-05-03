@@ -281,6 +281,7 @@ export class RoomService {
         size: data.size,
         bedType: data.bedType as any,
         view: data.view,
+        slug: data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + data.roomNumber,
       },
       include: {
         roomType: true,

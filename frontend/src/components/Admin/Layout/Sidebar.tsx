@@ -1,4 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
+import { useAdminAuth } from "../../../context/AdminAuthContext";
 import {
   LayoutDashboard,
   Users,
@@ -35,6 +36,13 @@ interface AppSidebarProps {
 
 export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppSidebarProps) {
   const location = useLocation();
+
+  const { adminLogout, admin } = useAdminAuth();
+
+  const handleLogout = () => {
+    adminLogout();
+    window.location.href = '/admin/login'; // Force full redirect to clear any lingering memory state
+  };
 
   const sidebarContent = (
     <div className={`flex flex-col h-full bg-[#14532D] text-white transition-all duration-300 ${collapsed ? "w-[80px]" : "w-[280px]"}`}>
@@ -105,8 +113,8 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
                 <img src="/avatar-placeholder.png" alt="Super Admin" className="w-full h-full object-cover rounded-full" />
               </div>
               <div className="overflow-hidden">
-                <h4 className="text-[12px] font-bold text-white leading-none">Super Admin</h4>
-                <p className="text-[10px] font-bold text-[#F59E0B]/80 uppercase mt-1 tracking-wider opacity-80">Online</p>
+                <h4 className="text-[12px] font-bold text-white leading-none">{admin?.name || 'Super Admin'}</h4>
+                <p className="text-[10px] font-bold text-[#F59E0B]/80 uppercase mt-1 tracking-wider opacity-80">{admin?.role || 'Online'}</p>
               </div>
             </div>
             <button 
@@ -129,14 +137,14 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
           </button>
         )}
         
-        <Link 
-          to="/logout"
-          className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl bg-[#DC2626]/10 text-red-400 hover:bg-[#DC2626] hover:text-white transition-all duration-300 group ${collapsed ? "justify-center" : ""}`}
+        <button 
+          onClick={handleLogout}
+          className={`flex w-full items-center gap-4 px-5 py-3.5 rounded-2xl bg-[#DC2626]/10 text-red-400 hover:bg-[#DC2626] hover:text-white transition-all duration-300 group ${collapsed ? "justify-center" : ""}`}
           title="Logout"
         >
           <LogOut size={20} className="shrink-0 transition-transform group-hover:-translate-x-1" />
           {!collapsed && <span className="text-[11px] font-black uppercase tracking-[0.2em]">Logout</span>}
-        </Link>
+        </button>
       </div>
     </div>
   );

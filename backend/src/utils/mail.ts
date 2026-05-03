@@ -4,64 +4,67 @@ import { config } from '../config';
 const transporter = nodemailer.createTransport({
   host: config.email.host,
   port: config.email.port,
-  secure: config.email.port === 465, // true for 465, false for other ports
+  secure: config.email.port === 465,
   auth: {
     user: config.email.user,
     pass: config.email.pass,
   },
+  // Shorter connection timeout so a bad network doesn't block the request for >30s
+  connectionTimeout: 5000,
+  greetingTimeout: 5000,
+  socketTimeout: 5000,
 });
 
-export const sendEmail = async (to: string, subject: string, html: string) => {
+export const sendEmail = async (to: string, subject: string, html: string): Promise<void> => {
   try {
     const info = await transporter.sendMail({
-      from: `"Antigravity Hotel" <${config.email.user}>`,
+      from: `"Itahari Namuna Hotel" <${config.email.user}>`,
       to,
       subject,
       html,
     });
-    console.log('Message sent: %s', info.messageId);
-    return info;
+    console.log('Email sent: %s', info.messageId);
   } catch (error) {
-    console.error('Error sending email:', error);
-    throw error;
+    // Log but DO NOT rethrow — email failures should never crash the API
+    console.error('Error sending email (non-fatal):', error);
   }
 };
 
-export const sendOTPEmail = async (to: string, otp: string) => {
-  const subject = 'Your Login OTP - Antigravity Hotel';
+export const sendOTPEmail = async (to: string, otp: string): Promise<void> => {
+  const subject = 'Your OTP Code - Itahari Namuna Hotel';
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-      <h2 style="color: #333; text-align: center;">Antigravity Hotel</h2>
+      <h2 style="color: #14532D; text-align: center;">Itahari Namuna Hotel</h2>
       <p>Hello,</p>
-      <p>Your One-Time Password (OTP) for login is:</p>
-      <div style="background: #f4f4f4; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4A90E2; border-radius: 5px; margin: 20px 0;">
+      <p>Your One-Time Password (OTP) for verification is:</p>
+      <div style="background: #f4f4f4; padding: 20px; text-align: center; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #14532D; border-radius: 8px; margin: 20px 0;">
         ${otp}
       </div>
-      <p>This OTP will expire in 10 minutes. If you did not request this, please ignore this email.</p>
+      <p>This OTP will expire in <strong>10 minutes</strong>. If you did not request this, please ignore this email.</p>
       <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-      <p style="font-size: 12px; color: #888; text-align: center;">&copy; 2026 Antigravity Hotel. All rights reserved.</p>
+      <p style="font-size: 12px; color: #888; text-align: center;">&copy; 2026 Itahari Namuna Hotel. All rights reserved.</p>
     </div>
   `;
-  return sendEmail(to, subject, html);
+  await sendEmail(to, subject, html);
 };
 
-export const sendResetPasswordEmail = async (to: string, token: string) => {
-  const resetUrl = `${config.corsOrigin}/reset-password?token=${token}`;
-  const subject = 'Reset Your Password - Antigravity Hotel';
+export const sendResetPasswordEmail = async (to: string, token: string): Promise<void> => {
+  const origin = Array.isArray(config.corsOrigin) ? config.corsOrigin[0] : config.corsOrigin;
+  const resetUrl = `${origin}/reset-password?token=${token}`;
+  const subject = 'Reset Your Password - Itahari Namuna Hotel';
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-      <h2 style="color: #333; text-align: center;">Antigravity Hotel</h2>
+      <h2 style="color: #14532D; text-align: center;">Itahari Namuna Hotel</h2>
       <p>Hello,</p>
-      <p>You requested to reset your password. Please click the button below to set a new password:</p>
+      <p>You requested to reset your password. Click the button below:</p>
       <div style="text-align: center; margin: 30px 0;">
-        <a href="${resetUrl}" style="background: #4A90E2; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Reset Password</a>
+        <a href="${resetUrl}" style="background: #14532D; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Reset Password</a>
       </div>
-      <p>If the button doesn't work, copy and paste this link into your browser:</p>
-      <p style="word-break: break-all; color: #4A90E2;">${resetUrl}</p>
-      <p>This link will expire in 1 hour. If you did not request this, please ignore this email.</p>
+      <p>Or copy this link: <a href="${resetUrl}" style="color: #14532D;">${resetUrl}</a></p>
+      <p>This link expires in <strong>1 hour</strong>.</p>
       <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-      <p style="font-size: 12px; color: #888; text-align: center;">&copy; 2026 Antigravity Hotel. All rights reserved.</p>
+      <p style="font-size: 12px; color: #888; text-align: center;">&copy; 2026 Itahari Namuna Hotel. All rights reserved.</p>
     </div>
   `;
-  return sendEmail(to, subject, html);
+  await sendEmail(to, subject, html);
 };

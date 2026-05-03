@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -30,6 +31,7 @@ async function main() {
   await prisma.serviceOrder.deleteMany();
   await prisma.booking.deleteMany();
   await prisma.guest.deleteMany();
+  await prisma.admin.deleteMany();
   await prisma.extraService.deleteMany();
   await prisma.service.deleteMany();
   await prisma.serviceCategory.deleteMany();
@@ -37,6 +39,18 @@ async function main() {
   await prisma.roomType.deleteMany();
   await prisma.amenity.deleteMany();
   await prisma.facility.deleteMany();
+
+  console.log('Creating Admin User...');
+  const hashedAdminPassword = await bcrypt.hash('admin123', 10);
+  await prisma.admin.create({
+    data: {
+      email: 'admin@hotelpms.com',
+      password: hashedAdminPassword,
+      name: 'Super Admin',
+      role: 'superadmin',
+      isActive: true,
+    }
+  });
 
   console.log('Creating Service Categories & Facilities...');
   const fbCategory = await prisma.serviceCategory.create({
@@ -88,31 +102,59 @@ async function main() {
   });
 
   const room101 = await prisma.room.create({
-    data: { roomNumber: '101', name: 'Standard 101', roomTypeId: standardType.id, capacity: 2, basePrice: 50.00, floor: 1, bedType: 'double', status: 'available' }
+    data: { roomNumber: '101', slug: 'standard-room-101', name: 'Standard 101', roomTypeId: standardType.id, capacity: 2, basePrice: 50.00, floor: 1, bedType: 'double', status: 'available', isFeatured: true }
   });
   
   const room102 = await prisma.room.create({
-    data: { roomNumber: '102', name: 'Standard 102', roomTypeId: standardType.id, capacity: 2, basePrice: 50.00, floor: 1, bedType: 'double', status: 'occupied' }
+    data: { roomNumber: '102', slug: 'standard-room-102', name: 'Standard 102', roomTypeId: standardType.id, capacity: 2, basePrice: 50.00, floor: 1, bedType: 'double', status: 'occupied' }
+  });
+
+  const room103 = await prisma.room.create({
+    data: { roomNumber: '103', slug: 'standard-room-103', name: 'Standard 103', roomTypeId: standardType.id, capacity: 2, basePrice: 55.00, floor: 1, bedType: 'twin', status: 'available' }
   });
 
   const room201 = await prisma.room.create({
-    data: { roomNumber: '201', name: 'Deluxe 201', roomTypeId: deluxeType.id, capacity: 4, basePrice: 120.00, floor: 2, bedType: 'king', status: 'available' }
+    data: { roomNumber: '201', slug: 'deluxe-suite-201', name: 'Deluxe 201', roomTypeId: deluxeType.id, capacity: 4, basePrice: 120.00, floor: 2, bedType: 'king', status: 'available', isFeatured: true }
+  });
+
+  const room202 = await prisma.room.create({
+    data: { roomNumber: '202', slug: 'deluxe-suite-202', name: 'Deluxe 202', roomTypeId: deluxeType.id, capacity: 4, basePrice: 130.00, floor: 2, bedType: 'king', status: 'cleaning' }
+  });
+
+  const room203 = await prisma.room.create({
+    data: { roomNumber: '203', slug: 'deluxe-suite-203', name: 'Deluxe 203', roomTypeId: deluxeType.id, capacity: 3, basePrice: 115.00, floor: 2, bedType: 'queen', status: 'available' }
+  });
+
+  console.log('Creating Housekeeping Staff...');
+  await prisma.housekeepingStaff.createMany({
+    data: [
+      { staffId: 'HK-001', name: 'Ram Prasad', role: 'Housekeeper', phone: '9800000001', status: 'on_duty' },
+      { staffId: 'HK-002', name: 'Sita Kumari', role: 'Housekeeper', phone: '9800000002', status: 'on_duty' },
+      { staffId: 'HK-003', name: 'Hari Bahadur', role: 'Supervisor', phone: '9800000003', status: 'on_duty' },
+      { staffId: 'HK-004', name: 'Gita Devi', role: 'Housekeeper', phone: '9800000004', status: 'off_duty' },
+    ]
   });
 
   console.log('Creating Guests & Bookings...');
+  const hashedGuestPassword = await bcrypt.hash('password123', 10);
+
   const guest1 = await prisma.guest.create({
-    data: { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com', phone: '+1234567890', city: 'New York', country: 'USA' }
+    data: { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com', phone: '+1234567890', city: 'New York', country: 'USA', isVerified: true, password: hashedGuestPassword }
   });
   
   const guest2 = await prisma.guest.create({
-    data: { firstName: 'Alice', lastName: 'Smith', email: 'alice.smith@example.com', phone: '+0987654321', city: 'London', country: 'UK' }
+    data: { firstName: 'Alice', lastName: 'Smith', email: 'alice.smith@example.com', phone: '+0987654321', city: 'London', country: 'UK', isVerified: true, password: hashedGuestPassword }
+  });
+
+  const guest3 = await prisma.guest.create({
+    data: { firstName: 'Rajesh', lastName: 'Tharu', email: 'rajesh.tharu@example.com', phone: '+9779812345678', city: 'Itahari', country: 'Nepal', isVerified: true, password: hashedGuestPassword }
   });
 
   const today = new Date();
   const checkout = new Date();
   checkout.setDate(today.getDate() + 3);
 
-  await prisma.booking.create({
+  const booking1 = await prisma.booking.create({
     data: {
       bookingNumber: 'BKG-1001',
       guestId: guest1.id,
@@ -125,12 +167,16 @@ async function main() {
     }
   });
 
+  await prisma.payment.create({
+    data: { bookingId: booking1.id, amount: 150.00, method: 'cash', status: 'completed' }
+  });
+
   const tomorrow = new Date();
   tomorrow.setDate(today.getDate() + 1);
   const checkout2 = new Date();
   checkout2.setDate(tomorrow.getDate() + 2);
 
-  await prisma.booking.create({
+  const booking2 = await prisma.booking.create({
     data: {
       bookingNumber: 'BKG-1002',
       guestId: guest2.id,
@@ -140,6 +186,53 @@ async function main() {
       totalAmount: 240.00,
       status: 'confirmed',
       source: 'ota'
+    }
+  });
+
+  // Past booking for reviews
+  const pastCheckIn = new Date();
+  pastCheckIn.setDate(today.getDate() - 10);
+  const pastCheckOut = new Date();
+  pastCheckOut.setDate(today.getDate() - 7);
+
+  const booking3 = await prisma.booking.create({
+    data: {
+      bookingNumber: 'BKG-1003',
+      guestId: guest3.id,
+      roomId: room203.id,
+      checkIn: pastCheckIn,
+      checkOut: pastCheckOut,
+      totalAmount: 345.00,
+      status: 'checked_out',
+      source: 'direct'
+    }
+  });
+
+  await prisma.payment.create({
+    data: { bookingId: booking3.id, amount: 345.00, method: 'esewa', status: 'completed' }
+  });
+
+  // Seed a review
+  await prisma.review.create({
+    data: {
+      guestId: guest3.id,
+      bookingId: booking3.id,
+      roomTypeId: deluxeType.id,
+      rating: 5,
+      comment: 'Excellent stay! The room was spacious and clean. Staff was very friendly and helpful.',
+      status: 'approved',
+      isVerified: true,
+    }
+  });
+
+  await prisma.review.create({
+    data: {
+      guestId: guest1.id,
+      roomTypeId: standardType.id,
+      rating: 4,
+      comment: 'Good value for money. Clean rooms and great location. Will definitely come back!',
+      status: 'approved',
+      isVerified: true,
     }
   });
 

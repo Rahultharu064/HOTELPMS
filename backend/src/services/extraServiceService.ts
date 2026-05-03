@@ -77,12 +77,20 @@ export class ExtraServiceService {
       }
     }
 
+    // Explicitly pick allowed fields to prevent Prisma errors from extra fields (like 'id')
+    const updateData: any = {};
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.price !== undefined) updateData.price = new Prisma.Decimal(data.price);
+    if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
+    if (data.active !== undefined) updateData.active = data.active;
+    if (data.discountPercentage !== undefined) updateData.discountPercentage = data.discountPercentage;
+    if (data.discountAllowed !== undefined) updateData.discountAllowed = data.discountAllowed;
+    if (data.image !== undefined) updateData.image = data.image;
+
     return await prisma.extraService.update({
       where: { id },
-      data: {
-        ...data,
-        price: data.price ? new Prisma.Decimal(data.price) : undefined,
-      }
+      data: updateData
     });
   }
 

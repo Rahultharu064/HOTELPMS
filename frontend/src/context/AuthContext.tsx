@@ -18,20 +18,43 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const API_BASE = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000') + '/api';
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // On mount: restore session and validate the token is still good
   useEffect(() => {
     const savedToken = localStorage.getItem('guest_token');
     const savedUser = localStorage.getItem('guest_user');
 
     if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
+      // Validate the token against /auth/me – if the guest was deleted or
+      // the token expired the server returns 401, and we auto-logout cleanly.
+      fetch(`${API_BASE}/auth/me`, {
+        headers: { Authorization: `Bearer ${savedToken}` },
+      })
+        .then((res) => {
+          if (res.ok) {
+            setToken(savedToken);
+            setUser(JSON.parse(savedUser));
+          } else {
+            // Token is stale / guest deleted – clear silently
+            localStorage.removeItem('guest_token');
+            localStorage.removeItem('guest_user');
+          }
+        })
+        .catch(() => {
+          // Network error – still load the user from cache so the app works
+          setToken(savedToken);
+          setUser(JSON.parse(savedUser));
+        })
+        .finally(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
   const login = (userData: User, authToken: string) => {

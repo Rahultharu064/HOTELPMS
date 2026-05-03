@@ -15,22 +15,22 @@ model RoomType {
   description String?  @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
-  rooms       Room[]
-  reviews     Review[]
-  
+
+  rooms   Room[]
+  reviews Review[]
+
   @@map("room_types")
 }
 
 // Rooms
 model Room {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(100)
-  slug        String    @unique @db.VarChar(150)
-  roomNumber  String   @unique @db.VarChar(20)
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(100)
+  slug        String     @unique @db.VarChar(150)
+  roomNumber  String     @unique @db.VarChar(20)
   roomTypeId  Int
-  capacity    Int      @default(2)
-  basePrice   Decimal  @db.Decimal(10,2)
+  capacity    Int        @default(2)
+  basePrice   Decimal    @db.Decimal(10, 2)
   floor       Int?
   status      RoomStatus @default(available)
   description String?    @db.Text
@@ -40,15 +40,15 @@ model Room {
   isFeatured  Boolean    @default(false)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  
-  roomType    RoomType   @relation(fields: [roomTypeId], references: [id], onDelete: Restrict)
-  images      Image[]
-  videos      Video[]
-  bookings    Booking[]
-  amenities   Amenity[]  @relation("RoomAmenities")
-  serviceOrders ServiceOrder[]
+
+  roomType         RoomType          @relation(fields: [roomTypeId], references: [id], onDelete: Restrict)
+  images           Image[]
+  videos           Video[]
+  bookings         Booking[]
+  amenities        Amenity[]         @relation("RoomAmenities")
+  serviceOrders    ServiceOrder[]
   housekeepingLogs HousekeepingLog[]
-  
+
   @@index([status])
   @@index([roomTypeId])
   @@index([isFeatured])
@@ -57,74 +57,74 @@ model Room {
 
 // Amenities
 model Amenity {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique @db.VarChar(100)
-  icon        String?  @db.VarChar(255)
+  id          Int             @id @default(autoincrement())
+  name        String          @unique @db.VarChar(100)
+  icon        String?         @db.VarChar(255)
   category    AmenityCategory @default(standard)
-  description String?  @db.Text
-  createdAt   DateTime @default(now())
-  
-  rooms       Room[]     @relation("RoomAmenities")
-  
+  description String?         @db.Text
+  createdAt   DateTime        @default(now())
+
+  rooms Room[] @relation("RoomAmenities")
+
   @@map("amenities")
 }
 
 // Images
 model Image {
-  id          Int      @id @default(autoincrement())
-  url         String   @db.VarChar(500)
-  alt         String?  @db.VarChar(255)
-  roomId      Int?
-  isPrimary   Boolean  @default(false)
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  
-  room        Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  
+  id        Int      @id @default(autoincrement())
+  url       String   @db.VarChar(500)
+  alt       String?  @db.VarChar(255)
+  roomId    Int?
+  isPrimary Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  room Room? @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
   @@index([roomId])
   @@map("images")
 }
 
 // Videos
 model Video {
-  id          Int      @id @default(autoincrement())
-  url         String   @db.VarChar(500)
-  title       String?  @db.VarChar(255)
-  thumbnail   String?  @db.VarChar(500)
-  roomId      Int?
-  createdAt   DateTime @default(now())
-  
-  room        Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  
+  id        Int      @id @default(autoincrement())
+  url       String   @db.VarChar(500)
+  title     String?  @db.VarChar(255)
+  thumbnail String?  @db.VarChar(500)
+  roomId    Int?
+  createdAt DateTime @default(now())
+
+  room Room? @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
   @@index([roomId])
   @@map("videos")
 }
 
 // Bookings
 model Booking {
-  id            Int         @id @default(autoincrement())
-  bookingNumber String      @unique @db.VarChar(50)
-  guestId       Int
-  roomId        Int
-  checkIn       DateTime
-  checkOut      DateTime
-  adults        Int         @default(1)
-  children      Int         @default(0)
-  totalAmount   Decimal     @db.Decimal(10,2)
-  status        BookingStatus @default(pending)
-  source        BookingSource @default(direct)
-  specialRequests String?   @db.Text
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  
-  guest         Guest       @relation(fields: [guestId], references: [id])
-  room          Room        @relation(fields: [roomId], references: [id])
+  id              Int           @id @default(autoincrement())
+  bookingNumber   String        @unique @db.VarChar(50)
+  guestId         Int
+  roomId          Int
+  checkIn         DateTime
+  checkOut        DateTime
+  adults          Int           @default(1)
+  children        Int           @default(0)
+  totalAmount     Decimal       @db.Decimal(10, 2)
+  status          BookingStatus @default(pending)
+  source          BookingSource @default(direct)
+  specialRequests String?       @db.Text
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  guest         Guest                 @relation(fields: [guestId], references: [id])
+  room          Room                  @relation(fields: [roomId], references: [id])
   payments      Payment[]
   workflowLogs  BookingWorkflowLog[]
   serviceOrders ServiceOrder[]
   extraServices BookingExtraService[]
   review        Review?
-  
+
   @@index([guestId])
   @@index([roomId])
   @@index([status])
@@ -134,39 +134,39 @@ model Booking {
 
 // Extra Services
 model ExtraService {
-  id                Int      @id @default(autoincrement())
-  name              String   @db.VarChar(100)
-  description       String?  @db.Text
-  price             Decimal  @db.Decimal(10,2)
-  categoryId        Int
-  image             String?  @db.VarChar(500)
-  discountPercentage Float   @default(0)
-  discountAllowed   Boolean  @default(false)
-  active            Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                 Int      @id @default(autoincrement())
+  name               String   @db.VarChar(100)
+  description        String?  @db.Text
+  price              Decimal  @db.Decimal(10, 2)
+  categoryId         Int
+  image              String?  @db.VarChar(500)
+  discountPercentage Float    @default(0)
+  discountAllowed    Boolean  @default(false)
+  active             Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  category          ServiceCategory @relation(fields: [categoryId], references: [id])
-  bookings          BookingExtraService[]
+  category ServiceCategory       @relation(fields: [categoryId], references: [id])
+  bookings BookingExtraService[]
 
   @@map("extra_services")
 }
 
 // Booking Extra Services (Link table)
 model BookingExtraService {
-  id                   Int      @id @default(autoincrement())
-  bookingId            Int
-  extraServiceId       Int
-  quantity             Int      @default(1)
-  unitPrice            Decimal  @db.Decimal(10,2)
-  basePrice            Decimal  @db.Decimal(10,2)
-  discountAmount       Decimal  @db.Decimal(10,2) @default(0)
-  serviceChargeAmount  Decimal  @db.Decimal(10,2) @default(0)
-  totalPrice           Decimal  @db.Decimal(10,2)
-  createdAt            DateTime @default(now())
+  id                  Int      @id @default(autoincrement())
+  bookingId           Int
+  extraServiceId      Int
+  quantity            Int      @default(1)
+  unitPrice           Decimal  @db.Decimal(10, 2)
+  basePrice           Decimal  @db.Decimal(10, 2)
+  discountAmount      Decimal  @default(0) @db.Decimal(10, 2)
+  serviceChargeAmount Decimal  @default(0) @db.Decimal(10, 2)
+  totalPrice          Decimal  @db.Decimal(10, 2)
+  createdAt           DateTime @default(now())
 
-  booking              Booking      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  extraService         ExtraService @relation(fields: [extraServiceId], references: [id])
+  booking      Booking      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  extraService ExtraService @relation(fields: [extraServiceId], references: [id])
 
   @@index([bookingId])
   @@index([extraServiceId])
@@ -186,58 +186,84 @@ model AppSetting {
 
 // Guests
 model Guest {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique @db.VarChar(255)
-  phone       String   @unique @db.VarChar(20)
-  password    String?  @db.VarChar(255)
-  firstName   String   @db.VarChar(100)
-  lastName    String   @db.VarChar(100)
-  address     String?  @db.Text
-  city        String?  @db.VarChar(100)
-  country     String?  @db.VarChar(100)
-  postalCode  String?  @db.VarChar(20)
-  idType      IdType?  @default(passport)
-  idNumber    String?  @db.VarChar(100)
-  idProofImage String?  @db.VarChar(500)
-  profileImage String?  @db.VarChar(500)
-  
+  id           Int     @id @default(autoincrement())
+  email        String  @unique @db.VarChar(255)
+  phone        String  @unique @db.VarChar(20)
+  password     String? @db.VarChar(255)
+  firstName    String  @db.VarChar(100)
+  lastName     String  @db.VarChar(100)
+  address      String? @db.Text
+  city         String? @db.VarChar(100)
+  country      String? @db.VarChar(100)
+  postalCode   String? @db.VarChar(20)
+  idType       IdType? @default(passport)
+  idNumber     String? @db.VarChar(100)
+  idProofImage String? @db.VarChar(500)
+  profileImage String? @db.VarChar(500)
+
   // Auth fields
-  googleId    String?  @unique @db.VarChar(255)
-  otp         String?  @db.VarChar(10)
-  otpExpires  DateTime?
-  resetToken  String?  @db.VarChar(255)
+  googleId          String?   @unique @db.VarChar(255)
+  otp               String?   @db.VarChar(10)
+  otpExpires        DateTime?
+  resetToken        String?   @db.VarChar(255)
   resetTokenExpires DateTime?
-  isVerified  Boolean  @default(false)
-  
-  totalBookings Int    @default(0)
-  totalSpent   Decimal @default(0) @db.Decimal(10,2)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  bookings    Booking[]
-  reviews     Review[]
+  isVerified        Boolean   @default(false)
+
+  totalBookings Int      @default(0)
+  totalSpent    Decimal  @default(0) @db.Decimal(10, 2)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  bookings      Booking[]
+  reviews       Review[]
   serviceOrders ServiceOrder[]
-  
+
   @@index([email])
   @@index([phone])
   @@map("guests")
 }
 
+// Admins
+model Admin {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique @db.VarChar(255)
+  password      String    @db.VarChar(255)
+  name          String    @db.VarChar(100)
+  role          AdminRole @default(admin)
+  isActive      Boolean   @default(true)
+  lastLogin     DateTime?
+  loginAttempts Int       @default(0)
+  lockedUntil   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("admins")
+}
+
+// Admin Roles
+enum AdminRole {
+  superadmin
+  admin
+  manager
+
+  @@map("admin_role")
+}
+
 // Payments
 model Payment {
-  id          Int          @id @default(autoincrement())
-  bookingId   Int?
+  id             Int           @id @default(autoincrement())
+  bookingId      Int?
   serviceOrderId Int?
-  amount      Decimal      @db.Decimal(10,2)
-  method      PaymentMethod
-  status      PaymentStatus @default(pending)
-  transactionId String?    @db.VarChar(255)
-  paymentData Json?        @db.Json
-  createdAt   DateTime     @default(now())
-  
-  booking       Booking?      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  serviceOrder  ServiceOrder? @relation(fields: [serviceOrderId], references: [id], onDelete: SetNull)
-  
+  amount         Decimal       @db.Decimal(10, 2)
+  method         PaymentMethod
+  status         PaymentStatus @default(pending)
+  transactionId  String?       @db.VarChar(255)
+  paymentData    Json?         @db.Json
+  createdAt      DateTime      @default(now())
+
+  booking      Booking?      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  serviceOrder ServiceOrder? @relation(fields: [serviceOrderId], references: [id], onDelete: SetNull)
+
   @@index([bookingId])
   @@index([serviceOrderId])
   @@index([status])
@@ -252,123 +278,123 @@ model BookingWorkflowLog {
   description String?  @db.Text
   performedBy String?  @db.VarChar(100)
   createdAt   DateTime @default(now())
-  
-  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
   @@index([bookingId])
   @@map("booking_workflow_logs")
 }
 
 // Facilities
 model Facility {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique @db.VarChar(100)
-  slug        String   @unique @db.VarChar(100)
-  description String?  @db.Text
-  status      FacilityStatus @default(active)
-  openingHours String? @db.VarChar(255)
-  category    FacilityCategory @default(other)
-  location    String?  @db.VarChar(255)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  images      FacilityImage[]
-  videos      FacilityVideo[]
-  
+  id           Int              @id @default(autoincrement())
+  name         String           @unique @db.VarChar(100)
+  slug         String           @unique @db.VarChar(100)
+  description  String?          @db.Text
+  status       FacilityStatus   @default(active)
+  openingHours String?          @db.VarChar(255)
+  category     FacilityCategory @default(other)
+  location     String?          @db.VarChar(255)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  images FacilityImage[]
+  videos FacilityVideo[]
+
   @@map("facilities")
 }
 
 // Facility Images
 model FacilityImage {
-  id          Int      @id @default(autoincrement())
-  url         String   @db.VarChar(500)
-  alt         String?  @db.VarChar(255)
-  facilityId  Int
-  isPrimary   Boolean  @default(false)
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  
-  facility    Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
-  
+  id         Int      @id @default(autoincrement())
+  url        String   @db.VarChar(500)
+  alt        String?  @db.VarChar(255)
+  facilityId Int
+  isPrimary  Boolean  @default(false)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  facility Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+
   @@index([facilityId])
   @@map("facility_images")
 }
 
 // Facility Videos
 model FacilityVideo {
-  id          Int      @id @default(autoincrement())
-  url         String   @db.VarChar(500)
-  title       String?  @db.VarChar(255)
-  thumbnail   String?  @db.VarChar(500)
-  facilityId  Int
-  createdAt   DateTime @default(now())
-  
-  facility    Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
-  
+  id         Int      @id @default(autoincrement())
+  url        String   @db.VarChar(500)
+  title      String?  @db.VarChar(255)
+  thumbnail  String?  @db.VarChar(500)
+  facilityId Int
+  createdAt  DateTime @default(now())
+
+  facility Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+
   @@index([facilityId])
   @@map("facility_videos")
 }
 
 // Service Categories (Service Types)
 model ServiceCategory {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique @db.VarChar(100)
-  slug        String    @unique @db.VarChar(100)
-  description String?   @db.Text
-  image       String?   @db.VarChar(500)
-  icon        String?   @db.VarChar(255)
+  id          Int           @id @default(autoincrement())
+  name        String        @unique @db.VarChar(100)
+  slug        String        @unique @db.VarChar(100)
+  description String?       @db.Text
+  image       String?       @db.VarChar(500)
+  icon        String?       @db.VarChar(255)
   status      ServiceStatus @default(active)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  services    Service[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  services      Service[]
   extraServices ExtraService[]
-  
+
   @@map("service_categories")
 }
 
 // Services (Individual Service Items)
 model Service {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(100)
-  slug        String   @unique @db.VarChar(100)
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(100)
+  slug        String        @unique @db.VarChar(100)
   categoryId  Int
-  price       Decimal  @db.Decimal(10,2)
-  description String?  @db.Text
-  image       String?  @db.VarChar(500)
+  price       Decimal       @db.Decimal(10, 2)
+  description String?       @db.Text
+  image       String?       @db.VarChar(500)
   status      ServiceStatus @default(active)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  category    ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  orderItems  ServiceOrderItem[]
-  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  category   ServiceCategory    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  orderItems ServiceOrderItem[]
+
   @@index([categoryId])
   @@map("services")
 }
 
 // Service Orders
 model ServiceOrder {
-  id            Int               @id @default(autoincrement())
-  orderNumber   String            @unique @db.VarChar(50)
-  bookingId     Int?
-  guestId       Int?
-  roomId        Int?
-  totalAmount   Decimal           @db.Decimal(10,2) @default(0)
-  status        ServiceOrderStatus @default(pending)
-  priority      ServicePriority   @default(normal)
-  notes         String?           @db.Text
-  requestedBy   String?           @db.VarChar(100)
-  assignedTo    String?           @db.VarChar(100)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  
-  booking       Booking?          @relation(fields: [bookingId], references: [id], onDelete: SetNull)
-  guest         Guest?            @relation(fields: [guestId], references: [id], onDelete: SetNull)
-  room          Room?             @relation(fields: [roomId], references: [id])
-  items         ServiceOrderItem[]
-  payments      Payment[]
-  
+  id          Int                @id @default(autoincrement())
+  orderNumber String             @unique @db.VarChar(50)
+  bookingId   Int?
+  guestId     Int?
+  roomId      Int?
+  totalAmount Decimal            @default(0) @db.Decimal(10, 2)
+  status      ServiceOrderStatus @default(pending)
+  priority    ServicePriority    @default(normal)
+  notes       String?            @db.Text
+  requestedBy String?            @db.VarChar(100)
+  assignedTo  String?            @db.VarChar(100)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  booking  Booking?           @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  guest    Guest?             @relation(fields: [guestId], references: [id], onDelete: SetNull)
+  room     Room?              @relation(fields: [roomId], references: [id])
+  items    ServiceOrderItem[]
+  payments Payment[]
+
   @@index([bookingId])
   @@index([guestId])
   @@index([roomId])
@@ -378,16 +404,16 @@ model ServiceOrder {
 
 // Service Order Items
 model ServiceOrderItem {
-  id          Int      @id @default(autoincrement())
-  orderId     Int
-  serviceId   Int
-  quantity    Int      @default(1)
-  price       Decimal  @db.Decimal(10,2)
-  notes       String?  @db.Text
-  
-  order       ServiceOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  service     Service     @relation(fields: [serviceId], references: [id])
-  
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  serviceId Int
+  quantity  Int     @default(1)
+  price     Decimal @db.Decimal(10, 2)
+  notes     String? @db.Text
+
+  order   ServiceOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  service Service      @relation(fields: [serviceId], references: [id])
+
   @@index([orderId])
   @@index([serviceId])
   @@map("service_order_items")
@@ -398,7 +424,7 @@ enum ServiceStatus {
   active
   inactive
   maintenance
-  
+
   @@map("service_status")
 }
 
@@ -408,7 +434,7 @@ enum ServiceOrderStatus {
   in_progress
   completed
   cancelled
-  
+
   @@map("service_order_status")
 }
 
@@ -417,7 +443,7 @@ enum ServicePriority {
   normal
   high
   urgent
-  
+
   @@map("service_priority")
 }
 
@@ -428,7 +454,7 @@ enum RoomStatus {
   cleaning
   reserved
   out_of_service
-  
+
   @@map("room_status")
 }
 
@@ -438,7 +464,7 @@ enum BedType {
   queen
   king
   twin
-  
+
   @@map("bed_type")
 }
 
@@ -446,7 +472,7 @@ enum AmenityCategory {
   standard
   premium
   accessible
-  
+
   @@map("amenity_category")
 }
 
@@ -457,7 +483,7 @@ enum BookingStatus {
   checked_out
   cancelled
   no_show
-  
+
   @@map("booking_status")
 }
 
@@ -466,7 +492,7 @@ enum BookingSource {
   ota
   walk_in
   corporate
-  
+
   @@map("booking_source")
 }
 
@@ -474,7 +500,7 @@ enum PaymentMethod {
   cash
   esewa
   khalti
-  
+
   @@map("payment_method")
 }
 
@@ -483,7 +509,7 @@ enum PaymentStatus {
   completed
   failed
   refunded
-  
+
   @@map("payment_status")
 }
 
@@ -493,22 +519,22 @@ enum IdType {
   national_id
   citizenship
   other
-  
+
   @@map("id_type")
 }
 
 // Housekeeping Logs
 model HousekeepingLog {
-  id          Int       @id @default(autoincrement())
-  roomId      Int
-  staffId     String?   @db.VarChar(100)
-  type        HousekeepingType @default(general)
-  status      String    @db.VarChar(50) // e.g. clean, dirty, inspected
-  notes       String?   @db.Text
-  createdAt   DateTime  @default(now())
-  
-  room        Room      @relation(fields: [roomId], references: [id])
-  
+  id        Int              @id @default(autoincrement())
+  roomId    Int
+  staffId   String?          @db.VarChar(100)
+  type      HousekeepingType @default(general)
+  status    String           @db.VarChar(50) // e.g. clean, dirty, inspected
+  notes     String?          @db.Text
+  createdAt DateTime         @default(now())
+
+  room Room @relation(fields: [roomId], references: [id])
+
   @@index([roomId])
   @@map("housekeeping_logs")
 }
@@ -519,28 +545,28 @@ enum HousekeepingType {
   inspection
   maintenance
   turn_down
-  
+
   @@map("housekeeping_type")
 }
 
 // Reviews
 model Review {
-  id          Int      @id @default(autoincrement())
-  guestId     Int
-  bookingId   Int?     @unique
-  roomTypeId  Int?
-  rating      Int      @default(5)
-  comment     String?  @db.Text
-  staffReply  String?  @db.Text
-  status      ReviewStatus @default(pending)
-  isVerified  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  guest       Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
-  booking     Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
-  roomType    RoomType? @relation(fields: [roomTypeId], references: [id], onDelete: SetNull)
-  
+  id         Int          @id @default(autoincrement())
+  guestId    Int
+  bookingId  Int?         @unique
+  roomTypeId Int?
+  rating     Int          @default(5)
+  comment    String?      @db.Text
+  staffReply String?      @db.Text
+  status     ReviewStatus @default(pending)
+  isVerified Boolean      @default(false)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  guest    Guest     @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  booking  Booking?  @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  roomType RoomType? @relation(fields: [roomTypeId], references: [id], onDelete: SetNull)
+
   @@index([guestId])
   @@index([roomTypeId])
   @@map("reviews")
@@ -551,7 +577,7 @@ enum ReviewStatus {
   approved
   rejected
   hidden
-  
+
   @@map("review_status")
 }
 
@@ -559,7 +585,7 @@ enum FacilityStatus {
   active
   maintenance
   closed
-  
+
   @@map("facility_status")
 }
 
@@ -571,20 +597,20 @@ enum FacilityCategory {
   business_center
   parking
   other
-  
+
   @@map("facility_category")
 }
 
 // Housekeeping Staff
 model HousekeepingStaff {
-  id          Int      @id @default(autoincrement())
-  staffId     String   @unique @db.VarChar(50)
-  name        String   @db.VarChar(100)
-  role        String?  @db.VarChar(100)
-  phone       String?  @db.VarChar(20)
-  status      String   @default("on_duty") @db.VarChar(20)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  staffId   String   @unique @db.VarChar(50)
+  name      String   @db.VarChar(100)
+  role      String?  @db.VarChar(100)
+  phone     String?  @db.VarChar(20)
+  status    String   @default("on_duty") @db.VarChar(20)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("housekeeping_staff")
 }

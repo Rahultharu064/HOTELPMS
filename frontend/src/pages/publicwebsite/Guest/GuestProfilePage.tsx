@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { authService } from '../../../services/authService';
 import { useAuth } from '../../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { 
   User, 
@@ -25,6 +26,7 @@ export const GuestProfilePage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const { logout, user: authUser } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProfile();
@@ -35,7 +37,15 @@ export const GuestProfilePage: React.FC = () => {
       const data = await authService.getMe();
       setGuest(data);
     } catch (error: any) {
-      toast.error('Failed to load profile');
+      const status = error?.response?.data?.statusCode || error?.response?.status;
+      if (status === 401) {
+        // Token is invalid/expired — clear session and redirect to login
+        logout();
+        toast.error('Session expired. Please login again.');
+        navigate('/login');
+      } else {
+        toast.error('Failed to load profile');
+      }
     } finally {
       setLoading(false);
     }

@@ -92,6 +92,7 @@ export class RoomController {
         capacity: Number(maxAdults),
         status: status || 'available',
         description,
+        slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + roomNumber,
         // amenities are handled via relation in Prisma if using a separate model, 
         // but here the schema.prisma shows: amenities Amenity[] @relation("RoomAmenities")
         // We'll skip complex amenity linking for this quick build or use connectOrCreate
@@ -219,6 +220,7 @@ export class RoomController {
         capacity: capacity ? Number(capacity) : undefined,
         status,
         description,
+        slug: name ? name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + (roomNumber || currentRoom.roomNumber) : undefined,
       },
     });
 

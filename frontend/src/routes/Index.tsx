@@ -52,6 +52,8 @@ import AdminUsersPage from '../pages/Admin/UsersPage';
 import RoomEditPage from '../pages/Admin/RoomEditPage';
 import AdminRoomDetailsPage from '../pages/Admin/RoomDetailsPage';
 import { AdminLoginPage } from '../pages/Admin/Auth/AdminLoginPage';
+import { StaffResetPasswordPage } from '../pages/Admin/Auth/StaffResetPasswordPage';
+import { AdminAuthGuard } from '../components/auth/AdminAuthGuard';
 
 // Simple placeholder components for missing routes
 const FinancialsPage = () => (
@@ -149,10 +151,16 @@ const routes: RouteObject[] = [
     ],
   },
 
+  // Staff Security Workstation
+  {
+    path: '/admin/auth/reset-password',
+    element: <AdminAuthGuard><StaffResetPasswordPage /></AdminAuthGuard>,
+  },
+
   // Front Office Management
   {
     path: '/frontoffice',
-    element: <FrontOfficeLayout />,
+    element: <AdminAuthGuard allowedRoles={['front_office', 'superadmin', 'admin', 'manager']}><FrontOfficeLayout /></AdminAuthGuard>,
     children: [
       {
         index: true,
@@ -213,7 +221,7 @@ const routes: RouteObject[] = [
   // Housekeeping Management
   {
     path: '/housekeeping',
-    element: <HousekeepingLayout />,
+    element: <AdminAuthGuard allowedRoles={['housekeeping', 'superadmin', 'admin', 'manager']}><HousekeepingLayout /></AdminAuthGuard>,
     children: [
       {
         index: true,
@@ -249,7 +257,7 @@ const routes: RouteObject[] = [
   },
   {
     path: '/admin',
-    element: <AdminLayout />,
+    element: <AdminAuthGuard allowedRoles={['superadmin', 'admin', 'manager']}><AdminLayout /></AdminAuthGuard>,
     children: [
       {
         index: true,

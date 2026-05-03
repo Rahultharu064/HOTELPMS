@@ -97,27 +97,23 @@ const ProfilePage: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="text-2xl font-black text-[#111827] tracking-tight">Identity Details</h2>
-                  <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mt-0.5 font-mono">Profile publicly visible to staff</p>
+                  <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mt-0.5 font-mono">Profile visible to system administrators</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Full Name</label>
-                  <input type="text" defaultValue="Namuna Admin" className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/20 transition-all shadow-inner" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Full Legal Name</label>
+                  <input type="text" readOnly value={admin?.name || ''} className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#111827] focus:outline-none shadow-inner" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Phone Number</label>
-                  <input type="tel" defaultValue="+977-9841234567" className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/20 transition-all shadow-inner" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Official Email</label>
+                  <input type="email" readOnly value={admin?.email || ''} className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#111827] focus:outline-none shadow-inner" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Email Address</label>
-                  <input type="email" defaultValue="admin@namunacollege.edu.np" className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/20 transition-all shadow-inner" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Manager Role</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Workstation Role</label>
                   <div className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#F59E0B] uppercase tracking-widest flex items-center gap-2">
-                    <Shield size={14} /> Full System Access
+                    <Shield size={14} /> {admin?.role.replace('_', ' ')}
                   </div>
                 </div>
               </div>

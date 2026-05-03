@@ -1,6 +1,10 @@
-import { useState } from "react";
-import { Bell, Search, ChevronDown, Settings, LogOut, User, MessageSquare, Zap, ShieldCheck } from "lucide-react";
+import { useState, useRef } from "react";
+import { Bell, Search, ChevronDown, Settings, LogOut, User, MessageSquare, Zap, ShieldCheck, Camera, Loader2 } from "lucide-react";
 import { MobileMenuButton } from "./Sidebar";
+import { useAdminAuth } from "../../../context/AdminAuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import { api, BACKEND_ROOT } from "../../../services/api";
+import { toast } from "react-hot-toast";
 
 import { NotificationBell } from "../../common/NotificationBell";
 
@@ -11,10 +15,50 @@ interface HeaderProps {
 
 export function Header({ title, onMobileMenuClick }: HeaderProps) {
   const [profileOpen, setProfileOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const { admin, adminLogout, updateAdminUser } = useAdminAuth();
+  const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleLogout = () => {
+    adminLogout();
+    navigate('/admin/login');
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    setUploading(true);
+    try {
+      const response = await api.post<{ success: boolean, data: { avatar: string } }>('/admin/auth/avatar', formData);
+      if (response.success && admin) {
+        updateAdminUser({ ...admin, avatar: response.data.avatar });
+        toast.success("Identity image updated");
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase();
 
   return (
     <header className="sticky top-0 z-[40] transition-all duration-300 px-10 h-24 flex items-center gap-10 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <MobileMenuButton onClick={onMobileMenuClick} />
+      
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        className="hidden" 
+        accept="image/*"
+        onChange={handleAvatarUpload}
+      />
 
       {/* Title & Page Status */}
       <div className="flex flex-col h-full justify-center">
@@ -66,24 +110,41 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
 
         {/* User Profile */}
         <div className="relative ml-2">
-          <button
-            onClick={() => setProfileOpen(!profileOpen)}
-            aria-label="Toggle user menu"
-            title="Toggle user menu"
-            className={`flex items-center gap-3 p-1 rounded-2xl transition-all ${profileOpen ? "bg-gray-100 shadow-inner" : "hover:bg-gray-50"
-              }`}
-          >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1F7A3A] to-[#14532D] p-0.5 shadow-lg group-hover:scale-105 transition-all">
-              <div className="w-full h-full rounded-[10px] overflow-hidden border-2 border-white/20">
-                <img src="/avatar-placeholder.png" alt="Profile" className="w-full h-full object-cover" />
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="relative group w-10 h-10 rounded-xl bg-gradient-to-br from-[#1F7A3A] to-[#14532D] flex items-center justify-center text-white text-xs font-black shadow-lg overflow-hidden border-2 border-white"
+            >
+              {uploading ? (
+                <Loader2 size={16} className="animate-spin text-white" />
+              ) : admin?.avatar ? (
+                <img 
+                  src={`${BACKEND_ROOT}${admin.avatar}`} 
+                  alt={admin.name} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                getInitials(admin?.name || 'Admin')
+              )}
+              
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Camera size={14} className="text-white" />
               </div>
-            </div>
-            <div className="text-left hidden sm:block pr-2">
-              <p className="text-[12px] font-black text-[#111827] leading-none">Super Admin</p>
-              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#F59E0B] mt-1 opacity-80">Full Access</p>
-            </div>
-            <ChevronDown size={14} className={`text-gray-400 transition-transform hidden sm:block duration-500 ${profileOpen ? "rotate-180" : ""}`} />
-          </button>
+            </button>
+
+            <button
+              onClick={() => setProfileOpen(!profileOpen)}
+              className={`flex items-center gap-3 p-1 rounded-2xl transition-all ${
+                profileOpen ? "bg-gray-100 shadow-inner" : "hover:bg-gray-50"
+              }`}
+            >
+              <div className="text-left hidden sm:block pr-2">
+                <p className="text-[12px] font-black text-[#111827] leading-none">{admin?.name || 'Superuser'}</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#F59E0B] mt-1 opacity-80">{admin?.role.replace('_', ' ')}</p>
+              </div>
+              <ChevronDown size={14} className={`text-gray-400 transition-transform hidden sm:block duration-500 ${profileOpen ? "rotate-180" : ""}`} />
+            </button>
+          </div>
 
           {profileOpen && (
             <div className="absolute right-0 mt-4 w-64 bg-white rounded-[32px] shadow-2xl border border-gray-100 overflow-hidden animate-fade-down z-[60]">
@@ -97,26 +158,23 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
                 </div>
               </div>
               <div className="p-2">
-                {[
-                  { label: "Admin Profile", icon: User },
-                  { label: "Security Config", icon: Settings },
-                ].map((item) => (
-                  <button
-                    key={item.label}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-bold text-gray-500 hover:text-[#111827] hover:bg-gray-50 rounded-2xl transition-all"
-                    title={`Go to ${item.label}`}
-                  >
-                    <item.icon size={16} strokeWidth={2.5} />
-                    {item.label}
-                  </button>
-                ))}
+                <Link 
+                  to="/admin/users"
+                  onClick={() => setProfileOpen(false)}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-bold text-gray-500 hover:text-[#111827] hover:bg-gray-50 rounded-2xl transition-all"
+                  title="Go to User Management"
+                >
+                  <User size={16} strokeWidth={2.5} />
+                  Staff Roster
+                </Link>
                 <div className="h-px bg-gray-50 my-2 mx-4" />
-                <button
+                <button 
+                  onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all"
-                  title="Log out of system"
+                  title="Sign out of system"
                 >
                   <LogOut size={16} strokeWidth={2.5} />
-                  Terminate Session
+                  Logout
                 </button>
               </div>
             </div>

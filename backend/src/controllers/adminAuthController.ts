@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import path from 'path';
+import fs from 'fs';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../config/database';
@@ -6,6 +8,7 @@ import { config } from '../config';
 import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
 import { asyncHandler } from '../utils/asyncHandler';
+import { ApiResponse } from '../utils/ApiResponse';
 
 export class AdminAuthController {
   /**
@@ -75,8 +78,89 @@ export class AdminAuthController {
         email: admin.email,
         name: admin.name,
         role: admin.role,
+        mustChangePassword: admin.mustChangePassword,
       },
     });
+  });
+
+  /**
+   * Change Password (Staff Preference Reset)
+   */
+  changePassword = asyncHandler(async (req: Request, res: Response) => {
+    const userId = (req as any).user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    const admin = await prisma.admin.findUnique({
+      where: { id: userId },
+    });
+
+    if (!admin) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'User not found');
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, admin.password);
+    if (!isMatch) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'Current password provided is incorrect.');
+    }
+
+    // Hash and save new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.admin.update({
+      where: { id: userId },
+      data: {
+        password: hashedPassword,
+        mustChangePassword: false, // Reset the flag
+      },
+    });
+
+    res.status(HttpStatus.OK).json(
+      ApiResponse.success('Password updated successfully. You can now access your workstation.')
+    );
+  });
+
+  /**
+   * Update Admin Avatar
+   */
+  updateAvatar = asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user.id;
+      
+      if (!req.file) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'No file uploaded');
+      }
+
+      // Get the relative path for storage
+      const avatarUrl = `/uploads/${req.file.filename}`;
+
+      // Optional: Delete old avatar file
+      const admin = await prisma.admin.findUnique({
+        where: { id: userId },
+        select: { avatar: true }
+      });
+
+      if (admin?.avatar) {
+        // Remove the leading slash if it exists for path.join
+        const relativePath = admin.avatar.startsWith('/') ? admin.avatar.substring(1) : admin.avatar;
+        const oldPath = path.join(process.cwd(), relativePath);
+        
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+
+      await prisma.admin.update({
+        where: { id: userId },
+        data: { avatar: avatarUrl }
+      });
+
+      res.status(HttpStatus.OK).json(
+        ApiResponse.success('Avatar updated successfully', { avatar: avatarUrl })
+      );
+    } catch (error) {
+      console.error('Avatar Upload Error:', error);
+      throw error;
+    }
   });
 
   /**
@@ -92,12 +176,14 @@ export class AdminAuthController {
         email: true,
         name: true,
         role: true,
+        avatar: true,
         lastLogin: true,
+        mustChangePassword: true,
       }
     });
 
     if (!admin) {
-      throw new ApiError(HttpStatus.NOT_FOUND, 'Admin user not found');
+      throw new ApiError(HttpStatus.NOT_FOUND, 'User not found');
     }
 
     res.json(admin);

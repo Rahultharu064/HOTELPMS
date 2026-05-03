@@ -1,4 +1,6 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useAdminAuth } from "../../../context/AdminAuthContext";
+import { BACKEND_ROOT } from "../../../services/api";
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -35,6 +37,15 @@ interface AppSidebarProps {
 
 export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppSidebarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { admin, adminLogout } = useAdminAuth();
+
+  const handleLogout = () => {
+    adminLogout();
+    navigate('/admin/login');
+  };
+
+  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase();
 
   const sidebarContent = (
     <div className={`flex flex-col h-full bg-[#14532D] text-white transition-all duration-300 ${collapsed ? "w-[80px]" : "w-[280px]"}`}>
@@ -101,12 +112,16 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         {!collapsed && (
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/5 p-1 flex items-center justify-center border border-white/10 transition-all overflow-hidden relative">
-                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&q=80" alt="Admin" className="w-full h-full object-cover rounded-full" />
+              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 text-[10px] font-black text-[#F59E0B] overflow-hidden">
+                {admin?.avatar ? (
+                  <img src={`${BACKEND_ROOT}${admin.avatar}`} alt={admin.name} className="w-full h-full object-cover" />
+                ) : (
+                  admin ? getInitials(admin.name) : '??'
+                )}
               </div>
               <div className="overflow-hidden">
-                <h4 className="text-[12px] font-bold text-white leading-none">John Doe</h4>
-                <p className="text-[10px] font-bold text-[#F59E0B]/80 uppercase mt-1 tracking-wider opacity-80">Manager</p>
+                <h4 className="text-[12px] font-bold text-white leading-none truncate w-[120px]">{admin?.name || 'Guest Admin'}</h4>
+                <p className="text-[10px] font-bold text-[#F59E0B]/80 uppercase mt-1 tracking-wider opacity-80">{admin?.role.replace('_', ' ')}</p>
               </div>
             </div>
             <button 
@@ -129,14 +144,14 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
           </button>
         )}
         
-        <Link 
-          to="/logout"
-          className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl bg-[#DC2626]/10 text-red-400 hover:bg-[#DC2626] hover:text-white transition-all duration-300 group ${collapsed ? "justify-center" : ""}`}
+        <button 
+          onClick={handleLogout}
+          className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl bg-[#DC2626]/10 text-red-400 hover:bg-[#DC2626] hover:text-white transition-all duration-300 group ${collapsed ? "justify-center" : ""}`}
           title="Logout session"
         >
           <LogOut size={20} className="shrink-0 transition-transform group-hover:-translate-x-1" />
           {!collapsed && <span className="text-[11px] font-black uppercase tracking-[0.2em]">Logout</span>}
-        </Link>
+        </button>
       </div>
     </div>
   );

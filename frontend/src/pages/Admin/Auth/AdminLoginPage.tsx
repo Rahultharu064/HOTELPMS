@@ -10,8 +10,26 @@ export const AdminLoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { adminLogin } = useAdminAuth();
+  const { admin, adminLogin, isAdminAuthenticated } = useAdminAuth();
   const navigate = useNavigate();
+
+  // Auto-redirect if already authenticated
+  React.useEffect(() => {
+    if (isAdminAuthenticated && admin) {
+      if (admin.mustChangePassword) {
+        navigate('/admin/auth/reset-password');
+      } else {
+        const homeMap: Record<string, string> = {
+          superadmin: '/admin',
+          admin: '/admin',
+          manager: '/admin',
+          front_office: '/frontoffice',
+          housekeeping: '/housekeeping'
+        };
+        navigate(homeMap[admin.role] || '/admin');
+      }
+    }
+  }, [isAdminAuthenticated, admin, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +38,18 @@ export const AdminLoginPage: React.FC = () => {
       // Direct API call since we don't have a specific adminAuthService yet
       const response = await api.post<any>('/admin/auth/login', { email, password });
       adminLogin(response.user, response.token);
-      toast.success('Admin authentication successful');
-      navigate('/admin');
+      toast.success('Authentication successful');
+
+      if (response.user.mustChangePassword) {
+        navigate('/admin/auth/reset-password');
+        return;
+      }
+
+      // Role-based redirection
+      const role = response.user.role;
+      if (role === 'front_office') navigate('/frontoffice');
+      else if (role === 'housekeeping') navigate('/housekeeping');
+      else navigate('/admin');
     } catch (error: any) {
       console.error('Admin Login error:', error);
       toast.error(error.response?.data?.message || 'Authentication failed');

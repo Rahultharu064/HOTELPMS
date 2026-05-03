@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Users, 
   UserPlus, 
@@ -12,157 +12,101 @@ import {
   XCircle,
   Trash2,
   Edit2,
-  Download
+  Download,
+  Loader2,
+  Copy,
+  AlertTriangle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Modal } from "../../components/ui/Modal";
 import { toast } from "react-hot-toast";
-
-interface UserNode {
-  id: string;
-  name: string;
-  email: string;
-  role: 'Super Admin' | 'Admin' | 'Receptionist' | 'Housekeeping' | 'Manager';
-  status: 'Active' | 'Inactive' | 'Suspended';
-  lastLogin: string;
-  avatar?: string;
-  phone: string;
-}
-
-const dummyUsers: UserNode[] = [
-  { 
-    id: "USR-001", 
-    name: "Rahul Tharu", 
-    email: "rahul@namunahotel.com", 
-    role: "Super Admin", 
-    status: "Active", 
-    lastLogin: "2 mins ago", 
-    phone: "+977 9800000000" 
-  },
-  { 
-    id: "USR-002", 
-    name: "Sita Sharma", 
-    email: "sita@namunahotel.com", 
-    role: "Receptionist", 
-    status: "Active", 
-    lastLogin: "1 hr ago", 
-    phone: "+977 9811111111" 
-  },
-  { 
-    id: "USR-003", 
-    name: "Ram Bahadur", 
-    email: "ram@namunahotel.com", 
-    role: "Housekeeping", 
-    status: "Inactive", 
-    lastLogin: "Yesterday", 
-    phone: "+977 9822222222" 
-  },
-  { 
-    id: "USR-004", 
-    name: "Gita Thapa", 
-    email: "gita@namunahotel.com", 
-    role: "Manager", 
-    status: "Active", 
-    lastLogin: "Just now", 
-    phone: "+977 9833333333" 
-  },
-];
+import { staffService, type StaffMember } from "../../services/staffService";
 
 const AdminUsersPage: React.FC = () => {
-  const [users, setUsers] = useState<UserNode[]>(dummyUsers);
+  const [staff, setStaff] = useState<StaffMember[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<UserNode | null>(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [createdStaffInfo, setCreatedStaffInfo] = useState<{name: string, email: string, temporaryPassword: string} | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    role: 'Receptionist' as any,
-    phone: '',
-    status: 'Active' as any
+    role: 'front_office',
+    phoneNumber: '',
   });
 
-  const filteredUsers = users.filter(u => 
+  const fetchStaff = async () => {
+    try {
+      setLoading(true);
+      const res = await staffService.getAllStaff();
+      if (res.success) {
+        setStaff(res.data);
+      }
+    } catch (error) {
+      toast.error("Failed to load staff records");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStaff();
+  }, []);
+
+  const handleToggleStatus = async (id: number, currentStatus: boolean) => {
+    try {
+      const res = await staffService.toggleStatus(id, !currentStatus);
+      if (res.success) {
+        toast.success(res.message);
+        fetchStaff();
+      }
+    } catch (error) {
+      toast.error("Failed to update status");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await staffService.createStaff(formData);
+      if (res.success) {
+        setCreatedStaffInfo({
+          name: res.data.staff.name,
+          email: res.data.staff.email,
+          temporaryPassword: res.data.temporaryPassword
+        });
+        setIsModalOpen(false);
+        setIsSuccessModalOpen(true);
+        fetchStaff();
+        setFormData({ name: '', email: '', role: 'front_office', phoneNumber: '' });
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to create staff account");
+    }
+  };
+
+  const filteredStaff = staff.filter(u => 
     u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     u.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleOpenModal = (user?: UserNode) => {
-    if (user) {
-      setEditingUser(user);
-      setFormData({
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        phone: user.phone,
-        status: user.status
-      });
-    } else {
-      setEditingUser(null);
-      setFormData({
-        name: '',
-        email: '',
-        role: 'Receptionist',
-        phone: '',
-        status: 'Active'
-      });
-    }
-    setIsModalOpen(true);
-  };
-
-  const handleToggleStatus = (id: string) => {
-    setUsers(prev => prev.map(u => {
-      if (u.id === id) {
-        const newStatus = u.status === 'Active' ? 'Inactive' : 'Active';
-        toast.success(`${u.name} is now ${newStatus}`, {
-          icon: newStatus === 'Active' ? '🟢' : '🔴'
-        });
-        return { ...u, status: newStatus as any };
-      }
-      return u;
-    }));
-  };
-
-  const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(prev => prev.filter(u => u.id !== id));
-      toast.success("User deleted successfully");
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (editingUser) {
-      // Update Logic
-      setUsers(prev => prev.map(u => 
-        u.id === editingUser.id ? { ...u, ...formData } : u
-      ));
-      toast.success("User details updated");
-    } else {
-      // Create Logic
-      const newUser: UserNode = {
-        id: `USR-00${users.length + 1}`,
-        ...formData,
-        lastLogin: "Never"
-      };
-      setUsers(prev => [newUser, ...prev]);
-      toast.success("New user added successfully");
-    }
-    
-    setIsModalOpen(false);
-  };
-
   const stats = [
-    { label: "Total Users", value: users.length, icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Active Users", value: users.filter(u => u.status === 'Active').length, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
-    { label: "System Admins", value: users.filter(u => u.role.includes('Admin')).length, icon: ShieldCheck, color: "text-amber-600", bg: "bg-amber-50" },
-    { label: "Inactive Users", value: users.filter(u => u.status !== 'Active').length, icon: XCircle, color: "text-rose-600", bg: "bg-rose-50" },
+    { label: "Total Personnel", value: staff.length, icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "On Duty", value: staff.filter(u => u.isActive).length, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "Front Office", value: staff.filter(u => u.role === 'front_office').length, icon: ShieldCheck, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Housekeeping", value: staff.filter(u => u.role === 'housekeeping').length, icon: XCircle, color: "text-rose-600", bg: "bg-rose-50" },
   ];
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Copied to clipboard");
+  };
 
   return (
     <div className="space-y-12 animate-fade-in pb-20">
@@ -171,16 +115,16 @@ const AdminUsersPage: React.FC = () => {
         <div>
           <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
             <div className="w-2 h-8 bg-[#14532D] rounded-full" />
-            User Management
+            Personnel Roster
           </h1>
-          <p className="text-neutral-text-secondary text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Manage staff members and their access levels</p>
+          <p className="text-neutral-text-secondary text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Administer staff identities and access privileges</p>
         </div>
         <div className="flex items-center gap-4">
           <Button 
-            onClick={() => handleOpenModal()}
-            className="bg-[#14532D] hover:bg-[#111827] text-white px-8 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-[#14532D]/10 flex items-center gap-3"
+            onClick={() => setIsModalOpen(true)}
+            className="bg-[#14532D] hover:bg-[#111827] text-white px-8 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-green-900/20 flex items-center gap-3"
           >
-            <UserPlus size={18} strokeWidth={3} /> Add New User
+            <UserPlus size={18} strokeWidth={3} /> Register Personnel
           </Button>
         </div>
       </div>
@@ -215,7 +159,7 @@ const AdminUsersPage: React.FC = () => {
             <input 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Query by name, role or email..." 
+              placeholder="Query by identity, role or mail..." 
               className="w-full pl-16 pr-6 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold focus:ring-4 focus:ring-[#14532D]/5 transition-all outline-none"
             />
           </div>
@@ -224,7 +168,7 @@ const AdminUsersPage: React.FC = () => {
               <Filter size={16} /> Filters
             </Button>
             <Button variant="ghost" className="h-12 px-6 rounded-2xl bg-gray-50 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-[#111827] flex items-center gap-2">
-              <Download size={16} /> Export Data
+              <Download size={16} /> Export
             </Button>
           </div>
         </div>
@@ -234,20 +178,25 @@ const AdminUsersPage: React.FC = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">User Details</th>
-                <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Role</th>
+                <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Identity Details</th>
+                <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Designation</th>
                 <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
-                <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Actions</th>
+                <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Operations</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              <AnimatePresence>
-                {filteredUsers.map((user, i) => (
+              {loading ? (
+                <tr>
+                  <td colSpan={4} className="py-20 text-center">
+                    <Loader2 className="animate-spin mx-auto text-[#14532D]" size={32} />
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-4">Accessing Personnel Database...</p>
+                  </td>
+                </tr>
+              ) : filteredStaff.map((user, i) => (
                   <motion.tr 
                     layout
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ delay: i * 0.05 }}
                     key={user.id} 
                     className="hover:bg-gray-50/50 transition-all group"
@@ -266,116 +215,162 @@ const AdminUsersPage: React.FC = () => {
                     <td className="px-10 py-8">
                       <div className="flex flex-col">
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest w-fit ${
-                          user.role.includes('Admin') ? 'bg-[#14532D]/10 text-[#14532D]' : 'bg-gray-100 text-gray-500'
+                          user.role.includes('admin') ? 'bg-[#14532D]/10 text-[#14532D]' : 'bg-gray-100 text-gray-500'
                         }`}>
-                          <ShieldCheck size={10} /> {user.role}
+                          <ShieldCheck size={10} /> {user.role.replace('_', ' ')}
                         </span>
-                        <span className="text-[9px] font-bold text-gray-400 mt-2 ml-1 uppercase tracking-widest">ID: {user.id}</span>
+                        <span className="text-[9px] font-bold text-gray-400 mt-2 ml-1 uppercase tracking-widest">ID: {user.id.toString().padStart(4, '0')}</span>
                       </div>
                     </td>
                     <td className="px-10 py-8">
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                          <div className={`w-1.5 h-1.5 rounded-full ${user.status === 'Active' ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                          <span className="text-[12px] font-bold text-[#111827]">{user.status}</span>
+                          <div className={`w-1.5 h-1.5 rounded-full ${user.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                          <span className="text-[12px] font-bold text-[#111827]">{user.isActive ? 'Active' : 'Deactivated'}</span>
                         </div>
-                        <span className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">Last Auth: {user.lastLogin}</span>
+                        <span className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">Last Access: {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}</span>
                       </div>
                     </td>
                     <td className="px-10 py-8 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
-                          onClick={() => handleOpenModal(user)}
+                          onClick={() => handleToggleStatus(user.id, user.isActive)}
+                          title={user.isActive ? "Deactivate Account" : "Activate Account"}
+                          className={`w-10 h-10 rounded-xl transition-all flex items-center justify-center ${user.isActive ? 'bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white' : 'bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white'}`}
+                        >
+                          {user.isActive ? <XCircle size={16} strokeWidth={2.5} /> : <CheckCircle2 size={16} strokeWidth={2.5} />}
+                        </button>
+                        <button 
                           className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-[#111827] hover:text-white transition-all flex items-center justify-center"
                         >
                           <Edit2 size={16} strokeWidth={2.5} />
                         </button>
-                        <button 
-                          onClick={() => handleDelete(user.id)}
-                          className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-red-600 hover:text-white transition-all flex items-center justify-center"
-                        >
-                          <Trash2 size={16} strokeWidth={2.5} />
-                        </button>
                       </div>
                     </td>
                   </motion.tr>
-                ))}
-              </AnimatePresence>
+                ))
+              }
             </tbody>
           </table>
         </div>
 
-        {filteredUsers.length === 0 && (
+        {!loading && filteredStaff.length === 0 && (
           <div className="py-32 flex flex-col items-center justify-center gap-6 opacity-30">
             <Users size={64} strokeWidth={1} />
-            <p className="text-[11px] font-black uppercase tracking-[0.3em]">No users found</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.3em]">No personnel records found</p>
           </div>
         )}
       </Card>
 
-      {/* Modal for adding/editing users */}
+      {/* Modal for adding users */}
       <Modal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
-        title={editingUser ? "Edit User Details" : "Add New User"}
+        title="Register Personnel"
       >
         <form onSubmit={handleSubmit} className="p-4 space-y-8">
-           <div className="grid grid-cols-2 gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Full Legal Name</label>
                  <input 
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all" 
+                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all font-bold" 
                     placeholder="Enter full name" 
                  />
               </div>
               <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Email Address</label>
+                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Official Email</label>
                  <input 
                     required
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all" 
-                    placeholder="name@namunahotel.com" 
+                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all font-bold" 
+                    placeholder="staff@hotelpms.com" 
                  />
               </div>
            </div>
-           <div className="grid grid-cols-2 gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">User Role</label>
+                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Workstation Role</label>
                  <select 
                     value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
-                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all appearance-none"
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all appearance-none font-bold"
                  >
-                    <option value="Receptionist">Receptionist</option>
-                    <option value="Housekeeping">Housekeeping</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Super Admin">Super Admin</option>
+                    <option value="front_office">Front Office Staff</option>
+                    <option value="housekeeping">Housekeeping Staff</option>
+                    <option value="manager">Service Manager</option>
+                    <option value="admin">System Administrator</option>
                  </select>
               </div>
               <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Contact Number</label>
+                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Contact Signal</label>
                  <input 
                     required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all" 
+                    value={formData.phoneNumber}
+                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all font-bold" 
                     placeholder="+977 98XXXXXXXX" 
                  />
               </div>
            </div>
            <div className="pt-6 flex gap-4">
               <Button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 h-14 rounded-2xl bg-gray-50 text-gray-400 text-[11px] font-black uppercase tracking-widest hover:bg-gray-100">Cancel</Button>
-              <Button type="submit" className="flex-[2] h-14 rounded-2xl bg-[#14532D] text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#111827] shadow-xl shadow-[#14532D]/20">
-                {editingUser ? "Update User" : "Add User"}
+              <Button type="submit" className="flex-[2] h-14 rounded-2xl bg-[#14532D] text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#111827] shadow-xl shadow-green-900/20 transition-all">
+                Authorize Personnel
               </Button>
            </div>
         </form>
+      </Modal>
+
+      {/* Success Modal with Temporary Password */}
+      <Modal 
+        isOpen={isSuccessModalOpen} 
+        onClose={() => setIsSuccessModalOpen(false)}
+        title="Account Authorized"
+      >
+        <div className="p-8 space-y-8 text-center">
+           <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-[28px] flex items-center justify-center mx-auto shadow-sm">
+              <CheckCircle2 size={40} strokeWidth={2.5} />
+           </div>
+           
+           <div>
+              <h3 className="text-xl font-black text-[#111827] tracking-tight">{createdStaffInfo?.name} authorized successfully!</h3>
+              <p className="text-xs font-bold text-gray-400 mt-2">A temporary security credential has been generated.</p>
+           </div>
+
+           <div className="p-8 bg-gray-50 rounded-[32px] border border-gray-100 relative group">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Temporary Workstation Password</p>
+              <div className="flex items-center justify-center gap-4">
+                 <span className="text-3xl font-black text-[#14532D] tracking-widest font-mono select-all">
+                   {createdStaffInfo?.temporaryPassword}
+                 </span>
+                 <button 
+                   onClick={() => copyToClipboard(createdStaffInfo?.temporaryPassword || '')}
+                   className="p-3 bg-white text-[#14532D] rounded-xl shadow-sm hover:scale-110 transition-transform"
+                 >
+                   <Copy size={20} />
+                 </button>
+              </div>
+           </div>
+
+           <div className="flex items-start gap-4 p-6 bg-amber-50 rounded-2xl border border-amber-100 text-left">
+              <AlertTriangle size={20} className="text-amber-500 shrink-0 mt-0.5" />
+              <p className="text-[10px] font-bold text-amber-800 leading-relaxed uppercase tracking-wide">
+                IMPORTANT: Give this password to the staff member. They will be required to change it upon their first login for security purposes. This password will not be shown again.
+              </p>
+           </div>
+
+           <Button 
+             onClick={() => setIsSuccessModalOpen(false)}
+             className="w-full h-14 bg-[#111827] text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-xl shadow-gray-900/20"
+           >
+             Continue to Roster
+           </Button>
+        </div>
       </Modal>
     </div>
   );

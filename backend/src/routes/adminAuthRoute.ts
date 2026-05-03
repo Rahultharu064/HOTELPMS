@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { AdminAuthController } from '../controllers/adminAuthController';
 import { validate } from '../middlewares/validateMiddleware';
 import { authenticateAdmin } from '../middlewares/adminAuthMiddleware';
+import { upload } from '../middlewares/uploadMiddleware';
 import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
 
@@ -29,5 +30,7 @@ router.post('/login', loginLimiter, validate(adminLoginSchema), adminAuthControl
 
 // Protected routes
 router.get('/me', authenticateAdmin as any, adminAuthController.getMe);
+router.post('/change-password', authenticateAdmin as any, adminAuthController.changePassword);
+router.post('/avatar', authenticateAdmin as any, upload.single('avatar'), adminAuthController.updateAvatar);
 
 export default router;

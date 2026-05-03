@@ -59,3 +59,15 @@ export const requireSuperAdmin = (req: AdminAuthRequest, res: Response, next: Ne
   }
   next();
 };
+
+/**
+ * Authorize multiple roles
+ */
+export const authorizeRoles = (...roles: string[]) => {
+  return (req: AdminAuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return next(new ApiError(HttpStatus.FORBIDDEN, `Access denied. Requires one of these roles: ${roles.join(', ')}`));
+    }
+    next();
+  };
+};

@@ -1,5 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
+import { BACKEND_ROOT } from "../../../services/api";
 import {
   LayoutDashboard,
   Users,
@@ -109,12 +110,18 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         {!collapsed && (
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/5 p-1 flex items-center justify-center border border-white/10 transition-all overflow-hidden relative">
-                <img src="/avatar-placeholder.png" alt="Super Admin" className="w-full h-full object-cover rounded-full" />
+              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 transition-all overflow-hidden relative">
+                {admin?.avatar ? (
+                  <img src={`${BACKEND_ROOT}${admin.avatar}`} alt={admin.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="text-[10px] font-black text-[#F59E0B]">
+                    {admin?.name ? admin.name.split(' ').map(n => n[0]).join('').toUpperCase() : '??'}
+                  </div>
+                )}
               </div>
               <div className="overflow-hidden">
-                <h4 className="text-[12px] font-bold text-white leading-none">{admin?.name || 'Super Admin'}</h4>
-                <p className="text-[10px] font-bold text-[#F59E0B]/80 uppercase mt-1 tracking-wider opacity-80">{admin?.role || 'Online'}</p>
+                <h4 className="text-[12px] font-bold text-white leading-none truncate w-[120px]">{admin?.name || 'Super Admin'}</h4>
+                <p className="text-[10px] font-bold text-[#F59E0B]/80 uppercase mt-1 tracking-wider opacity-80">{admin?.role.replace('_', ' ') || 'Online'}</p>
               </div>
             </div>
             <button 

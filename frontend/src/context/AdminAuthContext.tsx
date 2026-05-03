@@ -5,12 +5,15 @@ interface AdminUser {
   email: string;
   name: string;
   role: string;
+  avatar?: string;
+  mustChangePassword?: boolean;
 }
 
 interface AdminAuthContextType {
   admin: AdminUser | null;
   adminToken: string | null;
   adminLogin: (userData: AdminUser, token: string) => void;
+  updateAdminUser: (userData: AdminUser) => void;
   adminLogout: () => void;
   isAdminAuthenticated: boolean;
   isAdminLoading: boolean;
@@ -41,6 +44,11 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     localStorage.setItem('admin_user', JSON.stringify(userData));
   };
 
+  const updateAdminUser = (userData: AdminUser) => {
+    setAdmin(userData);
+    localStorage.setItem('admin_user', JSON.stringify(userData));
+  };
+
   const adminLogout = () => {
     setAdmin(null);
     setAdminToken(null);
@@ -49,7 +57,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   return (
-    <AdminAuthContext.Provider value={{ admin, adminToken, adminLogin, adminLogout, isAdminAuthenticated: !!adminToken, isAdminLoading }}>
+    <AdminAuthContext.Provider value={{ admin, adminToken, adminLogin, updateAdminUser, adminLogout, isAdminAuthenticated: !!adminToken, isAdminLoading }}>
       {children}
     </AdminAuthContext.Provider>
   );

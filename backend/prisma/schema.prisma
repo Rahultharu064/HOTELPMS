@@ -223,19 +223,22 @@ model Guest {
   @@map("guests")
 }
 
-// Admins
+// Admins & Staff
 model Admin {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique @db.VarChar(255)
-  password      String    @db.VarChar(255)
-  name          String    @db.VarChar(100)
-  role          AdminRole @default(admin)
-  isActive      Boolean   @default(true)
-  lastLogin     DateTime?
-  loginAttempts Int       @default(0)
-  lockedUntil   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                 Int       @id @default(autoincrement())
+  email              String    @unique @db.VarChar(255)
+  password           String    @db.VarChar(255)
+  name               String    @db.VarChar(100)
+  phoneNumber        String?   @db.VarChar(20)
+  avatar             String?   @db.Text
+  role               AdminRole @default(admin)
+  isActive           Boolean   @default(true)
+  mustChangePassword Boolean   @default(false)
+  lastLogin          DateTime?
+  loginAttempts      Int       @default(0)
+  lockedUntil        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   @@map("admins")
 }
@@ -245,6 +248,8 @@ enum AdminRole {
   superadmin
   admin
   manager
+  front_office
+  housekeeping
 
   @@map("admin_role")
 }

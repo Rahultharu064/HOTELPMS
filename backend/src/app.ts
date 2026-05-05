@@ -57,6 +57,15 @@ const uploadsPath = path.join(process.cwd(), config.uploadDir);
 console.log('Serving static files from:', uploadsPath);
 app.use('/uploads', express.static(uploadsPath));
 
+// Root route
+app.get('/', (_req: Request, res: Response) => {
+  res.status(200).json({
+    message: 'Welcome to the HOTELPMS API',
+    status: 'running',
+    docs: '/api' // Or wherever documentation might be
+  });
+});
+
 // Health check
 app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({

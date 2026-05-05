@@ -26,7 +26,7 @@ export const staffService = {
     email: string;
     phoneNumber?: string;
     role: string;
-  }) => {
+  }): Promise<ApiResponse<CreateStaffResponse>> => {
     const response = await api.post<ApiResponse<CreateStaffResponse>>('/admin/staff', data);
     return response;
   },
@@ -34,7 +34,7 @@ export const staffService = {
   /**
    * Get all staff members
    */
-  getAllStaff: async () => {
+  getAllStaff: async (): Promise<ApiResponse<StaffMember[]>> => {
     const response = await api.get<ApiResponse<StaffMember[]>>('/admin/staff');
     return response;
   },
@@ -42,7 +42,7 @@ export const staffService = {
   /**
    * Toggle staff active status
    */
-  toggleStatus: async (id: number, isActive: boolean) => {
+  toggleStatus: async (id: number, isActive: boolean): Promise<ApiResponse<StaffMember>> => {
     const response = await api.patch<ApiResponse<StaffMember>>(`/admin/staff/${id}/status`, { isActive });
     return response;
   },

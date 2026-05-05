@@ -13,7 +13,7 @@ import {
   Package,
   History
 } from 'lucide-react';
-import {  Button } from '../../../components/ui/Button';
+import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 
 export const GuestProfilePage: React.FC = () => {

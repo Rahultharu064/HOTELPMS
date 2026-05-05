@@ -4,7 +4,6 @@ import QuickActions from "../../components/frontoffice/Dashboard/QuickActions";
 import BookingsTable from "../../components/frontoffice/Dashboard/BookingsTable";
 import CheckInOutForm from "../../components/frontoffice/Dashboard/CheckInOutForm";
 import GuestManagement from "../../components/frontoffice/Dashboard/GuestManagement";
-import { motion } from "framer-motion";
 
 const DashboardHome: React.FC = () => {
   return (

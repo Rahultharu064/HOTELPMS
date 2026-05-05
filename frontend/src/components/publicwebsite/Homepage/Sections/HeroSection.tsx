@@ -3,7 +3,7 @@ import { Button } from "../../../ui/Button";
 import { ChevronDown, ChevronLeft, ChevronRight, CalendarDays, Users, Baby } from "lucide-react";
 import hero1 from "../../../../assets/Hero.webp"
 
-import { Link } from "react-router-dom";
+
 import { Input } from "../../../ui/Input";
 import { Select } from "../../../ui/Select";
 const slides = [

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Star, Quote, MessageSquare, Plus } from "lucide-react";
 import { reviewService, type Review } from "../../../../services/reviewService";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "../../../ui/Button";
 import { SubmitReviewModal } from "./SubmitReviewModal";
 

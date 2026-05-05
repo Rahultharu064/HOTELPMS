@@ -5,8 +5,7 @@ import {
   Activity,
   Clock3,
   Loader2,
-  RefreshCcw,
-  CheckCircle2
+  RefreshCcw
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { housekeepingService } from "../../services/housekeepingService";

@@ -4,13 +4,10 @@ import {
   DoorOpen,
   Hammer,
   Clock,
-  ArrowUpRight,
   CheckCircle2,
   UserSquare2,
   Loader2,
   RefreshCcw,
-  AlertCircle,
-  X
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { housekeepingService } from "../../services/housekeepingService";
@@ -196,7 +193,6 @@ const DashboardPage: React.FC = () => {
             {filteredRooms.map((room) => {
               const isDirty = room.status === 'cleaning';
               const isClean = room.status === 'available';
-              const isOccupied = room.status === 'occupied';
 
               return (
                 <div key={room.id} className="bg-white p-7 rounded-[40px] border border-gray-100 hover:shadow-2xl transition-all relative overflow-hidden group">

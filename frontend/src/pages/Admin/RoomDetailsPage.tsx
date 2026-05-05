@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -11,7 +11,6 @@ import {
   Clock, 
   AlertTriangle,
   LayoutGrid,
-  MapPin,
   Layers,
   Sparkles,
   Loader2

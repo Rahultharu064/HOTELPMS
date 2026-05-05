@@ -3,21 +3,17 @@ import {
   Users, 
   UserPlus, 
   ShieldCheck, 
-  Mail, 
-  Phone, 
-  MoreVertical, 
   Search, 
   Filter, 
   CheckCircle2,
   XCircle,
-  Trash2,
   Edit2,
   Download,
   Loader2,
   Copy,
   AlertTriangle
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Modal } from "../../components/ui/Modal";
@@ -297,8 +293,8 @@ const AdminUsersPage: React.FC = () => {
                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Workstation Role</label>
                  <select 
                     value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all appearance-none font-bold"
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, role: e.target.value })}
+                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all appearance-none font-bold text-sm"
                  >
                     <option value="front_office">Front Office Staff</option>
                     <option value="housekeeping">Housekeeping Staff</option>
@@ -348,12 +344,12 @@ const AdminUsersPage: React.FC = () => {
                  <span className="text-3xl font-black text-[#14532D] tracking-widest font-mono select-all">
                    {createdStaffInfo?.temporaryPassword}
                  </span>
-                 <button 
-                   onClick={() => copyToClipboard(createdStaffInfo?.temporaryPassword || '')}
-                   className="p-3 bg-white text-[#14532D] rounded-xl shadow-sm hover:scale-110 transition-transform"
+                 <Button 
+                      onClick={() => copyToClipboard(createdStaffInfo?.temporaryPassword || '')}
+                    className="p-3 bg-white text-[#14532D] rounded-xl shadow-sm hover:scale-110 transition-transform"
                  >
                    <Copy size={20} />
-                 </button>
+                 </Button>
               </div>
            </div>
 

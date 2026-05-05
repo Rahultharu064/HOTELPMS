@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, Search, ChevronDown, Settings, LogOut, User, MessageSquare, Zap } from "lucide-react";
+import { Search, ChevronDown, Settings, LogOut, User, Zap } from "lucide-react";
 import { MobileMenuButton } from "./Sidebar";
 
 import { NotificationBell } from "../../common/NotificationBell";

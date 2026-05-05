@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api, type ApiResponse } from './api';
 
 export interface StaffMember {
   id: number;
@@ -12,6 +12,11 @@ export interface StaffMember {
   createdAt: string;
 }
 
+export interface CreateStaffResponse {
+  staff: StaffMember;
+  temporaryPassword: string;
+}
+
 export const staffService = {
   /**
    * Create a new staff member
@@ -22,23 +27,23 @@ export const staffService = {
     phoneNumber?: string;
     role: string;
   }) => {
-    const response = await api.post('/admin/staff', data);
-    return response.data;
+    const response = await api.post<ApiResponse<CreateStaffResponse>>('/admin/staff', data);
+    return response;
   },
 
   /**
    * Get all staff members
    */
   getAllStaff: async () => {
-    const response = await api.get('/admin/staff');
-    return response.data;
+    const response = await api.get<ApiResponse<StaffMember[]>>('/admin/staff');
+    return response;
   },
 
   /**
    * Toggle staff active status
    */
   toggleStatus: async (id: number, isActive: boolean) => {
-    const response = await api.patch(`/admin/staff/${id}/status`, { isActive });
-    return response.data;
+    const response = await api.patch<ApiResponse<StaffMember>>(`/admin/staff/${id}/status`, { isActive });
+    return response;
   },
 };

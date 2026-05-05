@@ -38,11 +38,6 @@ export const LoginPage: React.FC = () => {
     onSuccess: async (tokenResponse) => {
       setLoading(true);
       try {
-        // Exchange the access token for a credential via the userinfo endpoint
-        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        });
-        const userInfo = await userInfoRes.json();
         // Use id_token flow if available, otherwise use googleId directly
         const data = await authService.googleLogin(tokenResponse.access_token);
         login(data.user, data.token);
@@ -92,7 +87,7 @@ export const LoginPage: React.FC = () => {
             <div>
               <div className="flex justify-between items-center mb-1 ml-1">
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest">Password</label>
-                <Link to="/forgot-password" size="sm" className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-blue-700">
+                <Link to="/forgot-password" title="Forgot Password" className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-blue-700">
                   Forgot?
                 </Link>
               </div>

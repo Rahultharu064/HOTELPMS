@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authService } from '../../../services/authService';
 import { toast } from 'react-hot-toast';
-import { Lock, ArrowRight, CheckCircle } from 'lucide-react';
+import { Lock, CheckCircle } from 'lucide-react';
 
 export const ResetPasswordPage: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -41,7 +41,7 @@ export const ResetPasswordPage: React.FC = () => {
           <h2 className="text-2xl font-bold text-red-600">Invalid Link</h2>
           <p className="text-gray-600 mt-2">The password reset link is invalid or has expired.</p>
           <div className="mt-8">
-            <Link to="/forgot-password" size="sm" className="text-sm font-black text-blue-600 uppercase tracking-widest hover:text-blue-700">
+            <Link to="/forgot-password" title="Forgot Password" className="text-sm font-black text-blue-600 uppercase tracking-widest hover:text-blue-700">
               Request a new link
             </Link>
           </div>

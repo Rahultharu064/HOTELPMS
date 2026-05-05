@@ -6,18 +6,14 @@ import {
   Clock, 
   CheckCircle2, 
   AlertCircle, 
-  History, 
   User, 
   BedDouble, 
   Wind, 
-  Coffee, 
   Tv, 
   Hammer,
-  MoreVertical,
   Plus,
   Loader2
 } from "lucide-react";
-import { motion } from "framer-motion";
 import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
 

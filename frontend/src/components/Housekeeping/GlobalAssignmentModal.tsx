@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 import { housekeepingService } from '../../services/housekeepingService';
 import { toast } from 'react-hot-toast';
-import { Loader2, CheckCircle2, User, DoorOpen, Zap, ShieldCheck } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export const GlobalAssignmentModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);

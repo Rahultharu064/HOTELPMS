@@ -7,26 +7,15 @@ import {
   X, 
   Plus, 
   ImageIcon, 
-  Video as VideoIcon, 
-  Type, 
-  Hash, 
-  Layers, 
-  Banknote, 
-  Maximize2, 
-  Users, 
-  Settings, 
-  AlignLeft, 
-  Sparkles,
-  Upload,
   Loader2
 } from 'lucide-react';
 import { roomService } from '../../services/roomService';
 import { roomTypeService } from '../../services/roomTypeService';
 import type { RoomType } from '../../services/roomTypeService';
-import type { Room } from '../../services/roomService';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
+import { Select } from '../../components/ui/Select';
 
 export default function RoomEditPage() {
   const { id } = useParams();
@@ -91,22 +80,22 @@ export default function RoomEditPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev: any) => ({ ...prev, [name]: value }));
   };
 
   const addAmenity = () => {
     const v = form.newAmenity.trim();
     if (!v) return;
     if (amenities.includes(v)) return toast.error('Already added');
-    setAmenities(prev => [...prev, v]);
-    setForm(prev => ({ ...prev, newAmenity: '' }));
+    setAmenities((prev: string[]) => [...prev, v]);
+    setForm((prev: any) => ({ ...prev, newAmenity: '' }));
   };
 
-  const removeAmenity = (a: string) => setAmenities(prev => prev.filter(x => x !== a));
+  const removeAmenity = (a: string) => setAmenities((prev: string[]) => prev.filter(x => x !== a));
 
   const handleImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setNewImages(prev => [...prev, ...files]);
+    setNewImages((prev: File[]) => [...prev, ...files]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -144,12 +133,12 @@ export default function RoomEditPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-10 pb-20">
       <div className="flex items-center gap-6">
-        <button 
+        <Button 
           onClick={() => navigate('/admin/rooms')}
-          className="w-12 h-12 rounded-2xl bg-white shadow-soft border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-all"
+           className="w-12 h-12 rounded-2xl bg-white shadow-soft border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-all"
         >
           <ArrowLeft size={20} />
-        </button>
+        </Button>
         <div>
           <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
             <div className="w-2 h-8 bg-[#F59E0B] rounded-full" />
@@ -169,9 +158,13 @@ export default function RoomEditPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 ml-1">Room Category</label>
-                <select name="roomTypeId" value={form.roomTypeId} onChange={handleChange} className="w-full h-12 bg-gray-50 border-none rounded-2xl font-bold px-4 appearance-none focus:ring-2 focus:ring-[#14532D]/20 outline-none">
-                  {roomTypes.map(rt => <option key={rt.id} value={rt.id}>{rt.name}</option>)}
-                </select>
+                <Select
+  name="roomTypeId"
+  value={form.roomTypeId}
+  onChange={handleChange}
+  options={roomTypes.map(rt => ({ label: rt.name, value: rt.id.toString() }))}
+  className="w-full h-12 bg-gray-50 border-none rounded-2xl font-bold px-4 focus:ring-2 focus:ring-[#14532D]/20 outline-none"
+/>
               </div>
               <div className="space-y-2">
                 <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 ml-1">Room Number</label>

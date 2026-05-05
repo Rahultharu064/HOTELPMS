@@ -5,13 +5,13 @@ import {
   Clock, ShieldCheck,
   Zap, ArrowRight,
   Loader2,
-  UserPlus,
-  X
+  UserPlus
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
 import { Modal } from "../../components/ui/Modal";
+import { Select } from "../../components/ui/Select";
 
 const StaffAssignmentPage: React.FC = () => {
   const [staff, setStaff] = useState<any[]>([]);
@@ -115,7 +115,7 @@ const StaffAssignmentPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {filteredStaff.length > 0 ? filteredStaff.map((s: any, i: number) => {
+            {filteredStaff.length > 0 ? filteredStaff.map((s: any) => {
               const staffTasks = rooms.filter(r => r.housekeepingLogs?.[0]?.staffId === s.staffId && r.status === 'cleaning').length;
               return (
                 <motion.div
@@ -230,7 +230,7 @@ const StaffAssignmentPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Role / Designation</label>
-              <select
+              <Select
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                 className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all appearance-none"
@@ -239,7 +239,7 @@ const StaffAssignmentPage: React.FC = () => {
                 <option>Sr. Attendant</option>
                 <option>Floor Supervisor</option>
                 <option>Team Lead</option>
-              </select>
+              </Select>
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Phone Number</label>

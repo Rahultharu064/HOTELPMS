@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "../../components/ui/Button";
 import {
   Search, LogIn, LogOut,
   Clock, ChevronRight,
@@ -10,7 +9,7 @@ import {
 import { frontOfficeService } from "../../services/frontofficeService";
 import { toast } from "react-hot-toast";
 import { CreateOfflineReservationModal } from "../../components/Admin/Dashboard/CreateOfflineReservationModal";
-import { QuickCheckInModal } from "../../components/FrontOffice/QuickCheckInModal";
+import { QuickCheckInModal } from "../../components/frontoffice/QuickCheckInModal";
 import { OrderExtraServiceModal } from "../../components/frontoffice/OrderExtraServiceModal";
 import { QuickCheckOutModal } from "../../components/frontoffice/QuickCheckOutModal";
 
@@ -18,8 +17,8 @@ const CheckInOutPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"checkin" | "checkout">("checkin");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [processingId, setProcessingId] = useState<number | null>(null);
   const [data, setData] = useState<any[]>([]);
+  const [processingId] = useState<number | null>(null);
   const [isOfflineModalOpen, setIsOfflineModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [isCheckInModalOpen, setIsCheckInModalOpen] = useState(false);

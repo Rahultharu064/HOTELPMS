@@ -6,6 +6,7 @@ import type { ExtraService } from '../../../services/extraServiceManagement';
 
 import { Plus, X } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { Select } from '../../ui/Select';
 
 interface ExtraServiceFormProps {
   initialData?: ExtraService;
@@ -145,18 +146,14 @@ export function ExtraServiceForm({ initialData, onSubmit, onCancel, isLoading }:
               </Button>
             </div>
           ) : (
-            <select
-              name="categoryId"
-              value={formData.categoryId}
-              onChange={handleChange}
-              required
-              className="w-full h-12 px-4 rounded-xl border-none bg-neutral-light shadow-inner font-bold focus:ring-2 focus:ring-primary-green outline-none"
-            >
-              <option value="">Select Category</option>
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
+            <Select
+            name="categoryId"
+            value={formData.categoryId}
+            onChange={handleChange}
+            required
+            className="w-full h-12 px-4 rounded-xl border-none bg-neutral-light shadow-inner font-bold focus:ring-2 focus:ring-primary-green outline-none"
+            options={categories.map(cat => ({ value: cat.id.toString(), label: cat.name }))}
+            />
           )}
         </div>
 
@@ -176,7 +173,7 @@ export function ExtraServiceForm({ initialData, onSubmit, onCancel, isLoading }:
 
         <div className="space-y-2">
           <label className="text-xs font-black uppercase tracking-widest text-neutral-text-secondary">Image</label>
-          <input
+          <Input
             type="file"
             accept="image/*"
             onChange={handleFileChange}
@@ -200,15 +197,13 @@ export function ExtraServiceForm({ initialData, onSubmit, onCancel, isLoading }:
 
         <div className="space-y-2">
           <label className="text-xs font-black uppercase tracking-widest text-neutral-text-secondary">Discount Allowed</label>
-          <select
+          <Select
             name="discountAllowed"
             value={formData.discountAllowed}
             onChange={handleChange}
             className="w-full h-12 px-4 rounded-xl border-none bg-neutral-light shadow-inner font-bold focus:ring-2 focus:ring-primary-green outline-none"
-          >
-            <option value="true">Yes</option>
-            <option value="false">No</option>
-          </select>
+            options={[{ value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }]}
+          />
         </div>
       </div>
 

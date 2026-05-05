@@ -1,7 +1,6 @@
 import { Button } from "../../components/ui/Button";
 import { Tag } from "lucide-react";
-
-
+import ScrollReveal from "../../components/publicwebsite/Homepage/Sections/ScrollReveal";
 const offers = [
   { title: "Early Bird Special", discount: "20% OFF", desc: "Book 30 days in advance and save on any room category.", badge: "Popular" },
   { title: "Weekend Getaway", discount: "15% OFF", desc: "Enjoy Friday to Sunday stays with complimentary breakfast.", badge: "Limited" },

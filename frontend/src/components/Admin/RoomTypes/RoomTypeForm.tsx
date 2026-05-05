@@ -16,7 +16,7 @@ interface RoomTypeFormProps {
 
 export function RoomTypeForm({ initialData, onSubmit, onCancel, isLoading }: RoomTypeFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(initialData?.image || null);
-  const { register, handleSubmit, formState: { errors }, watch } = useForm<Partial<RoomType>>({
+  const { register, handleSubmit, formState: { errors } } = useForm<Partial<RoomType>>({
     defaultValues: {
       name: initialData?.name || '',
       description: initialData?.description || '',

@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  MoreVertical,
   Search,
   Filter,
   ArrowRight,
   FileText,
   Loader2,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  Users,
   ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

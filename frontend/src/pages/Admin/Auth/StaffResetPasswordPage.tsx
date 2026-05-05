@@ -11,7 +11,7 @@ import {
   ArrowRight,
   Loader2
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 import { api } from '../../../services/api';
 import { toast } from 'react-hot-toast';

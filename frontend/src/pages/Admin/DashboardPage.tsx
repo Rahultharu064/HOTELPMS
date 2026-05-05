@@ -5,8 +5,6 @@ import {
   TrendingUp, 
   ShieldCheck, 
   Activity,
-  ArrowUpRight,
-  ArrowDownRight,
   Search,
   Plus,
   Loader2,
@@ -14,7 +12,7 @@ import {
   CheckCircle2,
   Clock
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { bookingService } from "../../services/bookingService";
 import { toast } from "react-hot-toast";
 
@@ -167,7 +165,7 @@ const AdminDashboard: React.FC = () => {
                       </tr>
                    </thead>
                    <tbody className="divide-y divide-gray-50">
-                      {recentLogs.map((log, i) => (
+                      {recentLogs.map((log) => (
                         <tr key={log.id} className="hover:bg-gray-50/50 transition-all group cursor-pointer">
                            <td className="px-10 py-8">
                              <div className="flex flex-col">

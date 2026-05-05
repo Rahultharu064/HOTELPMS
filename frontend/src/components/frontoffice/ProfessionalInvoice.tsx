@@ -5,7 +5,6 @@ interface Props {
   hotelName?: string;
   hotelAddress?: string;
   hotelPhone?: string;
-  hotelEmail?: string;
   hotelWebsite?: string;
   hotelVat?: string;
 }
@@ -23,7 +22,6 @@ export const ProfessionalInvoice: React.FC<Props> = ({
   hotelName = "ANTIGRAVITY LUXE HOTEL & RESORTS",
   hotelAddress = "Elite Plaza, Ward No. 3, Kathmandu, Nepal",
   hotelPhone = "+977-1-4400000, 4400001",
-  hotelEmail = "billing@antigravityluxe.com",
   hotelWebsite = "www.antigravityluxe.com",
   hotelVat = "PAN/VAT No: 600123456"
 }) => {

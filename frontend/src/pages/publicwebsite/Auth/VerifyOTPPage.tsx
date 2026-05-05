@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../../../services/authService';
 import { useAuth } from '../../../context/AuthContext';
 import { toast } from 'react-hot-toast';
-import { ShieldCheck, ArrowRight, RefreshCw, Mail } from 'lucide-react';
+import { ShieldCheck, ArrowRight, RefreshCw } from 'lucide-react';
 
 export const VerifyOTPPage: React.FC = () => {
   const [otp, setOtp] = useState('');
@@ -45,7 +45,7 @@ export const VerifyOTPPage: React.FC = () => {
     console.log(`[VerifyOTP] Attempting verification for ${email} with code ${otp}`);
     
     try {
-      const data = await authService.verifyOTP(email, otp);
+      const data = await authService.verifyOTP(email, otp) as any;
       console.log('[VerifyOTP] Success:', data);
       
       if (data.token && data.user) {

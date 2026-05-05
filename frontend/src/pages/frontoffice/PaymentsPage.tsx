@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { 
-  Search, CreditCard, DollarSign, 
-  ArrowUpRight, ArrowDownRight, 
+  Search, 
   Download, Filter, Plus, 
-  CheckCircle2, Clock, AlertCircle,
-  MoreVertical, Landmark, Wallet,
-  Receipt, Calendar, Loader2, Utensils,
-  ChevronRight, ArrowRight, User, Hash,
+  CheckCircle2, AlertCircle,
+  MoreVertical, Landmark,
+  Receipt, Utensils,
+  ArrowRight, Hash,
   TrendingUp, Activity, PieChart
 } from "lucide-react";
-import { paymentService } from "../../services/paymentService";
 import { bookingService } from "../../services/bookingService";
 import { extraService } from "../../services/extraService";
 import { toast } from "react-hot-toast";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 const payStatusStyles: Record<string, { bg: string, text: string, dot: string }> = {

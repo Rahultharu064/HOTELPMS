@@ -1,8 +1,10 @@
-import { useState } from "react";
-import { Bell, Search, ChevronDown, Settings, LogOut, User, MessageSquare, Zap } from "lucide-react";
+import { useState, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Search, ChevronDown, LogOut, User, Zap, Camera, Loader2 } from "lucide-react";
 import { MobileMenuButton } from "./Sidebar";
-
 import { NotificationBell } from "../../common/NotificationBell";
+import { useAdminAuth } from "../../../context/AdminAuthContext";
+import { BACKEND_ROOT } from "../../../services/api";
 
 interface HeaderProps {
   title: string;
@@ -11,6 +13,18 @@ interface HeaderProps {
 
 export function Header({ title, onMobileMenuClick }: HeaderProps) {
   const [profileOpen, setProfileOpen] = useState(false);
+  const { admin, adminLogout } = useAdminAuth();
+  const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // These were missing or causing issues
+  const uploading = false; 
+  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase();
+
+  const handleLogout = () => {
+    adminLogout();
+    navigate('/admin/login');
+  };
 
   return (
     <header className="sticky top-0 z-[40] transition-all duration-300 px-10 h-24 flex items-center gap-10 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
@@ -71,6 +85,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
               onClick={() => fileInputRef.current?.click()}
               className="relative group w-10 h-10 rounded-xl bg-gradient-to-br from-[#1F7A3A] to-[#14532D] flex items-center justify-center text-white text-xs font-black shadow-lg overflow-hidden border-2 border-white"
             >
+              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" />
               {uploading ? (
                 <Loader2 size={16} className="animate-spin text-white" />
               ) : admin?.avatar ? (
@@ -96,7 +111,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
             >
               <div className="text-left hidden sm:block pr-2">
                 <p className="text-[12px] font-black text-[#111827] leading-none">{admin?.name || 'Guest Admin'}</p>
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#F59E0B] mt-1 opacity-80">{admin?.role.replace('_', ' ')}</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#F59E0B] mt-1 opacity-80">{admin?.role?.replace('_', ' ')}</p>
               </div>
               <ChevronDown size={14} className={`text-gray-400 transition-transform hidden sm:block duration-500 ${profileOpen ? "rotate-180" : ""}`} />
             </button>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Search, ShoppingCart, Plus, Minus, X, 
-  User, BedDouble, Utensils, Waves, 
-  Wind, Ghost, Zap, Loader2, CheckCircle2,
+  User, Utensils, Waves, 
+  Wind, Ghost, Zap, Loader2,
   Trash2, CreditCard, Receipt
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

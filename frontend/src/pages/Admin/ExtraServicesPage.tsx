@@ -5,7 +5,7 @@ import { ExtraServiceForm } from '../../components/Admin/ExtraServices/ExtraServ
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { Plus, Edit2, Trash2, Search, Filter, ImageOff, Zap } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Filter, ImageOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function ExtraServicesPage() {

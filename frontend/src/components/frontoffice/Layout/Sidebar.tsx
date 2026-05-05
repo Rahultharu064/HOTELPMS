@@ -12,9 +12,7 @@ import {
   ChevronLeft,
   Menu,
   Building2,
-  LogOut,
-  ShoppingBag,
-  MonitorPlay
+  LogOut
 } from "lucide-react";
 import { Button } from "../../ui/Button";
 

@@ -28,7 +28,7 @@ const getHeaders = (isFormData: boolean = false, isAdminEndpoint: boolean = fals
 };
 
 export const api = {
-  async get<T>(endpoint: string, options?: { params?: Record<string, any> }): Promise<T> {
+  async get<T = any>(endpoint: string, options?: { params?: Record<string, any> }): Promise<T> {
     const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
     let url = `${API_BASE_URL}${endpoint}`;
     if (options?.params) {
@@ -53,7 +53,7 @@ export const api = {
     return result;
   },
 
-  async post<T>(endpoint: string, data: any): Promise<T> {
+  async post<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -68,7 +68,7 @@ export const api = {
     return result;
   },
 
-  async put<T>(endpoint: string, data: any): Promise<T> {
+  async put<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -83,7 +83,7 @@ export const api = {
     return result;
   },
 
-  async patch<T>(endpoint: string, data: any): Promise<T> {
+  async patch<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -98,15 +98,27 @@ export const api = {
     return result;
   },
 
-  async delete(endpoint: string): Promise<void> {
+  async delete<T = any>(endpoint: string): Promise<T> {
     const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
       headers: getHeaders(false, isAdminEndpoint),
     });
+    
     if (!response.ok) {
       const result = await response.json();
       throw { response: { data: result, status: response.status } };
+    }
+
+    // Handle empty response for 204 No Content
+    if (response.status === 204) {
+      return {} as T;
+    }
+
+    try {
+      return await response.json();
+    } catch {
+      return {} as T;
     }
   },
 };

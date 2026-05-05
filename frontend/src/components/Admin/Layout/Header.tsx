@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Bell, Search, ChevronDown, Settings, LogOut, User, MessageSquare, Zap, ShieldCheck, Camera, Loader2 } from "lucide-react";
+import { Search, ChevronDown, LogOut, User, Zap, Camera, Loader2 } from "lucide-react";
 import { MobileMenuButton } from "./Sidebar";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
 import { useNavigate, Link } from "react-router-dom";
@@ -7,6 +7,7 @@ import { api, BACKEND_ROOT } from "../../../services/api";
 import { toast } from "react-hot-toast";
 
 import { NotificationBell } from "../../common/NotificationBell";
+import { Input } from "../../ui/Input";
 
 interface HeaderProps {
   title: string;
@@ -52,7 +53,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
     <header className="sticky top-0 z-[40] transition-all duration-300 px-10 h-24 flex items-center gap-10 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <MobileMenuButton onClick={onMobileMenuClick} />
       
-      <input 
+      <Input 
         type="file" 
         ref={fileInputRef} 
         className="hidden" 

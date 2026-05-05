@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import CreateRoom from '../../components/Admin/Dashboard/CreateRoom';
 import { Button } from '../../components/ui/Button';
-import { Plus, LayoutGrid, List as ListIcon, Search, SlidersHorizontal, ArrowLeft, Trash2, Edit2, Loader2, BedDouble, Users, Maximize } from 'lucide-react';
+import { Plus, LayoutGrid, List as ListIcon, Search, SlidersHorizontal, ArrowLeft, Trash2, Edit2, Loader2, BedDouble, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { roomService } from '../../services/roomService';
 import type { Room } from '../../services/roomService';
@@ -64,8 +64,8 @@ export default function RoomsPage() {
           
           <div className="flex items-center gap-4">
              <div className="flex bg-white p-1 rounded-2xl shadow-soft border border-neutral-border/30">
-               <button className="p-2.5 rounded-xl bg-primary-green text-white shadow-lg transition-all"><LayoutGrid size={20} /></button>
-               <button className="p-2.5 rounded-xl text-neutral-text-secondary hover:bg-neutral-light transition-all"><ListIcon size={20} /></button>
+               <Button className="p-2.5 rounded-xl bg-primary-green text-white shadow-lg transition-all"><LayoutGrid size={20} /></Button>
+               <Button className="p-2.5 rounded-xl text-neutral-text-secondary hover:bg-neutral-light transition-all"><ListIcon size={20} /></Button>
              </div>
              <Button
                 onClick={() => setShowCreateForm(true)}
@@ -78,12 +78,12 @@ export default function RoomsPage() {
         </div>
       ) : (
         <div className="flex items-center gap-4 animate-in slide-in-from-left-4 transition-all">
-           <button 
+           <Button
             onClick={() => setShowCreateForm(false)}
             className="w-12 h-12 rounded-2xl bg-white shadow-soft border border-neutral-border/30 flex items-center justify-center hover:bg-neutral-light transition-all text-neutral-text-secondary hover:text-primary-green"
            >
              <ArrowLeft size={20} />
-           </button>
+           </Button>
            <div>
              <h2 className="text-2xl font-black text-neutral-text-primary">Inventory Addition</h2>
              <p className="text-[10px] font-black uppercase tracking-widest text-primary-gold">Back to rooms list</p>

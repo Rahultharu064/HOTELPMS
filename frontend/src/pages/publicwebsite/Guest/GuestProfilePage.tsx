@@ -5,18 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { 
   User, 
-  Mail, 
-  Phone, 
-  MapPin, 
   Camera, 
   Calendar, 
-  CreditCard, 
   Settings, 
   LogOut,
   ChevronRight,
   Package,
   History
 } from 'lucide-react';
+import {  Button } from '../../../components/ui/Button';
+import { Input } from '../../../components/ui/Input';
 
 export const GuestProfilePage: React.FC = () => {
   const [guest, setGuest] = useState<any>(null);
@@ -25,7 +23,7 @@ export const GuestProfilePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'bookings'>('profile');
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const { logout, user: authUser } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -121,13 +119,13 @@ export const GuestProfilePage: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <button 
+                  <Button 
                     onClick={() => fileInputRef.current?.click()}
                     className="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all"
                   >
                     <Camera size={16} />
-                  </button>
-                  <input 
+                  </Button>
+                  <Input 
                     type="file" 
                     ref={fileInputRef} 
                     className="hidden" 
@@ -157,15 +155,15 @@ export const GuestProfilePage: React.FC = () => {
                   >
                     <Calendar size={18} /> My Bookings
                   </button>
-                  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50">
+                  <Button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50">
                     <Settings size={18} /> Account Settings
-                  </button>
-                  <button 
+                  </Button>
+                  <Button 
                     onClick={logout}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50"
                   >
                     <LogOut size={18} /> Logout
-                  </button>
+                  </Button>
                 </nav>
               </div>
             </div>
@@ -187,7 +185,7 @@ export const GuestProfilePage: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">First Name</label>
-                      <input 
+                      <Input 
                         name="firstName"
                         defaultValue={guest?.firstName}
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
@@ -195,7 +193,7 @@ export const GuestProfilePage: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Last Name</label>
-                      <input 
+                      <Input 
                         name="lastName"
                         defaultValue={guest?.lastName}
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
@@ -203,7 +201,7 @@ export const GuestProfilePage: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Email (Unchangeable)</label>
-                      <input 
+                      <Input 
                         disabled
                         value={guest?.email}
                         className="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 text-gray-500 cursor-not-allowed"
@@ -211,7 +209,7 @@ export const GuestProfilePage: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Phone Number</label>
-                      <input 
+                      <Input 
                         name="phone"
                         defaultValue={guest?.phone}
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
@@ -224,7 +222,7 @@ export const GuestProfilePage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="md:col-span-2">
                         <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Street Address</label>
-                        <input 
+                        <Input 
                           name="address"
                           defaultValue={guest?.address}
                           className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
@@ -233,7 +231,7 @@ export const GuestProfilePage: React.FC = () => {
                       </div>
                       <div>
                         <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">City</label>
-                        <input 
+                        <Input 
                           name="city"
                           defaultValue={guest?.city}
                           className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
@@ -241,7 +239,7 @@ export const GuestProfilePage: React.FC = () => {
                       </div>
                       <div>
                         <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Country</label>
-                        <input 
+                        <Input 
                           name="country"
                           defaultValue={guest?.country}
                           className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
@@ -251,13 +249,13 @@ export const GuestProfilePage: React.FC = () => {
                   </div>
 
                   <div className="flex justify-end pt-6">
-                    <button
+                    <Button
                       type="submit"
-                      disabled={updating}
+                       disabled={updating}
                       className="px-8 py-3 bg-blue-600 text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-blue-700 transition-all disabled:opacity-50"
                     >
                       {updating ? 'Saving...' : 'Save Changes'}
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>
@@ -318,9 +316,9 @@ export const GuestProfilePage: React.FC = () => {
                       </div>
                       <h4 className="text-lg font-bold text-gray-900">No bookings yet</h4>
                       <p className="text-sm text-gray-500 mb-6">You haven't made any reservations at Antigravity Hotel yet.</p>
-                      <button className="px-6 py-2 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-lg hover:bg-blue-700 transition-all">
+                      <Button className="px-6 py-2 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-lg hover:bg-blue-700 transition-all">
                         Book a Room Now
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>

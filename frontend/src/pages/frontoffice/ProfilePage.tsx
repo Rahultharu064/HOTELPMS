@@ -4,8 +4,10 @@ import {
   Camera, ChevronRight, Save,
   LogOut, Star, Globe, Zap
 } from "lucide-react";
+import { useAdminAuth } from "../../context/AdminAuthContext";
 
 const ProfilePage: React.FC = () => {
+  const { admin } = useAdminAuth();
   return (
     <div className="space-y-10 animate-fade-in pb-10">
       {/* Header Section */}

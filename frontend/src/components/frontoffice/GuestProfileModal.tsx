@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  X, Mail, Phone, MapPin, ShieldCheck, 
+  Mail, Phone, MapPin, ShieldCheck, 
   Globe, Calendar, CreditCard, ShieldAlert, 
   ExternalLink, Download, User, Info, 
   Eye, CheckCircle2, AlertCircle, Clock
@@ -8,6 +8,7 @@ import {
 import { Modal } from '../ui/Modal';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Guest } from '../../services/guestService';
+import { Button } from '../ui/Button';
 
 interface GuestProfileModalProps {
   isOpen: boolean;
@@ -188,9 +189,9 @@ export const GuestProfileModal: React.FC<GuestProfileModalProps> = ({ isOpen, on
                         </div>
                       )}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                         <button className="h-14 w-14 rounded-full bg-white text-[#111827] flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
+                         <Button className="h-14 w-14 rounded-full bg-white text-[#111827] flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
                             <Eye size={24} />
-                         </button>
+                         </Button>
                       </div>
                     </>
                   ) : (

@@ -36,15 +36,11 @@ export const extraServiceManagement = {
   },
 
   create: async (data: FormData): Promise<ApiResponse<ExtraService>> => {
-    return await api.post<ApiResponse<ExtraService>>('/extra-services', data, {
-      headers: { 'Content-Type': 'multipart/form-data' } 
-    });
+    return await api.post<ApiResponse<ExtraService>>('/extra-services', data);
   },
 
   update: async (id: number, data: FormData): Promise<ApiResponse<ExtraService>> => {
-    return await api.put<ApiResponse<ExtraService>>(`/extra-services/${id}`, data, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    return await api.put<ApiResponse<ExtraService>>(`/extra-services/${id}`, data);
   },
 
   delete: async (id: number): Promise<ApiResponse<void>> => {

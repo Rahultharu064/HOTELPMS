@@ -4,7 +4,7 @@ import { frontOfficeService } from '../../services/frontofficeService';
 import { toast } from 'react-hot-toast';
 import {
   Loader2, ShieldCheck, CheckCircle2,
-  Calendar, Bed, FileText, Wallet, Zap, CreditCard,
+  Calendar, Bed, Wallet, Zap, CreditCard,
   LogOut, ArrowRight, ShoppingCart, Utensils, ArrowUpRight,
   Download
 } from 'lucide-react';

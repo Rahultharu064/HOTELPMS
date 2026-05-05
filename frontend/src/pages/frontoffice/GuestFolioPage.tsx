@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { 
-  User, Bed, Calendar, Hash, 
-  ChevronRight, Utensils, Shirt, Flower, 
-  Plus, ArrowRight, Receipt, CreditCard, 
-  Wallet, DollarSign, Download, Printer,
+  Bed, Calendar, Hash, 
+  Utensils, Shirt, Flower, 
+  ArrowRight, CreditCard, 
+  Download,
   CheckCircle2, AlertCircle, Trash2, 
-  Smartphone, Banknote, Menu, Loader2
+  Smartphone, Banknote, Loader2
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import { paymentService } from "../../services/paymentService";
 import { frontOfficeService } from "../../services/frontofficeService";

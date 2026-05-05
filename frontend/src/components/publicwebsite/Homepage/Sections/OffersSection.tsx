@@ -2,8 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { 
   Sparkles, Clock, Percent, 
-  Settings, ArrowRight, Zap,
-  Compass, Crown, Star
+  ArrowRight, Zap
 } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 

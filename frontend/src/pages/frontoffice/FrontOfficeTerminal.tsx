@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { 
   Search, LogIn, LogOut, 
-  Clock, BedDouble, CreditCard, 
-  Plus, Loader2, Zap, Bell,
-  ChevronRight, ArrowLeft,
-  User, Receipt, ShoppingCart,
-  CheckCircle2, Printer, X
+  Clock, BedDouble, 
+  Plus, Loader2,
+  ArrowLeft,
+  X
 } from "lucide-react";
 import { frontOfficeService } from "../../services/frontofficeService";
 import { extraServiceManagement, type ExtraService } from "../../services/extraServiceManagement";
@@ -21,7 +20,6 @@ import { SettlementTerminal } from "../../components/frontoffice/Terminal/Settle
 
 const FrontOfficeTerminal: React.FC = () => {
   const { bookingId } = useParams<{ bookingId?: string }>();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"checkin" | "checkout">("checkin");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 import { Select } from '../ui/Select';
-import { Input } from '../ui/Input';
+
 import { Button } from '../ui/Button';
 import { extraServiceManagement, type ExtraService, type BookingExtraService } from '../../services/extraServiceManagement';
 import { toast } from 'react-hot-toast';
-import { Loader2, Trash2, CreditCard, Wallet, Plus, Info, Printer, Search, ShoppingCart, Zap, ArrowUpRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Loader2, Trash2, CreditCard, Wallet, Plus, Printer, Search, ShoppingCart, ShieldCheck } from 'lucide-react';
 import { ThermalReceipt } from './ThermalReceipt';
 
 interface Props {
@@ -218,9 +218,9 @@ export const OrderExtraServiceModal: React.FC<Props> = ({
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     <span className="text-[8px] font-black uppercase tracking-[0.35em] text-white/40">Active Folio Balance</span>
                   </div>
-                  <button onClick={handlePrint} className="w-9 h-9 bg-white/10 hover:bg-[#14532D] text-white rounded-lg flex items-center justify-center transition-all">
+                  <Button onClick={handlePrint} className="w-9 h-9 bg-white/10 hover:bg-[#14532D] text-white rounded-lg flex items-center justify-center transition-all">
                     <Printer size={16} />
-                  </button>
+                  </Button>
                 </div>
                 <div className="flex items-baseline gap-1.5 mb-6">
                   <span className="text-[10px] font-black text-white/30 uppercase">Rs.</span>

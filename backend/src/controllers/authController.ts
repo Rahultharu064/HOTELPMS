@@ -154,7 +154,7 @@ export class AuthController {
 
     const token = this.generateToken(updatedGuest.id);
 
-    res.json({
+    return res.json({
       message: 'Verification successful',
       token,
       user: {
@@ -390,9 +390,9 @@ export class AuthController {
    * Helper: Generate JWT
    */
   private generateToken(id: number): string {
-    return jwt.sign({ id }, config.jwt.secret, {
+    return jwt.sign({ id }, config.jwt.secret as string, {
       expiresIn: config.jwt.expire,
-    });
+    } as jwt.SignOptions);
   }
 }
 

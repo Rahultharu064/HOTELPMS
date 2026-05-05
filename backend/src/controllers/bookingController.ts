@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { BookingService } from '../services/bookingService';
 import { ApiResponse } from '../utils/ApiResponse';
+import { ApiError } from '../utils/ApiError';
 import { asyncHandler } from '../utils/asyncHandler';
 import { HttpStatus } from '../constants';
 

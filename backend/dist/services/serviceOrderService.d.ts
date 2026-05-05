@@ -1,0 +1,446 @@
+import { Prisma, ServiceOrderStatus, ServicePriority } from '@prisma/client';
+export declare class ServiceOrderService {
+    getAllOrders(filters: {
+        page?: number;
+        limit?: number;
+        status?: ServiceOrderStatus;
+        priority?: ServicePriority;
+        roomId?: number;
+        bookingId?: number;
+        search?: string;
+    }): Promise<{
+        orders: ({
+            room: {
+                description: string | null;
+                name: string;
+                id: number;
+                createdAt: Date;
+                updatedAt: Date;
+                status: import(".prisma/client").$Enums.RoomStatus;
+                slug: string;
+                roomNumber: string;
+                roomTypeId: number;
+                capacity: number;
+                basePrice: Prisma.Decimal;
+                floor: number | null;
+                size: number | null;
+                bedType: import(".prisma/client").$Enums.BedType | null;
+                view: string | null;
+                isFeatured: boolean;
+            } | null;
+            booking: ({
+                guest: {
+                    id: number;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    isVerified: boolean;
+                    email: string;
+                    phone: string;
+                    password: string | null;
+                    firstName: string;
+                    lastName: string;
+                    address: string | null;
+                    city: string | null;
+                    country: string | null;
+                    postalCode: string | null;
+                    idType: import(".prisma/client").$Enums.IdType | null;
+                    idNumber: string | null;
+                    idProofImage: string | null;
+                    profileImage: string | null;
+                    googleId: string | null;
+                    otp: string | null;
+                    otpExpires: Date | null;
+                    resetToken: string | null;
+                    resetTokenExpires: Date | null;
+                    totalBookings: number;
+                    totalSpent: Prisma.Decimal;
+                };
+            } & {
+                id: number;
+                createdAt: Date;
+                updatedAt: Date;
+                status: import(".prisma/client").$Enums.BookingStatus;
+                roomId: number;
+                guestId: number;
+                checkOut: Date;
+                checkIn: Date;
+                bookingNumber: string;
+                adults: number;
+                children: number;
+                totalAmount: Prisma.Decimal;
+                source: import(".prisma/client").$Enums.BookingSource;
+                specialRequests: string | null;
+            }) | null;
+            guest: {
+                id: number;
+                createdAt: Date;
+                updatedAt: Date;
+                isVerified: boolean;
+                email: string;
+                phone: string;
+                password: string | null;
+                firstName: string;
+                lastName: string;
+                address: string | null;
+                city: string | null;
+                country: string | null;
+                postalCode: string | null;
+                idType: import(".prisma/client").$Enums.IdType | null;
+                idNumber: string | null;
+                idProofImage: string | null;
+                profileImage: string | null;
+                googleId: string | null;
+                otp: string | null;
+                otpExpires: Date | null;
+                resetToken: string | null;
+                resetTokenExpires: Date | null;
+                totalBookings: number;
+                totalSpent: Prisma.Decimal;
+            } | null;
+            items: ({
+                service: {
+                    image: string | null;
+                    description: string | null;
+                    name: string;
+                    id: number;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    status: import(".prisma/client").$Enums.ServiceStatus;
+                    slug: string;
+                    price: Prisma.Decimal;
+                    categoryId: number;
+                };
+            } & {
+                id: number;
+                price: Prisma.Decimal;
+                notes: string | null;
+                orderId: number;
+                serviceId: number;
+                quantity: number;
+            })[];
+        } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.ServiceOrderStatus;
+            roomId: number | null;
+            guestId: number | null;
+            bookingId: number | null;
+            totalAmount: Prisma.Decimal;
+            orderNumber: string;
+            priority: import(".prisma/client").$Enums.ServicePriority;
+            notes: string | null;
+            requestedBy: string | null;
+            assignedTo: string | null;
+        })[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }>;
+    getOrderById(id: number): Promise<{
+        room: {
+            description: string | null;
+            name: string;
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.RoomStatus;
+            slug: string;
+            roomNumber: string;
+            roomTypeId: number;
+            capacity: number;
+            basePrice: Prisma.Decimal;
+            floor: number | null;
+            size: number | null;
+            bedType: import(".prisma/client").$Enums.BedType | null;
+            view: string | null;
+            isFeatured: boolean;
+        } | null;
+        booking: ({
+            guest: {
+                id: number;
+                createdAt: Date;
+                updatedAt: Date;
+                isVerified: boolean;
+                email: string;
+                phone: string;
+                password: string | null;
+                firstName: string;
+                lastName: string;
+                address: string | null;
+                city: string | null;
+                country: string | null;
+                postalCode: string | null;
+                idType: import(".prisma/client").$Enums.IdType | null;
+                idNumber: string | null;
+                idProofImage: string | null;
+                profileImage: string | null;
+                googleId: string | null;
+                otp: string | null;
+                otpExpires: Date | null;
+                resetToken: string | null;
+                resetTokenExpires: Date | null;
+                totalBookings: number;
+                totalSpent: Prisma.Decimal;
+            };
+        } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.BookingStatus;
+            roomId: number;
+            guestId: number;
+            checkOut: Date;
+            checkIn: Date;
+            bookingNumber: string;
+            adults: number;
+            children: number;
+            totalAmount: Prisma.Decimal;
+            source: import(".prisma/client").$Enums.BookingSource;
+            specialRequests: string | null;
+        }) | null;
+        items: ({
+            service: {
+                image: string | null;
+                description: string | null;
+                name: string;
+                id: number;
+                createdAt: Date;
+                updatedAt: Date;
+                status: import(".prisma/client").$Enums.ServiceStatus;
+                slug: string;
+                price: Prisma.Decimal;
+                categoryId: number;
+            };
+        } & {
+            id: number;
+            price: Prisma.Decimal;
+            notes: string | null;
+            orderId: number;
+            serviceId: number;
+            quantity: number;
+        })[];
+    } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import(".prisma/client").$Enums.ServiceOrderStatus;
+        roomId: number | null;
+        guestId: number | null;
+        bookingId: number | null;
+        totalAmount: Prisma.Decimal;
+        orderNumber: string;
+        priority: import(".prisma/client").$Enums.ServicePriority;
+        notes: string | null;
+        requestedBy: string | null;
+        assignedTo: string | null;
+    }>;
+    createOrder(data: {
+        bookingId?: number;
+        guestId?: number;
+        roomId?: number;
+        notes?: string;
+        priority?: ServicePriority;
+        requestedBy?: string;
+        items: Array<{
+            serviceId: number;
+            quantity: number;
+            notes?: string;
+        }>;
+    }): Promise<{
+        room: {
+            description: string | null;
+            name: string;
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.RoomStatus;
+            slug: string;
+            roomNumber: string;
+            roomTypeId: number;
+            capacity: number;
+            basePrice: Prisma.Decimal;
+            floor: number | null;
+            size: number | null;
+            bedType: import(".prisma/client").$Enums.BedType | null;
+            view: string | null;
+            isFeatured: boolean;
+        } | null;
+        guest: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            isVerified: boolean;
+            email: string;
+            phone: string;
+            password: string | null;
+            firstName: string;
+            lastName: string;
+            address: string | null;
+            city: string | null;
+            country: string | null;
+            postalCode: string | null;
+            idType: import(".prisma/client").$Enums.IdType | null;
+            idNumber: string | null;
+            idProofImage: string | null;
+            profileImage: string | null;
+            googleId: string | null;
+            otp: string | null;
+            otpExpires: Date | null;
+            resetToken: string | null;
+            resetTokenExpires: Date | null;
+            totalBookings: number;
+            totalSpent: Prisma.Decimal;
+        } | null;
+        items: ({
+            service: {
+                image: string | null;
+                description: string | null;
+                name: string;
+                id: number;
+                createdAt: Date;
+                updatedAt: Date;
+                status: import(".prisma/client").$Enums.ServiceStatus;
+                slug: string;
+                price: Prisma.Decimal;
+                categoryId: number;
+            };
+        } & {
+            id: number;
+            price: Prisma.Decimal;
+            notes: string | null;
+            orderId: number;
+            serviceId: number;
+            quantity: number;
+        })[];
+    } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import(".prisma/client").$Enums.ServiceOrderStatus;
+        roomId: number | null;
+        guestId: number | null;
+        bookingId: number | null;
+        totalAmount: Prisma.Decimal;
+        orderNumber: string;
+        priority: import(".prisma/client").$Enums.ServicePriority;
+        notes: string | null;
+        requestedBy: string | null;
+        assignedTo: string | null;
+    }>;
+    updateOrderStatus(id: number, status: ServiceOrderStatus, assignedTo?: string): Promise<{
+        room: {
+            description: string | null;
+            name: string;
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.RoomStatus;
+            slug: string;
+            roomNumber: string;
+            roomTypeId: number;
+            capacity: number;
+            basePrice: Prisma.Decimal;
+            floor: number | null;
+            size: number | null;
+            bedType: import(".prisma/client").$Enums.BedType | null;
+            view: string | null;
+            isFeatured: boolean;
+        } | null;
+        booking: ({
+            guest: {
+                id: number;
+                createdAt: Date;
+                updatedAt: Date;
+                isVerified: boolean;
+                email: string;
+                phone: string;
+                password: string | null;
+                firstName: string;
+                lastName: string;
+                address: string | null;
+                city: string | null;
+                country: string | null;
+                postalCode: string | null;
+                idType: import(".prisma/client").$Enums.IdType | null;
+                idNumber: string | null;
+                idProofImage: string | null;
+                profileImage: string | null;
+                googleId: string | null;
+                otp: string | null;
+                otpExpires: Date | null;
+                resetToken: string | null;
+                resetTokenExpires: Date | null;
+                totalBookings: number;
+                totalSpent: Prisma.Decimal;
+            };
+        } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.BookingStatus;
+            roomId: number;
+            guestId: number;
+            checkOut: Date;
+            checkIn: Date;
+            bookingNumber: string;
+            adults: number;
+            children: number;
+            totalAmount: Prisma.Decimal;
+            source: import(".prisma/client").$Enums.BookingSource;
+            specialRequests: string | null;
+        }) | null;
+        items: ({
+            service: {
+                image: string | null;
+                description: string | null;
+                name: string;
+                id: number;
+                createdAt: Date;
+                updatedAt: Date;
+                status: import(".prisma/client").$Enums.ServiceStatus;
+                slug: string;
+                price: Prisma.Decimal;
+                categoryId: number;
+            };
+        } & {
+            id: number;
+            price: Prisma.Decimal;
+            notes: string | null;
+            orderId: number;
+            serviceId: number;
+            quantity: number;
+        })[];
+    } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import(".prisma/client").$Enums.ServiceOrderStatus;
+        roomId: number | null;
+        guestId: number | null;
+        bookingId: number | null;
+        totalAmount: Prisma.Decimal;
+        orderNumber: string;
+        priority: import(".prisma/client").$Enums.ServicePriority;
+        notes: string | null;
+        requestedBy: string | null;
+        assignedTo: string | null;
+    }>;
+    deleteOrder(id: number): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import(".prisma/client").$Enums.ServiceOrderStatus;
+        roomId: number | null;
+        guestId: number | null;
+        bookingId: number | null;
+        totalAmount: Prisma.Decimal;
+        orderNumber: string;
+        priority: import(".prisma/client").$Enums.ServicePriority;
+        notes: string | null;
+        requestedBy: string | null;
+        assignedTo: string | null;
+    }>;
+}
+//# sourceMappingURL=serviceOrderService.d.ts.map

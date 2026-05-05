@@ -45,7 +45,7 @@ export const errorHandler = (
 
   // Default error
   const statusCode = res.statusCode !== 200 ? res.statusCode : HttpStatus.INTERNAL_SERVER_ERROR;
-  res.status(statusCode).json(
+  return res.status(statusCode).json(
     ApiResponse.error(
       process.env.NODE_ENV === 'production' 
         ? 'Internal server error' 

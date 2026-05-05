@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Hotel Property Management System Backend",
   "main": "dist/server.js",
-  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
@@ -14,7 +13,8 @@
     "prisma:seed": "tsx prisma/seed.ts",
     "prisma:studio": "prisma studio",
     "lint": "eslint src --ext ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "render-build": "npm install && npx prisma generate && npm run build"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

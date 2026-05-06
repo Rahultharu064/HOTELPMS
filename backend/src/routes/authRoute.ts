@@ -68,6 +68,22 @@ router.post('/reset-password', validate(resetPasswordSchema), authController.res
 // Protected routes
 router.get('/me', authenticate as any, authController.getMe);
 router.put('/profile', authenticate as any, authController.updateProfile);
-router.post('/profile-image', authenticate as any, upload.single('image'), authController.updateProfileImage);
+
+// Wrapper for upload middleware to catch and expose Multer/Cloudinary errors
+const uploadMiddleware = (req: any, res: any, next: any) => {
+  upload.single('image')(req, res, (err: any) => {
+    if (err) {
+      console.error('Upload Middleware Error:', err);
+      return res.status(500).json({
+        success: false,
+        message: 'Image upload failed. Please check Cloudinary credentials.',
+        error: err.message || err.toString()
+      });
+    }
+    next();
+  });
+};
+
+router.post('/profile-image', authenticate as any, uploadMiddleware, authController.updateProfileImage);
 
 export default router;

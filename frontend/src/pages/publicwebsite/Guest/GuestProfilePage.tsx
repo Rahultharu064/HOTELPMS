@@ -81,7 +81,8 @@ export const GuestProfilePage: React.FC = () => {
       toast.success('Profile image updated');
       fetchProfile();
     } catch (error: any) {
-      toast.error('Failed to upload image');
+      console.error('Upload Error:', error.response?.data);
+      toast.error(error.response?.data?.message || error.response?.data?.error || 'Failed to upload image');
     } finally {
       setUpdating(false);
     }

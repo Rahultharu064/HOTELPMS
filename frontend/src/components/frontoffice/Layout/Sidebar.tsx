@@ -58,7 +58,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         
         {!collapsed && (
           <div className="overflow-hidden relative z-10 transition-all duration-500 delay-100">
-            <h1 className="font-black text-[13px] leading-none tracking-tight uppercase">Antigravity</h1>
+            <h1 className="font-black text-[13px] leading-none tracking-tight uppercase">Itahari Namuna</h1>
             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-[#F59E0B] mt-1.5 opacity-90">College PMS</p>
           </div>
         )}

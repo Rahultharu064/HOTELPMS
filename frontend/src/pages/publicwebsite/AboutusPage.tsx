@@ -16,9 +16,9 @@ export const AboutusPage: React.FC = () => {
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative h-full flex items-center justify-center text-center text-white">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">About Antigravity</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">About Itahari Namuna</h1>
             <p className="text-lg max-w-2xl mx-auto">
-              Setting the standard for modern property management
+              Where academic excellence meets luxurious hospitality
             </p>
           </div>
         </div>
@@ -35,9 +35,10 @@ export const AboutusPage: React.FC = () => {
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Story</h2>
           <p className="text-neutral-text-secondary text-lg leading-relaxed">
-            Antigravity Hotel PMS was founded with a vision to redefine property management 
-            through innovation and luxury. We believe that a seamless, high-tech environment 
-            is essential for modern hospitality and unparalleled guest satisfaction.
+            Itahari Namuna College PMS was founded with a vision to create a unique space 
+            that combines the best of academic excellence with world-class hospitality. 
+            We believe that a comfortable, inspiring environment is essential for both 
+            learning and relaxation.
           </p>
         </motion.div>
 
@@ -107,7 +108,7 @@ export const AboutusPage: React.FC = () => {
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Core Values</h2>
           <p className="text-neutral-text-secondary max-w-2xl mx-auto">
-            These principles guide everything we do at Antigravity
+            These principles guide everything we do at Itahari Namuna
           </p>
         </motion.div>
 

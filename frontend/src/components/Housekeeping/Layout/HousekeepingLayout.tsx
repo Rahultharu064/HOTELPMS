@@ -50,7 +50,7 @@ export function HousekeepingLayout() {
         
         {/* Footer info for internal dash */}
         <footer className="px-10 py-6 border-t border-gray-100 flex items-center justify-between text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white/50 backdrop-blur-md">
-          <p>© 2026 Antigravity Hotel PMS - Operations Module</p>
+          <p>© 2026 Itahari Namuna College PMS - Operations Module</p>
           <div className="flex items-center gap-6">
             <button className="hover:text-[#1F7A3A] transition-colors">Server Status: Online</button>
             <button className="hover:text-[#1F7A3A] transition-colors">Documentation</button>

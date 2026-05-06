@@ -286,6 +286,14 @@ const gracefulShutdown = async () => {
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  
+  // Don't crash for specific service errors like Cloudinary configuration
+  const errorMsg = reason?.message || '';
+  if (errorMsg.includes('cloud_name') || errorMsg.includes('Cloudinary')) {
+    console.warn('⚠️ Service configuration error detected. Server will remain running, but some features may fail.');
+    return;
+  }
+  
   gracefulShutdown();
 });
 

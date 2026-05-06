@@ -44,7 +44,7 @@ export const config = {
     },
   },
   cloudinary: {
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME?.trim().toLowerCase(),
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME?.trim(),
     apiKey: process.env.CLOUDINARY_API_KEY?.trim(),
     apiSecret: process.env.CLOUDINARY_API_SECRET?.trim(),
   },

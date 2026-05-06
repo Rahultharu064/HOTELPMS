@@ -353,7 +353,7 @@ export class AuthController {
       throw new ApiError(HttpStatus.BAD_REQUEST, 'No image file provided');
     }
 
-    const profileImage = `/uploads/${file.filename}`;
+    const profileImage = file.path; // Cloudinary URL
 
     await prisma.guest.update({
       where: { id: userId },

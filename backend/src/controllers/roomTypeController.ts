@@ -36,7 +36,7 @@ export class RoomTypeController {
     // req.file will contain the uploaded image
     const data = {
       ...req.body,
-      image: req.file ? `/uploads/${req.file.filename}` : undefined,
+      image: req.file ? (req.file as any).path : undefined,
     };
 
     const roomType = await roomTypeService.createRoomType(data);
@@ -54,7 +54,7 @@ export class RoomTypeController {
     const { id } = req.params;
     const data = {
       ...req.body,
-      image: req.file ? `/uploads/${req.file.filename}` : undefined,
+      image: req.file ? (req.file as any).path : undefined,
     };
 
     const roomType = await roomTypeService.updateRoomType(Number(id), data);

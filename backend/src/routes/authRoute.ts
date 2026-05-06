@@ -3,20 +3,10 @@ import { AuthController } from '../controllers/authController';
 import { validate } from '../middlewares/validateMiddleware';
 import { authenticate } from '../middlewares/authMiddleware';
 import { z } from 'zod';
-import multer from 'multer';
-import path from 'path';
+import { upload } from '../middlewares/uploadMiddleware';
 
 const router = Router();
 const authController = new AuthController();
-
-// Multer config for profile images
-const storage = multer.diskStorage({
-  destination: 'uploads/',
-  filename: (_req, file, cb) => {
-    cb(null, `profile-${Date.now()}${path.extname(file.originalname)}`);
-  },
-});
-const upload = multer({ storage });
 
 const registerSchema = z.object({
   body: z.object({

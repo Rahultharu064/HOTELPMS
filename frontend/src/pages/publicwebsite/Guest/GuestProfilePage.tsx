@@ -109,7 +109,7 @@ export const GuestProfilePage: React.FC = () => {
                   <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100 mx-auto">
                     {guest?.profileImage ? (
                       <img 
-                        src={`http://localhost:5000${guest.profileImage}`} 
+                        src={guest.profileImage.startsWith('http') ? guest.profileImage : `http://localhost:5000${guest.profileImage}`} 
                         alt="Profile" 
                         className="w-full h-full object-cover"
                       />

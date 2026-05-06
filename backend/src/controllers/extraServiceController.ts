@@ -9,7 +9,7 @@ const extraServiceService = new ExtraServiceService();
 export class ExtraServiceController {
   createExtraService = asyncHandler(async (req: Request, res: Response) => {
     const { name, description, price, categoryId, discountPercentage, discountAllowed } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
+    const image = req.file ? (req.file as any).path : null;
 
     const service = await extraServiceService.createExtraService({
       name,
@@ -31,7 +31,7 @@ export class ExtraServiceController {
 
   updateExtraService = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const image = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const image = req.file ? (req.file as any).path : undefined;
 
     const service = await extraServiceService.updateExtraService(Number(id), {
       ...req.body,

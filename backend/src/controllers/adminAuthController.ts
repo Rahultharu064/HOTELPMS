@@ -123,44 +123,22 @@ export class AdminAuthController {
    * Update Admin Avatar
    */
   updateAvatar = asyncHandler(async (req: Request, res: Response) => {
-    try {
-      const userId = (req as any).user.id;
-      
-      if (!req.file) {
-        throw new ApiError(HttpStatus.BAD_REQUEST, 'No file uploaded');
-      }
-
-      // Get the relative path for storage
-      const avatarUrl = `/uploads/${req.file.filename}`;
-
-      // Optional: Delete old avatar file
-      const admin = await prisma.admin.findUnique({
-        where: { id: userId },
-        select: { avatar: true }
-      });
-
-      if (admin?.avatar) {
-        // Remove the leading slash if it exists for path.join
-        const relativePath = admin.avatar.startsWith('/') ? admin.avatar.substring(1) : admin.avatar;
-        const oldPath = path.join(process.cwd(), relativePath);
-        
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
-      }
-
-      await prisma.admin.update({
-        where: { id: userId },
-        data: { avatar: avatarUrl }
-      });
-
-      res.status(HttpStatus.OK).json(
-        ApiResponse.success('Avatar updated successfully', { avatar: avatarUrl })
-      );
-    } catch (error) {
-      console.error('Avatar Upload Error:', error);
-      throw error;
+    const userId = (req as any).user.id;
+    
+    if (!req.file) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'No file uploaded');
     }
+
+    const avatarUrl = (req.file as any).path; // Cloudinary URL
+
+    await prisma.admin.update({
+      where: { id: userId },
+      data: { avatar: avatarUrl }
+    });
+
+    res.status(HttpStatus.OK).json(
+      ApiResponse.success('Avatar updated successfully', { avatar: avatarUrl })
+    );
   });
 
   /**

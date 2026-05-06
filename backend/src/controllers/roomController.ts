@@ -106,7 +106,7 @@ export class RoomController {
         files['images'].map((file, index) =>
           prisma.image.create({
             data: {
-              url: `/uploads/${file.filename}`,
+              url: file.path, // Cloudinary URL
               roomId: room.id,
               isPrimary: index === 0,
             },
@@ -121,7 +121,7 @@ export class RoomController {
         files['videos'].map(file =>
           prisma.video.create({
             data: {
-              url: `/uploads/${file.filename}`,
+              url: file.path, // Cloudinary URL
               roomId: room.id,
             },
           })
@@ -231,7 +231,7 @@ export class RoomController {
         files['images'].map((file, index) =>
           prisma.image.create({
             data: {
-              url: `/uploads/${file.filename}`,
+              url: file.path, // Cloudinary URL
               roomId: updatedRoom.id,
               isPrimary: index === 0 && !currentRoom.id, // simplified logic
             },

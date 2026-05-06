@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 import { toast } from 'react-hot-toast';
 import { Lock, Mail, ArrowRight, Loader2, ShieldCheck, Info } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import api from '../../../services/api';
 
 export const AdminLoginPage: React.FC = () => {

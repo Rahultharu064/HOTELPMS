@@ -1,3 +1,9 @@
+// Sanitize CLOUDINARY_URL before ANY imports, as cloudinary SDK throws on import if it's invalid
+if (process.env.CLOUDINARY_URL && !process.env.CLOUDINARY_URL.startsWith('cloudinary://')) {
+  console.warn('⚠️ Invalid CLOUDINARY_URL detected. Removing from environment to prevent crash.');
+  delete process.env.CLOUDINARY_URL;
+}
+
 import app from './app';
 console.log('App initialized and starting server...');
 import http from 'http';

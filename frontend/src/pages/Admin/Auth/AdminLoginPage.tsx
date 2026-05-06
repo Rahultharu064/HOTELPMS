@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 import { toast } from 'react-hot-toast';
-import { Lock, ArrowRight, Loader2, Activity, AlertTriangle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Lock, Mail, ArrowRight, Loader2, ShieldCheck, Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../../services/api';
 
 export const AdminLoginPage: React.FC = () => {
@@ -11,19 +11,14 @@ export const AdminLoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [systemTime, setSystemTime] = useState(new Date().toLocaleTimeString());
-  const [connectionSecure, setConnectionSecure] = useState(false);
   
   const { admin, adminLogin, isAdminAuthenticated } = useAdminAuth();
   const navigate = useNavigate();
 
-  // Update clock and simulate secure connection handshake
+  // Update clock every second for professional system feel
   useEffect(() => {
     const timer = setInterval(() => setSystemTime(new Date().toLocaleTimeString()), 1000);
-    const handshake = setTimeout(() => setConnectionSecure(true), 1500);
-    return () => {
-      clearInterval(timer);
-      clearTimeout(handshake);
-    };
+    return () => clearInterval(timer);
   }, []);
 
   // Auto-redirect if already authenticated
@@ -42,174 +37,169 @@ export const AdminLoginPage: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!connectionSecure) return;
-    
+    if (!email || !password) {
+      toast.error('Please enter both email and password');
+      return;
+    }
+
     setLoading(true);
     try {
+      // Logic enhancement: Use a small delay for better "authentication" UX feel
       const response = await api.post<any>('/admin/auth/login', { email, password });
-      adminLogin(response.user, response.token);
-      toast.success('System Access Granted');
       
-      const role = response.user.role;
-      const target = response.user.mustChangePassword ? '/admin/auth/reset-password' : 
-                     (role === 'front_office' ? '/frontoffice' : (role === 'housekeeping' ? '/housekeeping' : '/admin'));
-      navigate(target);
+      // Delay success action slightly to show authenticating state
+      setTimeout(() => {
+        adminLogin(response.user, response.token);
+        toast.success(`Welcome back, ${response.user.firstName || 'Admin'}`);
+
+        const role = response.user.role;
+        const target = response.user.mustChangePassword ? '/admin/auth/reset-password' : 
+                       (role === 'front_office' ? '/frontoffice' : (role === 'housekeeping' ? '/housekeeping' : '/admin'));
+        navigate(target);
+      }, 800);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Access Denied: Invalid Authentication Token');
-    } finally {
+      console.error('Admin Login error:', error);
+      toast.error(error.response?.data?.message || 'Authentication failed. Please check your credentials.');
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans select-none">
-      {/* Immersive Background Layer */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2000" 
-          alt="Tech Grid" 
-          className="w-full h-full object-cover opacity-10"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#020617] via-transparent to-[#020617] opacity-90" />
-      </div>
-
-      {/* Dynamic Animated Accents */}
-      <motion.div 
-        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-        transition={{ duration: 8, repeat: Infinity }}
-        className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-primary-green/5 rounded-full blur-[150px] -mr-96 -mt-96 pointer-events-none" 
-      />
-      
-      {/* Top System Status Bar */}
-      <div className="absolute top-0 left-0 right-0 h-16 border-b border-white/5 bg-black/20 backdrop-blur-xl z-20 flex items-center px-10 justify-between hidden md:flex">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <div className={`h-2 w-2 rounded-full ${connectionSecure ? 'bg-primary-green shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-primary-gold animate-pulse'}`} />
-            <span className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em]">
-              {connectionSecure ? 'Secure Link Established' : 'Establishing Secure Handshake...'}
-            </span>
-          </div>
-          <div className="h-4 w-px bg-white/10" />
-          <div className="flex items-center gap-3 text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">
-            <Activity size={12} className="text-primary-gold" />
-            Load: 0.12ms // Latency: 4ms
-          </div>
-        </div>
-        <div className="flex items-center gap-8">
-          <div className="text-[10px] font-black text-white/50 tracking-[0.3em] font-mono">{systemTime}</div>
-          <div className="text-[10px] font-black text-primary-gold uppercase tracking-[0.3em] bg-primary-gold/5 px-3 py-1 rounded-md border border-primary-gold/10">v1.0.4 Release</div>
-        </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
+      {/* Background decoration to keep it professional */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-primary-green/5 blur-3xl"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary-gold/5 blur-3xl"></div>
       </div>
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md w-full relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-2xl border border-gray-100 relative z-10"
       >
-        <div className="bg-slate-900/40 backdrop-blur-3xl p-10 md:p-14 rounded-[48px] shadow-[0_0_80px_rgba(0,0,0,0.4)] border border-white/10 relative group">
-          {/* Scanline line */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary-green/5 to-transparent h-[10px] top-0 animate-scan pointer-events-none" />
-
-          <div className="flex flex-col items-center mb-12">
-            <motion.div 
-              whileHover={{ rotate: 5, scale: 1.05 }}
-              className="mb-8 relative"
-            >
-              <div className="absolute inset-0 bg-primary-green/30 blur-3xl rounded-full" />
-              <img src="/LOGOS.png" alt="Logo" className="h-20 w-auto object-contain relative z-10 drop-shadow-[0_0_15px_rgba(34,197,94,0.3)]" />
-            </motion.div>
-            
-            <h1 className="text-3xl font-black text-white tracking-tighter uppercase mb-2">
-              Staff <span className="text-primary-green">Entry</span>
-            </h1>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-gold animate-pulse" />
-              <p className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30">
-                Authorized Personnel Only
-              </p>
-            </div>
+        <div>
+          <div className="mx-auto flex justify-center">
+            <img src="/LOGOS.png" alt="Logo" className="h-24 w-auto object-contain" />
           </div>
-
-          <form onSubmit={handleLogin} className="space-y-7">
-            <div className="space-y-6">
-              <div className="group/input">
-                <label className="block text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-3 ml-2 group-focus-within/input:text-primary-green transition-colors">
-                  System ID
-                </label>
-                <div className="relative">
-                   <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-8 py-5 bg-white/5 border border-white/10 focus:border-primary-green/30 focus:bg-white/[0.07] rounded-[24px] text-[15px] font-medium text-white outline-none transition-all placeholder:text-white/10 shadow-inner"
-                    placeholder="admin@hotelpms.com"
-                  />
-                </div>
-              </div>
-              
-              <div className="group/input">
-                <label className="block text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-3 ml-2 group-focus-within/input:text-primary-green transition-colors">
-                  Security Token
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-8 top-1/2 -translate-y-1/2 text-white/20 group-focus-within/input:text-primary-green transition-colors" size={20} />
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-16 pr-8 py-5 bg-white/5 border border-white/10 focus:border-primary-green/30 focus:bg-white/[0.07] rounded-[24px] text-[15px] font-medium text-white outline-none transition-all placeholder:text-white/10 shadow-inner"
-                    placeholder="••••••••"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading || !connectionSecure}
-              className="w-full mt-6 py-6 bg-primary-green text-white rounded-[24px] text-[13px] font-black uppercase tracking-[0.2em] hover:bg-white hover:text-primary-dark transition-all duration-500 shadow-[0_20px_40px_-10px_rgba(34,197,94,0.3)] flex items-center justify-center gap-4 active:scale-[0.98] disabled:opacity-50 group/btn"
-            >
-              {loading ? (
-                <>
-                  <Loader2 size={20} className="animate-spin" /> Verifying...
-                </>
-              ) : (
-                <>
-                  Initialize Session <ArrowRight size={20} className="group-hover/btn:translate-x-1.5 transition-transform duration-500" />
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="mt-14 text-center">
-             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 flex items-center justify-center gap-2">
-                <AlertTriangle size={14} className="text-primary-gold/40" />
-                Access is restricted and monitored
-             </p>
-             
-             {/* Developer Quick Access - ONLY IN DEV MODE */}
-             {import.meta.env.DEV && (
-               <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.3 }}
-                whileHover={{ opacity: 1 }}
-                onClick={() => {
-                  setEmail('admin@hotelpms.com');
-                  setPassword('admin123');
-                }}
-                className="mt-6 text-[9px] font-bold text-primary-gold uppercase tracking-[0.3em] border border-primary-gold/20 px-4 py-2 rounded-full hover:bg-primary-gold/10 transition-all"
-               >
-                 Dev Bypass: Load Root Credentials
-               </motion.button>
-             )}
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <ShieldCheck className="text-primary-green" size={24} />
+            <h2 className="text-center text-3xl font-extrabold text-gray-900 tracking-tight">
+              Staff Portal
+            </h2>
           </div>
-
+          <p className="mt-2 text-center text-sm text-gray-600 font-medium">
+            Authorized Administrative Access Only
+          </p>
         </div>
+
+        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">
+                Admin Email
+              </label>
+              <div className="relative group">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary-green transition-colors" size={18} />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="appearance-none rounded-xl relative block w-full px-10 py-3.5 border border-gray-200 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green sm:text-sm bg-gray-50 transition-all"
+                  placeholder="admin@hotelpms.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-1 ml-1">
+                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest">
+                  Secure Password
+                </label>
+              </div>
+              <div className="relative group">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary-green transition-colors" size={18} />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="appearance-none rounded-xl relative block w-full px-10 py-3.5 border border-gray-200 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green sm:text-sm bg-gray-50 transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center">
+            <input
+              id="remember-me"
+              name="remember-me"
+              type="checkbox"
+              className="h-4 w-4 text-primary-green focus:ring-primary-green border-gray-300 rounded"
+            />
+            <label htmlFor="remember-me" className="ml-2 block text-xs text-gray-500 font-bold uppercase tracking-wider">
+              Remember this device
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-black uppercase tracking-widest rounded-xl text-white bg-primary-green hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-green transition-all shadow-lg shadow-primary-green/20 disabled:opacity-70"
+          >
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="animate-spin" size={18} />
+                Authenticating...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                Sign In <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
+              </span>
+            )}
+          </button>
+        </form>
+
+        <div className="mt-6 pt-6 border-t border-gray-100">
+          <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-xl border border-amber-100">
+            <Info className="text-amber-500 shrink-0" size={18} />
+            <p className="text-[10px] text-amber-800 leading-relaxed font-medium uppercase tracking-tight">
+              Security Notice: All login attempts and session activities are monitored and logged for audit purposes.
+            </p>
+          </div>
+        </div>
+
+        {/* Developer Quick Access - ONLY IN DEV MODE */}
+        {import.meta.env.DEV && (
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('admin@hotelpms.com');
+                setPassword('admin123');
+              }}
+              className="text-[9px] font-black text-primary-gold uppercase tracking-[0.2em] hover:text-primary-green transition-colors py-2 px-4 rounded-lg border border-primary-gold/20 hover:border-primary-green/20 bg-gray-50"
+            >
+              Dev: Load Test Admin
+            </button>
+          </div>
+        )}
       </motion.div>
+
+      <div className="mt-8 flex flex-col items-center gap-2 opacity-50">
+        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
+          System Node: 019 // {systemTime}
+        </p>
+        <p className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">
+          Build v1.0.4-stable
+        </p>
+      </div>
     </div>
   );
 };
+
+
 
 

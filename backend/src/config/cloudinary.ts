@@ -2,11 +2,22 @@ import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { config } from './index';
 
+if (!config.cloudinary.cloudName || !config.cloudinary.apiKey || !config.cloudinary.apiSecret) {
+  console.error('❌ Cloudinary configuration missing!', {
+    hasCloudName: !!config.cloudinary.cloudName,
+    hasApiKey: !!config.cloudinary.apiKey,
+    hasApiSecret: !!config.cloudinary.apiSecret,
+  });
+}
+
 cloudinary.config({
   cloud_name: config.cloudinary.cloudName,
   api_key: config.cloudinary.apiKey,
   api_secret: config.cloudinary.apiSecret,
+  secure: true
 });
+
+console.log('☁️ Cloudinary initialized with cloud_name:', config.cloudinary.cloudName);
 
 export const cloudinaryStorage = new CloudinaryStorage({
   cloudinary: cloudinary,

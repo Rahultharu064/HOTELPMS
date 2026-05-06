@@ -2,10 +2,16 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Sanitize CLOUDINARY_URL if it's invalid (e.g. accidentally set to dashboard URL)
-if (process.env.CLOUDINARY_URL && !process.env.CLOUDINARY_URL.startsWith('cloudinary://')) {
-  console.warn('⚠️ Invalid CLOUDINARY_URL detected. Removing from environment to prevent crash.');
-  delete process.env.CLOUDINARY_URL;
+// Sanitize CLOUDINARY_URL if it's invalid or if we have individual credentials
+if (process.env.CLOUDINARY_URL) {
+  if (!process.env.CLOUDINARY_URL.startsWith('cloudinary://')) {
+    console.warn('⚠️ Invalid CLOUDINARY_URL detected. Removing from environment to prevent crash.');
+    delete process.env.CLOUDINARY_URL;
+  } else if (process.env.CLOUDINARY_CLOUD_NAME) {
+    // If we have both, prefer individual vars to avoid confusion in production
+    console.log('ℹ️ Individual Cloudinary variables provided. Using them instead of CLOUDINARY_URL.');
+    delete process.env.CLOUDINARY_URL;
+  }
 }
 
 
@@ -38,8 +44,8 @@ export const config = {
     },
   },
   cloudinary: {
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-    apiKey: process.env.CLOUDINARY_API_KEY,
-    apiSecret: process.env.CLOUDINARY_API_SECRET,
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME?.trim().toLowerCase(),
+    apiKey: process.env.CLOUDINARY_API_KEY?.trim(),
+    apiSecret: process.env.CLOUDINARY_API_SECRET?.trim(),
   },
 } as const;

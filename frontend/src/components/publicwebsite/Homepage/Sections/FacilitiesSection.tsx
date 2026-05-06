@@ -1,15 +1,21 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Wifi, Waves, Dumbbell, Utensils, Car, Shield, Wind, Coffee } from "lucide-react";
+import { Wifi, Waves, Dumbbell, Utensils, Car, Shield, Wind, Coffee, Zap, Smartphone, Leaf, Monitor } from "lucide-react";
 
 const ITEMS = [
-  { icon: Wifi,     label: "High-Speed Wi-Fi",   sub: "Blazing-fast 1Gbps throughout the property.",        color: "#1F7A3A" },
-  { icon: Waves,    label: "Infinity Pool",        sub: "Rooftop pool with panoramic mountain views.",        color: "#F59E0B" },
-  { icon: Dumbbell, label: "Fitness Center",       sub: "State-of-the-art gym open 24 hours.",               color: "#1F7A3A" },
-  { icon: Utensils, label: "Fine Dining",          sub: "Award-winning local & international cuisine.",       color: "#F97316" },
-  { icon: Car,      label: "Valet Parking",        sub: "Complimentary secure parking for all guests.",       color: "#1F7A3A" },
-  { icon: Shield,   label: "24/7 Security",        sub: "Round-the-clock CCTV & trained security staff.",    color: "#DC2626" },
-  { icon: Wind,     label: "Spa & Wellness",       sub: "Full-service spa with massages & facials.",          color: "#F59E0B" },
-  { icon: Coffee,   label: "Premium Breakfast",    sub: "Complimentary continental breakfast buffet.",        color: "#1F7A3A" },
+  { icon: Wifi,       label: "1Gbps Fiber Wi-Fi",  sub: "Seamless connectivity throughout the entire estate.",        color: "#1F7A3A" },
+  { icon: Waves,      label: "Infinity Pool",        sub: "Heated rooftop pool with panoramic views.",                 color: "#F59E0B" },
+  { icon: Dumbbell,   label: "Smart Fitness",       sub: "AI-integrated equipment and Peloton studios.",              color: "#1F7A3A" },
+  { icon: Utensils,   label: "Gourmet Dining",      sub: "Farm-to-table culinary excellence by master chefs.",         color: "#F97316" },
+  { icon: Smartphone, label: "Smart Controls",      sub: "Manage room lighting & climate from your phone.",           color: "#1F7A3A", status: "New" },
+  { icon: Zap,        label: "EV Charging",         sub: "Universal electric vehicle charging stations.",             color: "#DC2626", status: "Coming Soon" },
+  { icon: Leaf,       label: "Eco-Friendly",        sub: "100% solar powered with zero-waste initiatives.",           color: "#1F7A3A", status: "Planned" },
+  { icon: Monitor,    label: "Business Hub",        sub: "Private soundproof pods for remote work.",                  color: "#F59E0B", status: "New" },
+];
+
+const FUTURE_CHANGES = [
+  { label: "AI Concierge", desc: "24/7 holographic guest assistance powered by advanced AI." },
+  { label: "Biometric Access", desc: "Keyless entry using facial recognition and palm-vein scanning." },
+  { label: "Immersive VR Tours", desc: "Experience local attractions via in-room VR headsets." }
 ];
 
 const FacilitiesSection: React.FC = () => {
@@ -26,7 +32,7 @@ const FacilitiesSection: React.FC = () => {
   }, []);
 
   return (
-    <section id="facilities" ref={ref} className="section-padding bg-gray-50/50 border-y border-neutral-border/50">
+    <section id="facilities" ref={ref} className="section-padding bg-gray-50/50 border-y border-neutral-border/50 relative">
       {/* Background Decor */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-green-50/50 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
@@ -37,25 +43,30 @@ const FacilitiesSection: React.FC = () => {
             show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
           }`}
         >
-          <span className="text-[10px] font-bold tracking-[0.4em] text-[#1F7A3A] uppercase mb-4 block">Premium Experience</span>
+          <span className="text-[10px] font-bold tracking-[0.4em] text-[#1F7A3A] uppercase mb-4 block">Future-Ready Hospitality</span>
           <h2 className="text-3xl md:text-5xl font-extrabold text-primary-dark mb-4 leading-tight tracking-tight">
-            Superior <span className="text-primary-green">Facilities</span>
+            Elevated <span className="text-primary-green">Facilities</span>
           </h2>
           <div className="h-1.5 w-16 bg-[#F59E0B] mx-auto rounded-full mb-6" />
           <p className="text-base text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
-            Every detail at our property is meticulously curated to provide an unparalleled guest experience.
+            We are constantly evolving. Our facilities are designed to meet the needs of today while anticipating the technology of tomorrow.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
           {ITEMS.map((item, i) => (
             <div
               key={i}
-              className={`group bg-white rounded-[32px] p-8 border border-gray-100/80 hover:border-[#1F7A3A]/10 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] transition-all duration-700 ${
+              className={`group bg-white rounded-[32px] p-8 border border-gray-100/80 hover:border-[#1F7A3A]/10 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] transition-all duration-700 relative overflow-hidden ${
                 show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
               }`}
               style={{ transitionDelay: `${i * 100}ms` }}
             >
+              {item.status && (
+                <div className="absolute top-4 right-4 bg-[#1F7A3A]/10 text-[#1F7A3A] text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-full">
+                  {item.status}
+                </div>
+              )}
               <div
                 className="w-14 h-14 rounded-2xl flex items-center justify-center mb-7 transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_10px_25px_-5px_rgba(31,122,58,0.2)]"
                 style={{
@@ -74,9 +85,34 @@ const FacilitiesSection: React.FC = () => {
             </div>
           ))}
         </div>
+
+        {/* Future Enhancements Analysis Section */}
+        <div className={`mt-20 p-10 bg-primary-dark rounded-[40px] shadow-2xl relative overflow-hidden transition-all duration-1000 ${show ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary-green/10 rounded-full blur-3xl -mr-32 -mt-32" />
+            
+            <div className="relative z-10 grid lg:grid-cols-3 gap-10 items-center">
+                <div className="lg:col-span-1">
+                    <span className="text-[10px] font-black tracking-[0.4em] text-primary-gold uppercase mb-4 block">Strategic Roadmap</span>
+                    <h3 className="text-3xl font-black text-white mb-4">Future <span className="text-primary-green">Enhancements</span></h3>
+                    <p className="text-white/60 text-sm font-medium leading-relaxed">
+                        Based on guest feedback and hospitality trends, we have identified these key upgrades for 2026-2027.
+                    </p>
+                </div>
+                
+                <div className="lg:col-span-2 grid sm:grid-cols-3 gap-6">
+                    {FUTURE_CHANGES.map((change, i) => (
+                        <div key={i} className="p-6 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                            <h4 className="text-primary-gold font-bold text-sm mb-2">{change.label}</h4>
+                            <p className="text-white/40 text-[10px] leading-relaxed font-medium">{change.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
       </div>
     </section>
   );
 };
 
 export default FacilitiesSection;
+

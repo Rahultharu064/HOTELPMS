@@ -10,6 +10,8 @@ export interface Review {
     roomTypeId?: number;
     rating: number;
     comment?: string;
+    proofImage?: string;
+
     staffReply?: string;
     status: ReviewStatus;
     isVerified: boolean;
@@ -47,15 +49,12 @@ export const reviewService = {
         return api.get<ApiResponse<Review>>(`/reviews/${id}`);
     },
 
-    async createReview(data: {
-        guestId: number;
-        bookingId?: number;
-        roomTypeId?: number;
-        rating: number;
-        comment?: string;
-    }): Promise<ApiResponse<Review>> {
-        return api.post<ApiResponse<Review>>('/reviews', data);
+    async createReview(data: FormData): Promise<ApiResponse<Review>> {
+        return api.post<ApiResponse<Review>>('/reviews', data, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
     },
+
 
     async updateReviewStatus(id: number, status: ReviewStatus, staffReply?: string): Promise<ApiResponse<Review>> {
         return api.patch<ApiResponse<Review>>(`/reviews/${id}/status`, { status, staffReply });

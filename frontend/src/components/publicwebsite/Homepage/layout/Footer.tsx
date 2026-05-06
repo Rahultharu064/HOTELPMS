@@ -115,8 +115,9 @@ const Footer = () => {
           <div className="flex gap-6">
             <a href="#" className="hover:text-primary-gold transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-primary-gold transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-primary-gold transition-colors">Cookie Policy</a>
+            <Link to="/admin/auth/login" className="hover:text-primary-gold transition-colors font-bold text-white/50 border-l border-white/10 pl-6">Staff Login</Link>
           </div>
+
         </div>
       </div>
     </footer>

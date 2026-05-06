@@ -48,6 +48,7 @@ export class ReviewService {
     roomTypeId?: number;
     rating: number;
     comment?: string;
+    proofImage?: string;
   }) {
     // 1. If bookingId is provided, check if it's already reviewed
     if (data.bookingId) {
@@ -66,12 +67,14 @@ export class ReviewService {
         roomTypeId: data.roomTypeId,
         rating: data.rating,
         comment: data.comment,
+        proofImage: data.proofImage,
         isVerified: !!data.bookingId, // Verified if linked to a booking
         status: 'pending'
       },
       include: { guest: true, roomType: true }
     });
   }
+
 
   async updateReviewStatus(id: number, status: ReviewStatus, staffReply?: string) {
     const review = await prisma.review.findUnique({ where: { id } });

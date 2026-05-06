@@ -101,9 +101,28 @@ const ReviewsSection: React.FC = () => {
                   </div>
                 </div>
 
-                <p className="text-neutral-text-secondary text-[14px] leading-relaxed mb-8 font-medium italic opacity-90 flex-1">
+                <p className="text-neutral-text-secondary text-[14px] leading-relaxed mb-6 font-medium italic opacity-90 flex-1">
                   "{rev.comment || 'A wonderful experience!'}"
                 </p>
+
+                {rev.proofImage && (
+                  <div className="mb-6 group/img relative overflow-hidden rounded-2xl border border-neutral-border/30">
+                    <img 
+                      src={rev.proofImage} 
+                      alt="Review Proof" 
+                      className="w-full h-32 object-cover transition-transform duration-500 group-hover/img:scale-110 cursor-pointer"
+                      onClick={() => window.open(rev.proofImage, '_blank')}
+                    />
+                    <div className="absolute top-2 right-2 bg-primary-dark/80 backdrop-blur-md text-white text-[8px] font-bold uppercase tracking-widest px-2 py-1 rounded-full opacity-0 group-hover/img:opacity-100 transition-opacity">
+                      Click to expand
+                    </div>
+                    {rev.rating <= 3 && (
+                      <div className="absolute top-2 left-2 bg-red-500 text-white text-[8px] font-bold uppercase tracking-widest px-2 py-1 rounded-full shadow-lg">
+                        Evidence Provided
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="flex items-center gap-4 pt-6 border-t border-neutral-border/30">
                   <div className="relative">
@@ -121,6 +140,7 @@ const ReviewsSection: React.FC = () => {
                   </div>
                 </div>
               </motion.div>
+
             )) : (
               <div className="col-span-full">
                 <ApiStatus

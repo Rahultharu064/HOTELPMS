@@ -66,12 +66,27 @@ async function main() {
   });
 
   await prisma.facility.create({
-    data: { name: 'Oasis Pool', slug: 'oasis-pool', description: 'Temperature controlled outdoor swimming pool.', category: 'pool', openingHours: '06:00 - 22:00' }
+    data: { 
+      name: 'Oasis Pool', 
+      slug: 'oasis-pool', 
+      description: 'Temperature controlled outdoor swimming pool.', 
+      category: 'pool', 
+      openingHours: '06:00 - 22:00',
+      plannedUpgrade: 'Upgrading to solar heating and underwater acoustics by late 2026.'
+    }
   });
 
   await prisma.facility.create({
-    data: { name: 'Namuna Grand Restaurant', slug: 'restaurant', description: 'Fine dining restaurant serving multi-cuisine dishes.', category: 'restaurant', openingHours: '07:00 - 23:00' }
+    data: { 
+      name: 'Namuna Grand Restaurant', 
+      slug: 'restaurant', 
+      description: 'Fine dining restaurant serving multi-cuisine dishes.', 
+      category: 'restaurant', 
+      openingHours: '07:00 - 23:00',
+      plannedUpgrade: 'Adding a private glass-enclosed dining area and a rooftop terrace.'
+    }
   });
+
 
   console.log('Creating Extra Services...');
   await prisma.extraService.createMany({

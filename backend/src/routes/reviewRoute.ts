@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { ReviewController } from '../controllers/reviewController';
 import { validate } from '../middlewares/validateMiddleware';
+import { upload } from '../middlewares/uploadMiddleware';
 import { 
   createReviewSchema, 
   updateReviewStatusSchema,
@@ -12,7 +13,8 @@ const reviewController = new ReviewController();
 
 // List and create reviews
 router.get('/', validate(getReviewsSchema), reviewController.getAllReviews);
-router.post('/', validate(createReviewSchema), reviewController.createReview);
+router.post('/', upload.single('proofImage'), validate(createReviewSchema), reviewController.createReview);
+
 
 // Specific review details and status management
 router.get('/:id', reviewController.getReviewById);

@@ -27,7 +27,12 @@ export class ReviewController {
   });
 
   createReview = asyncHandler(async (req: Request, res: Response) => {
-    const review = await reviewService.createReview(req.body);
+    const reviewData = {
+      ...req.body,
+      proofImage: req.file ? (req.file as any).path || (req.file as any).url : undefined
+    };
+    
+    const review = await reviewService.createReview(reviewData);
 
     const io = req.app.get('io');
     if (io) {
@@ -36,6 +41,7 @@ export class ReviewController {
 
     res.status(HttpStatus.CREATED).json(ApiResponse.success('Review created successfully. Pending approval.', review));
   });
+
 
   updateReviewStatus = asyncHandler(async (req: Request, res: Response) => {
     const { status, staffReply } = req.body;

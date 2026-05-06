@@ -13,9 +13,23 @@ export const SubmitReviewModal: React.FC<SubmitReviewModalProps> = ({ isOpen, on
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [proofImage, setProofImage] = useState<File | null>(null);
+  const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProofImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProofPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,12 +37,15 @@ export const SubmitReviewModal: React.FC<SubmitReviewModalProps> = ({ isOpen, on
     setError("");
 
     try {
-      // For now, using a placeholder guestId. In a real app, this would come from auth context.
-      const res = await reviewService.createReview({
-        guestId: 1, // Placeholder
-        rating,
-        comment,
-      });
+      const formData = new FormData();
+      formData.append('guestId', '1'); // Placeholder
+      formData.append('rating', rating.toString());
+      formData.append('comment', comment);
+      if (proofImage) {
+        formData.append('proofImage', proofImage);
+      }
+
+      const res = await reviewService.createReview(formData);
 
       if (res.success) {
         setSuccess(true);
@@ -37,6 +54,8 @@ export const SubmitReviewModal: React.FC<SubmitReviewModalProps> = ({ isOpen, on
           setSuccess(false);
           setComment("");
           setRating(5);
+          setProofImage(null);
+          setProofPreview(null);
         }, 2000);
       }
     } catch (err: any) {
@@ -62,7 +81,7 @@ export const SubmitReviewModal: React.FC<SubmitReviewModalProps> = ({ isOpen, on
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden"
+            className="relative bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             <div className="absolute top-6 right-6">
               <button onClick={onClose} className="p-2 hover:bg-neutral-light rounded-full transition-colors">
@@ -126,6 +145,38 @@ export const SubmitReviewModal: React.FC<SubmitReviewModalProps> = ({ isOpen, on
                       />
                     </div>
 
+                    <div>
+                      <label className="block text-xs font-black uppercase tracking-widest text-primary-dark mb-3">
+                        {rating <= 3 ? "Upload Proof (Highly Recommended)" : "Upload Proof (Optional)"}
+                      </label>
+                      <div className="relative group">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        <div className={`w-full border-2 border-dashed rounded-2xl p-6 text-center transition-all ${proofPreview ? 'border-primary-green bg-primary-green/5' : 'border-neutral-border group-hover:border-primary-green/50'}`}>
+                          {proofPreview ? (
+                            <div className="relative inline-block">
+                              <img src={proofPreview} alt="Preview" className="h-32 w-auto rounded-xl shadow-md" />
+                              <div className="absolute -top-2 -right-2 bg-primary-green text-white rounded-full p-1 shadow-lg">
+                                <CheckCircle2 className="h-4 w-4" />
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              <div className="w-12 h-12 bg-neutral-light rounded-full flex items-center justify-center mx-auto">
+                                <Star className="h-6 w-6 text-neutral-text-secondary" />
+                              </div>
+                              <p className="text-sm font-bold text-primary-dark">Click or drag image to upload proof</p>
+                              <p className="text-xs text-neutral-text-secondary">Supports JPG, PNG, WEBP</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
                     {error && (
                       <p className="text-red-500 text-xs font-bold bg-red-50 p-3 rounded-xl border border-red-100">{error}</p>
                     )}
@@ -146,4 +197,5 @@ export const SubmitReviewModal: React.FC<SubmitReviewModalProps> = ({ isOpen, on
       )}
     </AnimatePresence>
   );
+
 };

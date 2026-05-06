@@ -21,9 +21,9 @@ export const cloudinaryStorage = new CloudinaryStorage({
     
     return {
       folder: folder,
-      allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+      allowed_formats: ['jpg', 'jpeg', 'png', 'webp','mp4','mov','flv','avi','webm','ogg','gif','3gp'],
       public_id: `${Date.now()}-${sanitizedName}`,
-      transformation: [{ width: 500, height: 500, crop: 'limit' }] // Optimize for profile pics
+      transformation: [{ width: 1200, quality: 80, crop: 'limit' }] // Optimize for web
     };
   },
 });

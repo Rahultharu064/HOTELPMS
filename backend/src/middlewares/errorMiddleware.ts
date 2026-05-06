@@ -48,7 +48,7 @@ export const errorHandler = (
   return res.status(statusCode).json(
     ApiResponse.error(
       process.env.NODE_ENV === 'production' 
-        ? 'Internal server error' 
+        ? `Internal server error: ${err.message}` 
         : err.message
     )
   );

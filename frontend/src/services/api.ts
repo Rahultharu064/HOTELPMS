@@ -41,7 +41,7 @@ async function fetchWithRetry(
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout for Render cold starts
 
       const response = await fetch(url, {
         ...options,

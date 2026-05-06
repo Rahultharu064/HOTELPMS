@@ -7,6 +7,19 @@ export interface ApiResponse<T> {
 export const BACKEND_ROOT = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 const API_BASE_URL = BACKEND_ROOT + '/api';
 
+/**
+ * Construct a full URL for an image, handling both relative and absolute paths.
+ * Useful for images stored locally on the backend or on a CDN like Cloudinary.
+ */
+export const getImageUrl = (url?: string) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  // Ensure we don't have double slashes
+  const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+  return `${BACKEND_ROOT}${cleanUrl}`;
+};
+
+
 const getHeaders = (isFormData: boolean = false, isAdminEndpoint: boolean = false) => {
   let token = localStorage.getItem('guest_token');
   

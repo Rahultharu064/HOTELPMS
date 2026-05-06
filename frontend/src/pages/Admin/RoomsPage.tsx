@@ -5,7 +5,9 @@ import { Plus, LayoutGrid, List as ListIcon, Search, SlidersHorizontal, ArrowLef
 import { useNavigate } from 'react-router-dom';
 import { roomService } from '../../services/roomService';
 import type { Room } from '../../services/roomService';
+import { getImageUrl } from '../../services/api';
 import { toast } from 'react-hot-toast';
+
 
 export default function RoomsPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -132,8 +134,7 @@ export default function RoomsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {filteredRooms.map((room) => {
                   const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url;
-                  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-                  const imageUrl = primaryImage ? (primaryImage.startsWith('http') ? primaryImage : `${backendUrl}${primaryImage}`) : null;
+                  const imageUrl = primaryImage ? getImageUrl(primaryImage) : null;
 
                   return (
                     <div key={room.id} className="group bg-white rounded-[32px] overflow-hidden shadow-soft border border-neutral-border/20 hover:shadow-xl transition-all duration-500 flex flex-col">

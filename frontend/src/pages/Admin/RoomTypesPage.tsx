@@ -8,12 +8,14 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Plus, Edit2, Trash2, Search, ArrowUpDown, Filter, Building2, LayoutGrid, List as ListIcon, ImageOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { getImageUrl } from '../../services/api';
+
 
 export default function RoomTypesPage() {
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const BACKEND_URL = 'http://localhost:5000';
+
   const [editingRoomType, setEditingRoomType] = useState<RoomType | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -197,7 +199,7 @@ export default function RoomTypesPage() {
                 <div className="relative h-56 overflow-hidden">
                   {roomType.image ? (
                     <img 
-                      src={roomType.image && roomType.image.startsWith('http') ? roomType.image : `${BACKEND_URL}${roomType.image || ''}`} 
+                      src={getImageUrl(roomType.image || '')} 
                       alt={roomType.name} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
@@ -258,7 +260,7 @@ export default function RoomTypesPage() {
                 <div className="flex items-center gap-6">
                   {roomType.image ? (
                     <img 
-                      src={roomType.image && roomType.image.startsWith('http') ? roomType.image : `${BACKEND_URL}${roomType.image || ''}`} 
+                      src={getImageUrl(roomType.image || '')} 
                       className="w-16 h-16 rounded-xl object-cover" 
                       alt={roomType.name} 
                     />

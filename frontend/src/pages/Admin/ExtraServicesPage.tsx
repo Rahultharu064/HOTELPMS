@@ -7,12 +7,14 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Plus, Edit2, Trash2, Search, Filter, ImageOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { getImageUrl } from '../../services/api';
+
 
 export default function ExtraServicesPage() {
   const [services, setServices] = useState<ExtraService[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const BACKEND_URL = 'http://localhost:5000';
+
   const [editingService, setEditingService] = useState<ExtraService | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -140,7 +142,7 @@ export default function ExtraServicesPage() {
               <div className="relative h-48 overflow-hidden">
                 {service.image ? (
                   <img 
-                    src={service.image.startsWith('http') ? service.image : `${BACKEND_URL}${service.image}`} 
+                    src={getImageUrl(service.image)} 
                     alt={service.name} 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />

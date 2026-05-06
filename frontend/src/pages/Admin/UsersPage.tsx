@@ -19,6 +19,7 @@ import { Card } from "../../components/ui/Card";
 import { Modal } from "../../components/ui/Modal";
 import { toast } from "react-hot-toast";
 import { staffService, type StaffMember } from "../../services/staffService";
+import { Select } from "../../components/ui/Select";
 
 const AdminUsersPage: React.FC = () => {
   const [staff, setStaff] = useState<StaffMember[]>([]);
@@ -229,18 +230,18 @@ const AdminUsersPage: React.FC = () => {
                     </td>
                     <td className="px-10 py-8 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button 
+                        <Button 
                           onClick={() => handleToggleStatus(user.id, user.isActive)}
                           title={user.isActive ? "Deactivate Account" : "Activate Account"}
                           className={`w-10 h-10 rounded-xl transition-all flex items-center justify-center ${user.isActive ? 'bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white' : 'bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white'}`}
                         >
                           {user.isActive ? <XCircle size={16} strokeWidth={2.5} /> : <CheckCircle2 size={16} strokeWidth={2.5} />}
-                        </button>
-                        <button 
+                        </Button>
+                        <Button 
                           className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-[#111827] hover:text-white transition-all flex items-center justify-center"
                         >
                           <Edit2 size={16} strokeWidth={2.5} />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </motion.tr>
@@ -291,7 +292,7 @@ const AdminUsersPage: React.FC = () => {
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Workstation Role</label>
-                 <select 
+                 <Select 
                     value={formData.role}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, role: e.target.value })}
                     className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all appearance-none font-bold text-sm"
@@ -300,7 +301,7 @@ const AdminUsersPage: React.FC = () => {
                     <option value="housekeeping">Housekeeping Staff</option>
                     <option value="manager">Service Manager</option>
                     <option value="admin">System Administrator</option>
-                 </select>
+                 </Select>
               </div>
               <div className="space-y-2">
                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Contact Signal</label>

@@ -21,12 +21,8 @@ const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNode, dela
   </motion.div>
 );
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-const getImageUrl = (room?: Room) => {
-    const primary = room?.images?.find(img => img.isPrimary)?.url || room?.images?.[0]?.url;
-    if (!primary) return "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&h=600&fit=crop";
-    return primary.startsWith('http') ? primary : `${API_URL}${primary}`;
-};
+import { getImageUrl } from "../../services/api";
+
 
 export const BookingsPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -628,11 +624,17 @@ export const BookingsPage: React.FC = () => {
                   </h3>
                   
                   <div className="relative aspect-video rounded-3xl overflow-hidden mb-8 shadow-soft border border-neutral-border/50 group">
-                    <img 
-                      src={getImageUrl(selectedRoom || undefined)} 
-                      alt={selectedRoom?.name} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                    />
+                    {(() => {
+                      const primaryImage = selectedRoom?.images?.find(img => img.isPrimary)?.url || selectedRoom?.images?.[0]?.url;
+                      return (
+                        <img 
+                          src={getImageUrl(primaryImage) || "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&h=600&fit=crop"} 
+                          alt={selectedRoom?.name} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                        />
+                      );
+                    })()}
+
                     <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
                        <span className="bg-white/95 backdrop-blur-md text-primary-dark text-[10px] font-black px-4 py-2 rounded-xl shadow-xl uppercase tracking-widest border border-white/20">
                           {selectedRoom?.roomNumber ? `No. ${selectedRoom.roomNumber}` : 'Selected Sanctuary'}

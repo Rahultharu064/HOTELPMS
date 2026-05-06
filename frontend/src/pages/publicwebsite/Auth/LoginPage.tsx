@@ -57,8 +57,8 @@ export const LoginPage: React.FC = () => {
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
         <div>
-          <div className="mx-auto h-16 w-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-            <LogIn size={32} />
+          <div className="mx-auto flex justify-center">
+            <img src="/LOGOS.png" alt="Logo" className="h-20 w-auto object-contain" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 tracking-tight">
             Welcome Back

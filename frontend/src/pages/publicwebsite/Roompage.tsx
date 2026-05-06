@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../components/ui/Button";
 import { roomService, type Room } from "../../services/roomService";
 import { roomTypeService, type RoomType } from "../../services/roomTypeService";
+import { getImageUrl } from "../../services/api";
+
+
 import { Users, BedDouble, Maximize, Star, SlidersHorizontal, X, Loader2 } from "lucide-react";
 
 
@@ -201,8 +204,7 @@ export const Roompage: React.FC = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredRooms.map((room, i) => {
                 const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url || "https://images.unsplash.com/photo-1566665797739-1674de7a421a";
-                const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-                const imageUrl = primaryImage.startsWith("http") ? primaryImage : `${backendUrl}${primaryImage}`;
+                const imageUrl = getImageUrl(primaryImage);
 
                 return (
                   <ScrollReveal key={room.id} delay={i * 0.1}>

@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
+import { getImageUrl } from '../../../services/api';
+
 
 export const GuestProfilePage: React.FC = () => {
   const [guest, setGuest] = useState<any>(null);
@@ -109,11 +111,12 @@ export const GuestProfilePage: React.FC = () => {
                   <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100 mx-auto">
                     {guest?.profileImage ? (
                       <img 
-                        src={guest.profileImage.startsWith('http') ? guest.profileImage : `http://localhost:5000${guest.profileImage}`} 
+                        src={getImageUrl(guest.profileImage)} 
                         alt="Profile" 
                         className="w-full h-full object-cover"
                       />
                     ) : (
+
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
                         <User size={64} />
                       </div>
@@ -272,7 +275,11 @@ export const GuestProfilePage: React.FC = () => {
                             <div className="flex gap-4">
                               <div className="w-20 h-20 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
                                 {booking.room?.images?.[0]?.url ? (
-                                  <img src={booking.room.images[0].url} className="w-full h-full object-cover" />
+                                  <img 
+                                    src={getImageUrl(booking.room.images[0].url)} 
+                                    alt={booking.room.name || "Room preview"} 
+                                    className="w-full h-full object-cover" 
+                                  />
                                 ) : (
                                   <div className="w-full h-full flex items-center justify-center text-gray-400"><Package size={24} /></div>
                                 )}

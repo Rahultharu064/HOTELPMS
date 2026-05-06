@@ -21,10 +21,8 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
       <div className="container-custom flex items-center justify-between h-16">
-        <Link to="/" className="flex items-center gap-2 group select-none">
-          <div className="w-9 h-9 rounded-lg bg-primary-green flex items-center justify-center shadow-md group-hover:scale-105 transition-all duration-300">
-            <Building className="text-white h-5 w-5" strokeWidth={2.5} />
-          </div>
+        <Link to="/" className="flex items-center gap-3 group select-none">
+          <img src="/LOGOS.png" alt="Itahari Namuna Logo" className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
           <div className="flex flex-col">
             <span className="font-bold text-sm tracking-tight text-primary-dark leading-none">Itahari Namuna</span>
             <span className="text-[9px] font-black uppercase text-primary-green tracking-[0.2em] mt-0.5">College PMS</span>

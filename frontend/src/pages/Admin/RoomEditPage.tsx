@@ -16,6 +16,9 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
+import { Textarea } from '../../components/ui/Textarea';
+import { getImageUrl } from '../../services/api';
+
 
 export default function RoomEditPage() {
   const { id } = useParams();
@@ -178,7 +181,7 @@ export default function RoomEditPage() {
 
             <div className="space-y-2">
                <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 ml-1">Description</label>
-               <textarea name="description" value={form.description} onChange={handleChange} rows={4} className="w-full p-6 bg-gray-50 border-none rounded-[32px] font-medium text-sm focus:ring-2 focus:ring-[#14532D]/20 outline-none resize-none" />
+                <Textarea name="description" value={form.description} onChange={handleChange} rows={4} className="w-full p-6 bg-gray-50 border-none rounded-[32px] font-medium text-sm focus:ring-2 focus:ring-[#14532D]/20 outline-none resize-none" />
             </div>
           </Card>
 
@@ -189,21 +192,21 @@ export default function RoomEditPage() {
              <div className="grid grid-cols-4 gap-4">
                 {existingImages.map(img => (
                   <div key={img.id} className="relative aspect-square rounded-2xl overflow-hidden group">
-                    <img src={img.url.startsWith('http') ? img.url : `http://localhost:5000${img.url}`} alt="Room" className="w-full h-full object-cover" />
+                     <img src={getImageUrl(img.url)} alt="Room" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-                      <button type="button" className="text-white hover:text-red-500"><X size={20} /></button>
+                      <Button type="button" className="text-white hover:text-red-500"><X size={20} /></Button>
                     </div>
                   </div>
                 ))}
-                <button 
+                <Button 
                   type="button"
                   onClick={() => imgInputRef.current?.click()}
                   className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-[#14532D] hover:bg-gray-50 transition-all group"
                 >
                   <Plus size={24} className="text-gray-300 group-hover:text-[#14532D]" />
                   <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Add More</span>
-                </button>
-                <input ref={imgInputRef} type="file" multiple className="hidden" onChange={handleImages} />
+                </Button>
+                <Input ref={imgInputRef} type="file" multiple className="hidden" onChange={handleImages} />
              </div>
           </Card>
         </div>
@@ -211,11 +214,11 @@ export default function RoomEditPage() {
         <div className="space-y-10">
           <Card className="p-8 rounded-[40px] border-none shadow-soft bg-white space-y-6">
              <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 ml-1">Room Status</label>
-             <select name="status" value={form.status} onChange={handleChange} className="w-full h-12 bg-gray-50 border-none rounded-2xl font-bold px-4 appearance-none focus:ring-2 focus:ring-[#14532D]/20 outline-none">
+             <Select name="status" value={form.status} onChange={handleChange} className="w-full h-12 bg-gray-50 border-none rounded-2xl font-bold px-4 appearance-none focus:ring-2 focus:ring-[#14532D]/20 outline-none">
                 <option value="available">🟢 Available</option>
                 <option value="occupied">🔴 Occupied</option>
                 <option value="maintenance">🟡 Maintenance</option>
-             </select>
+             </Select>
           </Card>
 
           <Card className="p-8 rounded-[40px] border-none shadow-soft bg-white space-y-6">
@@ -227,7 +230,7 @@ export default function RoomEditPage() {
              <div className="flex flex-wrap gap-2">
                 {amenities.map(a => (
                   <span key={a} className="px-3 py-1 bg-[#14532D]/5 text-[#14532D] text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-2 border border-[#14532D]/10">
-                    {a} <button type="button" onClick={() => removeAmenity(a)}><X size={10} /></button>
+                    {a} <Button type="button" onClick={() => removeAmenity(a)}><X size={10} /></Button>
                   </span>
                 ))}
              </div>

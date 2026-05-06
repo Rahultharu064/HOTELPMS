@@ -24,8 +24,11 @@ import type { RoomType } from '../../../services/roomTypeService';
 import { Button } from '../../ui/Button';
 import { Card } from '../../ui/Card';
 import { Input } from '../../ui/Input';
+import { Select } from '../../ui/Select';
+import { Textarea } from '../../ui/Textarea';
 import { Modal } from '../../ui/Modal';
 import { RoomTypeForm } from '../RoomTypes/RoomTypeForm';
+
 
 const initialForm = {
   name: '',
@@ -283,18 +286,15 @@ export default function CreateRoom({ onCancel, onSuccess }: { onCancel: () => vo
                   <Layers size={12} className="text-primary-green" /> Room Type
                 </label>
                 <div className="flex gap-3">
-                  <select
+                  <Select
                     name="roomType"
                     title="Select room category"
                     value={form.roomType}
                     onChange={handleChange}
+                    options={roomTypes.map(rt => ({ value: rt.id, label: rt.name }))}
                     className="flex-1 px-4 h-12 bg-neutral-light border-none rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-green font-bold text-sm shadow-inner transition-all"
-                  >
-                    <option value="">{loadingRoomTypes ? 'Loading types...' : 'Select Category'}</option>
-                    {roomTypes.map((rt) => (
-                      <option key={rt.id} value={rt.id}>{rt.name}</option>
-                    ))}
-                  </select>
+                  />
+
                   <Button
                     type="button"
                     onClick={() => setShowRoomTypeModal(true)}
@@ -432,7 +432,7 @@ export default function CreateRoom({ onCancel, onSuccess }: { onCancel: () => vo
 
                <div className="flex-1">
                   <label className="text-[10px] font-black uppercase tracking-wider text-neutral-text-secondary ml-1 flex items-center gap-1.5"><Settings size={12} /> Unit Status</label>
-                  <select
+                  <Select
                     name="status"
                     title="Change unit status"
                     value={form.status}
@@ -443,7 +443,7 @@ export default function CreateRoom({ onCancel, onSuccess }: { onCancel: () => vo
                     <option value="occupied">🔴 Occupied</option>
                     <option value="maintenance">🟡 Maintenance</option>
                     <option value="out_of_service">⚪ Out of Service</option>
-                  </select>
+                  </Select>
                </div>
             </div>
           </div>
@@ -454,7 +454,7 @@ export default function CreateRoom({ onCancel, onSuccess }: { onCancel: () => vo
                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary ml-1 flex items-center gap-2">
                  <AlignLeft size={12} className="text-primary-green" /> Description
                </label>
-               <textarea
+               <Textarea
                  name="description"
                  value={form.description}
                  onChange={handleChange}

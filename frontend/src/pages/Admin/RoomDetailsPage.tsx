@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { roomService } from '../../services/roomService';
 import type { Room } from '../../services/roomService';
+import { getImageUrl } from '../../services/api';
+
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { toast } from 'react-hot-toast';
@@ -71,21 +73,21 @@ export default function RoomDetailsPage() {
 
   if (!room) return null;
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
   const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url;
-  const imageUrl = primaryImage ? (primaryImage.startsWith('http') ? primaryImage : `${backendUrl}${primaryImage}`) : null;
+  const imageUrl = primaryImage ? getImageUrl(primaryImage) : null;
+
 
   return (
     <div className="max-w-6xl mx-auto space-y-10 pb-20 animate-fade-in">
       {/* Header Navigation */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex items-center gap-6">
-          <button 
+          <Button 
             onClick={() => navigate('/admin/rooms')}
             className="w-12 h-12 rounded-2xl bg-white shadow-soft border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-all"
           >
             <ArrowLeft size={20} />
-          </button>
+          </Button>
           <div>
             <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
               <div className="w-2 h-8 bg-[#14532D] rounded-full" />
@@ -183,7 +185,7 @@ export default function RoomDetailsPage() {
           <div className="grid grid-cols-3 gap-6">
              {room.images?.filter(img => !img.isPrimary).map(img => (
                 <div key={img.id} className="aspect-square rounded-3xl overflow-hidden bg-gray-100 shadow-sm hover:shadow-lg transition-all border border-gray-100">
-                   <img src={img.url.startsWith('http') ? img.url : `${backendUrl}${img.url}`} className="w-full h-full object-cover" alt="Gallery" />
+                   <img src={getImageUrl(img.url)} className="w-full h-full object-cover" alt="Gallery" />
                 </div>
              ))}
              <button className="aspect-square rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 text-gray-400 hover:bg-gray-50 hover:border-[#14532D] hover:text-[#14532D] transition-all">

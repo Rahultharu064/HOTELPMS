@@ -16,9 +16,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* About */}
           <div className="space-y-6">
-            <div>
-              <h3 className="font-bold text-xl mb-1 tracking-tight">Itahari Namuna</h3>
-              <p className="text-primary-gold font-black uppercase text-[10px] tracking-[0.3em]">Property Management</p>
+            <div className="flex flex-col gap-4">
+              <img src="/LOGOS.png" alt="Itahari Namuna Logo" className="h-12 w-auto object-contain brightness-0 invert opacity-90" />
+              <div>
+                <h3 className="font-bold text-xl mb-1 tracking-tight">Itahari Namuna</h3>
+                <p className="text-primary-gold font-black uppercase text-[10px] tracking-[0.3em]">Property Management</p>
+              </div>
             </div>
             <p className="text-sm text-primary-foreground/70 leading-relaxed max-w-xs">
               Experience premium hospitality with modern property management. Your comfort is our priority, and excellence is our standard.

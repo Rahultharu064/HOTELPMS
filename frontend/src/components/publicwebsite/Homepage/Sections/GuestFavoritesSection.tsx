@@ -6,11 +6,8 @@ import { roomService } from "../../../../services/roomService";
 import type { Room } from "../../../../services/roomService";
 import { Button } from "../../../ui/Button";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-const getImageUrl = (path?: string) => {
-    if (!path) return "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&h=600&fit=crop";
-    return path.startsWith('http') ? path : `${API_URL}${path}`;
-};
+import { getImageUrl } from "../../../../services/api";
+
 
 const ScrollReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
     <motion.div

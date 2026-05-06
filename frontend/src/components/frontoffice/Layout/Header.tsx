@@ -4,7 +4,7 @@ import { Search, ChevronDown, LogOut, User, Zap, Camera, Loader2 } from "lucide-
 import { MobileMenuButton } from "./Sidebar";
 import { NotificationBell } from "../../common/NotificationBell";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
-import { BACKEND_ROOT } from "../../../services/api";
+import { getImageUrl } from "../../../services/api";
 
 interface HeaderProps {
   title: string;
@@ -90,7 +90,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
                 <Loader2 size={16} className="animate-spin text-white" />
               ) : admin?.avatar ? (
                 <img 
-                  src={`${BACKEND_ROOT}${admin.avatar}`} 
+                  src={getImageUrl(admin.avatar)} 
                   alt={admin.name} 
                   className="w-full h-full object-cover"
                 />

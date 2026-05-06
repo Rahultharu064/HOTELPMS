@@ -6,6 +6,8 @@ import { Card } from '../../ui/Card';
 import { Input } from '../../ui/Input';
 import type { RoomType } from '../../../services/roomTypeService';
 import { Image as ImageIcon, Type, AlignLeft, Save, X, Upload, Trash2 } from 'lucide-react';
+import { getImageUrl } from '../../../services/api';
+
 
 interface RoomTypeFormProps {
   initialData?: RoomType;
@@ -126,7 +128,7 @@ export function RoomTypeForm({ initialData, onSubmit, onCancel, isLoading }: Roo
                 {imagePreview ? (
                   <>
                     <img 
-                      src={imagePreview.startsWith('data:') ? imagePreview : `http://localhost:5000${imagePreview}`} 
+                      src={imagePreview.startsWith('data:') ? imagePreview : getImageUrl(imagePreview)} 
                       alt="Preview" 
                       className="w-full h-full object-cover"
                     />

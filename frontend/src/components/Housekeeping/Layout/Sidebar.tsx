@@ -35,9 +35,11 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
       <div className="flex items-center gap-4 px-8 py-10 border-b border-white/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-24 h-24 bg-[#F59E0B]/10 rounded-full blur-[40px] -mr-12 -mt-12 transition-all duration-500 group-hover:scale-150 group-hover:bg-[#F59E0B]/20" />
 
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1F7A3A] via-[#14532D] to-[#1F7A3A] flex items-center justify-center shadow-lg flex-shrink-0 relative z-10 border border-white/10">
-          <Building2 size={24} className="text-white" strokeWidth={3} />
-        </div>
+        <img 
+          src="/LOGOS.png" 
+          alt="Logo" 
+          className="w-12 h-12 object-contain rounded-xl relative z-10 brightness-0 invert" 
+        />
 
         {!collapsed && (
           <div className="overflow-hidden relative z-10 transition-all duration-500 delay-100">

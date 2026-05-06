@@ -67,8 +67,8 @@ export const AdminLoginPage: React.FC = () => {
       <div className="max-w-md w-full relative z-10">
         <div className="bg-white p-12 rounded-[40px] shadow-2xl border border-gray-100 backdrop-blur-xl">
           <div className="flex flex-col items-center mb-10">
-            <div className="w-20 h-20 bg-gradient-to-br from-[#14532D] to-[#111827] rounded-3xl flex items-center justify-center text-[#F59E0B] shadow-xl shadow-[#14532D]/20 mb-6">
-              <ShieldAlert size={40} strokeWidth={2} />
+            <div className="mx-auto flex justify-center mb-6">
+              <img src="/LOGOS.png" alt="Logo" className="h-20 w-auto object-contain" />
             </div>
             <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase text-center">
               Restricted Area

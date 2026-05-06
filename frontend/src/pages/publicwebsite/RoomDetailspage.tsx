@@ -12,6 +12,9 @@ import {
 import { Button } from '../../components/ui/Button';
 import { roomService } from '../../services/roomService';
 import type { Room } from '../../services/roomService';
+import {  getImageUrl } from '../../services/api';
+
+
 import { toast } from 'react-hot-toast';
 
 // Icon Map for Amenities
@@ -54,7 +57,7 @@ export const RoomDetailspage = () => {
     checkOut: ''
   });
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
 
   useEffect(() => {
     const fetchRoom = async () => {
@@ -78,8 +81,9 @@ export const RoomDetailspage = () => {
 
   const images = useMemo(() => {
     if (!room?.images?.length) return ["https://images.unsplash.com/photo-1566665797739-1674de7a421a"];
-    return room.images.map(img => img.url.startsWith('http') ? img.url : `${backendUrl}${img.url}`);
-  }, [room, backendUrl]);
+    return room.images.map(img => getImageUrl(img.url));
+
+  }, [room]);
 
   const calculation = useMemo(() => {
     if (!bookingDates.checkIn || !bookingDates.checkOut || !room) {
@@ -157,18 +161,18 @@ export const RoomDetailspage = () => {
                   
                   {room.videos?.[0] && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:pointer-events-auto transition-all">
-                       <button onClick={() => setShowVideo(true)} className="h-16 w-16 rounded-full bg-white/90 shadow-2xl flex items-center justify-center scale-75 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all">
+                       <Button onClick={() => setShowVideo(true)} className="h-16 w-16 rounded-full bg-white/90 shadow-2xl flex items-center justify-center scale-75 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all">
                           <Play size={24} className="text-primary-dark ml-1" fill="currentColor" />
-                       </button>
+                       </Button>
                     </div>
                   )}
                 </div>
 
                 <div className="grid grid-cols-5 gap-3">
                   {images.slice(0, 5).map((img, i) => (
-                    <button key={i} onClick={() => setActiveImage(i)} className={`rounded-xl overflow-hidden aspect-video border-2 transition-all ${i === activeImage ? "border-primary-green shadow-lg" : "border-transparent opacity-50"}`}>
+                    <Button key={i} onClick={() => setActiveImage(i)} className={`rounded-xl overflow-hidden aspect-video border-2 transition-all ${i === activeImage ? "border-primary-green shadow-lg" : "border-transparent opacity-50"}`}>
                       <img src={img} alt="" className="w-full h-full object-cover" />
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -186,13 +190,13 @@ export const RoomDetailspage = () => {
                      className="relative w-full max-w-5xl aspect-video rounded-3xl overflow-hidden shadow-2xl bg-black"
                      onClick={e => e.stopPropagation()}
                   >
-                     <button onClick={() => setShowVideo(false)} className="absolute top-4 right-4 z-50 h-10 w-10 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/80 transition-colors">
+                     <Button onClick={() => setShowVideo(false)} className="absolute top-4 right-4 z-50 h-10 w-10 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/80 transition-colors">
                         <X size={20} />
-                     </button>
+                     </Button>
                      {(() => {
                         const videoUrl = room.videos?.[0].url || '';
                         const isExternal = videoUrl.startsWith('http') || videoUrl.includes('youtube') || videoUrl.includes('vimeo');
-                        const fullUrl = isExternal ? videoUrl : `${backendUrl}${videoUrl}`;
+                        const fullUrl = getImageUrl(videoUrl);
                         
                         if (isExternal) {
                            const embedUrl = videoUrl.includes('youtube.com/watch?v=') 

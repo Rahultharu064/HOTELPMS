@@ -14,6 +14,7 @@ import { frontOfficeService } from "../../services/frontofficeService";
 import { toast } from "react-hot-toast";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { Button } from "../../components/ui/Button";
 
 const GuestFolioPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -372,9 +373,9 @@ const GuestFolioPage: React.FC = () => {
             <div className="px-10 py-7 border-b border-gray-50 flex items-center justify-between">
               <h3 className="text-xs font-black uppercase tracking-widest text-[#111827]">Transaction Ledger</h3>
               <div className="flex items-center gap-2">
-                 <button className="p-2 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 transition-all">
+                 <Button className="p-2 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 transition-all">
                     <Trash2 size={16} />
-                 </button>
+                 </Button>
               </div>
             </div>
             <div className="overflow-x-auto">

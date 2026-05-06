@@ -3,7 +3,7 @@ import { Search, ChevronDown, LogOut, User, Zap, Camera, Loader2 } from "lucide-
 import { MobileMenuButton } from "./Sidebar";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { api, BACKEND_ROOT } from "../../../services/api";
+import { api, getImageUrl } from "../../../services/api";
 import { toast } from "react-hot-toast";
 
 import { NotificationBell } from "../../common/NotificationBell";
@@ -120,7 +120,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
                 <Loader2 size={16} className="animate-spin text-white" />
               ) : admin?.avatar ? (
                 <img 
-                  src={`${BACKEND_ROOT}${admin.avatar}`} 
+                  src={getImageUrl(admin.avatar)} 
                   alt={admin.name} 
                   className="w-full h-full object-cover"
                 />

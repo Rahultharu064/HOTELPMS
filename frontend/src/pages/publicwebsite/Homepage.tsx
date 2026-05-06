@@ -64,13 +64,12 @@ export const Homepage: React.FC = () => {
                 Our Legacy
               </span>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-2 mb-4 leading-tight">
-                Itahari Namuna <span className="gradient-text">College & PMS</span>
+                Antigravity <span className="gradient-text">Hotel PMS</span>
               </h2>
               <p className="text-neutral-text-secondary mb-6 leading-relaxed text-lg">
-                Combining academic excellence with luxurious hospitality, we provide an 
-                unmatched property management experience. Our spaces are designed to 
-                inspire and comfort, creating the perfect environment for both learning 
-                and relaxation.
+                Experience the pinnacle of hospitality management with Antigravity. 
+                Our next-generation property management system ensures an unmatched 
+                guest experience, combining luxury, efficiency, and seamless operation.
               </p>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

@@ -61,7 +61,7 @@ export const TestimonialsSlider: React.FC = () => {
             What Our Guests Say
           </h2>
           <p className="text-neutral-text-secondary max-w-2xl mx-auto">
-            Real experiences from our valued guests who have enjoyed the Itahari Namuna difference.
+            Real experiences from our valued guests who have enjoyed the Antigravity difference.
           </p>
         </motion.div>
 

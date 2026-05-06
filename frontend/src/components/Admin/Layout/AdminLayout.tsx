@@ -51,7 +51,7 @@ export function AdminLayout() {
 
         {/* Footer info for internal dash */}
         <footer className="px-10 py-6 border-t border-gray-100 flex items-center justify-between text-[10px] font-black text-gray-400 uppercase tracking-widest bg-white/50 backdrop-blur-md">
-          <p>© 2026 Itahari Namuna College PMS - Administrative Core V4.0.1</p>
+          <p>© 2026 Antigravity Hotel PMS - Administrative Core V4.0.1</p>
           <div className="flex items-center gap-6">
             <button className="hover:text-blue-600 transition-colors">Core Engine: Stable</button>
             <button className="hover:text-blue-600 transition-colors">System Logs</button>

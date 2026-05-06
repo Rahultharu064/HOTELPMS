@@ -58,7 +58,7 @@ const SettingsPage: React.FC = () => {
             <section className="space-y-8">
               <div>
                 <h2 className="text-xl font-black text-[#111827] tracking-tight">General Information</h2>
-                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mt-1">Primary details of Itahari Namuna College PMS</p>
+                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mt-1">Primary details of Antigravity Hotel PMS</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -66,7 +66,7 @@ const SettingsPage: React.FC = () => {
                   <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Hotel Name</label>
                   <input 
                     type="text" 
-                    defaultValue="Itahari Namuna College Hotel"
+                    defaultValue="Antigravity Hotel PMS"
                     className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-3xl text-sm font-bold text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/20 transition-all font-mono"
                   />
                 </div>
@@ -74,7 +74,7 @@ const SettingsPage: React.FC = () => {
                   <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Support Email</label>
                   <input 
                     type="email" 
-                    defaultValue="support@namunacollege.edu.np"
+                    defaultValue="support@antigravitypms.com"
                     className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-3xl text-sm font-bold text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/20 transition-all font-mono"
                   />
                 </div>

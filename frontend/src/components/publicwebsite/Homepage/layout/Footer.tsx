@@ -17,10 +17,10 @@ const Footer = () => {
           {/* About */}
           <div className="space-y-6">
             <div className="flex flex-col gap-4">
-              <img src="/LOGOS.png" alt="Itahari Namuna Logo" className="h-12 w-auto object-contain brightness-0 invert opacity-90" />
+              <img src="/LOGOS.png" alt="Antigravity Logo" className="h-12 w-auto object-contain brightness-0 invert opacity-90" />
               <div>
-                <h3 className="font-bold text-xl mb-1 tracking-tight">Itahari Namuna</h3>
-                <p className="text-primary-gold font-black uppercase text-[10px] tracking-[0.3em]">Property Management</p>
+                <h3 className="font-bold text-xl mb-1 tracking-tight">Antigravity PMS</h3>
+                <p className="text-primary-gold font-black uppercase text-[10px] tracking-[0.3em]">Next-Gen Property Management</p>
               </div>
             </div>
             <p className="text-sm text-primary-foreground/70 leading-relaxed max-w-xs">
@@ -80,7 +80,7 @@ const Footer = () => {
                 <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary-green transition-colors">
                   <Mail className="h-4 w-4 shrink-0" />
                 </div>
-                <span>info@itaharipms.com</span>
+                <span>info@antigravitypms.com</span>
               </li>
             </ul>
           </div>
@@ -111,7 +111,7 @@ const Footer = () => {
       
       <div className="border-t border-white/5 bg-black/10">
         <div className="container-custom py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-primary-foreground/40 font-medium">
-          <p>© 2026 Itahari Namuna College PMS. All rights reserved.</p>
+          <p>© 2026 Antigravity Hotel PMS. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-primary-gold transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-primary-gold transition-colors">Terms of Service</a>

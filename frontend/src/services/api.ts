@@ -19,6 +19,65 @@ export const getImageUrl = (url?: string) => {
   return `${BACKEND_ROOT}${cleanUrl}`;
 };
 
+/**
+ * Sleep utility for retry delays
+ */
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * Retry wrapper with exponential backoff for resilient API calls
+ */
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  retries = 2,
+  baseDelay = 1000
+): Promise<Response> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      // Don't retry on client errors (4xx), only on server errors (5xx)
+      if (response.ok || (response.status >= 400 && response.status < 500)) {
+        return response;
+      }
+
+      // Server error — retry if attempts remain
+      if (attempt < retries) {
+        const delay = baseDelay * Math.pow(2, attempt);
+        console.warn(`API request failed (${response.status}), retrying in ${delay}ms... (attempt ${attempt + 1}/${retries})`);
+        await sleep(delay);
+        continue;
+      }
+
+      return response; // Return the failed response on last attempt
+    } catch (error: any) {
+      lastError = error;
+
+      if (error.name === 'AbortError') {
+        console.warn(`Request to ${url} timed out`);
+      }
+
+      if (attempt < retries) {
+        const delay = baseDelay * Math.pow(2, attempt);
+        console.warn(`Network error, retrying in ${delay}ms... (attempt ${attempt + 1}/${retries})`);
+        await sleep(delay);
+      }
+    }
+  }
+
+  throw lastError || new Error('Request failed after retries');
+}
 
 const getHeaders = (isFormData: boolean = false, isAdminEndpoint: boolean = false) => {
   let token = localStorage.getItem('guest_token');
@@ -56,7 +115,7 @@ export const api = {
         url += `?${queryString}`;
       }
     }
-    const response = await fetch(url, {
+    const response = await fetchWithRetry(url, {
       headers: getHeaders(false, isAdminEndpoint),
     });
     const result = await response.json();
@@ -69,11 +128,11 @@ export const api = {
   async post<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    });
+    }, 1); // Fewer retries for mutations
     const result = await response.json();
     if (!response.ok) {
       throw { response: { data: result, status: response.status } };
@@ -84,11 +143,11 @@ export const api = {
   async put<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    });
+    }, 1);
     const result = await response.json();
     if (!response.ok) {
       throw { response: { data: result, status: response.status } };
@@ -99,11 +158,11 @@ export const api = {
   async patch<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'PATCH',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    });
+    }, 1);
     const result = await response.json();
     if (!response.ok) {
       throw { response: { data: result, status: response.status } };
@@ -113,10 +172,10 @@ export const api = {
 
   async delete<T = any>(endpoint: string): Promise<T> {
     const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
       headers: getHeaders(false, isAdminEndpoint),
-    });
+    }, 1);
     
     if (!response.ok) {
       const result = await response.json();

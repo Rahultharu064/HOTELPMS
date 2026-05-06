@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../components/ui/Button";
 import { roomService, type Room } from "../../services/roomService";
 import { roomTypeService, type RoomType } from "../../services/roomTypeService";
 import { getImageUrl } from "../../services/api";
-
+import { ApiStatus } from "../../components/ui/ApiStatus";
 
 import { Users, BedDouble, Maximize, Star, SlidersHorizontal, X, Loader2 } from "lucide-react";
 
@@ -30,25 +30,29 @@ export const Roompage: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [roomsRes, typesRes] = await Promise.all([
+        roomService.getAllRooms(),
+        roomTypeService.getAllRoomTypes(),
+      ]);
+      if (roomsRes.success) setRooms(roomsRes.data);
+      if (typesRes.success) setRoomTypes(typesRes.data.roomTypes);
+    } catch (err: any) {
+      console.error("Failed to fetch room data:", err);
+      setError(err?.message || 'Failed to load rooms');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [roomsRes, typesRes] = await Promise.all([
-          roomService.getAllRooms(),
-          roomTypeService.getAllRoomTypes(),
-        ]);
-        if (roomsRes.success) setRooms(roomsRes.data);
-        if (typesRes.success) setRoomTypes(typesRes.data.roomTypes);
-      } catch (error) {
-        console.error("Failed to fetch room data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   useEffect(() => {
     const t = searchParams.get("type");
@@ -190,6 +194,14 @@ export const Roompage: React.FC = () => {
 
           {/* Room Grid */}
           <div className="flex-1">
+            {error ? (
+              <ApiStatus
+                status="error"
+                errorMessage={error}
+                onRetry={fetchData}
+              />
+            ) : (
+            <>
             <div className="hidden lg:flex justify-between items-center mb-6 pl-2">
               {loading ? (
                 <div className="flex items-center gap-2 text-primary-green animate-pulse">
@@ -282,6 +294,8 @@ export const Roompage: React.FC = () => {
                   Clear all filters
                 </Button>
               </motion.div>
+            )}
+            </>
             )}
           </div>
         </div>

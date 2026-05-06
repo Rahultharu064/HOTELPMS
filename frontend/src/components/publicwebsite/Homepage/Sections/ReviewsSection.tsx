@@ -1,31 +1,36 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Star, Quote, MessageSquare, Plus } from "lucide-react";
 import { reviewService, type Review } from "../../../../services/reviewService";
 import { motion } from "framer-motion";
 import { Button } from "../../../ui/Button";
 import { SubmitReviewModal } from "./SubmitReviewModal";
+import { ApiStatus } from "../../../ui/ApiStatus";
 
 const ReviewsSection: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [show, setShow] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const ref = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const res = await reviewService.getAllReviews({ status: 'approved', limit: 4 });
-        if (res.success) {
-          setReviews(res.data.reviews);
-        }
-      } catch (error) {
-        console.error("Failed to fetch reviews:", error);
-      } finally {
-        setLoading(false);
+  const fetchReviews = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await reviewService.getAllReviews({ status: 'approved', limit: 12 });
+      if (res.success) {
+        setReviews(res.data.reviews);
       }
-    };
+    } catch (err: any) {
+      console.error("Failed to fetch reviews:", err);
+      setError(err?.message || 'Failed to load reviews');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
     fetchReviews();
 
     const obs = new IntersectionObserver(
@@ -34,7 +39,7 @@ const ReviewsSection: React.FC = () => {
     );
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-  }, []);
+  }, [fetchReviews]);
 
   return (
     <section ref={ref} className="section-padding bg-white relative overflow-hidden">
@@ -65,11 +70,13 @@ const ReviewsSection: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-             {[1, 2, 3, 4].map(i => (
-               <div key={i} className="bg-neutral-light rounded-[40px] h-64 animate-pulse" />
-             ))}
-          </div>
+          <ApiStatus status="loading" skeletonCount={4} skeletonVariant="card" />
+        ) : error ? (
+          <ApiStatus
+            status="error"
+            errorMessage={error}
+            onRetry={fetchReviews}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {reviews.length > 0 ? reviews.map((rev, i) => (
@@ -115,8 +122,13 @@ const ReviewsSection: React.FC = () => {
                 </div>
               </motion.div>
             )) : (
-              <div className="col-span-full text-center py-12 bg-neutral-light rounded-[40px] border-2 border-dashed border-neutral-border/30">
-                 <p className="text-neutral-text-secondary font-bold uppercase tracking-widest text-xs">No reviews to display yet.</p>
+              <div className="col-span-full">
+                <ApiStatus
+                  status="empty"
+                  emptyTitle="No Reviews Yet"
+                  emptyDescription="Be the first to share your experience with us!"
+                  emptyEmoji="💬"
+                />
               </div>
             )}
           </div>

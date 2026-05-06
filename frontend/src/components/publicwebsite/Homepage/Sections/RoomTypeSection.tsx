@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { RoomType } from "../../../../services/roomTypeService";
 import { roomTypeService } from "../../../../services/roomTypeService";
-
+import { ApiStatus } from "../../../ui/ApiStatus";
 import { getImageUrl } from "../../../../services/api";
 
 
@@ -22,20 +22,25 @@ const ScrollReveal = ({ children, delay = 0, className = "" }: { children: React
 export const RoomTypeSection: React.FC = () => {
     const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchRoomTypes = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await roomTypeService.getAllRoomTypes();
+            setRoomTypes(res.data.roomTypes || []);
+        } catch (err: any) {
+            console.error("Failed to fetch room types:", err);
+            setError(err?.message || 'Failed to load room types');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
-        const fetchRoomTypes = async () => {
-            try {
-                const res = await roomTypeService.getAllRoomTypes();
-                setRoomTypes(res.data.roomTypes || []);
-            } catch (error) {
-                console.error("Failed to fetch room types:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchRoomTypes();
-    }, []);
+    }, [fetchRoomTypes]);
 
     return (
         <section className="section-padding bg-white border-b border-neutral-border/50">
@@ -47,9 +52,20 @@ export const RoomTypeSection: React.FC = () => {
                 </ScrollReveal>
 
                 {loading ? (
-                    <div className="flex justify-center items-center py-20">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-green"></div>
-                    </div>
+                    <ApiStatus status="loading" skeletonCount={4} skeletonVariant="card" />
+                ) : error ? (
+                    <ApiStatus
+                        status="error"
+                        errorMessage={error}
+                        onRetry={fetchRoomTypes}
+                    />
+                ) : roomTypes.length === 0 ? (
+                    <ApiStatus
+                        status="empty"
+                        emptyTitle="Room Categories Coming Soon"
+                        emptyDescription="We're preparing our room collections for you. Check back shortly."
+                        emptyEmoji="🏨"
+                    />
                 ) : (
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
                         {roomTypes.slice(0, 4).map((rt, i) => (
@@ -62,6 +78,7 @@ export const RoomTypeSection: React.FC = () => {
                                         src={getImageUrl(rt.image)}
                                         alt={`${rt.name} rooms`}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ease-out"
+                                        loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/90 via-primary-dark/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
 

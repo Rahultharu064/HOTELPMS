@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Heart, Star, Users, ArrowRight, TrendingUp } from "lucide-react";
 import { roomService } from "../../../../services/roomService";
 import type { Room } from "../../../../services/roomService";
 import { Button } from "../../../ui/Button";
-
+import { ApiStatus } from "../../../ui/ApiStatus";
 import { getImageUrl } from "../../../../services/api";
 
 
@@ -24,24 +24,30 @@ const ScrollReveal = ({ children, delay = 0, className = "" }: { children: React
 export const GuestFavoritesSection: React.FC = () => {
     const [rooms, setRooms] = useState<Room[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchFavorites = async () => {
-            try {
-                const res = await roomService.getGuestFavorites();
-                if (res.success) {
-                    setRooms(res.data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch guest favorites:", error);
-            } finally {
-                setLoading(false);
+    const fetchFavorites = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await roomService.getGuestFavorites();
+            if (res.success) {
+                setRooms(res.data);
             }
-        };
-        fetchFavorites();
+        } catch (err: any) {
+            console.error("Failed to fetch guest favorites:", err);
+            setError(err?.message || 'Failed to load guest favorites');
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    if (!loading && rooms.length === 0) return null;
+    useEffect(() => {
+        fetchFavorites();
+    }, [fetchFavorites]);
+
+    // Don't render at all if no data and no error
+    if (!loading && !error && rooms.length === 0) return null;
 
     return (
         <section className="section-padding bg-white relative overflow-hidden">
@@ -60,11 +66,13 @@ export const GuestFavoritesSection: React.FC = () => {
                 </ScrollReveal>
 
                 {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[1, 2, 3].map(i => (
-                            <div key={i} className="h-48 bg-neutral-light rounded-3xl animate-pulse" />
-                        ))}
-                    </div>
+                    <ApiStatus status="loading" skeletonCount={3} skeletonVariant="row" />
+                ) : error ? (
+                    <ApiStatus
+                        status="error"
+                        errorMessage={error}
+                        onRetry={fetchFavorites}
+                    />
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                         {rooms.map((room, i) => {
@@ -78,6 +86,7 @@ export const GuestFavoritesSection: React.FC = () => {
                                                     src={getImageUrl(primaryImage)} 
                                                     alt={room.name} 
                                                     className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                                    loading="lazy"
                                                 />
                                                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
                                             </div>

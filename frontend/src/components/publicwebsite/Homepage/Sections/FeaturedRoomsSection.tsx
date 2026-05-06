@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Star, Users, BedDouble, Maximize, ArrowRight, Sparkles } from "lucide-react";
 import { roomService } from "../../../../services/roomService";
 import type { Room } from "../../../../services/roomService";
 import { Button } from "../../../ui/Button";
-
+import { ApiStatus } from "../../../ui/ApiStatus";
 import { getImageUrl } from "../../../../services/api";
 
 
@@ -24,25 +24,31 @@ const ScrollReveal = ({ children, delay = 0, className = "" }: { children: React
 export const FeaturedRoomsSection: React.FC = () => {
     const [rooms, setRooms] = useState<Room[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchRooms = async () => {
-            try {
-                // Fetch rooms with isFeatured=true
-                const res = await roomService.getAllRooms({ isFeatured: true });
-                if (res.success) {
-                    setRooms(res.data.slice(0, 3));
-                }
-            } catch (error) {
-                console.error("Failed to fetch featured rooms:", error);
-            } finally {
-                setLoading(false);
+    const fetchRooms = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            // Fetch rooms with isFeatured=true
+            const res = await roomService.getAllRooms({ isFeatured: true });
+            if (res.success) {
+                setRooms(res.data.slice(0, 3));
             }
-        };
-        fetchRooms();
+        } catch (err: any) {
+            console.error("Failed to fetch featured rooms:", err);
+            setError(err?.message || 'Failed to load featured rooms');
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    if (!loading && rooms.length === 0) return null;
+    useEffect(() => {
+        fetchRooms();
+    }, [fetchRooms]);
+
+    // Don't render section at all if no data and no error
+    if (!loading && !error && rooms.length === 0) return null;
 
     return (
         <section className="section-padding bg-neutral-light overflow-hidden relative">
@@ -71,11 +77,13 @@ export const FeaturedRoomsSection: React.FC = () => {
                 </div>
 
                 {loading ? (
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[1, 2, 3].map(i => (
-                            <div key={i} className="bg-white rounded-[40px] aspect-[4/5] animate-pulse shadow-sm" />
-                        ))}
-                    </div>
+                    <ApiStatus status="loading" skeletonCount={3} skeletonVariant="hero" />
+                ) : error ? (
+                    <ApiStatus
+                        status="error"
+                        errorMessage={error}
+                        onRetry={fetchRooms}
+                    />
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
                         {rooms.map((room, i) => {
@@ -94,6 +102,7 @@ export const FeaturedRoomsSection: React.FC = () => {
                                                 src={getImageUrl(primaryImage)} 
                                                 alt={room.name} 
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" 
+                                                loading="lazy"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                                             

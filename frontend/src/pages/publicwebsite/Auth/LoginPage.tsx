@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { authService } from '../../../services/authService';
 import { toast } from 'react-hot-toast';
-import { Mail, Lock, LogIn, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 
 export const LoginPage: React.FC = () => {

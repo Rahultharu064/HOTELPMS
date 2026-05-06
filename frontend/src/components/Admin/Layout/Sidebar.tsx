@@ -10,7 +10,6 @@ import {
   Menu,
   Building2,
   LogOut,
-  ShieldCheck,
   CreditCard,
   Warehouse,
   Zap,

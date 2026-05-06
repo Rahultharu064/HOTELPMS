@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 import { toast } from 'react-hot-toast';
-import { Lock, ShieldAlert, ArrowRight, Loader2 } from 'lucide-react';
+import { Lock, ArrowRight, Loader2 } from 'lucide-react';
 import api from '../../../services/api';
 
 export const AdminLoginPage: React.FC = () => {

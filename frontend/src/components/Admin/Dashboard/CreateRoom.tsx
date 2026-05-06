@@ -52,7 +52,7 @@ export default function CreateRoom({ onCancel, onSuccess }: { onCancel: () => vo
   const [images, setImages] = useState<File[]>([]);
   const [videos, setVideos] = useState<File[]>([]);
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
-  const [loadingRoomTypes, setLoadingRoomTypes] = useState(true);
+
   const [isLoading, setIsLoading] = useState(false);
   const [showRoomTypeModal, setShowRoomTypeModal] = useState(false);
   const [roomSequence, setRoomSequence] = useState('');
@@ -79,7 +79,6 @@ export default function CreateRoom({ onCancel, onSuccess }: { onCancel: () => vo
 
   const fetchRoomTypes = async () => {
     try {
-      setLoadingRoomTypes(true);
       const response = await roomTypeService.getAllRoomTypes();
       if (response.success) {
         setRoomTypes(response.data?.roomTypes || []);
@@ -87,7 +86,6 @@ export default function CreateRoom({ onCancel, onSuccess }: { onCancel: () => vo
     } catch (error) {
       toast.error('Failed to load room types');
     } finally {
-      setLoadingRoomTypes(false);
     }
   };
 

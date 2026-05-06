@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "../../../ui/Button";
-import { Menu, X, Building, User, LogOut } from "lucide-react";
+import { Menu, X, User, LogOut } from "lucide-react";
 import { useAuth } from "../../../../context/AuthContext";
 
 const navItems = [

@@ -6,7 +6,6 @@ import {
   UserSquare2,
   ChevronLeft,
   Menu,
-  Building2,
   LogOut,
   Plus,
 } from "lucide-react";

@@ -2,6 +2,13 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Sanitize CLOUDINARY_URL if it's invalid (e.g. accidentally set to dashboard URL)
+if (process.env.CLOUDINARY_URL && !process.env.CLOUDINARY_URL.startsWith('cloudinary://')) {
+  console.warn('⚠️ Invalid CLOUDINARY_URL detected. Removing from environment to prevent crash.');
+  delete process.env.CLOUDINARY_URL;
+}
+
+
 export const config = {
   port: parseInt(process.env.PORT || '5000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',

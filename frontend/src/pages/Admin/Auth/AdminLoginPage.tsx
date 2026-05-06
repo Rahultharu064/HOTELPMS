@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 import { toast } from 'react-hot-toast';
-import { Lock, ArrowRight, Loader2, ShieldCheck, Activity, Globe, Cpu, AlertTriangle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Lock, ArrowRight, Loader2, Activity, AlertTriangle } from 'lucide-react';
+import { motion } from 'framer-motion';
 import api from '../../../services/api';
 
 export const AdminLoginPage: React.FC = () => {

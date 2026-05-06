@@ -50,9 +50,7 @@ export const reviewService = {
     },
 
     async createReview(data: FormData): Promise<ApiResponse<Review>> {
-        return api.post<ApiResponse<Review>>('/reviews', data, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        return api.post<ApiResponse<Review>>('/reviews', data);
     },
 
 

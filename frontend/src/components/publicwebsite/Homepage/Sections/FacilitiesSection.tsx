@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Wifi, Waves, Dumbbell, Utensils, Car, Shield, Wind, Coffee, Zap, Smartphone, Leaf, Monitor } from "lucide-react";
+import { Wifi, Waves, Dumbbell, Utensils, Zap, Smartphone, Leaf, Monitor } from "lucide-react";
 
 const ITEMS = [
   { icon: Wifi,       label: "1Gbps Fiber Wi-Fi",  sub: "Seamless connectivity throughout the entire estate.",        color: "#1F7A3A" },

@@ -5,7 +5,7 @@ import HeroSection from '../../components/publicwebsite/Homepage/Sections/HeroSe
 import { RoomTypeSection } from '../../components/publicwebsite/Homepage/Sections/RoomTypeSection';
 import { FeaturedRoomsSection } from '../../components/publicwebsite/Homepage/Sections/FeaturedRoomsSection';
 import { GuestFavoritesSection } from '../../components/publicwebsite/Homepage/Sections/GuestFavoritesSection';
-import { TestimonialsSlider } from '../../components/publicwebsite/Homepage/Sections/TestimonialSliderSection';
+import ReviewsSection from '../../components/publicwebsite/Homepage/Sections/ReviewsSection';
 import FacilitiesSection from '../../components/publicwebsite/Homepage/Sections/FacilitiesSection';
 import { Button } from '../../components/ui/Button';
 import { FaArrowRight, FaAward, FaUsers, FaBed, FaStar } from 'react-icons/fa';
@@ -98,7 +98,7 @@ export const Homepage: React.FC = () => {
         </div>
       </section>
       
-      <TestimonialsSlider />
+      <ReviewsSection />
       
       {/* CTA Section */}
       <section className="relative overflow-hidden bg-gradient-to-r from-primary-dark via-primary-green to-primary-dark py-20">

@@ -11,13 +11,19 @@ cloudinary.config({
 export const cloudinaryStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (_req, file) => {
-    // Extract folder from request or use default
-    const folder = (_req.body.folder as string) || 'hotel-pms';
+    // Sanitize filename: remove extension and special characters
+    const sanitizedName = file.originalname
+      .split('.')[0]
+      .replace(/[^a-z0-9]/gi, '_')
+      .toLowerCase();
+      
+    const folder = (_req.body?.folder as string) || 'hotel-pms-profiles';
     
     return {
       folder: folder,
       allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
-      public_id: `${Date.now()}-${file.originalname.split('.')[0]}`,
+      public_id: `${Date.now()}-${sanitizedName}`,
+      transformation: [{ width: 500, height: 500, crop: 'limit' }] // Optimize for profile pics
     };
   },
 });

@@ -346,21 +346,34 @@ export class AuthController {
    * Update Profile Image
    */
   updateProfileImage = asyncHandler(async (req: Request, res: Response) => {
-    const userId = (req as any).user.id;
+    const userId = (req as any).user?.id;
     const file = req.file;
 
-    if (!file) {
-      throw new ApiError(HttpStatus.BAD_REQUEST, 'No image file provided');
+    if (!userId) {
+      throw new ApiError(HttpStatus.UNAUTHORIZED, 'User context missing');
     }
 
-    const profileImage = file.path; // Cloudinary URL
+    if (!file) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'No image file provided or upload failed');
+    }
 
-    await prisma.guest.update({
-      where: { id: userId },
-      data: { profileImage },
-    });
+    try {
+      const profileImage = file.path; // Cloudinary URL
 
-    res.json({ message: 'Profile image updated', profileImage });
+      await prisma.guest.update({
+        where: { id: userId },
+        data: { profileImage },
+      });
+
+      res.json({ 
+        success: true,
+        message: 'Profile image updated', 
+        profileImage 
+      });
+    } catch (error) {
+      console.error('[ProfileImageUpdateError]:', error);
+      throw error;
+    }
   });
 
   /**

@@ -23,7 +23,7 @@ export const LoginSuccess: React.FC = () => {
           const user = response.data || response; // Handle both wrapped and unwrapped response
           
           login(user, token);
-          toast.success('Welcome back to Antigravity PMS!');
+          toast.success('Welcome back to Itahari Namuna PMS!');
           navigate('/');
         } catch (error) {
           console.error('Login success error:', error);

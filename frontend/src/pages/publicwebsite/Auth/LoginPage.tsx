@@ -23,7 +23,7 @@ export const LoginPage: React.FC = () => {
       const response = await authService.login({ email, password });
       const { user, token } = response;
       login(user, token);
-      toast.success('Welcome back to Antigravity PMS!');
+      toast.success('Welcome back to Itahari Namuna PMS!');
       navigate('/');
     } catch (error: any) {
       console.error('Login error:', error);
@@ -202,7 +202,7 @@ export const LoginPage: React.FC = () => {
           <SiGooglechrome className="text-gray-400 hover:text-[#4285F4] transition-colors" size={12} />
         </div>
         <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] whitespace-nowrap opacity-50">
-          Powered by Antigravity PMS v2.0
+          Powered by Itahari Namuna PMS v2.0
         </div>
       </div>
     </div>

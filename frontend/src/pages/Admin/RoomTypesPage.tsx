@@ -138,20 +138,20 @@ export default function RoomTypesPage() {
 
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="flex items-center bg-neutral-light p-1 rounded-2xl shadow-inner h-12">
-            <button
+            <Button
               onClick={() => setViewMode('grid')}
               className={`p-2 px-4 rounded-xl transition-all duration-300 flex items-center gap-2 text-xs font-black uppercase tracking-widest ${viewMode === 'grid' ? 'bg-white text-primary-dark shadow-sm' : 'text-neutral-text-secondary hover:text-primary-dark hover:bg-white/50'}`}
             >
               <LayoutGrid size={14} className={viewMode === 'grid' ? 'stroke-[3]' : ''} />
               <span className="hidden sm:inline">Grid</span>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setViewMode('list')}
               className={`p-2 px-4 rounded-xl transition-all duration-300 flex items-center gap-2 text-xs font-black uppercase tracking-widest ${viewMode === 'list' ? 'bg-white text-primary-dark shadow-sm' : 'text-neutral-text-secondary hover:text-primary-dark hover:bg-white/50'}`}
             >
               <ListIcon size={14} className={viewMode === 'list' ? 'stroke-[3]' : ''} />
               <span className="hidden sm:inline">List</span>
-            </button>
+            </Button>
           </div>
 
           <Button variant="ghost" className="h-12 w-12 rounded-2xl bg-neutral-light hover:bg-white shadow-soft transition-all">
@@ -214,13 +214,13 @@ export default function RoomTypesPage() {
                   <div className="absolute top-4 right-4 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 delay-100">
                     <Button 
                       onClick={() => handleOpenModal(roomType)}
-                      className="w-10 h-10 rounded-xl bg-white shadow-2xl hover:bg-primary-dark hover:text-white transition-all text-neutral-text-primary p-0 flex items-center justify-center"
+                      className="w-10 h-10 rounded-xl bg-white shadow-2xl hover:bg-primary-dark hover:text-[#1F7A3A] transition-all text-neutral-text-primary p-0 flex items-center justify-center"
                     >
                       <Edit2 size={16} />
                     </Button>
                     <Button 
                       onClick={() => handleDelete(roomType.id)}
-                      className="w-10 h-10 rounded-xl bg-white shadow-2xl hover:bg-error-red hover:text-white transition-all text-error-red p-0 flex items-center justify-center"
+                      className="w-10 h-10 rounded-xl bg-white shadow-2xl hover:bg-error-red hover:text-[#1F7A3A] transition-all text-error-red p-0 flex items-center justify-center"
                     >
                       <Trash2 size={16} />
                     </Button>

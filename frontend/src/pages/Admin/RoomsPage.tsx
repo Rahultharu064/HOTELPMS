@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import CreateRoom from '../../components/Admin/Dashboard/CreateRoom';
 import { Button } from '../../components/ui/Button';
-import { Plus, LayoutGrid, List as ListIcon, Search, SlidersHorizontal, ArrowLeft, Trash2, Edit2, Loader2, BedDouble, Users } from 'lucide-react';
+import { Plus, LayoutGrid, List as ListIcon, Search, SlidersHorizontal, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { roomService } from '../../services/roomService';
 import type { Room } from '../../services/roomService';
-import { getImageUrl } from '../../services/api';
 import { toast } from 'react-hot-toast';
+import { RoomInventoryCard } from '../../components/Admin/Rooms/RoomInventoryCard';
+import { RoomsEmptyState } from '../../components/Admin/Rooms/RoomsEmptyState';
+import { RoomsLoadingState } from '../../components/Admin/Rooms/RoomsLoadingState';
 
 
 export default function RoomsPage() {
@@ -126,102 +128,21 @@ export default function RoomsPage() {
 
             {/* List Content */}
             {loading ? (
-              <div className="py-32 flex flex-col items-center justify-center space-y-4">
-                 <Loader2 className="w-12 h-12 text-primary-green animate-spin" />
-                 <p className="text-sm font-black uppercase tracking-widest text-neutral-text-secondary animate-pulse">Syncing Inventory...</p>
-              </div>
+              <RoomsLoadingState />
             ) : filteredRooms.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {filteredRooms.map((room) => {
-                  const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url;
-                  const imageUrl = primaryImage ? getImageUrl(primaryImage) : null;
-
-                  return (
-                    <div key={room.id} className="group bg-white rounded-[32px] overflow-hidden shadow-soft border border-neutral-border/20 hover:shadow-xl transition-all duration-500 flex flex-col">
-                      <div className="relative h-48 overflow-hidden bg-neutral-light">
-                        {imageUrl ? (
-                          <img src={imageUrl} alt={room.name} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-neutral-border opacity-50">
-                            <LayoutGrid size={48} />
-                          </div>
-                        )}
-                        <div className="absolute top-4 left-4 flex gap-2">
-                           <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ${
-                             room.status === 'available' ? 'bg-primary-green text-white' : 
-                             room.status === 'occupied' ? 'bg-primary-gold text-white' : 
-                             'bg-neutral-text-secondary text-white'
-                           }`}>
-                             {room.status}
-                           </span>
-                        </div>
-                        <div className="absolute bottom-4 right-4 flex gap-2 translate-y-12 group-hover:translate-y-0 transition-transform duration-300">
-                           <button 
-                             onClick={() => navigate(`/admin/rooms/edit/${room.id}`)}
-                             title="Edit Room"
-                             className="p-2.5 rounded-xl bg-white/90 backdrop-blur-md text-primary-dark shadow-xl hover:bg-primary-green hover:text-white transition-all"
-                            >
-                             <Edit2 size={16} />
-                           </button>
-                           <button 
-                             onClick={() => handleDeleteRoom(room.id)}
-                             title="Delete Room"
-                             className="p-2.5 rounded-xl bg-white/90 backdrop-blur-md text-red-500 shadow-xl hover:bg-red-500 hover:text-white transition-all"
-                            >
-                             <Trash2 size={16} />
-                           </button>
-                        </div>
-                      </div>
-                      
-                      <div className="p-6 flex flex-col flex-1">
-                        <div className="flex justify-between items-start mb-2">
-                           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-gold">{room.roomType?.name || 'Uncategorized'}</p>
-                           <p className="text-[10px] font-black text-neutral-text-secondary">#{room.roomNumber}</p>
-                        </div>
-                        <h3 className="text-lg font-black text-neutral-text-primary leading-tight mb-4 group-hover:text-primary-green transition-colors">{room.name}</h3>
-                        
-                        <div className="grid grid-cols-2 gap-3 mb-6">
-                           <div className="flex items-center gap-2 text-xs font-bold text-neutral-text-secondary bg-neutral-light/50 p-2 rounded-xl">
-                              <Users size={14} className="text-primary-green" />
-                              <span>{room.capacity} Guests</span>
-                           </div>
-                           <div className="flex items-center gap-2 text-xs font-bold text-neutral-text-secondary bg-neutral-light/50 p-2 rounded-xl">
-                              <BedDouble size={14} className="text-primary-gold" />
-                              <span className="truncate">{room.bedType || 'Queen'}</span>
-                           </div>
-                        </div>
-
-                        <div className="mt-auto pt-4 border-t border-neutral-border/10 flex justify-between items-center">
-                           <div>
-                              <p className="text-[9px] font-black uppercase tracking-widest text-neutral-text-secondary mb-0.5">Base Rate</p>
-                              <p className="text-lg font-black text-primary-dark">Rs. {Number(room.basePrice).toLocaleString()}</p>
-                           </div>
-                           <Button 
-                             onClick={() => navigate(`/admin/rooms/${room.id}`)}
-                             variant="outline" 
-                             size="sm" 
-                             className="h-10 rounded-xl font-black text-[10px] uppercase tracking-widest border-neutral-border/50"
-                           >
-                             Details
-                           </Button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                {filteredRooms.map((room) => (
+                  <RoomInventoryCard 
+                    key={room.id}
+                    room={room}
+                    onEdit={(id) => navigate(`/admin/rooms/edit/${id}`)}
+                    onDelete={handleDeleteRoom}
+                    onViewDetails={(id) => navigate(`/admin/rooms/${id}`)}
+                  />
+                ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                 <div className="col-span-full py-32 flex flex-col items-center justify-center space-y-4 bg-white/50 border-2 border-dashed border-neutral-border/40 rounded-[40px] opacity-60">
-                    <div className="w-20 h-20 rounded-[32px] bg-neutral-light flex items-center justify-center text-neutral-border">
-                      <LayoutGrid size={40} />
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm font-black uppercase tracking-widest text-neutral-text-secondary">No Rooms Registered</p>
-                      <p className="text-xs font-bold text-neutral-text-secondary/60 mt-1">Start building your inventory by clicking 'Add New Room'</p>
-                    </div>
-                 </div>
-              </div>
+              <RoomsEmptyState />
             )}
           </div>
         )}

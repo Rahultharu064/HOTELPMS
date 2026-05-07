@@ -53,7 +53,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         <img 
           src="/LOGOS.png" 
           alt="Logo" 
-          className="w-12 h-12 object-contain rounded-xl relative z-10 brightness-0 invert" 
+          className="w-12 h-12 object-contain rounded-xl relative z-10" 
         />
         
         {!collapsed && (

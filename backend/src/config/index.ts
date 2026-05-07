@@ -48,4 +48,9 @@ export const config = {
     apiKey: process.env.CLOUDINARY_API_KEY?.trim(),
     apiSecret: process.env.CLOUDINARY_API_SECRET?.trim(),
   },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackUrl: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
+  },
 } as const;

@@ -13,6 +13,7 @@ import { SignupPage } from '../pages/publicwebsite/Auth/SignupPage';
 import { ForgotPasswordPage } from '../pages/publicwebsite/Auth/ForgotPasswordPage';
 import { ResetPasswordPage } from '../pages/publicwebsite/Auth/ResetPasswordPage';
 import { VerifyOTPPage } from '../pages/publicwebsite/Auth/VerifyOTPPage';
+import { LoginSuccess } from '../pages/publicwebsite/Auth/LoginSuccess';
 import { GuestProfilePage } from '../pages/publicwebsite/Guest/GuestProfilePage';
 import PublicLayout from '../components/publicwebsite/Homepage/Sections/PublicLayout';
 import { AuthGuard } from '../components/auth/AuthGuard';
@@ -143,6 +144,10 @@ const routes: RouteObject[] = [
       {
         path: 'verify-otp',
         element: <VerifyOTPPage />,
+      },
+      {
+        path: 'login-success',
+        element: <LoginSuccess />,
       },
       {
         path: 'profile',

@@ -261,59 +261,82 @@ export class AuthController {
   });
 
   /**
-   * Google Login
+   * Professional Google Login
    */
   googleLogin = asyncHandler(async (req: Request, res: Response) => {
     const { tokenId } = req.body;
 
-    const ticket = await googleClient.verifyIdToken({
-      idToken: tokenId,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    const payload = ticket.getPayload();
-    if (!payload || !payload.email) {
-      throw new ApiError(HttpStatus.BAD_REQUEST, 'Invalid Google token');
+    if (!tokenId) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'Google Token is required');
     }
 
-    const { email, sub: googleId, given_name, family_name } = payload;
-    const normalizedEmail = email.toLowerCase();
+    try {
+      const ticket = await googleClient.verifyIdToken({
+        idToken: tokenId,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
 
-    let guest = await prisma.guest.findFirst({
-      where: { OR: [{ googleId }, { email: normalizedEmail }] },
-    });
+      const payload = ticket.getPayload();
+      if (!payload || !payload.email) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Invalid Google token payload');
+      }
 
-    if (!guest) {
-      guest = await prisma.guest.create({
-        data: {
-          email: normalizedEmail,
-          googleId,
-          firstName: given_name || 'Guest',
-          lastName: family_name || '',
-          phone: '', 
-          isVerified: true,
+      const { email, sub: googleId, given_name, family_name, picture } = payload;
+      const normalizedEmail = email.toLowerCase();
+
+      // Find user by Google ID or Email
+      let guest = await prisma.guest.findFirst({
+        where: {
+          OR: [
+            { googleId },
+            { email: normalizedEmail }
+          ]
         },
       });
-    } else if (!guest.googleId) {
-      // Link Google account to existing email
-      guest = await prisma.guest.update({
-        where: { id: guest.id },
-        data: { googleId, isVerified: true },
+
+      if (!guest) {
+        // Create new guest if doesn't exist
+        guest = await prisma.guest.create({
+          data: {
+            email: normalizedEmail,
+            googleId,
+            firstName: given_name || 'Guest',
+            lastName: family_name || '',
+            profileImage: picture, // Sync profile picture from Google
+            isVerified: true,
+            // phone is now optional in schema
+          },
+        });
+      } else {
+        // Update existing guest with Google ID and sync profile picture if missing
+        const updateData: any = { isVerified: true };
+        
+        if (!guest.googleId) updateData.googleId = googleId;
+        if (!guest.profileImage) updateData.profileImage = picture;
+
+        guest = await prisma.guest.update({
+          where: { id: guest.id },
+          data: updateData,
+        });
+      }
+
+      const token = this.generateToken(guest.id);
+
+      res.json({
+        message: 'Signed in successfully via Google',
+        token,
+        user: {
+          id: guest.id,
+          email: guest.email,
+          firstName: guest.firstName,
+          lastName: guest.lastName,
+          profileImage: guest.profileImage,
+        },
       });
+    } catch (error: any) {
+      console.error('[GoogleLoginError]:', error);
+      throw new ApiError(HttpStatus.UNAUTHORIZED, 'Failed to authenticate with Google');
     }
-
-    const token = this.generateToken(guest.id);
-
-    res.json({
-      message: 'Google login successful',
-      token,
-      user: {
-        id: guest.id,
-        email: guest.email,
-        firstName: guest.firstName,
-        lastName: guest.lastName,
-      },
-    });
   });
 
   /**
@@ -400,9 +423,29 @@ export class AuthController {
   });
 
   /**
+   * Passport Google Auth Callback
+   */
+  passportGoogleCallback = asyncHandler(async (req: Request, res: Response) => {
+    const guest = (req as any).user;
+    if (!guest) {
+      throw new ApiError(HttpStatus.UNAUTHORIZED, 'Authentication failed');
+    }
+
+    const token = this.generateToken(guest.id);
+    
+    // Redirect back to frontend with token
+    // In production, use the production frontend URL
+    const frontendUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://hotelpms-three.vercel.app' 
+      : 'http://localhost:5173';
+      
+    res.redirect(`${frontendUrl}/login-success?token=${token}`);
+  });
+
+  /**
    * Helper: Generate JWT
    */
-  private generateToken(id: number): string {
+  public generateToken(id: number): string {
     return jwt.sign({ id }, config.jwt.secret as string, {
       expiresIn: config.jwt.expire,
     } as jwt.SignOptions);

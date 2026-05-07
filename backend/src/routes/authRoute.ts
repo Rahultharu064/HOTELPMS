@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import passport from 'passport';
 import { AuthController } from '../controllers/authController';
 import { validate } from '../middlewares/validateMiddleware';
 import { authenticate } from '../middlewares/authMiddleware';
@@ -57,9 +58,15 @@ const resetPasswordSchema = z.object({
   }),
 });
 
+
 router.post('/register', validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
 router.post('/google', validate(googleLoginSchema), authController.googleLogin);
+
+// Passport Google Routes
+router.get('/google/login', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/login' }), authController.passportGoogleCallback);
+
 router.post('/verify-otp', validate(verifyOTPSchema), authController.verifyOTP);
 router.post('/resend-otp', validate(requestOTPSchema), authController.resendOTP);
 router.post('/forgot-password', validate(forgotPasswordSchema), authController.forgotPassword);

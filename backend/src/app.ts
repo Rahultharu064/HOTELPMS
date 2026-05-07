@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 import path from 'path';
+import passport from 'passport';
+import './config/passport';
 import { config } from './config';
 import { errorHandler, notFound } from './middlewares/errorMiddleware';
 
@@ -51,6 +53,7 @@ if (config.nodeEnv === 'development') {
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(passport.initialize());
 
 // Static files
 const uploadsPath = path.join(process.cwd(), config.uploadDir);

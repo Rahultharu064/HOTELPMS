@@ -8,7 +8,7 @@ import { SocketProvider } from './context/SocketContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-const GOOGLE_CLIENT_ID = "959138634926-nufr5p3j26rgufo36pg0p791tfjmf23c.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "76895817494-9nn39r5801ot1l26taiim2ccdti9cg59.apps.googleusercontent.com";
 
 const AppRoutes = () => {
   const element = useRoutes(routes);

@@ -76,124 +76,109 @@ export const AdminLoginPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-2xl border border-gray-100 relative z-10"
+        className="max-w-md w-full space-y-10 bg-white p-12 rounded-[40px] shadow-premium border border-gray-100 relative z-10"
       >
         <div>
-          <div className="mx-auto flex justify-center">
-            <img src="/LOGOS.png" alt="Logo" className="h-24 w-auto object-contain" />
+          <div className="mx-auto flex justify-center mb-8">
+            <img src="/LOGOS.png" alt="Logo" className="h-20 w-auto object-contain hover:scale-105 transition-transform" />
           </div>
-          <div className="flex items-center justify-center gap-2 mt-6">
-            <ShieldCheck className="text-primary-green" size={24} />
-            <h2 className="text-center text-3xl font-extrabold text-gray-900 tracking-tight">
-              Staff Portal
+          <div className="space-y-2 text-center">
+            <h2 className="text-2xl font-black text-[#111827] tracking-tight uppercase">
+              System Access
             </h2>
+            <p className="text-[10px] font-black text-primary-green uppercase tracking-[0.3em]">
+              Authorized Personnel Only
+            </p>
           </div>
-          <p className="mt-2 text-center text-sm text-gray-600 font-medium">
-            Authorized Administrative Access Only
-          </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          <div className="space-y-4">
+        <form className="space-y-8" onSubmit={handleLogin}>
+          <div className="space-y-5">
             <div>
-              <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">
-                Admin Email
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                Security Identity
               </label>
               <div className="relative group">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary-green transition-colors" size={18} />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary-green transition-colors" size={18} />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none rounded-xl relative block w-full px-10 py-3.5 border border-gray-200 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green sm:text-sm bg-gray-50 transition-all"
-                  placeholder="admin@hotelpms.com"
+                  className="appearance-none rounded-2xl relative block w-full px-12 py-4 border border-gray-100 placeholder-gray-300 text-[#111827] focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green/30 sm:text-sm bg-gray-50/50 transition-all font-medium"
+                  placeholder="admin@itaharinamuna.edu.np"
                 />
               </div>
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-1 ml-1">
-                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest">
-                  Secure Password
-                </label>
-              </div>
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                Access Credential
+              </label>
               <div className="relative group">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary-green transition-colors" size={18} />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary-green transition-colors" size={18} />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none rounded-xl relative block w-full px-10 py-3.5 border border-gray-200 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green sm:text-sm bg-gray-50 transition-all"
+                  className="appearance-none rounded-2xl relative block w-full px-12 py-4 border border-gray-100 placeholder-gray-300 text-[#111827] focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green/30 sm:text-sm bg-gray-50/50 transition-all font-medium"
                   placeholder="••••••••"
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center">
-            <input
-              id="remember-me"
-              name="remember-me"
-              type="checkbox"
-              className="h-4 w-4 text-primary-green focus:ring-primary-green border-gray-300 rounded"
-            />
-            <label htmlFor="remember-me" className="ml-2 block text-xs text-gray-500 font-bold uppercase tracking-wider">
-              Remember this device
-            </label>
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 text-primary-green focus:ring-primary-green border-gray-300 rounded-lg cursor-pointer"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-[10px] text-gray-400 font-black uppercase tracking-widest cursor-pointer">
+                Remember
+              </label>
+            </div>
+            <button type="button" className="text-[10px] font-black text-primary-gold uppercase tracking-widest hover:text-primary-orange transition-colors">
+              Recovery
+            </button>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-black uppercase tracking-widest rounded-xl text-white bg-primary-green hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-green transition-all shadow-lg shadow-primary-green/20 disabled:opacity-70"
+            className="group relative w-full flex justify-center py-5 px-4 border border-transparent text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl text-white bg-primary-green hover:bg-primary-dark focus:outline-none transition-all shadow-2xl shadow-primary-green/20 disabled:opacity-70 active:scale-95"
           >
             {loading ? (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-3">
                 <Loader2 className="animate-spin" size={18} />
-                Authenticating...
+                Verifying...
               </span>
             ) : (
-              <span className="flex items-center gap-2">
-                Sign In <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
+              <span className="flex items-center gap-3">
+                Establish Connection <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
               </span>
             )}
           </button>
         </form>
 
-        <div className="mt-6 pt-6 border-t border-gray-100">
-          <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-xl border border-amber-100">
-            <Info className="text-amber-500 shrink-0" size={18} />
-            <p className="text-[10px] text-amber-800 leading-relaxed font-medium uppercase tracking-tight">
-              Security Notice: All login attempts and session activities are monitored and logged for audit purposes.
-            </p>
-          </div>
+        <div className="pt-4 text-center">
+           <p className="text-[9px] font-black text-gray-300 uppercase tracking-[0.4em] flex items-center justify-center gap-3">
+             <ShieldCheck size={12} className="text-primary-green" /> End-to-End Encryption Active
+           </p>
         </div>
-
-        {/* Developer Quick Access - ONLY IN DEV MODE */}
-        {import.meta.env.DEV && (
-          <div className="mt-4 flex justify-center">
-            <button
-              type="button"
-              onClick={() => {
-                setEmail('admin@hotelpms.com');
-                setPassword('admin123');
-              }}
-              className="text-[9px] font-black text-primary-gold uppercase tracking-[0.2em] hover:text-primary-green transition-colors py-2 px-4 rounded-lg border border-primary-gold/20 hover:border-primary-green/20 bg-gray-50"
-            >
-              Dev: Load Test Admin
-            </button>
-          </div>
-        )}
       </motion.div>
 
-      <div className="mt-8 flex flex-col items-center gap-2 opacity-50">
-        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
-          System Node: 019 // {systemTime}
-        </p>
-        <p className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">
-          Build v1.0.4-stable
+      <div className="mt-12 flex flex-col items-center gap-3 opacity-40">
+        <div className="flex items-center gap-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.3em]">
+           <span>System Node: 019</span>
+           <span className="w-1 h-1 bg-gray-300 rounded-full" />
+           <span>{systemTime}</span>
+        </div>
+        <p className="text-[8px] font-bold text-gray-400 uppercase tracking-[0.5em]">
+          Core v1.0.4-S
         </p>
       </div>
     </div>

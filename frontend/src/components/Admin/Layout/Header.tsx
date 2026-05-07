@@ -62,15 +62,15 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
       />
 
       {/* Title & Page Status */}
-      <div className="flex flex-col h-full justify-center">
-        <div className="flex items-center gap-2">
-          <h2 className="font-black text-xl text-[#111827] tracking-tight">{title}</h2>
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#1F7A3A]/5 text-[#1F7A3A] text-[10px] font-black uppercase tracking-widest border border-[#1F7A3A]/10">
+      <div className="flex flex-col h-full justify-center min-w-0 flex-1 lg:flex-none">
+        <div className="flex items-center gap-2 overflow-hidden">
+          <h2 className="font-black text-lg md:text-xl text-[#111827] tracking-tight truncate">{title}</h2>
+          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#1F7A3A]/5 text-[#1F7A3A] text-[10px] font-black uppercase tracking-widest border border-[#1F7A3A]/10 flex-shrink-0">
             <div className="w-1 h-1 rounded-full bg-[#1F7A3A] animate-pulse" />
             Superuser Mode
           </div>
         </div>
-        <p className="hidden md:block text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Administrative Global Control</p>
+        <p className="hidden md:block text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5 truncate">Administrative Global Control</p>
       </div>
 
       {/* Central Search with premium field */}

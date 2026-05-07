@@ -10,7 +10,8 @@ import {
   Loader2,
   Hotel,
   CheckCircle2,
-  Clock
+  Clock,
+  LayoutDashboard
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { bookingService } from "../../services/bookingService";
@@ -99,20 +100,36 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-fade-in pb-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-        <div>
-          <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
-            <div className="w-2 h-8 bg-[#14532D] rounded-full" />
-            Admin Dashboard
-          </h1>
-          <p className="text-neutral-text-secondary text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Hotel Overview & Management</p>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 bg-white/40 backdrop-blur-sm p-8 rounded-[40px] border border-white/20 shadow-sm relative overflow-hidden group">
+        {/* Subtle background decoration */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#14532D]/5 rounded-full blur-[100px] -mr-32 -mt-32 transition-all duration-1000 group-hover:scale-150" />
+        
+        <div className="flex items-center gap-6 relative z-10">
+          <div className="w-16 h-16 rounded-[24px] bg-[#14532D] flex items-center justify-center shadow-2xl shadow-[#14532D]/20 text-white transform hover:rotate-6 transition-transform">
+            <LayoutDashboard size={32} strokeWidth={2.5} />
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-2xl md:text-3xl font-black text-[#111827] tracking-tight truncate uppercase">System Intelligence</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />
+              <p className="text-[10px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] opacity-80">
+                Command Center Overview
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-4">
-          <button onClick={fetchDashboardData} className="px-6 py-4 bg-white border border-gray-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:text-[#14532D] hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2">
-            <Activity size={16} /> Refresh Data
+
+        <div className="flex items-center gap-4 relative z-10">
+          <button 
+            onClick={fetchDashboardData} 
+            className="px-6 h-14 bg-white border border-gray-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:text-[#14532D] hover:bg-gray-50 transition-all shadow-sm flex items-center gap-3 active:scale-95"
+          >
+            <Activity size={18} className="text-[#F59E0B]" /> 
+            <span className="hidden sm:inline">Refresh Data</span>
           </button>
-          <button className="px-6 py-4 bg-[#14532D] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#111827] transition-all shadow-xl shadow-[#14532D]/10 flex items-center gap-2">
-            <Plus size={16} strokeWidth={3} /> Add New Entry
+          <button className="px-8 h-14 bg-[#14532D] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#111827] transition-all shadow-xl shadow-[#14532D]/20 flex items-center gap-3 active:scale-95">
+            <Plus size={18} strokeWidth={3} /> 
+            <span>New Action</span>
           </button>
         </div>
       </div>

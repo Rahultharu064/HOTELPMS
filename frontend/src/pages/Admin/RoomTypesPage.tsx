@@ -96,16 +96,17 @@ export default function RoomTypesPage() {
   return (
     <div className="flex flex-col gap-10 p-2 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-3">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-primary-dark flex items-center justify-center shadow-2xl shadow-primary-dark/20 text-white">
-              <Building2 size={32} strokeWidth={2.5} />
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-black text-neutral-text-primary tracking-tight">Room Type Management</h1>
-              <p className="text-sm font-bold text-neutral-text-secondary uppercase tracking-[0.2em] mt-1.5 opacity-80">
-                Configure your hotel's room offerings
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white/40 backdrop-blur-sm p-6 md:p-8 rounded-[32px] border border-white/20 shadow-sm">
+        <div className="flex items-center gap-5">
+          <div className="w-16 h-16 rounded-[24px] bg-primary-dark flex items-center justify-center shadow-2xl shadow-primary-dark/20 text-white transform hover:rotate-6 transition-transform">
+            <Building2 size={32} strokeWidth={2.5} />
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-2xl md:text-3xl font-black text-neutral-text-primary tracking-tight truncate">Room Categories</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />
+              <p className="text-[10px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] opacity-80">
+                Inventory Configuration
               </p>
             </div>
           </div>
@@ -113,11 +114,11 @@ export default function RoomTypesPage() {
 
         <Button
           onClick={() => handleOpenModal()}
-          className="bg-primary-dark hover:bg-black text-white px-8 h-14 rounded-2xl text-sm font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary-dark/20 flex items-center gap-3 overflow-hidden relative group"
+          className="bg-primary-dark hover:bg-black text-white px-8 h-14 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary-dark/20 flex items-center gap-3 overflow-hidden relative group"
         >
           <div className="absolute top-0 right-0 w-12 h-12 bg-white/10 rounded-full -mr-6 -mt-6 transition-all duration-500 group-hover:scale-150 group-hover:bg-white/20" />
-          <Plus size={20} className="relative z-10 stroke-[3]" />
-          <span className="relative z-10 transition-transform group-hover:translate-x-1">Create Room Type</span>
+          <Plus size={18} className="relative z-10 stroke-[3]" />
+          <span className="relative z-10 transition-transform group-hover:translate-x-1">Create Category</span>
         </Button>
       </div>
 
@@ -140,14 +141,14 @@ export default function RoomTypesPage() {
           <div className="flex items-center bg-neutral-light p-1 rounded-2xl shadow-inner h-12">
             <Button
               onClick={() => setViewMode('grid')}
-              className={`p-2 px-4 rounded-xl transition-all duration-300 flex items-center gap-2 text-xs font-black uppercase tracking-widest ${viewMode === 'grid' ? 'bg-white text-primary-dark shadow-sm' : 'text-neutral-text-secondary hover:text-primary-dark hover:bg-white/50'}`}
+              className={`p-2 px-4 rounded-xl transition-all duration-300 flex items-center gap-2 text-xs font-black uppercase tracking-widest ${viewMode === 'grid' ? 'bg-primary-green text-white shadow-md' : 'text-neutral-text-secondary hover:text-primary-green hover:bg-white/50'}`}
             >
               <LayoutGrid size={14} className={viewMode === 'grid' ? 'stroke-[3]' : ''} />
               <span className="hidden sm:inline">Grid</span>
             </Button>
             <Button
               onClick={() => setViewMode('list')}
-              className={`p-2 px-4 rounded-xl transition-all duration-300 flex items-center gap-2 text-xs font-black uppercase tracking-widest ${viewMode === 'list' ? 'bg-white text-primary-dark shadow-sm' : 'text-neutral-text-secondary hover:text-primary-dark hover:bg-white/50'}`}
+              className={`p-2 px-4 rounded-xl transition-all duration-300 flex items-center gap-2 text-xs font-black uppercase tracking-widest ${viewMode === 'list' ? 'bg-primary-green text-white shadow-md' : 'text-neutral-text-secondary hover:text-primary-green hover:bg-white/50'}`}
             >
               <ListIcon size={14} className={viewMode === 'list' ? 'stroke-[3]' : ''} />
               <span className="hidden sm:inline">List</span>
@@ -195,65 +196,70 @@ export default function RoomTypesPage() {
           {filteredRoomTypes.map((roomType, index) => (
             viewMode === 'grid' ? (
               <div key={roomType.id} className="animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${index * 50}ms` }}>
-                <Card className="group overflow-hidden border-none shadow-soft hover:shadow-premium transition-all duration-500 flex flex-col h-full bg-white rounded-[32px]">
-                <div className="relative h-56 overflow-hidden">
-                  {roomType.image ? (
-                    <img 
-                      src={getImageUrl(roomType.image || '')} 
-                      alt={roomType.name} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-neutral-light flex flex-col items-center justify-center gap-4 group-hover:bg-neutral-border/20 transition-colors">
-                      <ImageOff size={48} className="text-neutral-text-secondary/20" strokeWidth={1.5} />
-                      <p className="text-[10px] font-black uppercase tracking-widest text-neutral-text-secondary/40">No Image Preview</p>
+                <div className="group bg-white rounded-[32px] overflow-hidden shadow-soft border border-neutral-border/20 hover:shadow-xl transition-all duration-500 flex flex-col h-full">
+                  <div className="relative h-48 overflow-hidden bg-neutral-light">
+                    {roomType.image ? (
+                      <img 
+                        src={getImageUrl(roomType.image || '')} 
+                        alt={roomType.name} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-neutral-border opacity-50">
+                        <LayoutGrid size={48} />
+                      </div>
+                    )}
+                    
+                    <div className="absolute top-4 left-4 flex gap-2">
+                       <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg bg-primary-gold text-white">
+                         Active
+                       </span>
                     </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  <div className="absolute top-4 right-4 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 delay-100">
-                    <Button 
-                      onClick={() => handleOpenModal(roomType)}
-                      className="w-10 h-10 rounded-xl bg-white shadow-2xl hover:bg-primary-dark hover:text-[#1F7A3A] transition-all text-neutral-text-primary p-0 flex items-center justify-center"
-                    >
-                      <Edit2 size={16} />
-                    </Button>
-                    <Button 
-                      onClick={() => handleDelete(roomType.id)}
-                      className="w-10 h-10 rounded-xl bg-white shadow-2xl hover:bg-error-red hover:text-[#1F7A3A] transition-all text-error-red p-0 flex items-center justify-center"
-                    >
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
 
-                  <div className="absolute bottom-4 left-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-75">
-                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#F59E0B]">Verified Category</p>
+                    <div className="absolute bottom-4 right-4 flex gap-2 translate-y-12 group-hover:translate-y-0 transition-transform duration-300">
+                       <button 
+                         onClick={() => handleOpenModal(roomType)}
+                         title="Edit Room Type"
+                         className="p-2.5 rounded-xl bg-white/90 backdrop-blur-md text-primary-green shadow-xl hover:bg-primary-green hover:text-white transition-all"
+                        >
+                         <Edit2 size={16} />
+                       </button>
+                       <button 
+                         onClick={() => handleDelete(roomType.id)}
+                         title="Delete Room Type"
+                         className="p-2.5 rounded-xl bg-white/90 backdrop-blur-md text-error-red shadow-xl hover:bg-error-red hover:text-white transition-all"
+                        >
+                         <Trash2 size={16} />
+                       </button>
+                    </div>
+                  </div>
+                  
+                  <div className="p-6 flex flex-col flex-1">
+                    <div className="flex justify-between items-start mb-2">
+                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-gold">Room Category</p>
+                       <p className="text-[10px] font-black text-neutral-text-secondary">ID: {roomType.id}</p>
+                    </div>
+                    <h3 className="text-lg font-black text-neutral-text-primary leading-tight mb-4 group-hover:text-primary-green transition-colors">{roomType.name}</h3>
+                    
+                    <p className="text-xs font-bold text-neutral-text-secondary/80 leading-relaxed line-clamp-3 mb-6 h-12">
+                      {roomType.description || "No description provided for this room category. Update the details to inform guests about the features of this suite."}
+                    </p>
+
+                    <div className="mt-auto pt-4 border-t border-neutral-border/10 flex justify-between items-center">
+                       <div>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-neutral-text-secondary mb-0.5">Last Sync</p>
+                          <p className="text-sm font-black text-primary-dark">{roomType.updatedAt ? new Date(roomType.updatedAt).toLocaleDateString() : 'N/A'}</p>
+                       </div>
+                       <Button 
+                         variant="outline" 
+                         size="sm" 
+                         className="h-10 rounded-xl font-black text-[10px] uppercase tracking-widest border-neutral-border/50 hover:bg-primary-green hover:text-white transition-all"
+                       >
+                         View Rooms
+                       </Button>
+                    </div>
                   </div>
                 </div>
-
-                <div className="p-8 flex-1 flex flex-col">
-                  <div className="flex items-start justify-between gap-4 mb-4">
-                    <h3 className="text-xl font-black text-neutral-text-primary tracking-tight truncate group-hover:text-primary-green transition-colors">{roomType.name}</h3>
-                    <div className="px-3 py-1 bg-primary-dark/5 text-primary-dark text-[10px] font-black uppercase tracking-widest rounded-full border border-primary-dark/10">ID: {roomType.id}</div>
-                  </div>
-                  <p className="text-xs font-bold text-neutral-text-secondary/80 leading-relaxed line-clamp-3 mb-8 h-12">
-                    {roomType.description || "No description provided for this room category. Update the details to inform guests about the features of this suite."}
-                  </p>
-                  
-                  <div className="mt-auto flex items-center justify-between border-t border-neutral-light pt-6">
-                    <div className="flex flex-col">
-                       <span className="text-[9px] font-black uppercase tracking-widest text-neutral-text-secondary/40">Last Updated</span>
-                       <span className="text-[11px] font-bold text-neutral-text-secondary">{roomType.updatedAt ? new Date(roomType.updatedAt).toLocaleDateString() : 'N/A'}</span>
-                    </div>
-                    <Button 
-                      variant="ghost" 
-                      className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest text-primary-green hover:bg-primary-green/5 flex items-center gap-2 group/btn"
-                    >
-                      View Rooms <span className="group-hover:translate-x-1 transition-transform">→</span>
-                    </Button>
-                  </div>
-                </div>
-              </Card>
             </div>
             ) : (
               <Card key={roomType.id} className="group p-4 border-none shadow-soft hover:shadow-premium bg-white rounded-2xl flex items-center justify-between transition-all duration-300">
@@ -273,8 +279,8 @@ export default function RoomTypesPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button onClick={() => handleOpenModal(roomType)} variant="ghost" className="h-10 w-10 p-0 rounded-xl hover:bg-neutral-light text-neutral-text-secondary"><Edit2 size={16} /></Button>
-                  <Button onClick={() => handleDelete(roomType.id)} variant="ghost" className="h-10 w-10 p-0 rounded-xl hover:bg-error-red/10 text-error-red"><Trash2 size={16} /></Button>
+                  <Button onClick={() => handleOpenModal(roomType)} variant="ghost" className="h-10 w-10 p-0 rounded-xl bg-primary-green/10 text-primary-green hover:bg-primary-green hover:text-white transition-all"><Edit2 size={16} /></Button>
+                  <Button onClick={() => handleDelete(roomType.id)} variant="ghost" className="h-10 w-10 p-0 rounded-xl bg-error-red/10 text-error-red hover:bg-error-red hover:text-white transition-all"><Trash2 size={16} /></Button>
                 </div>
               </Card>
             )

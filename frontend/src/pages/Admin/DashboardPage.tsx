@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { 
-  Users, 
   CreditCard, 
   Activity,
   Plus,
   Loader2,
   Hotel,
+  Users,
   LayoutDashboard
 } from "lucide-react";
-import { motion } from "framer-motion";
 import { bookingService } from "../../services/bookingService";
 import { toast } from "react-hot-toast";
 import { StatCard } from "../../components/Admin/Dashboard/StatCard";

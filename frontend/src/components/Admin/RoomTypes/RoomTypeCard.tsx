@@ -1,4 +1,4 @@
-import { Building2, Edit2, Trash2, LayoutGrid } from 'lucide-react';
+import { Edit2, Trash2, LayoutGrid } from 'lucide-react';
 import { Button } from '../../ui/Button';
 import { getImageUrl } from '../../../services/api';
 import type { RoomType } from '../../../services/roomTypeService';

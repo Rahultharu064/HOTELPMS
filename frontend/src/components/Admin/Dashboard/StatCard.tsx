@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Activity, LucideIcon } from "lucide-react";
+import { Activity, type LucideIcon } from "lucide-react";
 
 interface StatCardProps {
   label: string;

@@ -12,11 +12,6 @@ const ITEMS = [
   { icon: Monitor,    label: "Business Hub",        sub: "Private soundproof pods for remote work.",                  color: "#F59E0B", status: "New" },
 ];
 
-const FUTURE_CHANGES = [
-  { label: "AI Concierge", desc: "24/7 holographic guest assistance powered by advanced AI." },
-  { label: "Biometric Access", desc: "Keyless entry using facial recognition and palm-vein scanning." },
-  { label: "Immersive VR Tours", desc: "Experience local attractions via in-room VR headsets." }
-];
 
 const FacilitiesSection: React.FC = () => {
   const [show, setShow] = useState(false);
@@ -84,30 +79,6 @@ const FacilitiesSection: React.FC = () => {
               </p>
             </div>
           ))}
-        </div>
-
-        {/* Future Enhancements Analysis Section */}
-        <div className={`mt-20 p-10 bg-primary-dark rounded-[40px] shadow-2xl relative overflow-hidden transition-all duration-1000 ${show ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}>
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary-green/10 rounded-full blur-3xl -mr-32 -mt-32" />
-            
-            <div className="relative z-10 grid lg:grid-cols-3 gap-10 items-center">
-                <div className="lg:col-span-1">
-                    <span className="text-[10px] font-black tracking-[0.4em] text-primary-gold uppercase mb-4 block">Strategic Roadmap</span>
-                    <h3 className="text-3xl font-black text-white mb-4">Future <span className="text-primary-green">Enhancements</span></h3>
-                    <p className="text-white/60 text-sm font-medium leading-relaxed">
-                        Based on guest feedback and hospitality trends, we have identified these key upgrades for 2026-2027.
-                    </p>
-                </div>
-                
-                <div className="lg:col-span-2 grid sm:grid-cols-3 gap-6">
-                    {FUTURE_CHANGES.map((change, i) => (
-                        <div key={i} className="p-6 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                            <h4 className="text-primary-gold font-bold text-sm mb-2">{change.label}</h4>
-                            <p className="text-white/40 text-[10px] leading-relaxed font-medium">{change.desc}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
         </div>
       </div>
     </section>

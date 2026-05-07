@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
 import { authService } from '../../../services/authService';
 import { toast } from 'react-hot-toast';
 import { Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
@@ -19,7 +18,6 @@ export const SignupPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

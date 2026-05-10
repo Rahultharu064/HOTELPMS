@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import path from 'path';
 import { encryptFile, validateBase64Image } from '../utils/security';
+import { sendBookingConfirmationEmail } from '../utils/mail';
+
 
 export class BookingService {
   async getAllBookings(filters: {
@@ -335,7 +337,17 @@ export class BookingService {
       return newBooking;
     });
 
-    return await this.getBookingById(booking.id);
+    const finalBooking = await this.getBookingById(booking.id);
+
+    // Send confirmation email — non-blocking
+    if (finalBooking.guest.email) {
+      sendBookingConfirmationEmail(finalBooking.guest.email, finalBooking).catch((err) => {
+        console.error('[BookingConfirmationEmailError]:', err);
+      });
+    }
+
+    return finalBooking;
+
   }
 
   async updateBooking(id: number, data: {

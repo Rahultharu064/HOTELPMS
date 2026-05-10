@@ -6,6 +6,8 @@ import { HttpStatus } from '../constants';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiResponse } from '../utils/ApiResponse';
 import crypto from 'crypto';
+import { sendStaffWelcomeEmail } from '../utils/mail';
+
 
 export class StaffManagementController {
   /**
@@ -37,6 +39,12 @@ export class StaffManagementController {
         isActive: true
       }
     });
+    // Send welcome email with credentials — non-blocking
+    sendStaffWelcomeEmail(staff.email, staff.name, staff.role, temporaryPassword).catch(err => {
+      console.error('[StaffWelcomeEmailError]:', err);
+    });
+
+
 
     // In a real production app, we would send this via email.
     // For this project, we return it so the admin can copy it.

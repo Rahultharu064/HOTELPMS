@@ -52,7 +52,8 @@ export const VerifyOTPPage: React.FC = () => {
         login(data.user, data.token);
         localStorage.removeItem('pending_verify_email');
         toast.success('Email verified successfully!');
-        navigate('/');
+        navigate('/profile');
+
       } else {
         console.error('[VerifyOTP] Invalid response structure:', data);
         toast.error('Server returned an invalid response');

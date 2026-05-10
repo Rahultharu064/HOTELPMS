@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, Users, BedDouble, Maximize, ArrowRight, Sparkles } from "lucide-react";
+import { Star, Users, BedDouble, Maximize, ArrowRight } from "lucide-react";
 import { roomService } from "../../../../services/roomService";
 import type { Room } from "../../../../services/roomService";
 import { Button } from "../../../ui/Button";

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
+import { Button } from './Button';
 
 interface ModalProps {
   isOpen: boolean;
@@ -68,12 +69,12 @@ export const Modal: React.FC<ModalProps> = ({
                     </h3>
                   </div>
                 )}
-                <button
+                <Button
                   onClick={onClose}
                   className="w-7 h-7 rounded-lg bg-gray-50 text-gray-400 hover:bg-[#111827] hover:text-white flex items-center justify-center transition-all duration-300 ml-auto"
                 >
                   <FaTimes size={10} />
-                </button>
+                </Button>
               </div>
 
               {/* Body */}

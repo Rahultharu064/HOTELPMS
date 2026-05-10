@@ -16,6 +16,8 @@
   --color-neutral-light: #F9FAFB;
   --color-neutral-border: #E5E7EB;
   --color-primary-foreground: #FFFFFF;
+  --font-georgia: Georgia, "Times New Roman", serif;
+  --animate-ken-burns: kenBurns 15s ease-out forwards;
 }
 
 @layer base {
@@ -114,6 +116,29 @@
 
   .btn-active-scale {
     @apply active:scale-95 transition-transform duration-200;
+  }
+
+  .hero-overlay-dark {
+    background: linear-gradient(to right, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.52) 50%, rgba(0,0,0,0.15) 100%);
+  }
+
+  .hero-heading-base {
+    @apply font-black leading-[1.05] tracking-[-0.02em];
+    text-shadow: 0 4px 32px rgba(0,0,0,0.45);
+    font-size: clamp(2rem, 5.5vw, 4.2rem);
+  }
+
+  .hero-highlight-base {
+    @apply font-black leading-[1.05] tracking-[-0.02em] mb-6 text-[#D4A017];
+    text-shadow: 0 4px 32px rgba(212,160,23,0.3);
+    font-size: clamp(2rem, 5.5vw, 4.2rem);
+  }
+
+  .btn-gold {
+    @apply px-8 py-3.5 font-bold text-[11px] uppercase transition-all duration-300 
+           hover:scale-[1.03] active:scale-95 bg-[#D4A017] text-black border-none 
+           rounded-sm tracking-[0.15em] shadow-[0_8px_30px_rgba(212,160,23,0.3)]
+           hover:shadow-[0_12px_40px_rgba(212,160,23,0.4)] hover:-translate-y-0.5;
   }
 }
 

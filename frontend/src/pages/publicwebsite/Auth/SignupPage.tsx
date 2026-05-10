@@ -32,8 +32,9 @@ export const SignupPage: React.FC = () => {
       toast.success('Registration successful! Please verify your email.');
       // In dev mode the backend sends back the OTP directly
       navigate('/verify-otp', {
-        state: { email: formData.email, devOtp: response.data?.otp || response.otp },
+        state: { email: formData.email },
       });
+
     } catch (error: any) {
       console.error('Registration error:', error);
       const message = error.response?.data?.message || 'Registration failed';

@@ -16,7 +16,7 @@ export const VerifyOTPPage: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const state = location.state as { email?: string; devOtp?: string };
+    const state = location.state as { email?: string };
     const savedEmail = localStorage.getItem('pending_verify_email');
     
     if (state?.email) {
@@ -28,11 +28,6 @@ export const VerifyOTPPage: React.FC = () => {
       toast.error('Session expired. Please try logging in.');
       navigate('/login');
     }
-
-    // Dev mode: auto-fill OTP if backend returned it
-    if (state?.devOtp) {
-      setOtp(state.devOtp);
-    }
   }, [location, navigate]);
 
   const handleVerify = async (e: React.FormEvent) => {
@@ -42,24 +37,19 @@ export const VerifyOTPPage: React.FC = () => {
       return;
     }
     setLoading(true);
-    console.log(`[VerifyOTP] Attempting verification for ${email} with code ${otp}`);
     
     try {
       const data = await authService.verifyOTP(email, otp) as any;
-      console.log('[VerifyOTP] Success:', data);
       
       if (data.token && data.user) {
         login(data.user, data.token);
         localStorage.removeItem('pending_verify_email');
         toast.success('Email verified successfully!');
         navigate('/profile');
-
       } else {
-        console.error('[VerifyOTP] Invalid response structure:', data);
         toast.error('Server returned an invalid response');
       }
     } catch (error: any) {
-      console.error('[VerifyOTP] Error:', error.response?.data || error);
       toast.error(error.response?.data?.message || 'Verification failed');
     } finally {
       setLoading(false);
@@ -69,20 +59,15 @@ export const VerifyOTPPage: React.FC = () => {
   const handleResend = async () => {
     setResending(true);
     try {
-      const response: any = await authService.resendOTP(email);
-      // Dev mode: auto-fill the new OTP
-      if (response?.otp) {
-        setOtp(response.otp);
-        toast.success('New OTP auto-filled (dev mode)');
-      } else {
-        toast.success('A new code has been sent to your email');
-      }
+      await authService.resendOTP(email);
+      toast.success('A new code has been sent to your email');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to resend code');
     } finally {
       setResending(false);
     }
   };
+
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -97,11 +82,7 @@ export const VerifyOTPPage: React.FC = () => {
           <p className="mt-2 text-sm text-gray-600">
             We've sent a 6-digit code to <span className="font-bold text-gray-900">{email}</span>
           </p>
-          {otp.length === 6 && (
-            <div className="mt-3 text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-              🛠 Dev mode — OTP auto-filled from server response
-            </div>
-          )}
+
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleVerify}>

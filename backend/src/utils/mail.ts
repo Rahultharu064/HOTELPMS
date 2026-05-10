@@ -2,18 +2,21 @@ import nodemailer from 'nodemailer';
 import { config } from '../config';
 
 const transporter = nodemailer.createTransport({
-  host: config.email.host,
-  port: config.email.port,
-  secure: config.email.port === 465,
+  service: 'gmail',
   auth: {
     user: config.email.user,
     pass: config.email.pass,
   },
+  tls: {
+    // Do not fail on invalid certs
+    rejectUnauthorized: false
+  },
   // Shorter connection timeout so a bad network doesn't block the request for >30s
-  connectionTimeout: 5000,
-  greetingTimeout: 5000,
-  socketTimeout: 5000,
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
 });
+
 
 export const sendEmail = async (to: string, subject: string, html: string): Promise<void> => {
   try {

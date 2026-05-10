@@ -6,8 +6,8 @@ import hero1 from "../../../../assets/Hero.webp";
 const slides = [
   {
     image: hero1,
-    welcomeText: "Experience Luxury",
-    title: "Antigravity",
+    welcomeText: "Welcome to",
+    title: "Itahari Namuna",
     highlight: "Luxury",
     subtitle:
       "Where comfort meets sophistication. Discover our curated collection of premium rooms designed for the modern traveler seeking an unforgettable stay.",
@@ -16,25 +16,27 @@ const slides = [
   },
   {
     image: hero1,
-    welcomeText: "Seamless Management",
-    title: "Precision",
-    highlight: "Systems",
+    welcomeText: "Precision in Hospitality",
+    title: "Itahari Namuna",
+    highlight: "Excellence",
     subtitle:
-      "Empower your hospitality business with our state-of-the-art Property Management System. Streamline operations and enhance guest satisfaction effortlessly.",
-    ctaLabel: "EXPLORE SERVICES",
-    ctaTo: "/services",
+      "Redefining the art of service with cutting-edge management and timeless sophistication. Discover a stay that flows with perfect grace.",
+    ctaLabel: "EXPLORE ROOMS",
+    ctaTo: "/rooms",
   },
   {
     image: hero1,
-    welcomeText: "Nature's Retreat",
-    title: "Serenity",
-    highlight: "Resorts",
+    welcomeText: "Beyond the Horizon",
+    title: "Itahari Namuna",
+    highlight: "Comfort",
     subtitle:
-      "Escape to a world of peace and tranquility. Our resorts offer the perfect blend of natural beauty and world-class amenities for your ultimate relaxation.",
-    ctaLabel: "VIEW GALLERY",
-    ctaTo: "/gallery",
+      "Where every detail is meticulously crafted to elevate your senses. Embark on a journey of relaxation in our curated collection of elite suites.",
+    ctaLabel: "VIEW COLLECTIONS",
+    ctaTo: "/rooms",
   },
 ];
+
+
 
 const HeroSection = () => {
   const [current, setCurrent] = useState(0);

@@ -25,8 +25,10 @@ const Navbar = () => {
           <img src="/LOGOS.png" alt="Itahari Namuna Logo" className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
           <div className="flex flex-col">
             <span className="font-bold text-sm tracking-tight text-primary-dark leading-none">Itahari Namuna</span>
-            <span className="text-[9px] font-black uppercase text-primary-green tracking-[0.2em] mt-0.5">College PMS</span>
+            <span className="text-[9px] font-black uppercase text-primary-green tracking-[0.2em] mt-0.5">Luxury PMS</span>
+
           </div>
+
         </Link>
 
         {/* Desktop nav */}

@@ -47,16 +47,16 @@ export class AuthController {
     });
 
     // Send OTP email — non-blocking, failure does NOT crash the endpoint
-    sendOTPEmail(normalizedEmail, otp).catch(() => {});
+    sendOTPEmail(normalizedEmail, otp).catch((err) => {
+      console.error('[RegistrationEmailError]:', err);
+    });
 
-    const isDev = process.env.NODE_ENV === 'development';
 
     res.status(HttpStatus.CREATED).json({
       message: 'Registration successful. Please verify your email with the OTP sent.',
       email: normalizedEmail,
-      // Expose OTP in dev mode since SMTP may not be configured
-      ...(isDev && { otp }),
     });
+
   });
 
   /**
@@ -84,7 +84,10 @@ export class AuthController {
         data: { otp, otpExpires },
       });
 
-      await sendOTPEmail(guest.email, otp);
+      await sendOTPEmail(guest.email, otp).catch((err) => {
+        console.error('[LoginResendOTPError]:', err);
+      });
+
       
       throw new ApiError(HttpStatus.FORBIDDEN, 'Account not verified. A new OTP has been sent to your email.');
     }
@@ -190,13 +193,15 @@ export class AuthController {
     });
 
     // Non-blocking — don't crash if SMTP is down
-    sendOTPEmail(email, otp).catch(() => {});
+    sendOTPEmail(email, otp).catch((err) => {
+      console.error('[ResendOTPError]:', err);
+    });
 
-    const isDev = process.env.NODE_ENV === 'development';
+
     res.json({
       message: 'A new OTP has been sent to your email',
-      ...(isDev && { otp }),
     });
+
   });
 
   /**

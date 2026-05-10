@@ -83,10 +83,16 @@ async function fetchWithRetry(
 }
 
 const getHeaders = (isFormData: boolean = false, isAdminEndpoint: boolean = false) => {
-  let token = localStorage.getItem('guest_token');
+  const adminToken = localStorage.getItem('admin_token');
+  const guestToken = localStorage.getItem('guest_token');
   
-  if (isAdminEndpoint) {
-    token = localStorage.getItem('admin_token');
+  // Choose the primary token based on the endpoint type
+  let token = isAdminEndpoint ? adminToken : guestToken;
+  
+  // Fallback: If the preferred token is missing, try the other one.
+  // This allows shared routes (like /rooms or /bookings) to work for both guests and staff.
+  if (!token) {
+    token = adminToken || guestToken;
   }
 
   const headers: Record<string, string> = {};
@@ -105,9 +111,12 @@ const getHeaders = (isFormData: boolean = false, isAdminEndpoint: boolean = fals
 const checkIfAdminEndpoint = (endpoint: string) => {
   return endpoint.startsWith('/admin') || 
          endpoint.startsWith('/frontoffice') || 
-         endpoint.startsWith('/housekeeping') ||
+         endpoint.startsWith('/housekeeping') || 
+         endpoint.startsWith('/guests') ||
+         endpoint.startsWith('/bookings') ||
          endpoint.includes('admin');
 };
+
 
 
 export const api = {

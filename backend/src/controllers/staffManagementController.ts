@@ -68,8 +68,9 @@ export class StaffManagementController {
     const staff = await prisma.admin.findMany({
       where: {
         role: {
-          in: ['front_office', 'housekeeping', 'manager']
+          in: ['admin', 'manager', 'front_office', 'housekeeping']
         }
+
       },
       select: {
         id: true,

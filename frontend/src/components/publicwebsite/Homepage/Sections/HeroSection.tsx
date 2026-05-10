@@ -39,7 +39,9 @@ const slides = [
 
 
 const HeroSection = () => {
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(0);src/pages/publicwebsite/Auth/SignupPage.tsx(31,13): error TS6133: 'response' is declared but its value is never read.
+Error: Command "npm run build" exited with 2 ead this anf ux this rror 
+
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const goTo = useCallback((idx: number) => {

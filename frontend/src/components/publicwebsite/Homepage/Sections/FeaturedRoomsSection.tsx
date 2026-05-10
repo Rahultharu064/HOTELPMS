@@ -56,23 +56,17 @@ export const FeaturedRoomsSection: React.FC = () => {
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary-green/10 rounded-full blur-[120px] -ml-64 -mb-64 pointer-events-none" />
              
             <div className="container-custom relative z-10">
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-                    <ScrollReveal className="max-w-2xl">
-                        <div className="flex items-center gap-2 mb-3">
-                            <span className="bg-primary-gold/10 text-primary-gold p-1.5 rounded-lg">
-                                <Sparkles className="h-4 w-4" />
-                            </span>
-                            <span className="text-primary-gold font-extrabold text-xs uppercase tracking-[0.2em] block drop-shadow-sm">Signature Experience</span>
-                        </div>
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-primary-dark tracking-tighter mb-4 leading-tight">Featured <span className="text-primary-green">Collections</span></h2>
-                        <p className="text-lg text-neutral-text-secondary font-medium max-w-lg leading-relaxed">Experience the pinnacle of luxury in our handpicked signature suites and rooms.</p>
-                    </ScrollReveal>
-                    <ScrollReveal delay={0.2}>
-                        <Button variant="outline" className="rounded-full px-8 h-12 font-bold group border-neutral-border hover:border-primary-green hover:bg-primary-green/5 transition-all" asChild>
-                            <Link to="/rooms" className="flex items-center gap-2 text-primary-dark">
-                                View All Rooms <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                        </Button>
+                <div className="text-center mb-16">
+                    <ScrollReveal className="max-w-3xl mx-auto flex flex-col items-center">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-primary-dark tracking-tighter mb-8 leading-tight">Featured <span className="text-primary-green">Collections</span></h2>
+                        
+                        <ScrollReveal delay={0.2}>
+                            <Button variant="outline" className="rounded-full px-8 h-12 font-bold group border-neutral-border hover:border-primary-green hover:bg-primary-green/5 transition-all" asChild>
+                                <Link to="/rooms" className="flex items-center gap-2 text-primary-dark">
+                                    View All Rooms <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                </Link>
+                            </Button>
+                        </ScrollReveal>
                     </ScrollReveal>
                 </div>
 
@@ -145,10 +139,14 @@ export const FeaturedRoomsSection: React.FC = () => {
                                                 )}
                                             </div>
                                             
-                                            <div className="flex gap-4">
-                                                <Button variant="primary" size="md" className="flex-1 font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary-green/20 rounded-2xl h-12" asChild>
-                                                    <Link to={`/rooms/${room.slug}`}>View Details</Link>
-                                                </Button>
+                                            <div className="flex pt-4 border-t border-neutral-border/10">
+                                                <Link 
+                                                    to={`/rooms/${room.slug}`} 
+                                                    className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary-green hover:text-primary-dark transition-colors group/link"
+                                                >
+                                                    View Details 
+                                                    <ArrowRight className="h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
+                                                </Link>
                                             </div>
                                         </div>
                                     </div>

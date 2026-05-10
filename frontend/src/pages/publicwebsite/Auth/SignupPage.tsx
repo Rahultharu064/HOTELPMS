@@ -28,7 +28,8 @@ export const SignupPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response: any = await authService.register(formData);
+      await authService.register(formData);
+
       toast.success('Registration successful! Please verify your email.');
       // In dev mode the backend sends back the OTP directly
       navigate('/verify-otp', {

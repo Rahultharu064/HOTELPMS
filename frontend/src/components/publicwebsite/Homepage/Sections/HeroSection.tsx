@@ -39,9 +39,7 @@ const slides = [
 
 
 const HeroSection = () => {
-  const [current, setCurrent] = useState(0);src/pages/publicwebsite/Auth/SignupPage.tsx(31,13): error TS6133: 'response' is declared but its value is never read.
-Error: Command "npm run build" exited with 2 ead this anf ux this rror 
-
+  const [current, setCurrent] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const goTo = useCallback((idx: number) => {
@@ -70,16 +68,14 @@ Error: Command "npm run build" exited with 2 ead this anf ux this rror
       {slides.map((slide, i) => (
         <div
           key={i}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            i === current ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 transition-opacity duration-1000 ${i === current ? "opacity-100" : "opacity-0"
+            }`}
         >
           <img
             src={slide.image}
             alt={slide.title}
-            className={`w-full h-full object-cover object-center ${
-              i === current ? "animate-ken-burns" : ""
-            }`}
+            className={`w-full h-full object-cover object-center ${i === current ? "animate-ken-burns" : ""
+              }`}
           />
           {/* Refined gradient overlay for better text contrast */}
           <div className="absolute inset-0 hero-overlay-dark" />
@@ -89,9 +85,8 @@ Error: Command "npm run build" exited with 2 ead this anf ux this rror
       {/* Main Content */}
       <div className="relative z-10 container-custom h-full flex flex-col justify-center">
         <div
-          className={`max-w-2xl transition-all duration-700 ${
-            isTransitioning ? "opacity-0 translate-y-8" : "opacity-100 translate-y-0"
-          }`}
+          className={`max-w-2xl transition-all duration-700 ${isTransitioning ? "opacity-0 translate-y-8" : "opacity-100 translate-y-0"
+            }`}
         >
           {/* Modern Label with Accent Line */}
           <div className="flex items-center gap-3 mb-4">
@@ -121,10 +116,10 @@ Error: Command "npm run build" exited with 2 ead this anf ux this rror
             <button className="btn-gold">
               {slides[current].ctaLabel}
             </button>
-            <Button 
-              variant="hero-outline" 
-              size="lg" 
-              asChild 
+            <Button
+              variant="hero-outline"
+              size="lg"
+              asChild
               to={slides[current].ctaTo}
               className="px-8 border-white/20 hover:border-white/60"
             >
@@ -141,11 +136,10 @@ Error: Command "npm run build" exited with 2 ead this anf ux this rror
                 className="relative py-2 group"
                 aria-label={`Go to slide ${i + 1}`}
               >
-                <div className={`h-[3px] transition-all duration-500 rounded-full ${
-                  i === current
+                <div className={`h-[3px] transition-all duration-500 rounded-full ${i === current
                     ? "w-16 bg-primary-gold shadow-[0_0_10px_rgba(212,160,23,0.5)]"
                     : "w-8 bg-white/10 group-hover:bg-white/30"
-                }`} />
+                  }`} />
               </button>
             ))}
           </div>

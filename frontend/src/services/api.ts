@@ -102,9 +102,19 @@ const getHeaders = (isFormData: boolean = false, isAdminEndpoint: boolean = fals
   return headers;
 };
 
+const checkIfAdminEndpoint = (endpoint: string) => {
+  return endpoint.startsWith('/admin') || 
+         endpoint.startsWith('/frontoffice') || 
+         endpoint.startsWith('/housekeeping') ||
+         endpoint.includes('admin');
+};
+
+
 export const api = {
   async get<T = any>(endpoint: string, options?: { params?: Record<string, any> }): Promise<T> {
-    const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
+    const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
+
+
     let url = `${API_BASE_URL}${endpoint}`;
     if (options?.params) {
       const params = new URLSearchParams();
@@ -130,7 +140,8 @@ export const api = {
 
   async post<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
-    const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
+    const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
+
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: getHeaders(isFormData, isAdminEndpoint),
@@ -145,7 +156,8 @@ export const api = {
 
   async put<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
-    const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
+    const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
+
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
       headers: getHeaders(isFormData, isAdminEndpoint),
@@ -160,7 +172,8 @@ export const api = {
 
   async patch<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
-    const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
+    const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
+
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'PATCH',
       headers: getHeaders(isFormData, isAdminEndpoint),
@@ -174,7 +187,9 @@ export const api = {
   },
 
   async delete<T = any>(endpoint: string): Promise<T> {
-    const isAdminEndpoint = endpoint.startsWith('/admin') || endpoint.includes('admin');
+    const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
+
+
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
       headers: getHeaders(false, isAdminEndpoint),

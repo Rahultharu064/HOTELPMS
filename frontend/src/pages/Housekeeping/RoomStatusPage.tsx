@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
 import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
 
 const RoomStatusPage: React.FC = () => {
   const [rooms, setRooms] = useState<any[]>([]);
@@ -99,7 +100,7 @@ const RoomStatusPage: React.FC = () => {
       <div className="bg-white p-5 rounded-[32px] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-6">
         <div className="flex items-center gap-2 overflow-x-auto pb-4 md:pb-0 w-full md:w-auto no-scrollbar">
           {["All", "Clean", "Dirty", "Occupied", "Maintenance"].map((f) => (
-            <button
+            <Button
               key={f}
               onClick={() => setFilter(f)}
               className={`px-6 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 ${filter === f
@@ -108,12 +109,12 @@ const RoomStatusPage: React.FC = () => {
                 }`}
             >
               {f}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="relative flex-1 w-full">
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" strokeWidth={2.5} />
-          <input
+          <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search room number..."
@@ -162,19 +163,19 @@ const RoomStatusPage: React.FC = () => {
                 </div>
 
                 {isDirty ? (
-                  <button
+                  <Button
                     onClick={() => handleAction(room.id, room.status)}
                     className="w-full py-4 rounded-[20px] bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 transition-all"
                   >
                     Mark Ready
-                  </button>
+                  </Button>
                 ) : isClean ? (
-                  <button
+                  <Button
                     onClick={() => handleAction(room.id, room.status)}
                     className="w-full py-4 rounded-[20px] bg-[#111827] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all"
                   >
                     Set To Cleaning
-                  </button>
+                  </Button>
                 ) : (
                   <Link
                     to={`/housekeeping/rooms/${room.id}`}

@@ -5,6 +5,7 @@ import {
   ChevronRight, Save, Trash2,
   Lock, Smartphone, CreditCard
 } from "lucide-react";
+import { Input } from "../../components/ui/Input";
 
 const SettingsPage: React.FC = () => {
   return (
@@ -63,16 +64,16 @@ const SettingsPage: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Hotel Name</label>
-                  <input 
+                  <Input.Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Hotel Name</Input.Label>
+                  <Input 
                     type="text" 
                     defaultValue="Itahari Namuna College Hotel"
                     className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-3xl text-sm font-bold text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/20 transition-all font-mono"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Support Email</label>
-                  <input 
+                  <Input.Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Support Email</Input.Label>
+                  <Input 
                     type="email" 
                     defaultValue="support@namunacollege.edu.np"
                     className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-3xl text-sm font-bold text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#1F7A3A]/5 focus:border-[#1F7A3A]/20 transition-all font-mono"

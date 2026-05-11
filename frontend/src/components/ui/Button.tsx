@@ -3,8 +3,8 @@ import { motion, type HTMLMotionProps } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 interface ButtonProps extends HTMLMotionProps<"button"> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'gold' | 'hero' | 'hero-outline';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'gold' | 'hero' | 'hero-outline' | 'destructive';
+  size?: 'sm' | 'md' | 'lg'|'icon';
   fullWidth?: boolean;
   children: React.ReactNode;
   icon?: React.ReactNode;
@@ -39,12 +39,14 @@ export const Button: React.FC<ButtonProps> = ({
     gold: 'bg-primary-gold text-white hover:bg-primary-orange focus:ring-primary-gold',
     hero: 'bg-[#F59E0B] text-[#14532D] hover:bg-[#D97706] focus:ring-[#F59E0B] shadow-xl hover:shadow-2xl hover:-translate-y-0.5',
     'hero-outline': 'border-2 border-white/40 text-white hover:bg-white/10 hover:border-white focus:ring-white',
+    destructive: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500',
   };
   
   const sizes = {
-    sm: 'px-3 py-1.5 text-xs gap-1.5',
-    md: 'px-4 py-2 text-sm gap-2',
-    lg: 'px-6 py-3 text-base gap-2',
+    sm:   'px-3 py-1.5 text-xs gap-1.5',
+    md:   'px-4 py-2 text-sm gap-2',
+    lg:   'px-6 py-3 text-base gap-2',
+    icon: 'p-2 text-sm',          // square icon-only button
   };
   
   const buttonContent = (

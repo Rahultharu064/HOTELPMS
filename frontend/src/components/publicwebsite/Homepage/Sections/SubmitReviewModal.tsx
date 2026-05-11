@@ -3,6 +3,7 @@ import { X, Star, Send, Loader2, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../../ui/Button";
 import { reviewService } from "../../../../services/reviewService";
+import { Input } from "../../../ui/Input";
 
 interface SubmitReviewModalProps {
   isOpen: boolean;
@@ -84,9 +85,9 @@ export const SubmitReviewModal: React.FC<SubmitReviewModalProps> = ({ isOpen, on
             className="relative bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             <div className="absolute top-6 right-6">
-              <button onClick={onClose} className="p-2 hover:bg-neutral-light rounded-full transition-colors">
+              <Button onClick={onClose} variant="outline" size="icon" className="rounded-full">
                 <X className="h-6 w-6 text-neutral-text-secondary" />
-              </button>
+              </Button>
             </div>
 
             <div className="p-10">
@@ -114,7 +115,7 @@ export const SubmitReviewModal: React.FC<SubmitReviewModalProps> = ({ isOpen, on
                       <label className="block text-xs font-black uppercase tracking-widest text-primary-dark mb-4">Your Rating</label>
                       <div className="flex gap-2">
                         {[1, 2, 3, 4, 5].map((s) => (
-                          <button
+                          <Button
                             key={s}
                             type="button"
                             onMouseEnter={() => setHoverRating(s)}
@@ -129,7 +130,7 @@ export const SubmitReviewModal: React.FC<SubmitReviewModalProps> = ({ isOpen, on
                                   : "text-neutral-border"
                               }`}
                             />
-                          </button>
+                          </Button>
                         ))}
                       </div>
                     </div>
@@ -150,8 +151,9 @@ export const SubmitReviewModal: React.FC<SubmitReviewModalProps> = ({ isOpen, on
                         {rating <= 3 ? "Upload Proof (Highly Recommended)" : "Upload Proof (Optional)"}
                       </label>
                       <div className="relative group">
-                        <input
+                        <Input
                           type="file"
+                          variant="outline"
                           accept="image/*"
                           onChange={handleFileChange}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"

@@ -10,10 +10,10 @@ interface Props {
 
 export const ThermalReceipt: React.FC<Props> = ({
   folio,
-  hotelName = "ANTIGRAVITY LUXE HOTEL",
-  hotelAddress = "Kathmandu, Nepal",
-  hotelPhone = "+977-1-4400000",
-  hotelVat = "600123456"
+  hotelName = "ITAHARI NAMUNA COLLEGE HOTEL",
+  hotelAddress = "Itahari-6, Sunsari, Nepal",
+  hotelPhone = "+977-25-585000",
+  hotelVat = "600987654"
 }) => {
   return (
     <div id="thermal-receipt" className="p-4 bg-white text-black font-mono text-[12px] leading-tight w-[80mm] mx-auto print:m-0 print:w-full">

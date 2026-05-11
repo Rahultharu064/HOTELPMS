@@ -12,6 +12,7 @@ import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
 import { Modal } from "../../components/ui/Modal";
 import { Select } from "../../components/ui/Select";
+import { Button } from "../../components/ui/Button";
 
 const StaffAssignmentPage: React.FC = () => {
   const [staff, setStaff] = useState<any[]>([]);
@@ -91,12 +92,12 @@ const StaffAssignmentPage: React.FC = () => {
           <p className="text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Manage floor personnel and cleaning duty allocations</p>
         </div>
         <div className="flex items-center gap-3">
-          <button
+          <Button
             onClick={() => setIsAddModalOpen(true)}
             className="px-6 py-4 bg-[#111827] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all flex items-center gap-2 shadow-xl shadow-black/10"
           >
             <UserPlus size={16} /> Add New Staff
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -142,9 +143,9 @@ const StaffAssignmentPage: React.FC = () => {
                         <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Active Duties</span>
                         <span className="text-2xl font-black text-[#111827] tracking-tighter">{staffTasks} <span className="text-[10px] text-gray-400 uppercase">Rooms</span></span>
                       </div>
-                      <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#14532D] hover:underline transition-all">
+                      <Button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#14532D] hover:underline transition-all">
                         Assign <ArrowRight size={14} />
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -153,9 +154,9 @@ const StaffAssignmentPage: React.FC = () => {
                       <Clock size={14} />
                       <p className="text-[9px] font-bold uppercase tracking-widest">Last Update: {new Date(s.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
-                    <button className="text-gray-300 hover:text-[#111827] transition-all">
+                    <Button className="text-gray-300 hover:text-[#111827] transition-all">
                       <MoreVertical size={18} />
-                    </button>
+                    </Button>
                   </div>
                 </motion.div>
               );
@@ -184,9 +185,9 @@ const StaffAssignmentPage: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-3">
               {[1, 2, 3, 4].map(f => (
-                <button key={f} className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[#F59E0B]/30 transition-all text-center">
+                <Button key={f} className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[#F59E0B]/30 transition-all text-center">
                   <p className="text-[11px] font-black uppercase">Floor {f}</p>
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -253,19 +254,19 @@ const StaffAssignmentPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4 pt-4">
-            <button
+            <Button
               type="button"
               onClick={() => setIsAddModalOpen(false)}
               className="flex-1 py-4 border border-gray-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-gray-400 hover:bg-gray-50 transition-all"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               className="flex-[2] py-4 bg-[#14532D] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#111827] transition-all shadow-xl shadow-[#14532D]/20"
             >
               Confirm Registration
-            </button>
+            </Button>
           </div>
         </form>
       </Modal>

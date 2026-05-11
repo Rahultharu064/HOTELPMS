@@ -1,24 +1,47 @@
 import React from 'react';
 
+/* ── Props ───────────────────────────────────────────────────── */
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   icon?: React.ReactNode;
+  /** Visual variant — accepted for API consistency but has no effect on native inputs. */
+  variant?: 'default' | 'outline' | 'ghost';
 }
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
-  label,
-  error,
-  icon,
-  className = '',
-  ...props
-}, ref) => {
+interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  children: React.ReactNode;
+}
+
+/* ── Label sub-component ─────────────────────────────────────── */
+
+const InputLabel: React.FC<LabelProps> = ({ children, className = '', ...props }) => (
+  <label
+    className={`block text-sm font-semibold text-neutral-text-primary ${className}`}
+    {...props}
+  >
+    {children}
+  </label>
+);
+InputLabel.displayName = 'Input.Label';
+
+/* ── Input (forwardRef) ──────────────────────────────────────── */
+
+const _Input = React.forwardRef<HTMLInputElement, InputProps>((
+  {
+    label,
+    error,
+    icon,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    variant,          // accepted but not forwarded to the DOM
+    className = '',
+    ...props
+  }, ref) => {
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-semibold mb-2 text-neutral-text-primary">
-          {label}
-        </label>
+        <InputLabel className="mb-2">{label}</InputLabel>
       )}
       <div className="relative">
         {icon && (
@@ -43,5 +66,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
     </div>
   );
 });
+_Input.displayName = 'Input';
 
-Input.displayName = 'Input';
+/* ── Compound export ─────────────────────────────────────────── */
+
+/**
+ * Input component with an optional compound sub-component:
+ * - `<Input />` — standard text input
+ * - `<Input.Label />` — styled label element
+ */
+export const Input = Object.assign(_Input, { Label: InputLabel });

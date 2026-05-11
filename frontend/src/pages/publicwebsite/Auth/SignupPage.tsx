@@ -4,7 +4,7 @@ import { authService } from '../../../services/authService';
 import { toast } from 'react-hot-toast';
 import { Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SiGooglechrome } from 'react-icons/si';
+
 import { FcGoogle } from 'react-icons/fc';
 
 export const SignupPage: React.FC = () => {
@@ -222,17 +222,6 @@ export const SignupPage: React.FC = () => {
           </p>
         </div>
       </motion.div>
-
-      {/* Footer Branding & Compatibility */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-        <div className="flex items-center gap-2 px-3 py-1 bg-white/50 backdrop-blur-sm rounded-full border border-gray-100 shadow-sm">
-          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Best experienced on</span>
-          <SiGooglechrome className="text-gray-400 hover:text-[#4285F4] transition-colors" size={12} />
-        </div>
-        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] whitespace-nowrap opacity-50">
-          Powered by Itahari Namuna PMS v2.0
-        </div>
-      </div>
     </div>
   );
 };

@@ -350,7 +350,12 @@ export const BookingsPage: React.FC = () => {
                 className="rounded-[40px] border border-neutral-border bg-white p-8 md:p-12 shadow-soft relative overflow-hidden"
               >
                 <div className="absolute top-0 left-0 right-0 h-2 bg-neutral-light" />
-                <div className="absolute top-0 left-0 h-2 bg-primary-green transition-all duration-700" style={{ width: `${((step + 1) / steps.length) * 100}%` }} aria-hidden="true" />
+                <div
+                  className="absolute top-0 left-0 h-2 bg-primary-green transition-all duration-700 booking-progress-bar"
+                  ref={el => { if (el) el.style.setProperty('--progress-width', `${((step + 1) / steps.length) * 100}%`); }}
+                  aria-hidden="true"
+                />
+
 
                 {step === 0 && (
                   <div className="space-y-8">

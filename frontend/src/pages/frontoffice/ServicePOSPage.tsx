@@ -192,7 +192,7 @@ const ServicePOSPage: React.FC = () => {
                                     className="absolute top-full left-0 right-0 mt-3 bg-white border border-gray-100 rounded-3xl shadow-2xl z-50 overflow-hidden"
                                 >
                                     {searchResults.map((res: any) => (
-                                        <button 
+                                        <Button 
                                             key={res.id} 
                                             onClick={() => {
                                                 setSelectedRecipient(res);
@@ -213,7 +213,7 @@ const ServicePOSPage: React.FC = () => {
                                             <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <Button size="sm" className="bg-blue-600">Select</Button>
                                             </div>
-                                        </button>
+                                        </Button>
                                     ))}
                                 </motion.div>
                             )}
@@ -222,7 +222,7 @@ const ServicePOSPage: React.FC = () => {
                 )}
             </div>
 
-            <button 
+            <Button 
                 onClick={() => {
                     setIsWalkIn(!isWalkIn);
                     setSelectedRecipient(null);
@@ -233,7 +233,7 @@ const ServicePOSPage: React.FC = () => {
                     ${isWalkIn ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20' : 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/20'}`}
             >
                 {isWalkIn ? "Switch to In-house" : "Switch to Walk-in"}
-            </button>
+            </Button>
         </div>
       </div>
 
@@ -243,7 +243,7 @@ const ServicePOSPage: React.FC = () => {
             {/* Categories */}
             <div className="flex items-center gap-3 overflow-x-auto pb-2 custom-scrollbar">
                 {categories.map((cat) => (
-                    <button
+                    <Button
                         key={cat.id}
                         onClick={() => setActiveCategory(cat.id)}
                         className={`px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-3
@@ -255,7 +255,7 @@ const ServicePOSPage: React.FC = () => {
                         {cat.name === 'Laundry' && <Wind size={14} />}
                         {cat.name === 'Spa' && <Waves size={14} />}
                         {cat.name}
-                    </button>
+                    </Button>
                 ))}
             </div>
 
@@ -317,9 +317,9 @@ const ServicePOSPage: React.FC = () => {
                     </div>
                 </div>
                 {cart.length > 0 && (
-                    <button onClick={() => setCart([])} className="text-white/20 hover:text-red-400 transition-colors">
+                    <Button onClick={() => setCart([])} className="text-white/20 hover:text-red-400 transition-colors">
                         <Trash2 size={18} />
-                    </button>
+                    </Button>
                 )}
             </div>
 
@@ -338,19 +338,19 @@ const ServicePOSPage: React.FC = () => {
                                     <h5 className="text-[12px] font-black text-white uppercase leading-none">{item.name}</h5>
                                     <p className="text-[10px] font-bold text-white/30 uppercase mt-2 tracking-widest">Rate: Rs. {item.price.toLocaleString()}</p>
                                 </div>
-                                <button onClick={() => removeFromCart(item.id)} className="text-white/10 hover:text-red-400 group-hover:opacity-100 lg:opacity-0 transition-opacity">
+                                <Button onClick={() => removeFromCart(item.id)} className="text-white/10 hover:text-red-400 group-hover:opacity-100 lg:opacity-0 transition-opacity">
                                     <X size={14} />
-                                </button>
+                                </Button>
                             </div>
                             <div className="flex items-center justify-between mt-4">
                                 <div className="flex items-center gap-3 bg-white/5 rounded-xl p-1 px-2 border border-white/5">
-                                    <button onClick={() => updateQuantity(item.id, -1)} className="text-white/40 hover:text-white transition-colors">
+                                    <Button onClick={() => updateQuantity(item.id, -1)} className="text-white/40 hover:text-white transition-colors">
                                         <Minus size={12} />
-                                    </button>
+                                    </Button>
                                     <span className="text-[11px] font-black text-white w-6 text-center">{item.quantity}</span>
-                                    <button onClick={() => updateQuantity(item.id, 1)} className="text-white/40 hover:text-white transition-colors">
+                                    <Button onClick={() => updateQuantity(item.id, 1)} className="text-white/40 hover:text-white transition-colors">
                                         <Plus size={12} />
-                                    </button>
+                                    </Button>
                                 </div>
                                 <span className="text-[13px] font-black text-white font-mono">Rs. {(item.price * item.quantity).toLocaleString()}</span>
                             </div>

@@ -13,6 +13,7 @@ import { extraService } from "../../services/extraService";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../../components/ui/Button";
 
 const payStatusStyles: Record<string, { bg: string, text: string, dot: string }> = {
   paid: { bg: "bg-emerald-100", text: "text-emerald-700", dot: "bg-emerald-600" },
@@ -316,16 +317,16 @@ const PaymentsPage: React.FC = () => {
                       </td>
                       <td className="px-10 py-8 text-right">
                         <div className="flex items-center justify-end gap-2">
-                           <button 
+                           <Button 
                              onClick={() => navigate(`/frontoffice/folio?id=${item.id}`)}
                              className="p-3 rounded-xl bg-gray-50 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all"
                              title="View Detailed Folio"
                            >
                              <ArrowRight size={18} strokeWidth={2.5} />
-                           </button>
-                           <button className="p-3 rounded-xl hover:bg-gray-100 text-gray-300 hover:text-[#111827] transition-all">
+                           </Button>
+                           <Button className="p-3 rounded-xl hover:bg-gray-100 text-gray-300 hover:text-[#111827] transition-all">
                              <MoreVertical size={18} />
-                           </button>
+                           </Button>
                         </div>
                       </td>
                     </motion.tr>
@@ -343,12 +344,12 @@ const PaymentsPage: React.FC = () => {
                 <p className="text-[11px] font-black uppercase tracking-[0.4em]">Vault Ledger is Empty</p>
                 <p className="text-xs font-bold mt-2">No {activeTab} records found for the current query</p>
             </div>
-            <button 
+            <Button 
               onClick={() => setSearchQuery("")}
               className="px-8 py-3 bg-gray-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:bg-gray-200 transition-all"
             >
               Reset Filters
-            </button>
+            </Button>
           </div>
         )}
         

@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
+import { Button } from "../../components/ui/Button";
 
 const CleaningTasksPage: React.FC = () => {
   const [rooms, setRooms] = useState<any[]>([]);
@@ -74,15 +75,18 @@ const CleaningTasksPage: React.FC = () => {
           <p className="text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Manage daily room cleaning and maintenance cycles</p>
         </div>
         <div className="flex items-center gap-3">
-          <button
+          <Button
             onClick={fetchRooms}
             className="p-4 bg-white border border-gray-100 rounded-2xl text-gray-400 hover:text-[#14532D] transition-all shadow-sm"
           >
             <RefreshCcw size={18} />
-          </button>
-          <button className="px-6 py-4 bg-[#111827] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all shadow-xl shadow-black/10">
+          </Button>
+          <Button
+            onClick={fetchRooms}
+            className="px-6 py-4 bg-[#111827] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all shadow-xl shadow-black/10"
+          >
             Export Task List
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -90,16 +94,16 @@ const CleaningTasksPage: React.FC = () => {
       <div className="bg-white p-5 rounded-[32px] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-6">
         <div className="flex items-center gap-2 overflow-x-auto pb-4 md:pb-0 w-full md:w-auto no-scrollbar">
           {["All", "In Progress", "Ready", "Stay Over"].map((f) => (
-            <button
+            <Button
               key={f}
               onClick={() => setFilter(f)}
               className={`px-6 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 ${filter === f
-                  ? "bg-[#14532D] text-white shadow-lg shadow-black/10"
-                  : "text-gray-400 hover:text-[#111827] hover:bg-gray-50"
+                ? "bg-[#14532D] text-white shadow-lg shadow-black/10"
+                : "text-gray-400 hover:text-[#111827] hover:bg-gray-50"
                 }`}
             >
               {f}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="relative flex-1 w-full">
@@ -180,9 +184,9 @@ const CleaningTasksPage: React.FC = () => {
                         >
                           Logs
                         </Link>
-                        <button className="w-9 h-9 rounded-xl border border-gray-100 flex items-center justify-center text-gray-300 hover:text-[#111827] transition-all">
+                        <Button className="w-9 h-9 rounded-xl border border-gray-100 flex items-center justify-center text-gray-300 hover:text-[#111827] transition-all">
                           <MoreVertical size={16} />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>

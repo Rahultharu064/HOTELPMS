@@ -136,14 +136,14 @@ export const ContactUsPage: React.FC = () => {
 
               <h3 className="font-semibold mb-3">Follow Us</h3>
               <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 rounded-full bg-neutral-light flex items-center justify-center text-primary-green hover:bg-primary-green hover:text-white transition-all">
-                  <FaFacebook />
+                <a href="#" aria-label="Follow us on Facebook" className="w-10 h-10 rounded-full bg-neutral-light flex items-center justify-center text-primary-green hover:bg-primary-green hover:text-white transition-all">
+                  <FaFacebook aria-hidden="true" focusable="false" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-neutral-light flex items-center justify-center text-primary-green hover:bg-primary-green hover:text-white transition-all">
-                  <FaInstagram />
+                <a href="#" aria-label="Follow us on Instagram" className="w-10 h-10 rounded-full bg-neutral-light flex items-center justify-center text-primary-green hover:bg-primary-green hover:text-white transition-all">
+                  <FaInstagram aria-hidden="true" focusable="false" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-neutral-light flex items-center justify-center text-primary-green hover:bg-primary-green hover:text-white transition-all">
-                  <FaTwitter />
+                <a href="#" aria-label="Follow us on Twitter" className="w-10 h-10 rounded-full bg-neutral-light flex items-center justify-center text-primary-green hover:bg-primary-green hover:text-white transition-all">
+                  <FaTwitter aria-hidden="true" focusable="false" />
                 </a>
               </div>
             </motion.div>

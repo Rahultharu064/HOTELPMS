@@ -217,3 +217,290 @@
   50% { transform: scale(1.07); }
   100% { transform: scale(1.05); }
 }
+
+/* ── PROFESSIONAL INVOICE STYLES ── */
+.invoice-container {
+  background-color: #FFFFFF;
+  color: #000000;
+  padding: 40px 60px;
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  font-family: "Times New Roman", Times, serif;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.invoice-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.hotel-name {
+  font-size: 26px;
+  font-weight: bold;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.hotel-info {
+  font-size: 12px;
+  margin: 5px 0;
+}
+
+.hotel-contact {
+  font-size: 12px;
+  margin: 2px 0;
+}
+
+.hotel-vat {
+  font-size: 12px;
+  margin: 2px 0;
+  font-weight: bold;
+}
+
+.invoice-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 20px;
+  border-bottom: 1px solid #000;
+  display: inline-block;
+  padding-bottom: 2px;
+}
+
+.invoice-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  font-size: 13px;
+}
+
+.guest-info {
+  flex: 1;
+}
+
+.guest-info p {
+  margin: 0 0 3px 0;
+}
+
+.guest-label {
+  margin: 0 0 5px 0;
+}
+
+.guest-name {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.meta-info {
+  text-align: right;
+}
+
+.meta-info p {
+  margin: 0 0 5px 0;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+  font-size: 13px;
+}
+
+.invoice-table thead tr {
+  border-bottom: 2px solid #000;
+  border-top: 2px solid #000;
+}
+
+.invoice-table th {
+  padding: 12px 5px;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.table-row {
+  border-bottom: 1px solid #EEE;
+}
+
+.invoice-table td {
+  padding: 12px 5px;
+}
+
+.item-subtext {
+  font-size: 11px;
+  color: #555;
+}
+
+.summary-section {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.summary-box {
+  width: 300px;
+  font-size: 13px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+.grand-total {
+  border-top: 1px solid #000;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 0;
+}
+
+.advance-paid {
+  color: #14532D;
+}
+
+.balance-due {
+  border-top: 2px solid #000;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 10px 0;
+}
+
+.invoice-notes {
+  margin-top: 40px;
+  font-size: 12px;
+}
+
+.signatures-section {
+  margin-top: 100px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.signature-box {
+  text-align: center;
+  width: 200px;
+}
+
+.signature-line {
+  border-top: 1px solid #000;
+  padding-top: 5px;
+}
+
+.legal-footer {
+  position: absolute;
+  bottom: 40px;
+  left: 60px;
+  right: 60px;
+  text-align: center;
+  font-size: 10px;
+  color: #888;
+}
+
+/* ── ROOM TYPE CARD ── */
+.room-type-card-animate {
+  animation: fade-in-up 500ms ease both;
+  animation-delay: var(--animation-delay, 0ms);
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── CHART COMPONENT STYLES ── */
+
+/* Shared height container — reads --chart-height set by ref callback */
+.chart-height-container {
+  height: var(--chart-height, 200px);
+}
+
+/* Bar chart track — reads --bar-height and --bar-min-height */
+.chart-bar-track {
+  height: var(--bar-height, 100%);
+  min-height: var(--bar-min-height, 4px);
+}
+
+/* Bar fill — reads --bar-color-start / --bar-color-end for gradient */
+.chart-bar-fill {
+  background: linear-gradient(
+    to top,
+    var(--bar-color-end, #14532Dcc),
+    var(--bar-color-start, #1F7A3A)
+  );
+}
+
+/* Donut chart wrapper — reads --donut-size */
+.chart-donut-wrapper {
+  width: var(--donut-size, 160px);
+  height: var(--donut-size, 160px);
+}
+
+/* Legend colour dot — reads --legend-color */
+.chart-legend-dot {
+  background-color: var(--legend-color, #1F7A3A);
+}
+
+/* ── PAGE HERO STYLES ── */
+.page-hero {
+  height: 340px;
+}
+
+.page-hero-bg {
+  background-image: var(--hero-bg);
+  background-color: #0c2012;
+}
+
+.page-hero-overlay {
+  background: linear-gradient(
+    108deg,
+    rgba(20, 83, 45, 0.95) 0%,
+    rgba(20, 83, 45, 0.8) 40%,
+    rgba(20, 83, 45, 0.6) 70%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+}
+
+.page-hero-content {
+  z-index: 2;
+}
+
+.page-hero-bottom-fade {
+  background: linear-gradient(to top, rgba(255,255,255,0.06), transparent);
+  z-index: 1;
+}
+
+/* ── FACILITY CARD STYLES ── */
+.facility-card {
+  transition-delay: var(--delay);
+}
+
+.facility-icon {
+  background-color: var(--icon-bg);
+  color: var(--icon-color);
+}
+
+.report-bar {
+  height: var(--bar-height);
+}
+
+
+
+

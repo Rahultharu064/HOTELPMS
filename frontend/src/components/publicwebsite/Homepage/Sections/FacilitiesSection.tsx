@@ -52,10 +52,12 @@ const FacilitiesSection: React.FC = () => {
           {ITEMS.map((item, i) => (
             <div
               key={i}
-              className={`group bg-white rounded-[32px] p-8 border border-gray-100/80 hover:border-[#1F7A3A]/10 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] transition-all duration-700 relative overflow-hidden ${
+              className={`group bg-white rounded-[32px] p-8 border border-gray-100/80 hover:border-[#1F7A3A]/10 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] transition-all duration-700 relative overflow-hidden facility-card ${
                 show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
               }`}
-              style={{ transitionDelay: `${i * 100}ms` }}
+              ref={(el) => {
+                if (el) el.style.setProperty('--delay', `${i * 100}ms`);
+              }}
             >
               {item.status && (
                 <div className="absolute top-4 right-4 bg-[#1F7A3A]/10 text-[#1F7A3A] text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-full">
@@ -63,12 +65,15 @@ const FacilitiesSection: React.FC = () => {
                 </div>
               )}
               <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-7 transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_10px_25px_-5px_rgba(31,122,58,0.2)]"
-                style={{
-                  backgroundColor: `${item.color}08`,
-                  color: item.color,
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-7 transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_10px_25px_-5px_rgba(31,122,58,0.2)] facility-icon"
+                ref={(el) => {
+                  if (el) {
+                    el.style.setProperty('--icon-bg', `${item.color}08`);
+                    el.style.setProperty('--icon-color', item.color);
+                  }
                 }}
               >
+
                 <item.icon size={26} strokeWidth={1.8} />
               </div>
               <h3 className="text-lg font-bold text-[#111827] mb-3 group-hover:text-[#1F7A3A] transition-colors">

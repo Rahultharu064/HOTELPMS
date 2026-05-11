@@ -139,12 +139,12 @@ const FrontOfficeTerminal: React.FC = () => {
         {/* Dashboard-Consistent Header */}
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-2">
           <div className="flex items-center gap-5">
-            <button 
+            <Button 
               onClick={() => setSelectedBooking(null)}
               className="w-12 h-12 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#111827] hover:border-[#111827]/10 transition-all shadow-sm group active:scale-90"
             >
               <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-            </button>
+            </Button>
             <div>
               <h1 className="text-2xl font-black text-[#111827] tracking-tight leading-none">
                 {selectedBooking.guest?.firstName} {selectedBooking.guest?.lastName}
@@ -158,12 +158,12 @@ const FrontOfficeTerminal: React.FC = () => {
              <div className="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-[9px] font-black uppercase tracking-widest border border-emerald-100/50">
                 Verified Session
              </div>
-             <button 
+             <Button 
                 onClick={() => setSelectedBooking(null)}
                 className="w-12 h-12 rounded-2xl bg-[#111827] text-white flex items-center justify-center shadow-xl shadow-black/10 hover:bg-rose-500 transition-all"
              >
                 <X size={20} />
-             </button>
+             </Button>
           </div>
         </header>
 

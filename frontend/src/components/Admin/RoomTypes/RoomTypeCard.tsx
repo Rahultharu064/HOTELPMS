@@ -7,14 +7,15 @@ interface RoomTypeCardProps {
   roomType: RoomType;
   onEdit: (roomType: RoomType) => void;
   onDelete: (id: number) => void;
-  animationDelay?: string;
+  animationDelay?: string | number;
 }
 
 export function RoomTypeCard({ roomType, onEdit, onDelete, animationDelay }: RoomTypeCardProps) {
   return (
-    <div 
-      className="animate-in fade-in slide-in-from-bottom-2 duration-500" 
-      style={{ animationDelay }}
+    <div
+      className="room-type-card-animate"
+      {...(animationDelay ? { 'data-delay': animationDelay } : {})}
+      ref={(el) => { if (el && animationDelay) el.style.setProperty('--animation-delay', typeof animationDelay === 'number' ? `${animationDelay}ms` : animationDelay); }}
     >
       <div className="group bg-white rounded-[32px] overflow-hidden shadow-soft border border-neutral-border/20 hover:shadow-xl transition-all duration-500 flex flex-col h-full">
         <div className="relative h-48 overflow-hidden bg-neutral-light">

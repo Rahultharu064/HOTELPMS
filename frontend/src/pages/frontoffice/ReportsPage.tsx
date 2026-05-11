@@ -112,9 +112,12 @@ const ReportsPage: React.FC = () => {
                       ${h * 120}
                     </div>
                     <div 
-                      className="w-full bg-gradient-to-t from-[#0C1F15] via-[#1F7A3A] to-[#1F7A3A]/80 rounded-t-xl transition-all duration-1000 origin-bottom hover:scale-x-110 hover:shadow-xl"
-                      style={{ height: `${h}%` }}
+                      className="w-full bg-gradient-to-t from-[#0C1F15] via-[#1F7A3A] to-[#1F7A3A]/80 rounded-t-xl transition-all duration-1000 origin-bottom hover:scale-x-110 hover:shadow-xl report-bar"
+                      ref={(el) => {
+                        if (el) el.style.setProperty('--bar-height', `${h}%`);
+                      }}
                     />
+
                   </div>
                 ))}
               </div>

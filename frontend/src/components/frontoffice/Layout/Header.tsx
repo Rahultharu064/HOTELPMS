@@ -5,6 +5,8 @@ import { MobileMenuButton } from "./Sidebar";
 import { NotificationBell } from "../../common/NotificationBell";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
 import { getImageUrl } from "../../../services/api";
+import { Button } from "../../ui/Button";
+import { Input } from "../../ui/Input";
 
 interface HeaderProps {
   title: string;
@@ -81,11 +83,13 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
         {/* User Profile */}
         <div className="relative ml-2">
           <div className="flex items-center gap-3">
-            <button
+            <Button
               onClick={() => fileInputRef.current?.click()}
-              className="relative group w-10 h-10 rounded-xl bg-gradient-to-br from-[#1F7A3A] to-[#14532D] flex items-center justify-center text-white text-xs font-black shadow-lg overflow-hidden border-2 border-white"
+              variant="primary"
+              size="sm"
+              className="relative group w-10 h-10 rounded-xl  flex items-center justify-center text-white text-xs font-black shadow-lg overflow-hidden border-2 border-white"
             >
-              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" />
+              <Input type="file" ref={fileInputRef} className="hidden" accept="image/*" />
               {uploading ? (
                 <Loader2 size={16} className="animate-spin text-white" />
               ) : admin?.avatar ? (
@@ -101,7 +105,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <Camera size={14} className="text-white" />
               </div>
-            </button>
+            </Button>
 
             <button
               onClick={() => setProfileOpen(!profileOpen)}

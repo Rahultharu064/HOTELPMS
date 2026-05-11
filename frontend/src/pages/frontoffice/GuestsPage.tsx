@@ -21,6 +21,8 @@ import {
 import { guestService, type Guest } from '../../services/guestService';
 import { GuestProfileModal } from '../../components/frontoffice/GuestProfileModal';
 import { toast } from 'react-hot-toast';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 
 const typeStyles: Record<string, string> = {
   'VIP':       'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/20',
@@ -146,7 +148,7 @@ const GuestsPage: React.FC = () => {
             <thead>
               <tr className="bg-gray-50/50 border-b border-gray-50">
                 <th className="w-12 px-6 py-6">
-                  <input type="checkbox" className="min-w-4 h-4 rounded-[4px] border-gray-300 text-[#1F7A3A] focus:ring-[#1F7A3A]" />
+                  <Input type="checkbox" className="min-w-4 h-4 rounded-[4px] border-gray-300 text-[#1F7A3A] focus:ring-[#1F7A3A]" />
                 </th>
                 {['Guest Details', 'Guest Type', 'Contact Info', 'Total Stays', 'Total Spent', 'Verification', ''].map((h, i) => (
                   <th key={i} className="px-4 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">
@@ -171,7 +173,7 @@ const GuestsPage: React.FC = () => {
                   return (
                     <tr key={g.id} className="group hover:bg-gray-50/40 transition-colors bg-white">
                       <td className="px-6 py-5">
-                        <input type="checkbox" className="w-4 h-4 rounded-[4px] border-gray-200 text-[#1F7A3A] focus:ring-[#1F7A3A] cursor-pointer" />
+                        <Input type="checkbox" className="w-4 h-4 rounded-[4px] border-gray-200 text-[#1F7A3A] focus:ring-[#1F7A3A] cursor-pointer" />
                       </td>
 
                       {/* Guest Profile */}
@@ -234,19 +236,19 @@ const GuestsPage: React.FC = () => {
                       {/* Actions (Dropdown Menu) */}
                       <td className="px-6 py-5 text-right relative">
                         <div className="flex items-center justify-end gap-1">
-                          <button
+                          <Button
                             onClick={() => handleViewProfile(g)}
                             title="Quick View Profile"
                             className="p-2 rounded-xl text-gray-400 hover:text-[#1F7A3A] hover:bg-[#1F7A3A]/5 transition-all focus:outline-none"
                           >
                             <Eye size={18} />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => setActiveMenu(activeMenu === g.id ? null : g.id)}
                             className="p-2 rounded-xl text-gray-400 hover:text-[#111827] bg-white border border-transparent hover:border-gray-100 hover:shadow-sm transition-all focus:outline-none"
                           >
                             <MoreVertical size={18} />
-                          </button>
+                          </Button>
                         </div>
 
                         {/* Action Dropdown Menu */}
@@ -254,22 +256,22 @@ const GuestsPage: React.FC = () => {
                           <>
                             <div className="fixed inset-0 z-10" onClick={() => setActiveMenu(null)} />
                             <div className="absolute right-8 top-12 w-48 bg-white rounded-2xl shadow-[0_12px_40px_-12px_rgba(0,0,0,0.15)] border border-gray-100 p-2 z-20 animate-fade-slide-up origin-top-right">
-                              <button 
+                              <Button 
                                 onClick={() => handleViewProfile(g)}
-                                className="w-full flex items-center gap-3 px-3 py-2 text-[12px] font-bold text-gray-600 hover:bg-gray-50 hover:text-[#111827] rounded-xl transition-colors text-left uppercase tracking-wider"
+                                variant="outline"  
                               >
                                 <Eye size={14} className="text-[#1F7A3A]" /> View Profile
-                              </button>
-                              <button className="w-full flex items-center gap-3 px-3 py-2 text-[12px] font-bold text-gray-600 hover:bg-gray-50 hover:text-[#111827] rounded-xl transition-colors text-left uppercase tracking-wider">
+                              </Button>
+                              <Button variant="outline" >
                                 <Briefcase size={14} className="text-[#F59E0B]" /> View Bookings
-                              </button>
-                              <button className="w-full flex items-center gap-3 px-3 py-2 text-[12px] font-bold text-gray-600 hover:bg-gray-50 hover:text-[#111827] rounded-xl transition-colors text-left uppercase tracking-wider">
+                              </Button>
+                              <Button variant="outline" >
                                 <Edit size={14} className="text-gray-400" /> Edit Guest
-                              </button>
+                              </Button>
                               <div className="border-t border-gray-50 my-1 mx-2" />
-                              <button className="w-full flex items-center gap-3 px-3 py-2 text-[12px] font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors text-left uppercase tracking-wider">
+                              <Button variant="destructive" >
                                 <Trash2 size={14} /> Delete Guest
-                              </button>
+                              </Button>
                             </div>
                           </>
                         )}
@@ -296,16 +298,16 @@ const GuestsPage: React.FC = () => {
         </p>
 
         <div className="flex items-center gap-2">
-          <button 
+          <Button 
             disabled={pagination.page === 1}
             onClick={() => setPagination(p => ({ ...p, page: p.page - 1 }))}
-            className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 bg-white hover:bg-gray-50 hover:text-[#111827] transition-colors disabled:opacity-50"
+            variant="outline"
           >
             <ChevronLeft size={16} />
-          </button>
+          </Button>
           <div className="flex items-center gap-1">
             {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((p) => (
-              <button
+              <Button
                 key={p}
                 onClick={() => setPagination(prev => ({ ...prev, page: p }))}
                 className={`min-w-8 h-8 flex items-center justify-center rounded-lg text-[12px] font-black transition-colors ${
@@ -315,16 +317,16 @@ const GuestsPage: React.FC = () => {
                 }`}
               >
                 {p}
-              </button>
+              </Button>
             ))}
           </div>
-          <button 
+          <Button 
             disabled={pagination.page === pagination.totalPages}
             onClick={() => setPagination(p => ({ ...p, page: p.page + 1 }))}
-            className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 bg-white hover:bg-gray-50 hover:text-[#111827] transition-colors"
+            variant="outline"
           >
             <ChevronRight size={16} />
-          </button>
+          </Button>
         </div>
         </div>
       </div>

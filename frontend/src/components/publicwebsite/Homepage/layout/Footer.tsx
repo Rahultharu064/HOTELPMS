@@ -4,10 +4,10 @@ import { FaFacebookF, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa6"
 
 const Footer = () => {
   const socials = [
-    { Icon: FaFacebookF, href: "#" },
-    { Icon: FaInstagram, href: "#" },
-    { Icon: FaTwitter, href: "#" },
-    { Icon: FaYoutube, href: "#" },
+    { Icon: FaFacebookF, href: "#", label: "Follow us on Facebook" },
+    { Icon: FaInstagram, href: "#", label: "Follow us on Instagram" },
+    { Icon: FaTwitter,   href: "#", label: "Follow us on Twitter" },
+    { Icon: FaYoutube,  href: "#", label: "Subscribe on YouTube" },
   ];
 
   return (
@@ -29,13 +29,14 @@ const Footer = () => {
               Experience premium hospitality with modern property management. Your comfort is our priority, and excellence is our standard.
             </p>
             <div className="flex gap-3">
-              {socials.map(({ Icon, href }, i) => (
-                <a 
-                  key={i} 
-                  href={href} 
+              {socials.map(({ Icon, href, label }, i) => (
+                <a
+                  key={i}
+                  href={href}
+                  aria-label={label}
                   className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-primary-green hover:scale-110 transition-all duration-300 border border-white/5 shadow-lg"
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-4 w-4" aria-hidden="true" focusable="false" />
                 </a>
               ))}
             </div>

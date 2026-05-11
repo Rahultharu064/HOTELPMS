@@ -11,21 +11,19 @@ interface Props {
 }
 
 const PageHero: React.FC<Props> = ({ title, highlight, subtitle, breadcrumbs, bgImage }) => (
-  <section className="relative w-full overflow-hidden" style={{ height: 340 }}>
+  <section className="relative w-full overflow-hidden page-hero">
     {/* Background */}
     <div
-      className="absolute inset-0 bg-cover bg-center"
-      style={{ backgroundImage: bgImage ? `url(${bgImage})` : undefined, backgroundColor: "#0C2012" }}
-    />
-    <div
-      className="absolute inset-0"
-      style={{
-        background: "linear-gradient(108deg, rgba(20,83,45,0.95) 0%, rgba(20,83,45,0.8) 40%, rgba(20,83,45,0.6) 70%, rgba(0,0,0,0.3) 100%)",
+      className="absolute inset-0 bg-cover bg-center page-hero-bg"
+      ref={(el) => {
+        if (el && bgImage) el.style.setProperty('--hero-bg', `url(${bgImage})`);
       }}
     />
+    <div className="absolute inset-0 page-hero-overlay" />
 
     {/* Content */}
-    <div className="absolute inset-0 flex items-center" style={{ zIndex: 2 }}>
+    <div className="absolute inset-0 flex items-center page-hero-content">
+
       <div className="site-container w-full">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 mb-6">
@@ -54,7 +52,8 @@ const PageHero: React.FC<Props> = ({ title, highlight, subtitle, breadcrumbs, bg
     </div>
 
     {/* Bottom fade */}
-    <div className="absolute inset-x-0 bottom-0 h-16" style={{ background: "linear-gradient(to top, rgba(255,255,255,0.06), transparent)", zIndex: 1 }} />
+    <div className="absolute inset-x-0 bottom-0 h-16 page-hero-bottom-fade" />
+
   </section>
 );
 

@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
 import { Modal } from "../../components/ui/Modal";
+import { Button } from "../../components/ui/Button";
 
 const DashboardPage: React.FC = () => {
   const [rooms, setRooms] = useState<any[]>([]);
@@ -137,12 +138,12 @@ const DashboardPage: React.FC = () => {
           <p className="text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Live operational control for room turnover</p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={fetchData} className="p-4 bg-white border border-gray-100 rounded-2xl text-gray-400 hover:text-[#14532D] transition-all shadow-sm">
+          <Button onClick={fetchData} className="p-4 bg-white border border-gray-100 rounded-2xl text-gray-400 hover:text-[#14532D] transition-all shadow-sm">
             <RefreshCcw size={18} />
-          </button>
-          <button className="px-6 py-4 bg-[#111827] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all shadow-xl shadow-black/10">
+          </Button>
+          <Button className="px-6 py-4 bg-[#111827] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all shadow-xl shadow-black/10">
             Daily Log Report
-          </button>
+          </Button>
         </div>
       </div>
 

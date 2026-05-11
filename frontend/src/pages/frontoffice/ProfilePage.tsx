@@ -5,6 +5,7 @@ import {
   LogOut, Star, Globe, Zap
 } from "lucide-react";
 import { useAdminAuth } from "../../context/AdminAuthContext";
+import { Input } from "../../components/ui/Input";
 
 const ProfilePage: React.FC = () => {
   const { admin } = useAdminAuth();
@@ -105,15 +106,15 @@ const ProfilePage: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Full Legal Name</label>
-                  <input type="text" readOnly value={admin?.name || ''} className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#111827] focus:outline-none shadow-inner" />
+                  <Input.Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Full Legal Name</Input.Label>
+                  <Input type="text" readOnly value={admin?.name || ''} className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#111827] focus:outline-none shadow-inner" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Official Email</label>
-                  <input type="email" readOnly value={admin?.email || ''} className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#111827] focus:outline-none shadow-inner" />
+                  <Input.Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Official Email</Input.Label>
+                  <Input type="email" readOnly value={admin?.email || ''} className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#111827] focus:outline-none shadow-inner" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Workstation Role</label>
+                  <Input.Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Workstation Role</Input.Label>
                   <div className="w-full px-8 py-5 bg-gray-50 border border-gray-100 rounded-[28px] text-[13px] font-black text-[#F59E0B] uppercase tracking-widest flex items-center gap-2">
                     <Shield size={14} /> {admin?.role.replace('_', ' ')}
                   </div>

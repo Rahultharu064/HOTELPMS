@@ -229,7 +229,7 @@ export const QuickCheckInModal: React.FC<QuickCheckInModalProps> = ({ isOpen, on
                 <div className="space-y-1.5">
                   <label className="text-[8px] font-black text-gray-400 uppercase tracking-widest ml-1">Document Evidence</label>
                   <div className="relative w-full h-24 border-2 border-dashed border-gray-100 rounded-xl flex flex-col items-center justify-center bg-gray-50/50 hover:bg-gray-50 hover:border-[#14532D]/30 transition-all cursor-pointer overflow-hidden group">
-                    <input type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
+                    <Input type="file" variant="outline" accept="image/*" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
                     {formData.idProofImage ? (
                       <div className="flex flex-col items-center gap-1.5 text-emerald-600">
                         <Check size={18} strokeWidth={3} />

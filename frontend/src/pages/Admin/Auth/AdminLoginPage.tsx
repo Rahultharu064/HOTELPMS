@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 import { toast } from 'react-hot-toast';
-import { Lock, Mail, ArrowRight, Loader2, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../../../services/api';
 
@@ -10,16 +10,9 @@ export const AdminLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [systemTime, setSystemTime] = useState(new Date().toLocaleTimeString());
-  
+
   const { admin, adminLogin, isAdminAuthenticated } = useAdminAuth();
   const navigate = useNavigate();
-
-  // Update clock every second for professional system feel
-  useEffect(() => {
-    const timer = setInterval(() => setSystemTime(new Date().toLocaleTimeString()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   // Auto-redirect if already authenticated
   useEffect(() => {
@@ -158,29 +151,14 @@ export const AdminLoginPage: React.FC = () => {
               </span>
             ) : (
               <span className="flex items-center gap-3">
-                Establish Connection <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
+              successfully login <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
               </span>
             )}
           </button>
         </form>
-
-        <div className="pt-4 text-center">
-           <p className="text-[9px] font-black text-gray-300 uppercase tracking-[0.4em] flex items-center justify-center gap-3">
-             <ShieldCheck size={12} className="text-primary-green" /> End-to-End Encryption Active
-           </p>
-        </div>
       </motion.div>
 
-      <div className="mt-12 flex flex-col items-center gap-3 opacity-40">
-        <div className="flex items-center gap-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.3em]">
-           <span>System Node: 019</span>
-           <span className="w-1 h-1 bg-gray-300 rounded-full" />
-           <span>{systemTime}</span>
-        </div>
-        <p className="text-[8px] font-bold text-gray-400 uppercase tracking-[0.5em]">
-          Core v1.0.4-S
-        </p>
-      </div>
+    
     </div>
   );
 };

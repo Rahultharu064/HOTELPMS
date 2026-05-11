@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
+import { Button } from "../../components/ui/Button";
 
 const RoomDetailsPage: React.FC = () => {
   const { id } = useParams();
@@ -196,9 +197,9 @@ const RoomDetailsPage: React.FC = () => {
       <div className="bg-white p-10 rounded-[48px] border border-gray-100 shadow-sm overflow-hidden">
          <div className="flex items-center justify-between mb-10">
             <h2 className="text-2xl font-black text-[#111827] uppercase tracking-tight">Action Logs</h2>
-            <button className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-[#111827] hover:text-white transition-all">
+            <Button className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-[#111827] hover:text-white transition-all">
                <Plus size={18} />
-            </button>
+            </Button>
          </div>
          <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">

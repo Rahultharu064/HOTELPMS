@@ -39,12 +39,12 @@ export const StaffResetPasswordPage: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await api.post('/admin/auth/change-password', {
+      const response = await api.post<any>('/admin/auth/change-password', {
         currentPassword,
         newPassword
       });
 
-      if (response.data.success) {
+      if (response.success) {
         toast.success("Security credentials updated successfully.");
         // Update local context so mustChangePassword is false
         if (admin) {

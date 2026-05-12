@@ -5,7 +5,7 @@ import { authService } from '../../../services/authService';
 import { toast } from 'react-hot-toast';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FcGoogle } from 'react-icons/fc';
+import { GoogleLogin } from '@react-oauth/google';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -70,18 +70,35 @@ export const LoginPage: React.FC = () => {
         <div className="mt-8 space-y-6">
           {/* Professional Passport.js Google Login Redirect */}
           <div className="flex flex-col items-center justify-center w-full">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-                window.location.href = `${backendUrl}/api/auth/google/login`;
-              }}
-              className="w-full flex items-center justify-center gap-3 px-6 py-3.5 border border-gray-200 rounded-2xl text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 transition-all shadow-sm group"
-            >
-              <FcGoogle size={22} />
-              <span className="group-hover:text-blue-600 transition-colors">Continue with Google</span>
-            </motion.button>
+            <div className="w-full flex justify-center">
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    setLoading(true);
+                    if (credentialResponse.credential) {
+                      const response = await authService.googleLogin(credentialResponse.credential);
+                      const { user, token } = response;
+                      login(user, token);
+                      toast.success('Welcome back to Itahari Namuna PMS!');
+                      navigate('/');
+                    }
+                  } catch (error: any) {
+                    console.error('Google Login error:', error);
+                    toast.error(error.response?.data?.message || 'Google login failed');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                onError={() => {
+                  toast.error('Google Sign-In Failed');
+                }}
+                useOneTap
+                theme="outline"
+                size="large"
+                width="100%"
+                text="continue_with"
+              />
+            </div>
             
             <div className="relative w-full mt-8 mb-4">
               <div className="absolute inset-0 flex items-center">

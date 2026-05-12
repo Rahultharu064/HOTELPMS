@@ -438,11 +438,8 @@ export class AuthController {
 
     const token = this.generateToken(guest.id);
     
-    // Redirect back to frontend with token
-    // In production, use the production frontend URL
-    const frontendUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://hotelpms-three.vercel.app' 
-      : 'http://localhost:5173';
+    // Redirect securely back to the production frontend
+    const frontendUrl = 'https://hotelpms-three.vercel.app';
       
     res.redirect(`${frontendUrl}/login-success?token=${token}`);
   });

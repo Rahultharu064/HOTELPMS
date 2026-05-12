@@ -64,7 +64,10 @@ router.post('/login', validate(loginSchema), authController.login);
 router.post('/google', validate(googleLoginSchema), authController.googleLogin);
 
 // Passport Google Routes
-router.get('/google/login', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
+router.get('/google/login', (req, res, next) => {
+  const state = req.query.state ? String(req.query.state) : 'production';
+  passport.authenticate('google', { scope: ['profile', 'email'], session: false, state })(req, res, next);
+});
 router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/login' }), authController.passportGoogleCallback);
 
 router.post('/verify-otp', validate(verifyOTPSchema), authController.verifyOTP);

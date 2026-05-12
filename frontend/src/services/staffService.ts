@@ -46,4 +46,25 @@ export const staffService = {
     const response = await api.patch<ApiResponse<StaffMember>>(`/admin/staff/${id}/status`, { isActive });
     return response;
   },
+
+  /**
+   * Update staff member details
+   */
+  updateStaff: async (id: number, data: {
+    name?: string;
+    email?: string;
+    phoneNumber?: string;
+    role?: string;
+  }): Promise<ApiResponse<StaffMember>> => {
+    const response = await api.put<ApiResponse<StaffMember>>(`/admin/staff/${id}`, data);
+    return response;
+  },
+
+  /**
+   * Reset staff password
+   */
+  resetPassword: async (id: number): Promise<ApiResponse<{ temporaryPassword: string }>> => {
+    const response = await api.post<ApiResponse<{ temporaryPassword: string }>>(`/admin/staff/${id}/reset-password`, {});
+    return response;
+  },
 };

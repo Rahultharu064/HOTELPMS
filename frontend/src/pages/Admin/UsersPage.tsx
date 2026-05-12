@@ -26,11 +26,20 @@ const AdminUsersPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [createdStaffInfo, setCreatedStaffInfo] = useState<{name: string, email: string, temporaryPassword: string} | null>(null);
+  const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    role: 'front_office',
+    phoneNumber: '',
+  });
+
+  const [editFormData, setEditFormData] = useState({
     name: '',
     email: '',
     role: 'front_office',
@@ -64,6 +73,53 @@ const AdminUsersPage: React.FC = () => {
       }
     } catch (error) {
       toast.error("Failed to update status");
+    }
+  };
+
+  const handleEditClick = (user: StaffMember) => {
+    setSelectedStaff(user);
+    setEditFormData({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      phoneNumber: user.phoneNumber || '',
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedStaff) return;
+    
+    try {
+      const res = await staffService.updateStaff(selectedStaff.id, editFormData);
+      if (res.success) {
+        toast.success("Personnel record updated successfully");
+        setIsEditModalOpen(false);
+        fetchStaff();
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to update staff account");
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!selectedStaff) return;
+    if (!window.confirm(`Are you sure you want to reset the password for ${selectedStaff.name}?`)) return;
+
+    try {
+      const res = await staffService.resetPassword(selectedStaff.id);
+      if (res.success) {
+        setCreatedStaffInfo({
+          name: selectedStaff.name,
+          email: selectedStaff.email,
+          temporaryPassword: res.data.temporaryPassword
+        });
+        setIsEditModalOpen(false);
+        setIsSuccessModalOpen(true);
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to reset password");
     }
   };
 
@@ -238,6 +294,7 @@ const AdminUsersPage: React.FC = () => {
                           {user.isActive ? <XCircle size={16} strokeWidth={2.5} /> : <CheckCircle2 size={16} strokeWidth={2.5} />}
                         </Button>
                         <Button 
+                          onClick={() => handleEditClick(user)}
                           className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-[#111827] hover:text-white transition-all flex items-center justify-center"
                         >
                           <Edit2 size={16} strokeWidth={2.5} />
@@ -318,6 +375,87 @@ const AdminUsersPage: React.FC = () => {
               <Button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 h-14 rounded-2xl bg-gray-50 text-gray-400 text-[11px] font-black uppercase tracking-widest hover:bg-gray-100">Cancel</Button>
               <Button type="submit" className="flex-[2] h-14 rounded-2xl bg-[#14532D] text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#111827] shadow-xl shadow-green-900/20 transition-all">
                 Authorize Personnel
+              </Button>
+           </div>
+        </form>
+      </Modal>
+
+      {/* Modal for editing users */}
+      <Modal 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)}
+        title="Update Personnel Details"
+      >
+        <form onSubmit={handleEditSubmit} className="p-4 space-y-8">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Full Legal Name</label>
+                 <input 
+                    required
+                    value={editFormData.name}
+                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all font-bold" 
+                    placeholder="Enter full name" 
+                 />
+              </div>
+              <div className="space-y-2">
+                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Official Email</label>
+                 <input 
+                    required
+                    type="email"
+                    value={editFormData.email}
+                    onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all font-bold" 
+                    placeholder="staff@hotelpms.com" 
+                 />
+              </div>
+           </div>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Workstation Role</label>
+                 <Select 
+                    value={editFormData.role}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEditFormData({ ...editFormData, role: e.target.value })}
+                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all appearance-none font-bold text-sm"
+                 >
+                    <option value="front_office">Front Office Staff</option>
+                    <option value="housekeeping">Housekeeping Staff</option>
+                    <option value="manager">Service Manager</option>
+                    <option value="admin">System Administrator</option>
+                 </Select>
+              </div>
+              <div className="space-y-2">
+                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Contact Signal</label>
+                 <input 
+                    required
+                    value={editFormData.phoneNumber}
+                    onChange={(e) => setEditFormData({ ...editFormData, phoneNumber: e.target.value })}
+                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:border-[#14532D]/20 transition-all font-bold" 
+                    placeholder="+977 98XXXXXXXX" 
+                 />
+              </div>
+           </div>
+
+           <div className="p-6 bg-red-50 rounded-2xl border border-red-100 flex flex-col gap-4">
+              <div className="flex gap-3">
+                 <AlertTriangle size={18} className="text-red-600 shrink-0 mt-0.5" />
+                 <p className="text-[10px] font-bold text-red-800 leading-relaxed uppercase tracking-wide">
+                    Critical Operation: Resetting the password will generate a new temporary credential and force the user to update it upon login.
+                 </p>
+              </div>
+              <Button 
+                type="button" 
+                onClick={handleResetPassword}
+                className="w-full h-12 bg-white text-red-600 border border-red-100 hover:bg-red-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+              >
+                Reset Workstation Password
+              </Button>
+           </div>
+
+           <div className="pt-6 flex gap-4">
+              <Button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 h-14 rounded-2xl bg-gray-50 text-gray-400 text-[11px] font-black uppercase tracking-widest hover:bg-gray-100">Discard</Button>
+              <Button type="submit" className="flex-[2] h-14 rounded-2xl bg-[#14532D] text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#111827] shadow-xl shadow-green-900/20 transition-all">
+                Save Changes
               </Button>
            </div>
         </form>

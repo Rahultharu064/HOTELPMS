@@ -120,6 +120,24 @@ export class AdminAuthController {
   });
 
   /**
+   * Skip forced password change
+   */
+  skipPasswordChange = asyncHandler(async (req: Request, res: Response) => {
+    const userId = (req as any).user.id;
+
+    await prisma.admin.update({
+      where: { id: userId },
+      data: {
+        mustChangePassword: false,
+      },
+    });
+
+    res.status(HttpStatus.OK).json(
+      ApiResponse.success('Security requirement bypassed for this session.')
+    );
+  });
+
+  /**
    * Update Admin Avatar
    */
   updateAvatar = asyncHandler(async (req: Request, res: Response) => {

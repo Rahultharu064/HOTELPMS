@@ -16,14 +16,25 @@ const createStaffSchema = z.object({
     name: z.string().min(2, "Name is too short"),
     email: z.string().email("Invalid email address"),
     phoneNumber: z.string().optional(),
-    role: z.enum(['front_office', 'housekeeping', 'manager'], {
+    role: z.enum(['front_office', 'housekeeping', 'manager', 'admin'], {
       errorMap: () => ({ message: "Invalid role selected" })
     })
+  })
+});
+
+const updateStaffSchema = z.object({
+  body: z.object({
+    name: z.string().min(2, "Name is too short").optional(),
+    email: z.string().email("Invalid email address").optional(),
+    phoneNumber: z.string().optional(),
+    role: z.enum(['front_office', 'housekeeping', 'manager', 'admin']).optional()
   })
 });
 
 router.post('/', validate(createStaffSchema), controller.createStaff);
 router.get('/', controller.getAllStaff);
 router.patch('/:id/status', controller.toggleStatus);
+router.put('/:id', validate(updateStaffSchema), controller.updateStaff);
+router.post('/:id/reset-password', controller.resetPassword);
 
 export default router;

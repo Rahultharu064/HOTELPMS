@@ -106,4 +106,82 @@ export class StaffManagementController {
       ApiResponse.success(`Staff account ${isActive ? 'activated' : 'deactivated'} successfully`)
     );
   });
+
+  /**
+   * Update staff details
+   */
+  updateStaff = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { name, email, phoneNumber, role } = req.body;
+
+    const existingStaff = await prisma.admin.findUnique({
+      where: { id: Number(id) }
+    });
+
+    if (!existingStaff) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Staff member not found');
+    }
+
+    // Check if email is being changed and if new email already exists
+    if (email && email.toLowerCase() !== existingStaff.email) {
+      const emailExists = await prisma.admin.findUnique({
+        where: { email: email.toLowerCase() }
+      });
+      if (emailExists) {
+        throw new ApiError(HttpStatus.CONFLICT, 'Email is already registered for another staff member.');
+      }
+    }
+
+    const updatedStaff = await prisma.admin.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        email: email?.toLowerCase(),
+        phoneNumber,
+        role
+      }
+    });
+
+    res.status(HttpStatus.OK).json(
+      ApiResponse.success('Staff details updated successfully', updatedStaff)
+    );
+  });
+
+  /**
+   * Reset staff password and force change on next login
+   */
+  resetPassword = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const existingStaff = await prisma.admin.findUnique({
+      where: { id: Number(id) }
+    });
+
+    if (!existingStaff) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Staff member not found');
+    }
+
+    // Generate a secure random password
+    const temporaryPassword = crypto.randomBytes(6).toString('hex');
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+
+    await prisma.admin.update({
+      where: { id: Number(id) },
+      data: {
+        password: hashedPassword,
+        mustChangePassword: true
+      }
+    });
+
+    // Send email with new temporary password
+    sendStaffWelcomeEmail(existingStaff.email, existingStaff.name, existingStaff.role, temporaryPassword).catch(err => {
+      console.error('[StaffPasswordResetEmailError]:', err);
+    });
+
+    res.status(HttpStatus.OK).json(
+      ApiResponse.success('Password reset successfully. A new temporary password has been sent to the staff member.', {
+        temporaryPassword
+      })
+    );
+  });
 }

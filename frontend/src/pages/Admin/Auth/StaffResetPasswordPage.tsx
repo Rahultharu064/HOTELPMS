@@ -63,6 +63,26 @@ export const StaffResetPasswordPage: React.FC = () => {
     }
   };
 
+  const handleSkip = async () => {
+    try {
+      setLoading(true);
+      const response = await api.post<any>('/admin/auth/skip-password-change', {});
+      if (response.success) {
+        if (admin) {
+          updateAdminUser({ ...admin, mustChangePassword: false });
+        }
+        const role = admin?.role;
+        if (role === 'front_office') navigate('/frontoffice');
+        else if (role === 'housekeeping') navigate('/housekeeping');
+        else navigate('/admin');
+      }
+    } catch (error: any) {
+      toast.error("Failed to skip security setup.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center p-6 font-sans">
       <motion.div 
@@ -154,13 +174,23 @@ export const StaffResetPasswordPage: React.FC = () => {
               )}
             </button>
             
-            <button
-              type="button"
-              onClick={adminLogout}
-              className="w-full text-center text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-red-500 transition-colors"
-            >
-              Cancel and Logout
-            </button>
+            <div className="flex flex-col gap-4 mt-6">
+              <button
+                type="button"
+                onClick={handleSkip}
+                className="w-full text-center text-[10px] font-black text-emerald-600 uppercase tracking-widest hover:text-emerald-700 transition-colors"
+              >
+                Skip and Set Later
+              </button>
+
+              <button
+                type="button"
+                onClick={adminLogout}
+                className="w-full text-center text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-red-500 transition-colors"
+              >
+                Cancel and Logout
+              </button>
+            </div>
           </form>
         </div>
 

@@ -164,7 +164,7 @@ export const ContactUsPage: React.FC = () => {
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113267.63921128722!2d87.21298475!3d26.6661668!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39ef6e2a9f3a4b9b%3A0x8b3a5c9f2e1d7a4c!2sItahari%2C%20Nepal!5e0!3m2!1sen!2snp!4v1700000000000!5m2!1sen!2snp"
               width="100%"
               height="400"
-              style={{ border: 0 }}
+              className="border-0"
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

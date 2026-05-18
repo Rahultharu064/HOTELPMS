@@ -31,9 +31,9 @@ export const FeaturedRoomsSection: React.FC = () => {
             setLoading(true);
             setError(null);
             // Fetch rooms with isFeatured=true
-            const res = await roomService.getAllRooms({ isFeatured: true });
+            const res = await roomService.getAllRooms({ isFeatured: true, limit: 3 });
             if (res.success) {
-                setRooms(res.data.slice(0, 3));
+                setRooms(res.data);
             }
         } catch (err: any) {
             console.error("Failed to fetch featured rooms:", err);

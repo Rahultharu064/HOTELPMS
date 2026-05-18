@@ -7,7 +7,7 @@ import { HttpStatus } from '../constants/index';
 
 export class RoomController {
   getAllRooms = asyncHandler(async (req: Request, res: Response) => {
-    const { status, roomTypeId, search, isFeatured } = req.query;
+    const { status, roomTypeId, search, isFeatured, limit } = req.query;
 
     const where: any = {};
     if (status) where.status = status;
@@ -20,8 +20,11 @@ export class RoomController {
       ];
     }
 
+    const takeLimit = limit ? Number(limit) : undefined;
+
     const rooms = await prisma.room.findMany({
       where,
+      take: takeLimit,
       include: {
         roomType: true,
         images: true,

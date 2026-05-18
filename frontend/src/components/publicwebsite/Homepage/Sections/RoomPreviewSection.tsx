@@ -28,10 +28,10 @@ export const RoomPreviewSection: React.FC = () => {
     useEffect(() => {
         const fetchRooms = async () => {
             try {
-                const res = await roomService.getAllRooms();
+                const res = await roomService.getAllRooms({ limit: 3 });
                 if (res.success) {
                     // Take first 3 rooms for preview
-                    setRooms(res.data.slice(0, 3));
+                    setRooms(res.data);
                 }
             } catch (error) {
                 console.error("Failed to fetch rooms:", error);

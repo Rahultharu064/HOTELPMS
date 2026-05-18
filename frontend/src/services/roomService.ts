@@ -38,7 +38,7 @@ export type Room = {
 };
 
 export const roomService = {
-  async getAllRooms(params?: { isFeatured?: boolean; roomTypeId?: number }): Promise<ApiResponse<Room[]>> {
+  async getAllRooms(params?: { isFeatured?: boolean; roomTypeId?: number; limit?: number }): Promise<ApiResponse<Room[]>> {
     return api.get<ApiResponse<Room[]>>('/rooms', { params });
   },
 

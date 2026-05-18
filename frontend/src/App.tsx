@@ -7,6 +7,7 @@ import { AdminAuthProvider } from './context/AdminAuthContext';
 import { SocketProvider } from './context/SocketContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import ScrollToTop from './components/ScrollToTop';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -18,6 +19,7 @@ const AppRoutes = () => {
 const App = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <AuthProvider>
           <AdminAuthProvider>

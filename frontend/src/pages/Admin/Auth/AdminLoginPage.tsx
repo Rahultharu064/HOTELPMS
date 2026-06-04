@@ -82,6 +82,9 @@ export const AdminLoginPage: React.FC = () => {
             <p className="text-[10px] font-black text-primary-green uppercase tracking-[0.3em]">
               Authorized Personnel Only
             </p>
+            <div className="mt-4 p-3 bg-emerald-50 border border-emerald-100 rounded-2xl text-center text-xs text-emerald-800 font-medium">
+              <span className="font-bold">Default:</span> admin@hotelpms.com / admin123
+            </div>
           </div>
         </div>
 
@@ -99,7 +102,7 @@ export const AdminLoginPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="appearance-none rounded-2xl relative block w-full px-12 py-4 border border-gray-100 placeholder-gray-300 text-[#111827] focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green/30 sm:text-sm bg-gray-50/50 transition-all font-medium"
-                  placeholder="admin@itaharinamuna.edu.np"
+                  placeholder="admin@hotelpms.com"
                 />
               </div>
             </div>
@@ -116,7 +119,7 @@ export const AdminLoginPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="appearance-none rounded-2xl relative block w-full px-12 py-4 border border-gray-100 placeholder-gray-300 text-[#111827] focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green/30 sm:text-sm bg-gray-50/50 transition-all font-medium"
-                  placeholder="••••••••"
+                  placeholder="admin123"
                 />
               </div>
             </div>

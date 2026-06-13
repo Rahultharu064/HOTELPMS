@@ -54,73 +54,110 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
       ? "Maintenance"
       : "Unavailable";
 
+  const formattedPrice = Number(room.basePrice).toLocaleString();
+
   return (
     <ScrollReveal delay={index * 0.12} className="h-full">
-      <Link
-        to={`/rooms/${room.slug}`}
-        className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-border/70 bg-white shadow-[0_2px_20px_rgba(20,83,45,0.07)] transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-green/15 hover:shadow-[0_16px_48px_rgba(20,83,45,0.12)]"
-      >
-        {/* Image */}
-        <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-neutral-light">
-          <img
-            src={getImageUrl(primaryImage)}
-            alt={room.name}
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            loading="lazy"
-          />
+      <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-border/70 bg-white shadow-[0_2px_20px_rgba(20,83,45,0.07)] transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-green/15 hover:shadow-[0_16px_48px_rgba(20,83,45,0.12)]">
+        <Link to={`/rooms/${room.slug}`} className="flex flex-1 flex-col">
+          {/* Image */}
+          <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-neutral-light">
+            <img
+              src={getImageUrl(primaryImage)}
+              alt={room.name}
+              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              loading="lazy"
+            />
 
-          {/* Status badge — top left */}
-          <div className="absolute left-3.5 top-3.5 z-10">
-            <span
-              className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-bold shadow-[0_4px_14px_rgba(0,0,0,0.18)] ${
-                isAvailable
-                  ? "bg-primary-green text-white"
-                  : "bg-neutral-text-primary/85 text-white"
-              }`}
-            >
-              <CheckCircle size={11} strokeWidth={2.5} />
-              {statusLabel}
-            </span>
+            {/* Status badge — top left */}
+            <div className="absolute left-3.5 top-3.5 z-10">
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-bold shadow-[0_4px_14px_rgba(0,0,0,0.18)] ${
+                  isAvailable
+                    ? "bg-primary-green text-white"
+                    : "bg-neutral-text-primary/85 text-white"
+                }`}
+              >
+                <CheckCircle size={11} strokeWidth={2.5} />
+                {statusLabel}
+              </span>
+            </div>
+
+            {/* Price badge — top right */}
+            <div className="absolute right-3.5 top-3.5 z-10">
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-primary-gold px-3.5 py-1.5 text-[11px] font-extrabold text-primary-dark shadow-[0_4px_14px_rgba(245,158,11,0.35)]">
+                NPR {formattedPrice}
+                <span className="text-[10px] font-semibold text-primary-dark/75">/night</span>
+              </span>
+            </div>
           </div>
 
-          {/* Price badge — top right */}
-          <div className="absolute right-3.5 top-3.5 z-10">
-            <span className="inline-flex items-center gap-0.5 rounded-full bg-primary-gold px-3.5 py-1.5 text-[11px] font-extrabold text-primary-dark shadow-[0_4px_14px_rgba(245,158,11,0.35)]">
-              NPR {Number(room.basePrice).toLocaleString()}
-              <span className="text-[10px] font-semibold text-primary-dark/75">/night</span>
-            </span>
+          {/* Content */}
+          <div className="flex flex-1 flex-col px-6 pb-4 pt-5">
+            <h3 className="font-georgia text-[1.15rem] font-bold leading-snug text-primary-dark transition-colors duration-300 group-hover:text-primary-green md:text-xl">
+              {room.name}
+            </h3>
+
+            <div className="mt-3.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] font-medium text-neutral-text-secondary">
+              <span className="inline-flex items-center gap-1.5">
+                <Users size={14} className="shrink-0 text-primary-gold" strokeWidth={2} />
+                {room.capacity} Guests
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <BedDouble size={14} className="shrink-0 text-primary-gold" strokeWidth={2} />
+                {formatBedLabel(room.bedType)}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Maximize size={14} className="shrink-0 text-primary-gold" strokeWidth={2} />
+                {formatSizeLabel(room.size)}
+              </span>
+            </div>
+
+            <p className="mt-4 line-clamp-3 flex-1 text-[13px] leading-[1.65] text-neutral-text-secondary">
+              {room.description ||
+                "Experience premium comfort and elegance in this beautifully designed room, thoughtfully appointed for a restful stay."}
+            </p>
+          </div>
+        </Link>
+
+        {/* Card footer — price + action */}
+        <div className="flex items-center justify-between gap-4 border-t border-neutral-border/60 px-6 py-4">
+          <div className="font-georgia leading-none">
+            <span className="text-[11px] text-neutral-text-secondary">NPR </span>
+            <span className="text-[1.35rem] font-bold text-primary-dark">{formattedPrice}</span>
+            <span className="text-[11px] text-neutral-text-secondary"> /night</span>
+          </div>
+
+          <div className="relative h-9 min-w-[118px] shrink-0">
+            {isAvailable ? (
+              <>
+                <Link
+                  to={`/booking?room=${room.id}`}
+                  className="absolute inset-0 inline-flex items-center justify-center gap-1 rounded-full bg-primary-dark px-5 text-[11px] font-bold tracking-wide text-primary-gold shadow-sm transition-all duration-300 group-hover:pointer-events-none group-hover:translate-y-1 group-hover:opacity-0"
+                >
+                  Book
+                  <ArrowRight size={13} strokeWidth={2.5} />
+                </Link>
+                <Link
+                  to={`/rooms/${room.slug}`}
+                  className="absolute inset-0 inline-flex translate-y-1 items-center justify-center gap-1 rounded-full bg-primary-dark px-4 text-[10px] font-bold tracking-wide text-primary-gold opacity-0 shadow-sm transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+                >
+                  View Details
+                  <ArrowRight size={13} strokeWidth={2.5} />
+                </Link>
+              </>
+            ) : (
+              <Link
+                to={`/rooms/${room.slug}`}
+                className="inline-flex h-9 w-full min-w-[118px] items-center justify-center gap-1 rounded-full bg-primary-dark px-4 text-[10px] font-bold tracking-wide text-primary-gold shadow-sm transition-colors hover:bg-primary-green hover:text-white"
+              >
+                View Details
+                <ArrowRight size={13} strokeWidth={2.5} />
+              </Link>
+            )}
           </div>
         </div>
-
-        {/* Content */}
-        <div className="flex flex-1 flex-col px-6 pb-6 pt-5">
-          <h3 className="font-georgia text-[1.15rem] font-bold leading-snug text-primary-dark transition-colors duration-300 group-hover:text-primary-green md:text-xl">
-            {room.name}
-          </h3>
-
-          {/* Meta row */}
-          <div className="mt-3.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] font-medium text-neutral-text-secondary">
-            <span className="inline-flex items-center gap-1.5">
-              <Users size={14} className="shrink-0 text-primary-gold" strokeWidth={2} />
-              {room.capacity} Guests
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <BedDouble size={14} className="shrink-0 text-primary-gold" strokeWidth={2} />
-              {formatBedLabel(room.bedType)}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Maximize size={14} className="shrink-0 text-primary-gold" strokeWidth={2} />
-              {formatSizeLabel(room.size)}
-            </span>
-          </div>
-
-          {/* Description */}
-          <p className="mt-4 line-clamp-3 flex-1 text-[13px] leading-[1.65] text-neutral-text-secondary">
-            {room.description ||
-              "Experience premium comfort and elegance in this beautifully designed room, thoughtfully appointed for a restful stay."}
-          </p>
-        </div>
-      </Link>
+      </div>
     </ScrollReveal>
   );
 };

@@ -25,13 +25,24 @@ export const errorHandler = (
         return res.status(HttpStatus.CONFLICT).json(
           ApiResponse.error(`Duplicate field: ${err.meta?.target}`)
         );
+      case 'P2021':
+        return res.status(503).json(
+          ApiResponse.error(
+            'Database schema is out of date. Run: npx prisma migrate deploy && npx prisma generate'
+          )
+        );
       case 'P2025':
         return res.status(HttpStatus.NOT_FOUND).json(
           ApiResponse.error('Record not found')
         );
       default:
+        console.error('Prisma error code:', err.code, err.message);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
-          ApiResponse.error('Database error occurred')
+          ApiResponse.error(
+            process.env.NODE_ENV === 'production'
+              ? 'Database error occurred'
+              : `Database error: ${err.code} — ${err.message}`
+          )
         );
     }
   }

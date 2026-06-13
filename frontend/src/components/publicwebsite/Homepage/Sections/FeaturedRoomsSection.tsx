@@ -28,13 +28,23 @@ const ScrollReveal = ({
   </motion.div>
 );
 
-/* ─────────────────────────────────────────────
-   Room Card — inspired by the reference design
-   ───────────────────────────────────────────── */
+const formatBedLabel = (bedType?: string) => {
+  if (!bedType) return "Queen Bed";
+  const normalized = bedType.trim();
+  if (/bed/i.test(normalized)) return normalized;
+  return `${normalized} Bed`;
+};
+
+const formatSizeLabel = (size?: number) => {
+  if (size) return `${size} sq ft`;
+  return "Large sq ft";
+};
+
 const RoomCard = ({ room, index }: { room: Room; index: number }) => {
   const primaryImage =
     room.images?.find((img) => img.isPrimary)?.url || room.images?.[0]?.url;
 
+  const isAvailable = room.status === "available";
   const statusLabel =
     room.status === "available"
       ? "Available"
@@ -44,91 +54,77 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
       ? "Maintenance"
       : "Unavailable";
 
-  const isAvailable = room.status === "available";
-
   return (
-    <ScrollReveal key={room.id} delay={index * 0.12}>
+    <ScrollReveal delay={index * 0.12} className="h-full">
       <Link
         to={`/rooms/${room.slug}`}
-        className="group block bg-white rounded-2xl overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition-all duration-500 hover:-translate-y-2 border border-gray-100/80"
+        className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-border/70 bg-white shadow-[0_2px_20px_rgba(20,83,45,0.07)] transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-green/15 hover:shadow-[0_16px_48px_rgba(20,83,45,0.12)]"
       >
-        {/* ── Image Container ── */}
-        <div className="relative overflow-hidden aspect-[4/3] bg-gray-100">
+        {/* Image */}
+        <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-neutral-light">
           <img
             src={getImageUrl(primaryImage)}
             alt={room.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             loading="lazy"
           />
 
           {/* Status badge — top left */}
-          <div className="absolute top-4 left-4 z-10">
+          <div className="absolute left-3.5 top-3.5 z-10">
             <span
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-lg backdrop-blur-sm ${
+              className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-bold shadow-[0_4px_14px_rgba(0,0,0,0.18)] ${
                 isAvailable
-                  ? "bg-[#14532D]/90 text-white"
-                  : "bg-gray-800/80 text-gray-200"
+                  ? "bg-primary-green text-white"
+                  : "bg-neutral-text-primary/85 text-white"
               }`}
             >
-              <CheckCircle size={12} strokeWidth={2.5} />
+              <CheckCircle size={11} strokeWidth={2.5} />
               {statusLabel}
             </span>
           </div>
 
           {/* Price badge — top right */}
-          <div className="absolute top-4 right-4 z-10">
-            <span className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-primary-gold/95 text-[#14532D] text-[11px] font-extrabold shadow-lg backdrop-blur-sm">
+          <div className="absolute right-3.5 top-3.5 z-10">
+            <span className="inline-flex items-center gap-0.5 rounded-full bg-primary-gold px-3.5 py-1.5 text-[11px] font-extrabold text-primary-dark shadow-[0_4px_14px_rgba(245,158,11,0.35)]">
               NPR {Number(room.basePrice).toLocaleString()}
-              <span className="font-semibold text-[10px] text-[#14532D]/70">/night</span>
+              <span className="text-[10px] font-semibold text-primary-dark/75">/night</span>
             </span>
           </div>
-
-          {/* Subtle bottom gradient for polish */}
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
         </div>
 
-        {/* ── Card Body ── */}
-        <div className="px-5 pt-5 pb-5">
-          {/* Room Name */}
-          <h3 className="text-lg font-bold text-primary-dark leading-snug mb-3 group-hover:text-primary-green transition-colors duration-300">
+        {/* Content */}
+        <div className="flex flex-1 flex-col px-6 pb-6 pt-5">
+          <h3 className="font-georgia text-[1.15rem] font-bold leading-snug text-primary-dark transition-colors duration-300 group-hover:text-primary-green md:text-xl">
             {room.name}
           </h3>
 
-          {/* Meta Info Row */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mb-4 text-[12px] text-neutral-text-secondary font-medium">
+          {/* Meta row */}
+          <div className="mt-3.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] font-medium text-neutral-text-secondary">
             <span className="inline-flex items-center gap-1.5">
-              <Users size={13} className="text-primary-gold" />
+              <Users size={14} className="shrink-0 text-primary-gold" strokeWidth={2} />
               {room.capacity} Guests
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <BedDouble size={13} className="text-primary-gold" />
-              {room.bedType || "Queen Bed"}
+              <BedDouble size={14} className="shrink-0 text-primary-gold" strokeWidth={2} />
+              {formatBedLabel(room.bedType)}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Maximize size={13} className="text-primary-gold" />
-              {room.size ? `${room.size} sq ft` : "Large"}
+              <Maximize size={14} className="shrink-0 text-primary-gold" strokeWidth={2} />
+              {formatSizeLabel(room.size)}
             </span>
           </div>
 
           {/* Description */}
-          <p className="text-[13px] text-neutral-text-secondary leading-relaxed line-clamp-2 mb-4">
-            {room.description || "Experience premium comfort and elegance in this beautifully designed room."}
+          <p className="mt-4 line-clamp-3 flex-1 text-[13px] leading-[1.65] text-neutral-text-secondary">
+            {room.description ||
+              "Experience premium comfort and elegance in this beautifully designed room, thoughtfully appointed for a restful stay."}
           </p>
-
-          {/* View Details link */}
-          <div className="flex items-center gap-1.5 text-primary-green text-[11px] font-bold uppercase tracking-[0.15em] group-hover:gap-2.5 transition-all duration-300">
-            View Details
-            <ArrowRight size={13} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-1" />
-          </div>
         </div>
       </Link>
     </ScrollReveal>
   );
 };
 
-/* ─────────────────────────────────────────────
-   Section
-   ───────────────────────────────────────────── */
 export const FeaturedRoomsSection: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
@@ -157,64 +153,53 @@ export const FeaturedRoomsSection: React.FC = () => {
   if (!loading && !error && rooms.length === 0) return null;
 
   return (
-    <section className="section-padding bg-neutral-light overflow-hidden relative">
-      {/* Decorative blurs */}
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary-gold/5 rounded-full blur-[100px] -mr-48 -mt-48 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary-green/5 rounded-full blur-[100px] -ml-48 -mb-48 pointer-events-none" />
+    <section className="section-padding relative overflow-hidden bg-white">
+      <div className="pointer-events-none absolute right-0 top-0 -mr-48 -mt-48 h-[400px] w-[400px] rounded-full bg-primary-gold/5 blur-[100px]" />
+      <div className="pointer-events-none absolute bottom-0 left-0 -mb-48 -ml-48 h-[400px] w-[400px] rounded-full bg-primary-green/5 blur-[100px]" />
 
       <div className="container-custom relative z-10">
-        {/* ── Section Header ── */}
-        <div className="text-center mb-14">
-          <ScrollReveal className="max-w-3xl mx-auto">
-            {/* Accent label */}
-            <div className="flex items-center justify-center gap-3 mb-4">
+        {/* Section header */}
+        <div className="mb-14 text-center">
+          <ScrollReveal className="mx-auto max-w-3xl">
+            <div className="mb-4 flex items-center justify-center gap-3">
               <span className="h-px w-8 bg-primary-gold" />
-              <span className="text-primary-gold font-extrabold text-[11px] uppercase tracking-[0.25em]">
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-primary-gold">
                 Accommodation
               </span>
               <span className="h-px w-8 bg-primary-gold" />
             </div>
 
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-primary-dark tracking-tight mb-4 leading-tight">
-              Rooms <span className="font-georgia italic text-primary-green">&</span> Suites
+            <h2 className="font-georgia text-3xl font-bold leading-tight tracking-tight text-primary-dark md:text-4xl lg:text-[2.75rem]">
+              Rooms <span className="italic text-primary-green">&</span> Suites
             </h2>
 
-            <p className="text-neutral-text-secondary font-medium text-sm md:text-base max-w-lg mx-auto leading-relaxed">
+            <p className="mx-auto mt-4 max-w-lg text-sm font-medium leading-relaxed text-neutral-text-secondary md:text-base">
               Elegantly designed spaces crafted for your ultimate comfort and relaxation.
             </p>
           </ScrollReveal>
         </div>
 
-        {/* ── Cards ── */}
         {loading ? (
-          <ApiStatus status="loading" skeletonCount={3} skeletonVariant="hero" />
+          <ApiStatus status="loading" skeletonCount={3} skeletonVariant="card" />
         ) : error ? (
-          <ApiStatus
-            status="error"
-            errorMessage={error}
-            onRetry={fetchRooms}
-          />
+          <ApiStatus status="error" errorMessage={error} onRetry={fetchRooms} />
         ) : (
           <>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8 mb-12">
+            <div className="mb-12 grid gap-7 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {rooms.map((room, i) => (
                 <RoomCard key={room.id} room={room} index={i} />
               ))}
             </div>
 
-            {/* View All button */}
             <ScrollReveal delay={0.3} className="text-center">
               <Button
                 variant="outline"
-                className="rounded-full px-8 h-12 font-bold group border-neutral-border hover:border-primary-green hover:bg-primary-green/5 transition-all"
+                className="group h-12 rounded-full border-neutral-border px-8 font-bold transition-all hover:border-primary-green hover:bg-primary-green/5"
                 asChild
               >
-                <Link
-                  to="/rooms"
-                  className="flex items-center gap-2 text-primary-dark"
-                >
+                <Link to="/rooms" className="flex items-center gap-2 text-primary-dark">
                   View All Rooms
-                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
             </ScrollReveal>

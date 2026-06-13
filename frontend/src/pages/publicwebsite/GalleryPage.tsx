@@ -48,27 +48,23 @@ export const GalleryPage = () => {
 
   return (
     <main className="min-h-screen bg-[#FAFAF8]">
-      <div className="bg-gradient-to-r from-primary-dark via-primary-green to-primary-dark py-10 md:py-12">
-        <div className="container-custom">
-          <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-white/60">
+      <div className="bg-gradient-to-r from-primary-dark via-primary-green to-primary-dark py-12 md:py-16">
+        <div className="container-custom text-center">
+          <nav className="mb-5 flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
             <Link to="/" className="inline-flex items-center gap-1 transition-colors hover:text-primary-gold">
               <Home size={12} />
               Home
             </Link>
             <ChevronRight size={12} className="text-white/30" />
-            <span className="text-primary-gold">Gallery</span>
+            <span className="text-primary-gold">Photo Gallery</span>
           </nav>
           <h1 className="font-georgia text-3xl font-bold text-white md:text-4xl lg:text-[2.5rem]">
-            Hotel Gallery &amp; Venues
+            Photo Gallery
           </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/75 md:text-base">
-            Explore our dining spaces, banquet halls, outdoor venues, and meeting rooms — crafted for memorable
-            experiences.
-          </p>
         </div>
       </div>
 
-      <VenuesSection showViewAll={false} />
+      <VenuesSection showViewAll={false} hideHeader />
 
       <section className="section-padding border-t border-neutral-border/50 bg-white">
         <div className="container-custom">

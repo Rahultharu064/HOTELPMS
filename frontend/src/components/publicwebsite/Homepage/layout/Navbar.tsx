@@ -16,48 +16,45 @@ import { useAuth } from "../../../../context/AuthContext";
 const navItems = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
-  { 
-    label: "Rooms", 
-    to: "/rooms", 
+  {
+    label: "Rooms",
+    to: "/rooms",
     hasDropdown: true,
     dropdownItems: [
-      { label: "Standard Rooms", to: "/rooms" },
-      { label: "Deluxe Rooms", to: "/rooms" },
-      { label: "Suite Rooms", to: "/rooms" }
-    ]
+      { label: "All Rooms", to: "/rooms" },
+      { label: "Standard Rooms", to: "/rooms?type=Standard" },
+      { label: "Deluxe Rooms", to: "/rooms?type=Deluxe" },
+      { label: "Suite Rooms", to: "/rooms?type=Suite" },
+    ],
   },
-  { 
-    label: "Dining", 
-    to: "/facilities", 
+  {
+    label: "Dining",
+    to: "/facilities",
     hasDropdown: true,
     dropdownItems: [
       { label: "Fine Dining Restaurant", to: "/facilities" },
       { label: "Bar & Lounge", to: "/facilities" },
-      { label: "Coffee Shop", to: "/facilities" }
-    ]
+      { label: "Coffee Shop", to: "/facilities" },
+    ],
   },
-  { 
-    label: "Events", 
-    to: "/facilities", 
-    hasDropdown: true,
-    dropdownItems: [
-      { label: "Weddings", to: "/facilities" },
-      { label: "Conferences", to: "/facilities" },
-      { label: "Private Celebrations", to: "/facilities" }
-    ]
-  },
-  { 
-    label: "Gallery", 
-    to: "/gallery", 
+  {
+    label: "Gallery",
+    to: "/gallery",
     hasDropdown: true,
     dropdownItems: [
       { label: "Hotel Gallery", to: "/gallery" },
       { label: "Our Venues", to: "/gallery#venues" },
-      { label: "Virtual Tour", to: "/gallery" }
-    ]
+      { label: "Virtual Tour", to: "/gallery" },
+    ],
   },
-  { label: "Contact", to: "/contact" }
+  { label: "Contact", to: "/contact" },
 ];
+
+const isItemActive = (pathname: string, to: string) => {
+  if (to === "/rooms") return pathname.startsWith("/rooms");
+  if (to === "/gallery") return pathname.startsWith("/gallery");
+  return pathname === to;
+};
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -97,14 +94,15 @@ const Navbar = () => {
         {/* Desktop Navigation Links */}
         <ul className="hidden lg:flex items-center gap-8 h-full">
           {navItems.map((item) => {
-            const isActive = pathname === item.to;
+            const isActive = isItemActive(pathname, item.to);
             if (item.hasDropdown) {
               return (
                 <li key={item.label} className="relative group flex items-center h-full">
-                  <button
+                  <Link
+                    to={item.to}
                     className={`flex items-center gap-1 text-sm font-semibold transition-colors cursor-pointer py-7 ${
-                      isActive 
-                        ? "text-[#14532D]" 
+                      isActive
+                        ? "text-[#14532D]"
                         : "text-muted-foreground hover:text-[#14532D]"
                     }`}
                   >
@@ -114,7 +112,7 @@ const Navbar = () => {
                       <div className={`absolute -bottom-1 left-0 right-0 h-[3px] bg-[#F59E0B] rounded-full transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-center opacity-0 group-hover:opacity-100 ${isActive ? "scale-x-100 opacity-100" : ""}`} />
                     </span>
                     <ChevronDown size={14} className="text-muted-foreground group-hover:rotate-180 transition-transform duration-300" />
-                  </button>
+                  </Link>
                   
                   {/* Dropdown Menu */}
                   <div className="absolute top-[80%] left-0 w-52 bg-white rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.06)] border border-gray-100 py-2.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-[90%] transition-all duration-300 z-50">
@@ -181,13 +179,26 @@ const Navbar = () => {
                 const isOpen = activeMobileDropdown === item.label;
                 return (
                   <div key={item.label} className="border-b border-gray-50 pb-2">
-                    <button
-                      onClick={() => toggleMobileDropdown(item.label)}
-                      className="flex items-center justify-between w-full text-sm font-bold text-gray-800 py-2 cursor-pointer"
-                    >
-                      <span>{item.label}</span>
-                      <ChevronDown size={16} className={`text-gray-400 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
-                    </button>
+                    <div className="flex items-center justify-between gap-2">
+                      <Link
+                        to={item.to}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex-1 text-sm font-bold text-gray-800 py-2 hover:text-[#14532D]"
+                      >
+                        {item.label}
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => toggleMobileDropdown(item.label)}
+                        className="p-2 cursor-pointer"
+                        aria-label={`Toggle ${item.label} menu`}
+                      >
+                        <ChevronDown
+                          size={16}
+                          className={`text-gray-400 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                    </div>
                     {isOpen && (
                       <div className="pl-4 py-2 flex flex-col gap-2 bg-gray-50/50 rounded-xl mt-1">
                         {item.dropdownItems?.map((dItem) => (
@@ -212,7 +223,7 @@ const Navbar = () => {
                   to={item.to}
                   onClick={() => setMobileOpen(false)}
                   className={`text-sm font-bold border-b border-gray-50 pb-2 ${
-                    pathname === item.to ? "text-[#14532D]" : "text-gray-800"
+                    isItemActive(pathname, item.to) ? "text-[#14532D]" : "text-gray-800"
                   }`}
                 >
                   {item.label}

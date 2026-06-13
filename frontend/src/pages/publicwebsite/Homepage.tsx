@@ -5,6 +5,7 @@ import HeroSection from '../../components/publicwebsite/Homepage/Sections/HeroSe
 import { RoomTypeSection } from '../../components/publicwebsite/Homepage/Sections/RoomTypeSection';
 import { FeaturedRoomsSection } from '../../components/publicwebsite/Homepage/Sections/FeaturedRoomsSection';
 import { GuestFavoritesSection } from '../../components/publicwebsite/Homepage/Sections/GuestFavoritesSection';
+import AboutUsSection from '../../components/publicwebsite/Homepage/Sections/AboutUsSection';
 import VenuesSection from '../../components/publicwebsite/Homepage/Sections/VenuesSection';
 import ReviewsSection from '../../components/publicwebsite/Homepage/Sections/ReviewsSection';
 import FacilitiesSection from '../../components/publicwebsite/Homepage/Sections/FacilitiesSection';
@@ -19,6 +20,7 @@ export const Homepage: React.FC = () => {
       <div id="homepage-content" className="pt-14">
         <RoomTypeSection />
       </div>
+      <AboutUsSection />
       <FeaturedRoomsSection />
       <GuestFavoritesSection />
       <VenuesSection />

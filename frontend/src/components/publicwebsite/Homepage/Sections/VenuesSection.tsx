@@ -10,9 +10,10 @@ import { VenueCard } from "./VenueCard";
 
 interface VenuesSectionProps {
   showViewAll?: boolean;
+  hideHeader?: boolean;
 }
 
-const VenuesSection = ({ showViewAll = true }: VenuesSectionProps) => {
+const VenuesSection = ({ showViewAll = true, hideHeader = false }: VenuesSectionProps) => {
   const [venues, setVenues] = useState<GalleryVenue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,29 +43,31 @@ const VenuesSection = ({ showViewAll = true }: VenuesSectionProps) => {
   return (
     <section id="venues" className="section-padding bg-[#FAFAF8]">
       <div className="container-custom">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mx-auto mb-12 max-w-3xl text-center md:mb-14"
-        >
-          <div className="mb-4 flex items-center justify-center gap-3">
-            <span className="h-px w-8 bg-primary-gold" />
-            <span className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-primary-gold">
-              Our Venues
-            </span>
-            <span className="h-px w-8 bg-primary-gold" />
-          </div>
+        {!hideHeader && (
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mx-auto mb-12 max-w-3xl text-center md:mb-14"
+          >
+            <div className="mb-4 flex items-center justify-center gap-3">
+              <span className="h-px w-8 bg-primary-gold" />
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-primary-gold">
+                Our Venues
+              </span>
+              <span className="h-px w-8 bg-primary-gold" />
+            </div>
 
-          <h2 className="font-georgia text-3xl font-bold leading-tight text-primary-dark md:text-4xl lg:text-[2.75rem]">
-            Dine, Celebrate <span className="italic text-primary-green">&</span> Meet
-          </h2>
+            <h2 className="font-georgia text-3xl font-bold leading-tight text-primary-dark md:text-4xl lg:text-[2.75rem]">
+              Dine, Celebrate <span className="italic text-primary-green">&</span> Meet
+            </h2>
 
-          <p className="mx-auto mt-4 max-w-2xl text-sm font-medium leading-relaxed text-neutral-text-secondary md:text-base">
-            From intimate dinners to grand celebrations — Itahari Namuna has the perfect space for every occasion.
-          </p>
-        </motion.div>
+            <p className="mx-auto mt-4 max-w-2xl text-sm font-medium leading-relaxed text-neutral-text-secondary md:text-base">
+              From intimate dinners to grand celebrations — Itahari Namuna has the perfect space for every occasion.
+            </p>
+          </motion.div>
+        )}
 
         {loading ? (
           <ApiStatus status="loading" skeletonCount={4} skeletonVariant="card" />

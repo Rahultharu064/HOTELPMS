@@ -1,161 +1,226 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, Users, BedDouble, Maximize, ArrowRight } from "lucide-react";
+import { Users, BedDouble, Maximize, ArrowRight, CheckCircle } from "lucide-react";
 import { roomService } from "../../../../services/roomService";
 import type { Room } from "../../../../services/roomService";
 import { Button } from "../../../ui/Button";
 import { ApiStatus } from "../../../ui/ApiStatus";
 import { getImageUrl } from "../../../../services/api";
 
-
-const ScrollReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
-        viewport={{ once: true }}
-        className={className}
-    >
-        {children}
-    </motion.div>
+const ScrollReveal = ({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+    viewport={{ once: true }}
+    className={className}
+  >
+    {children}
+  </motion.div>
 );
 
+/* ─────────────────────────────────────────────
+   Room Card — inspired by the reference design
+   ───────────────────────────────────────────── */
+const RoomCard = ({ room, index }: { room: Room; index: number }) => {
+  const primaryImage =
+    room.images?.find((img) => img.isPrimary)?.url || room.images?.[0]?.url;
+
+  const statusLabel =
+    room.status === "available"
+      ? "Available"
+      : room.status === "occupied"
+      ? "Occupied"
+      : room.status === "maintenance"
+      ? "Maintenance"
+      : "Unavailable";
+
+  const isAvailable = room.status === "available";
+
+  return (
+    <ScrollReveal key={room.id} delay={index * 0.12}>
+      <Link
+        to={`/rooms/${room.slug}`}
+        className="group block bg-white rounded-2xl overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition-all duration-500 hover:-translate-y-2 border border-gray-100/80"
+      >
+        {/* ── Image Container ── */}
+        <div className="relative overflow-hidden aspect-[4/3] bg-gray-100">
+          <img
+            src={getImageUrl(primaryImage)}
+            alt={room.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            loading="lazy"
+          />
+
+          {/* Status badge — top left */}
+          <div className="absolute top-4 left-4 z-10">
+            <span
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-lg backdrop-blur-sm ${
+                isAvailable
+                  ? "bg-[#14532D]/90 text-white"
+                  : "bg-gray-800/80 text-gray-200"
+              }`}
+            >
+              <CheckCircle size={12} strokeWidth={2.5} />
+              {statusLabel}
+            </span>
+          </div>
+
+          {/* Price badge — top right */}
+          <div className="absolute top-4 right-4 z-10">
+            <span className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-primary-gold/95 text-[#14532D] text-[11px] font-extrabold shadow-lg backdrop-blur-sm">
+              NPR {Number(room.basePrice).toLocaleString()}
+              <span className="font-semibold text-[10px] text-[#14532D]/70">/night</span>
+            </span>
+          </div>
+
+          {/* Subtle bottom gradient for polish */}
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+        </div>
+
+        {/* ── Card Body ── */}
+        <div className="px-5 pt-5 pb-5">
+          {/* Room Name */}
+          <h3 className="text-lg font-bold text-primary-dark leading-snug mb-3 group-hover:text-primary-green transition-colors duration-300">
+            {room.name}
+          </h3>
+
+          {/* Meta Info Row */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mb-4 text-[12px] text-neutral-text-secondary font-medium">
+            <span className="inline-flex items-center gap-1.5">
+              <Users size={13} className="text-primary-gold" />
+              {room.capacity} Guests
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <BedDouble size={13} className="text-primary-gold" />
+              {room.bedType || "Queen Bed"}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Maximize size={13} className="text-primary-gold" />
+              {room.size ? `${room.size} sq ft` : "Large"}
+            </span>
+          </div>
+
+          {/* Description */}
+          <p className="text-[13px] text-neutral-text-secondary leading-relaxed line-clamp-2 mb-4">
+            {room.description || "Experience premium comfort and elegance in this beautifully designed room."}
+          </p>
+
+          {/* View Details link */}
+          <div className="flex items-center gap-1.5 text-primary-green text-[11px] font-bold uppercase tracking-[0.15em] group-hover:gap-2.5 transition-all duration-300">
+            View Details
+            <ArrowRight size={13} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-1" />
+          </div>
+        </div>
+      </Link>
+    </ScrollReveal>
+  );
+};
+
+/* ─────────────────────────────────────────────
+   Section
+   ───────────────────────────────────────────── */
 export const FeaturedRoomsSection: React.FC = () => {
-    const [rooms, setRooms] = useState<Room[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    const fetchRooms = useCallback(async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            // Fetch rooms with isFeatured=true
-            const res = await roomService.getAllRooms({ isFeatured: true, limit: 3 });
-            if (res.success) {
-                setRooms(res.data);
-            }
-        } catch (err: any) {
-            console.error("Failed to fetch featured rooms:", err);
-            setError(err?.message || 'Failed to load featured rooms');
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  const fetchRooms = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await roomService.getAllRooms({ isFeatured: true, limit: 3 });
+      if (res.success) {
+        setRooms(res.data);
+      }
+    } catch (err: any) {
+      console.error("Failed to fetch featured rooms:", err);
+      setError(err?.message || "Failed to load featured rooms");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    useEffect(() => {
-        fetchRooms();
-    }, [fetchRooms]);
+  useEffect(() => {
+    fetchRooms();
+  }, [fetchRooms]);
 
-    // Don't render section at all if no data and no error
-    if (!loading && !error && rooms.length === 0) return null;
+  if (!loading && !error && rooms.length === 0) return null;
 
-    return (
-        <section className="section-padding bg-neutral-light overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-gold/10 rounded-full blur-[120px] -mr-64 -mt-64 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary-green/10 rounded-full blur-[120px] -ml-64 -mb-64 pointer-events-none" />
-             
-            <div className="container-custom relative z-10">
-                <div className="text-center mb-16">
-                    <ScrollReveal className="max-w-3xl mx-auto flex flex-col items-center">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-primary-dark tracking-tighter mb-8 leading-tight">Featured <span className="text-primary-green">Collections</span></h2>
-                        
-                        <ScrollReveal delay={0.2}>
-                            <Button variant="outline" className="rounded-full px-8 h-12 font-bold group border-neutral-border hover:border-primary-green hover:bg-primary-green/5 transition-all" asChild>
-                                <Link to="/rooms" className="flex items-center gap-2 text-primary-dark">
-                                    View All Rooms <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                                </Link>
-                            </Button>
-                        </ScrollReveal>
-                    </ScrollReveal>
-                </div>
+  return (
+    <section className="section-padding bg-neutral-light overflow-hidden relative">
+      {/* Decorative blurs */}
+      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary-gold/5 rounded-full blur-[100px] -mr-48 -mt-48 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary-green/5 rounded-full blur-[100px] -ml-48 -mb-48 pointer-events-none" />
 
-                {loading ? (
-                    <ApiStatus status="loading" skeletonCount={3} skeletonVariant="hero" />
-                ) : error ? (
-                    <ApiStatus
-                        status="error"
-                        errorMessage={error}
-                        onRetry={fetchRooms}
-                    />
-                ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-                        {rooms.map((room, i) => {
-                            const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url;
-                            return (
-                                <ScrollReveal key={room.id} delay={i * 0.15}>
-                                    <div className="group flex flex-col h-full rounded-[40px] bg-white overflow-hidden shadow-soft hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-3 border border-neutral-border/20 relative">
-                                        <div className="absolute top-6 left-6 z-20">
-                                            <div className="bg-primary-gold text-white px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl backdrop-blur-md border border-white/20">
-                                                Featured
-                                            </div>
-                                        </div>
-
-                                        <div className="relative overflow-hidden aspect-[4/3] bg-neutral-light">
-                                            <img 
-                                                src={getImageUrl(primaryImage)} 
-                                                alt={room.name} 
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" 
-                                                loading="lazy"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-                                            
-                                            <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl text-xs font-black text-primary-dark shadow-xl flex items-center gap-1.5 border border-white/20">
-                                                <Star className="h-3.5 w-3.5 text-primary-gold fill-primary-gold" /> {room.ratingSummary?.averageRating ? room.ratingSummary.averageRating.toFixed(1) : "5.0"}
-                                            </div>
-                                            
-                                            <div className="absolute bottom-6 left-8 right-8">
-                                                <span className="text-[10px] text-primary-gold font-black uppercase tracking-[0.2em] mb-1.5 block drop-shadow-md">{room.roomType?.name}</span>
-                                                <h3 className="font-black text-3xl text-white drop-shadow-xl leading-tight mb-2 group-hover:text-primary-green transition-colors">{room.name}</h3>
-                                                <div className="flex items-center gap-2">
-                                                     <span className="text-xl font-black text-white px-3 py-1 bg-primary-green/30 backdrop-blur-md rounded-xl border border-white/20">Rs. {Number(room.basePrice).toLocaleString()}</span>
-                                                     <span className="text-[10px] text-white/70 font-bold uppercase tracking-widest">/ Night</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="p-8 flex flex-col flex-1">
-                                            <p className="text-sm text-neutral-text-secondary mb-8 line-clamp-2 leading-relaxed flex-1 font-medium italic opacity-80">"{room.description}"</p>
-                                            
-                                            <div className="flex flex-wrap gap-2 mb-8">
-                                                {room.amenities && room.amenities.slice(0, 3).map((amenity) => (
-                                                    <div key={amenity.id} className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-light/50 rounded-xl border border-neutral-border/30 text-[10px] font-bold text-primary-dark">
-                                                        <div className="w-1.5 h-1.5 rounded-full bg-primary-green" />
-                                                        {amenity.name}
-                                                    </div>
-                                                ))}
-                                                {(!room.amenities || room.amenities.length === 0) && (
-                                                    <>
-                                                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-light/50 rounded-xl border border-neutral-border/30 text-[10px] font-bold text-primary-dark">
-                                                            <Users className="h-3 w-3 text-primary-green" /> {room.capacity} Guests
-                                                        </div>
-                                                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-light/50 rounded-xl border border-neutral-border/30 text-[10px] font-bold text-primary-dark">
-                                                            <BedDouble className="h-3 w-3 text-primary-gold" /> {room.bedType || 'Queen'}
-                                                        </div>
-                                                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-light/50 rounded-xl border border-neutral-border/30 text-[10px] font-bold text-primary-dark">
-                                                            <Maximize className="h-3 w-3 text-primary-dark" /> {room.size || 35}m²
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                            
-                                            <div className="flex pt-4 border-t border-neutral-border/10">
-                                                <Link 
-                                                    to={`/rooms/${room.slug}`} 
-                                                    className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary-green hover:text-primary-dark transition-colors group/link"
-                                                >
-                                                    View Details 
-                                                    <ArrowRight className="h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </ScrollReveal>
-                            );
-                        })}
-                    </div>
-                )}
+      <div className="container-custom relative z-10">
+        {/* ── Section Header ── */}
+        <div className="text-center mb-14">
+          <ScrollReveal className="max-w-3xl mx-auto">
+            {/* Accent label */}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <span className="h-px w-8 bg-primary-gold" />
+              <span className="text-primary-gold font-extrabold text-[11px] uppercase tracking-[0.25em]">
+                Accommodation
+              </span>
+              <span className="h-px w-8 bg-primary-gold" />
             </div>
-        </section>
-    );
+
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-primary-dark tracking-tight mb-4 leading-tight">
+              Rooms <span className="font-georgia italic text-primary-green">&</span> Suites
+            </h2>
+
+            <p className="text-neutral-text-secondary font-medium text-sm md:text-base max-w-lg mx-auto leading-relaxed">
+              Elegantly designed spaces crafted for your ultimate comfort and relaxation.
+            </p>
+          </ScrollReveal>
+        </div>
+
+        {/* ── Cards ── */}
+        {loading ? (
+          <ApiStatus status="loading" skeletonCount={3} skeletonVariant="hero" />
+        ) : error ? (
+          <ApiStatus
+            status="error"
+            errorMessage={error}
+            onRetry={fetchRooms}
+          />
+        ) : (
+          <>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8 mb-12">
+              {rooms.map((room, i) => (
+                <RoomCard key={room.id} room={room} index={i} />
+              ))}
+            </div>
+
+            {/* View All button */}
+            <ScrollReveal delay={0.3} className="text-center">
+              <Button
+                variant="outline"
+                className="rounded-full px-8 h-12 font-bold group border-neutral-border hover:border-primary-green hover:bg-primary-green/5 transition-all"
+                asChild
+              >
+                <Link
+                  to="/rooms"
+                  className="flex items-center gap-2 text-primary-dark"
+                >
+                  View All Rooms
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+            </ScrollReveal>
+          </>
+        )}
+      </div>
+    </section>
+  );
 };

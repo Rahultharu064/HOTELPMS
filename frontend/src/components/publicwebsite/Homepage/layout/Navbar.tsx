@@ -73,7 +73,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-sm border-b">
+    <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-neutral-border/50">
       {/* Main Navbar */}
       <div className="container-custom flex items-center justify-between h-20">
         {/* Brand / Logo */}

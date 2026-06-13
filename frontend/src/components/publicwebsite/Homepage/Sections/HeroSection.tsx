@@ -68,7 +68,7 @@ const CustomSelect = ({ value, onChange, options, placeholder }: CustomSelectPro
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center justify-between w-full text-left cursor-pointer group"
+        className="flex items-center justify-between w-full text-left cursor-pointer group rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary-green/25 focus-visible:ring-offset-1"
       >
         <span className="text-[#14532D] font-semibold text-[13px] leading-snug truncate">
           {selected ? selected.label : placeholder ?? "Select..."}
@@ -217,6 +217,7 @@ const HeroSection = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" />
           </div>
         ))}
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#F9FAFB] via-[#F9FAFB]/80 to-transparent pointer-events-none z-[2]" />
       </div>
 
       {/* ── Centered content ── */}
@@ -316,11 +317,11 @@ const HeroSection = () => {
 
       {/* ── Floating Availability Search Bar ── */}
       <div className="absolute bottom-[-44px] left-1/2 -translate-x-1/2 w-[94%] max-w-[1080px] z-30">
-        <div className="bg-white rounded-2xl shadow-[0_16px_48px_rgba(0,0,0,0.14)] border border-gray-100/80 px-6 py-4">
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
+        <div className="bg-white rounded-2xl shadow-[0_16px_48px_rgba(20,83,45,0.10)] border border-primary-green/10 px-6 py-4">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center">
 
             {/* Room Type */}
-            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:pr-5">
+            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:pr-5 border-b lg:border-b-0 lg:border-r border-primary-green/10">
               <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center text-primary-gold shrink-0">
                 <BedDouble size={17} />
               </div>
@@ -337,7 +338,7 @@ const HeroSection = () => {
             </div>
 
             {/* Price Range */}
-            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:px-5">
+            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:px-5 border-b lg:border-b-0 lg:border-r border-primary-green/10">
               <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center text-primary-gold shrink-0">
                 <Tag size={17} />
               </div>
@@ -354,7 +355,7 @@ const HeroSection = () => {
             </div>
 
             {/* Check-in */}
-            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:px-5">
+            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:px-5 border-b lg:border-b-0 border-primary-green/10">
               <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center text-primary-gold shrink-0">
                 <CalendarCheck size={17} />
               </div>
@@ -371,7 +372,7 @@ const HeroSection = () => {
                   onBlur={(e) => {
                     if (!e.target.value) e.target.type = "text";
                   }}
-                  className="block w-full bg-transparent border-none text-[#14532D] font-semibold text-[13px] placeholder:text-gray-400 focus:outline-none focus:ring-0 p-0 cursor-pointer leading-snug"
+                  className="hero-date-input block w-full bg-transparent border-none text-[#14532D] font-semibold text-[13px] placeholder:text-gray-400 focus:outline-none focus:ring-0 p-0 cursor-pointer leading-snug"
                 />
               </div>
             </div>
@@ -380,7 +381,7 @@ const HeroSection = () => {
             <div className="pt-3 lg:pt-0 lg:pl-5 shrink-0">
               <button
                 onClick={handleSearch}
-                className="w-full lg:w-auto flex items-center justify-center gap-2 h-11 px-7 bg-[#14532D] hover:bg-primary-gold text-primary-gold hover:text-[#14532D] font-extrabold text-[10px] uppercase tracking-[0.22em] rounded-xl transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 cursor-pointer whitespace-nowrap"
+                className="w-full lg:w-auto flex items-center justify-center gap-2 h-11 px-7 bg-[#14532D] hover:bg-primary-gold text-primary-gold hover:text-[#14532D] font-extrabold text-[10px] uppercase tracking-[0.22em] rounded-xl transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 cursor-pointer whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary-gold/45 focus-visible:ring-offset-2"
               >
                 <Search size={14} strokeWidth={2.5} />
                 <span>Search</span>

@@ -239,6 +239,24 @@
   .animate-fadeIn {
     animation: fadeIn 0.15s ease-out;
   }
+
+  /* Hero search — theme-aligned native date control */
+  .hero-date-input::-webkit-calendar-picker-indicator {
+    opacity: 0.55;
+    cursor: pointer;
+    filter: invert(24%) sepia(42%) saturate(1200%) hue-rotate(98deg) brightness(92%) contrast(95%);
+    transition: opacity 0.2s ease;
+  }
+
+  .hero-date-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 0.85;
+  }
+
+  .hero-date-input:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(31, 122, 58, 0.22);
+    border-radius: 6px;
+  }
 }
 
 /* ── PROFESSIONAL INVOICE STYLES ── */

@@ -128,34 +128,17 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
             <span className="text-[11px] text-neutral-text-secondary"> /night</span>
           </div>
 
-          <div className="relative h-9 min-w-[118px] shrink-0">
-            {isAvailable ? (
-              <>
-                <Link
-                  to={`/booking?room=${room.id}`}
-                  className="absolute inset-0 inline-flex items-center justify-center gap-1 rounded-full bg-primary-dark px-5 text-[11px] font-bold tracking-wide text-primary-gold shadow-sm transition-all duration-300 group-hover:pointer-events-none group-hover:translate-y-1 group-hover:opacity-0"
-                >
-                  Book
-                  <ArrowRight size={13} strokeWidth={2.5} />
-                </Link>
-                <Link
-                  to={`/rooms/${room.slug}`}
-                  className="absolute inset-0 inline-flex translate-y-1 items-center justify-center gap-1 rounded-full bg-primary-dark px-4 text-[10px] font-bold tracking-wide text-primary-gold opacity-0 shadow-sm transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
-                >
-                  View Details
-                  <ArrowRight size={13} strokeWidth={2.5} />
-                </Link>
-              </>
-            ) : (
-              <Link
-                to={`/rooms/${room.slug}`}
-                className="inline-flex h-9 w-full min-w-[118px] items-center justify-center gap-1 rounded-full bg-primary-dark px-4 text-[10px] font-bold tracking-wide text-primary-gold shadow-sm transition-colors hover:bg-primary-green hover:text-white"
-              >
-                View Details
-                <ArrowRight size={13} strokeWidth={2.5} />
-              </Link>
-            )}
-          </div>
+          <Link
+            to={isAvailable ? `/booking?room=${room.id}` : `/rooms/${room.slug}`}
+            className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 rounded-full px-5 text-[11px] font-bold tracking-wide shadow-sm transition-all duration-300 ${
+              isAvailable
+                ? "bg-primary-dark text-primary-gold hover:bg-primary-green hover:text-white"
+                : "cursor-pointer bg-neutral-border/80 text-neutral-text-secondary hover:bg-neutral-border"
+            }`}
+          >
+            {isAvailable ? "Book" : "Unavailable"}
+            <ArrowRight size={13} strokeWidth={2.5} />
+          </Link>
         </div>
       </div>
     </ScrollReveal>

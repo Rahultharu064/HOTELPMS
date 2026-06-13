@@ -17,7 +17,7 @@ const Footer = () => {
           {/* About */}
           <div className="space-y-6">
             <div className="flex flex-col gap-4">
-              <img src="/LOGOS.png" alt="Itahari Namuna Logo" className="h-12 w-auto object-contain opacity-90" />
+              <img src="/Logos1.png" alt="Itahari Namuna Logo" className="h-12 w-auto object-contain opacity-90" />
               <div>
                 <h3 className="font-bold text-xl mb-1 tracking-tight">Itahari Namuna</h3>
                 <p className="text-primary-gold font-black uppercase text-[10px] tracking-[0.3em]">Luxury PMS</p>

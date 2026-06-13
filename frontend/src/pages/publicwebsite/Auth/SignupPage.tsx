@@ -64,7 +64,7 @@ export const SignupPage: React.FC = () => {
             className="mx-auto flex justify-center mb-6"
           >
             <div className="p-3 bg-white rounded-2xl shadow-sm border border-gray-100">
-              <img src="/LOGOS.png" alt="Itahari Namuna Logo" className="h-16 w-auto object-contain" />
+              <img src="/Logos1.png" alt="Itahari Namuna Logo" className="h-16 w-auto object-contain" />
             </div>
           </motion.div>
           <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">

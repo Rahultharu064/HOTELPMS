@@ -53,7 +53,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         <div className="absolute top-0 right-0 w-24 h-24 bg-[#F59E0B]/10 rounded-full blur-[40px] -mr-12 -mt-12 transition-all duration-500 group-hover:scale-150 group-hover:bg-[#F59E0B]/20" />
         
         <img 
-          src="/LOGOS.png" 
+          src="/Logos1.png" 
           alt="Logo" 
           className="w-12 h-12 object-contain rounded-xl relative z-10" 
         />

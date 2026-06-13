@@ -73,7 +73,7 @@ export const AdminLoginPage: React.FC = () => {
       >
         <div>
           <div className="mx-auto flex justify-center mb-8">
-            <img src="/LOGOS.png" alt="Logo" className="h-20 w-auto object-contain hover:scale-105 transition-transform" />
+            <img src="/Logos1.png" alt="Logo" className="h-20 w-auto object-contain hover:scale-105 transition-transform" />
           </div>
           <div className="space-y-2 text-center">
             <h2 className="text-2xl font-black text-[#111827] tracking-tight uppercase">

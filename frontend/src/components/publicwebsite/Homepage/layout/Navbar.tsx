@@ -48,11 +48,12 @@ const navItems = [
   },
   { 
     label: "Gallery", 
-    to: "/about", 
+    to: "/gallery", 
     hasDropdown: true,
     dropdownItems: [
-      { label: "Hotel Gallery", to: "/about" },
-      { label: "Virtual Tour", to: "/about" }
+      { label: "Hotel Gallery", to: "/gallery" },
+      { label: "Our Venues", to: "/gallery#venues" },
+      { label: "Virtual Tour", to: "/gallery" }
     ]
   },
   { label: "Contact", to: "/contact" }

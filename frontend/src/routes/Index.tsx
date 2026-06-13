@@ -6,6 +6,7 @@ import { Roompage } from '../pages/publicwebsite/Roompage';
 import {RoomDetailspage}from '../pages/publicwebsite/RoomDetailspage';
 import { BookingsPage as PublicBookingsPage } from '../pages/publicwebsite/BookingsPage';
 import { FacilitiesPage } from '../pages/publicwebsite/FacilitiesPage';
+import { GalleryPage } from '../pages/publicwebsite/GalleryPage';
 import { PaymentSuccessPage } from '../pages/publicwebsite/PaymentSuccessPage';
 import { PaymentFailurePage } from '../pages/publicwebsite/PaymentFailurePage';
 import { LoginPage } from '../pages/publicwebsite/Auth/LoginPage';
@@ -116,6 +117,10 @@ const routes: RouteObject[] = [
       {
         path: 'facilities',
         element: <FacilitiesPage />,
+      },
+      {
+        path: 'gallery',
+        element: <GalleryPage />,
       },
       {
         path: 'payment/success',

@@ -5,6 +5,7 @@ import HeroSection from '../../components/publicwebsite/Homepage/Sections/HeroSe
 import { RoomTypeSection } from '../../components/publicwebsite/Homepage/Sections/RoomTypeSection';
 import { FeaturedRoomsSection } from '../../components/publicwebsite/Homepage/Sections/FeaturedRoomsSection';
 import { GuestFavoritesSection } from '../../components/publicwebsite/Homepage/Sections/GuestFavoritesSection';
+import VenuesSection from '../../components/publicwebsite/Homepage/Sections/VenuesSection';
 import ReviewsSection from '../../components/publicwebsite/Homepage/Sections/ReviewsSection';
 import FacilitiesSection from '../../components/publicwebsite/Homepage/Sections/FacilitiesSection';
 import { Button } from '../../components/ui/Button';
@@ -20,7 +21,8 @@ export const Homepage: React.FC = () => {
       </div>
       <FeaturedRoomsSection />
       <GuestFavoritesSection />
-      <FacilitiesSection /> 
+      <VenuesSection />
+      <FacilitiesSection />
       <ReviewsSection />
       
       {/* CTA Section */}

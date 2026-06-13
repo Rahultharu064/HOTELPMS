@@ -13,9 +13,11 @@ import { Button } from '../../components/ui/Button';
 export const Homepage: React.FC = () => {
 
   return (
-    <main className="overflow-hidden">
+    <main className="overflow-x-hidden">
       <HeroSection />
-      <RoomTypeSection />
+      <div id="homepage-content" className="pt-14">
+        <RoomTypeSection />
+      </div>
       <FeaturedRoomsSection />
       <GuestFavoritesSection />
       <FacilitiesSection /> 

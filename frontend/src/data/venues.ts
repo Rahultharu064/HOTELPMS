@@ -1,56 +1,89 @@
-import { UtensilsCrossed, TreePalm, Crown, Presentation } from "lucide-react";
+import {
+  UtensilsCrossed,
+  TreePalm,
+  Crown,
+  Presentation,
+  Wifi,
+  Waves,
+  Dumbbell,
+  Utensils,
+  Car,
+  Sparkles,
+  Tv,
+  Wind,
+  Coffee,
+  Shield,
+  Wine,
+  Volume2,
+  Building2,
+  PartyPopper,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export type VenueLayout = "featured" | "compact" | "wide";
 
-export interface Venue {
-  id: string;
+export interface GalleryVenue {
+  id: number;
   title: string;
+  slug: string;
   description: string;
   image: string;
-  icon: LucideIcon;
+  icon: string;
   layout: VenueLayout;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export const VENUES: Venue[] = [
-  {
-    id: "royal-dining",
-    title: "Royal Dining",
-    description: "Multi-cuisine fine dining with expert chefs and elegant ambience.",
-    image:
-      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
-    icon: UtensilsCrossed,
-    layout: "featured",
-  },
-  {
-    id: "tropical-outdoor",
-    title: "Tropical Outdoor",
-    description: "Garden lounge & outdoor space for intimate gatherings.",
-    image:
-      "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=800&q=80",
-    icon: TreePalm,
-    layout: "compact",
-  },
-  {
-    id: "royal-banquet",
-    title: "Royal Banquet",
-    description: "Grand hall for weddings, receptions & celebrations.",
-    image:
-      "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80",
-    icon: Crown,
-    layout: "compact",
-  },
-  {
-    id: "annapurna-hall",
-    title: "Annapurna Hall",
-    description: "Professional conference & meeting room for up to 25 attendees.",
-    image:
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80",
-    icon: Presentation,
-    layout: "wide",
-  },
-];
+export const VENUE_ICON_OPTIONS = [
+  { value: "UtensilsCrossed", label: "Dining" },
+  { value: "TreePalm", label: "Outdoor" },
+  { value: "Crown", label: "Banquet" },
+  { value: "Presentation", label: "Conference" },
+  { value: "PartyPopper", label: "Events" },
+  { value: "Building2", label: "Hall" },
+  { value: "Utensils", label: "Restaurant" },
+  { value: "Sparkles", label: "Premium" },
+  { value: "Waves", label: "Pool" },
+  { value: "Dumbbell", label: "Gym" },
+  { value: "Car", label: "Parking" },
+  { value: "Wifi", label: "Wi-Fi Lounge" },
+  { value: "Tv", label: "Media" },
+  { value: "Wind", label: "Climate" },
+  { value: "Coffee", label: "Cafe" },
+  { value: "Shield", label: "Secure" },
+  { value: "Wine", label: "Bar" },
+  { value: "Volume2", label: "Sound" },
+] as const;
 
-export const featuredVenue = VENUES.find((v) => v.layout === "featured")!;
-export const compactVenues = VENUES.filter((v) => v.layout === "compact");
-export const wideVenue = VENUES.find((v) => v.layout === "wide")!;
+const ICON_MAP: Record<string, LucideIcon> = {
+  UtensilsCrossed,
+  TreePalm,
+  Crown,
+  Presentation,
+  PartyPopper,
+  Building2,
+  Utensils,
+  Sparkles,
+  Waves,
+  Dumbbell,
+  Car,
+  Wifi,
+  Tv,
+  Wind,
+  Coffee,
+  Shield,
+  Wine,
+  Volume2,
+};
+
+export const resolveVenueIcon = (iconName?: string): LucideIcon =>
+  (iconName && ICON_MAP[iconName]) || UtensilsCrossed;
+
+export const partitionVenues = (venues: GalleryVenue[]) => ({
+  featured: venues.find((v) => v.layout === "featured") ?? null,
+  compact: venues.filter((v) => v.layout === "compact"),
+  wide: venues.find((v) => v.layout === "wide") ?? null,
+  all: venues,
+});

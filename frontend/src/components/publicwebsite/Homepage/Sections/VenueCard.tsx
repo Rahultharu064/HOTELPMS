@@ -1,22 +1,24 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import type { Venue } from "../../../../data/venues";
+import { getImageUrl } from "../../../../services/api";
+import { resolveVenueIcon, type GalleryVenue } from "../../../../data/venues";
 
 interface VenueCardProps {
-  venue: Venue;
+  venue: GalleryVenue;
   className?: string;
 }
 
 export const VenueCard = ({ venue, className = "" }: VenueCardProps) => {
-  const Icon = venue.icon;
+  const Icon = resolveVenueIcon(venue.icon);
+  const imageSrc = venue.image.startsWith("http") ? venue.image : getImageUrl(venue.image);
 
   return (
     <Link
-      to={`/gallery#${venue.id}`}
+      to={`/gallery#${venue.slug}`}
       className={`group relative block overflow-hidden rounded-2xl ${className}`}
     >
       <img
-        src={venue.image}
+        src={imageSrc}
         alt={venue.title}
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         loading="lazy"

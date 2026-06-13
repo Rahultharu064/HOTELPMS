@@ -39,6 +39,7 @@ async function main() {
   await prisma.roomType.deleteMany();
   await prisma.amenity.deleteMany();
   await prisma.facility.deleteMany();
+  await prisma.galleryVenue.deleteMany();
 
   console.log('Creating Admin User...');
   const hashedAdminPassword = await bcrypt.hash('admin123', 10);
@@ -87,6 +88,52 @@ async function main() {
     }
   });
 
+
+  console.log('Creating Gallery Venues...');
+  await prisma.galleryVenue.createMany({
+    data: [
+      {
+        title: 'Royal Dining',
+        slug: 'royal-dining',
+        description: 'Multi-cuisine fine dining with expert chefs and elegant ambience.',
+        image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80',
+        icon: 'UtensilsCrossed',
+        layout: 'featured',
+        sortOrder: 1,
+        isActive: true,
+      },
+      {
+        title: 'Tropical Outdoor',
+        slug: 'tropical-outdoor',
+        description: 'Garden lounge & outdoor space for intimate gatherings.',
+        image: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=800&q=80',
+        icon: 'TreePalm',
+        layout: 'compact',
+        sortOrder: 2,
+        isActive: true,
+      },
+      {
+        title: 'Royal Banquet',
+        slug: 'royal-banquet',
+        description: 'Grand hall for weddings, receptions & celebrations.',
+        image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80',
+        icon: 'Crown',
+        layout: 'compact',
+        sortOrder: 3,
+        isActive: true,
+      },
+      {
+        title: 'Annapurna Hall',
+        slug: 'annapurna-hall',
+        description: 'Professional conference & meeting room for up to 25 attendees.',
+        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80',
+        icon: 'Presentation',
+        layout: 'wide',
+        sortOrder: 4,
+        isActive: true,
+      },
+    ],
+  });
 
   console.log('Creating Extra Services...');
   await prisma.extraService.createMany({

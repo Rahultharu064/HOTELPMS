@@ -623,3 +623,31 @@ model HousekeepingStaff {
 
   @@map("housekeeping_staff")
 }
+
+// Gallery / Venues (public website)
+enum VenueLayout {
+  featured
+  compact
+  wide
+
+  @@map("venue_layout")
+}
+
+model GalleryVenue {
+  id          Int         @id @default(autoincrement())
+  title       String      @db.VarChar(150)
+  slug        String      @unique @db.VarChar(180)
+  description String      @db.Text
+  image       String      @db.VarChar(500)
+  icon        String      @default("UtensilsCrossed") @db.VarChar(50)
+  layout      VenueLayout @default(compact)
+  sortOrder   Int         @default(0)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([isActive])
+  @@index([sortOrder])
+  @@index([layout])
+  @@map("gallery_venues")
+}

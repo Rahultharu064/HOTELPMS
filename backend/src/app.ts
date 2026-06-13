@@ -26,6 +26,7 @@ import adminAuthRoutes from './routes/adminAuthRoute';
 import staffRoutes from './routes/staffRoute';
 import checkInOutRoutes from './routes/checkInOutRoute';
 import extraServiceRoutes from './routes/extraServiceRoute';
+import galleryRoutes from './routes/galleryRoute';
 // import facilityRoutes from './routes/facilityRoute';
 // import facilityRoutes from './routes/facilityRoute';
 
@@ -95,6 +96,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/staff', staffRoutes);
 app.use('/api/extra-services', extraServiceRoutes);
+app.use('/api/gallery', galleryRoutes);
 // app.use('/api/facilities', facilityRoutes);
 // app.use('/api/facilities', facilityRoutes);
 

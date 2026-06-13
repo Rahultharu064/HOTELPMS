@@ -50,6 +50,7 @@ import RoomsPage from '../pages/Admin/RoomsPage';
 import AdminBookingsPage from '../pages/Admin/BookingsPage';
 import AdminGuestsPage from '../pages/Admin/GuestsPage';
 import ExtraServicesPage from '../pages/Admin/ExtraServicesPage';
+import GalleryVenuesPage from '../pages/Admin/GalleryVenuesPage';
 import AdminUsersPage from '../pages/Admin/UsersPage';
 import RoomEditPage from '../pages/Admin/RoomEditPage';
 import AdminRoomDetailsPage from '../pages/Admin/RoomDetailsPage';
@@ -312,6 +313,10 @@ const routes: RouteObject[] = [
       {
         path: 'extra-services',
         element: <ExtraServicesPage />,
+      },
+      {
+        path: 'gallery',
+        element: <GalleryVenuesPage />,
       },
       {
         path: 'financials',

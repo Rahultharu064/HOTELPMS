@@ -14,6 +14,7 @@ import {
   Warehouse,
   Zap,
   ShieldCheck,
+  Images,
 } from "lucide-react";
 import { Button } from "../../ui/Button";
 
@@ -27,6 +28,7 @@ const menuItems = [
   { title: "System Analytics", url: "/admin/reports", icon: BarChart3 },
   { title: "Configuration", url: "/admin/settings", icon: Settings },
   { title: "Extra Services", url: "/admin/extra-services", icon: Zap },
+  { title: "Gallery & Venues", url: "/admin/gallery", icon: Images },
 ];
 
 interface AppSidebarProps {

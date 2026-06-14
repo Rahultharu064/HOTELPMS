@@ -69,6 +69,14 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
               loading="lazy"
             />
 
+            {/* Hover overlay + View Details */}
+            <div className="absolute inset-0 z-[5] flex items-center justify-center bg-primary-dark/45 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <span className="inline-flex translate-y-3 items-center gap-1.5 rounded-full bg-white px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-primary-dark shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-all duration-300 group-hover:translate-y-0">
+                View Details
+                <ArrowRight size={14} strokeWidth={2.5} />
+              </span>
+            </div>
+
             {/* Status badge — top left */}
             <div className="absolute left-3.5 top-3.5 z-10">
               <span

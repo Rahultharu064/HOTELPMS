@@ -1,105 +1,129 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import type { RoomType } from "../../../../services/roomTypeService";
 import { roomTypeService } from "../../../../services/roomTypeService";
 import { ApiStatus } from "../../../ui/ApiStatus";
 import { getImageUrl } from "../../../../services/api";
 
-
-const ScrollReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
-        viewport={{ once: true }}
-        className={className}
-    >
-        {children}
-    </motion.div>
+const ScrollReveal = ({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+    viewport={{ once: true }}
+    className={className}
+  >
+    {children}
+  </motion.div>
 );
 
 export const RoomTypeSection: React.FC = () => {
-    const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    const fetchRoomTypes = useCallback(async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const res = await roomTypeService.getAllRoomTypes();
-            setRoomTypes(res.data.roomTypes || []);
-        } catch (err: any) {
-            console.error("Failed to fetch room types:", err);
-            setError(err?.message || 'Failed to load room types');
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  const fetchRoomTypes = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await roomTypeService.getAllRoomTypes();
+      setRoomTypes(res.data.roomTypes || []);
+    } catch (err: any) {
+      console.error("Failed to fetch room types:", err);
+      setError(err?.message || "Failed to load room types");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    useEffect(() => {
-        fetchRoomTypes();
-    }, [fetchRoomTypes]);
+  useEffect(() => {
+    fetchRoomTypes();
+  }, [fetchRoomTypes]);
 
-    return (
-        <section className="section-padding bg-white border-b border-neutral-border/50">
-            <div className="container-custom">
-                <ScrollReveal className="text-center mb-16">
-                    <span className="text-primary-gold font-extrabold text-xs uppercase tracking-[0.2em] block mb-2">Our Collections</span>
-                    <h2 className="text-3xl md:text-5xl font-extrabold text-primary-dark tracking-tight mb-4">Browse by Room Type</h2>
-                    <p className="text-neutral-text-secondary font-medium">Find the perfect sanctuary that entirely suits your style and needs.</p>
-                </ScrollReveal>
+  return (
+    <section id="room-types" className="section-padding relative overflow-hidden border-b border-neutral-border/50 bg-[#FAFAF8]">
+      <div className="pointer-events-none absolute right-0 top-0 -mr-40 -mt-40 h-80 w-80 rounded-full bg-primary-gold/5 blur-[90px]" />
+      <div className="pointer-events-none absolute bottom-0 left-0 -mb-40 -ml-40 h-80 w-80 rounded-full bg-primary-green/5 blur-[90px]" />
 
-                {loading ? (
-                    <ApiStatus status="loading" skeletonCount={4} skeletonVariant="card" />
-                ) : error ? (
-                    <ApiStatus
-                        status="error"
-                        errorMessage={error}
-                        onRetry={fetchRoomTypes}
+      <div className="container-custom relative z-10">
+        <ScrollReveal className="mx-auto mb-14 max-w-3xl text-center md:mb-16">
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="h-px w-8 bg-primary-gold" />
+            <span className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-primary-gold">
+              Our Collections
+            </span>
+            <span className="h-px w-8 bg-primary-gold" />
+          </div>
+
+          <h2 className="font-georgia text-3xl font-bold leading-tight text-primary-dark md:text-4xl lg:text-[2.75rem]">
+            Browse by <span className="italic text-primary-green">Room</span> Type
+          </h2>
+
+          <p className="mx-auto mt-4 max-w-2xl text-sm font-medium leading-relaxed text-neutral-text-secondary md:text-base">
+            Find the perfect sanctuary that entirely suits your style and needs.
+          </p>
+        </ScrollReveal>
+
+        {loading ? (
+          <ApiStatus status="loading" skeletonCount={4} skeletonVariant="card" />
+        ) : error ? (
+          <ApiStatus status="error" errorMessage={error} onRetry={fetchRoomTypes} />
+        ) : roomTypes.length === 0 ? (
+          <ApiStatus
+            status="empty"
+            emptyTitle="Room Categories Coming Soon"
+            emptyDescription="We're preparing our room collections for you. Check back shortly."
+            emptyEmoji="🏨"
+          />
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            {roomTypes.slice(0, 4).map((rt, i) => (
+              <ScrollReveal key={rt.id} delay={i * 0.08}>
+                <Link
+                  to={`/rooms?type=${rt.name}`}
+                  className="group relative block overflow-hidden rounded-2xl border border-neutral-border/60 bg-white shadow-[0_8px_32px_rgba(20,83,45,0.06)] transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-green/20 hover:shadow-[0_20px_48px_rgba(20,83,45,0.12)]"
+                >
+                  <div className="relative aspect-[4/5] overflow-hidden">
+                    <img
+                      src={getImageUrl(rt.image)}
+                      alt={`${rt.name} rooms`}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
                     />
-                ) : roomTypes.length === 0 ? (
-                    <ApiStatus
-                        status="empty"
-                        emptyTitle="Room Categories Coming Soon"
-                        emptyDescription="We're preparing our room collections for you. Check back shortly."
-                        emptyEmoji="🏨"
-                    />
-                ) : (
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
-                        {roomTypes.slice(0, 4).map((rt, i) => (
-                            <ScrollReveal key={rt.id} delay={i * 0.1}>
-                                <Link
-                                    to={`/rooms?type=${rt.name}`}
-                                    className="group block rounded-3xl overflow-hidden relative aspect-[3/4] hover:-translate-y-2 transition-all duration-500 shadow-sm hover:shadow-2xl"
-                                >
-                                    <img
-                                        src={getImageUrl(rt.image)}
-                                        alt={`${rt.name} rooms`}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ease-out"
-                                        loading="lazy"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/90 via-primary-dark/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/95 via-primary-dark/35 to-primary-dark/10" />
 
-                                    <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-                                        <h3 className="text-xl md:text-2xl font-extrabold text-white tracking-tight drop-shadow-md mb-1.5 group-hover:text-primary-green transition-colors">{rt.name}</h3>
-                                        <p className="text-xs md:text-sm font-medium text-white/80 line-clamp-2 leading-relaxed mb-3">{rt.description}</p>
+                    <span className="absolute left-4 top-4 rounded-full border border-white/20 bg-white/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white backdrop-blur-sm">
+                      {rt.name}
+                    </span>
 
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-[9px] md:text-[10px] font-bold text-white uppercase tracking-widest bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10">Explore</span>
-                                        </div>
-                                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
+                      <h3 className="font-georgia text-xl font-bold text-white md:text-2xl">{rt.name}</h3>
+                      <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-white/80">
+                        {rt.description || "Elegant rooms designed for comfort and a memorable stay."}
+                      </p>
 
-                                    <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform scale-75 group-hover:scale-100 border border-white/20">
-                                        <svg className="h-4 w-4 text-white ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
-                                    </div>
-                                </Link>
-                            </ScrollReveal>
-                        ))}
+                      <span className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-primary-gold transition-colors group-hover:text-white">
+                        Explore Rooms
+                        <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                      </span>
                     </div>
-                )}
-            </div>
-        </section>
-    );
+                  </div>
+                </Link>
+              </ScrollReveal>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
 };

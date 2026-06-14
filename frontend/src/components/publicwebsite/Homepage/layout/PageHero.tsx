@@ -1,60 +1,48 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Home } from "lucide-react";
 
-interface Props {
-  title: string;
-  highlight?: string;
-  subtitle: string;
-  breadcrumbs: { label: string; to?: string }[];
-  bgImage?: string;
+export interface PageHeroBreadcrumb {
+  label: string;
+  to?: string;
 }
 
-const PageHero: React.FC<Props> = ({ title, highlight, subtitle, breadcrumbs, bgImage }) => (
-  <section className="relative w-full overflow-hidden page-hero">
-    {/* Background */}
-    <div
-      className="absolute inset-0 bg-cover bg-center page-hero-bg"
-      ref={(el) => {
-        if (el && bgImage) el.style.setProperty('--hero-bg', `url(${bgImage})`);
-      }}
-    />
-    <div className="absolute inset-0 page-hero-overlay" />
+interface PageHeroProps {
+  title: string;
+  subtitle?: string;
+  breadcrumbs: PageHeroBreadcrumb[];
+}
 
-    {/* Content */}
-    <div className="absolute inset-0 flex items-center page-hero-content">
+const PageHero = ({ title, subtitle, breadcrumbs }: PageHeroProps) => (
+  <div className="bg-gradient-to-r from-primary-dark via-primary-green to-primary-dark py-12 md:py-16">
+    <div className="container-custom text-center">
+      <nav className="mb-5 flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
+        {breadcrumbs.map((crumb, index) => (
+          <span key={`${crumb.label}-${index}`} className="inline-flex items-center gap-1.5">
+            {index > 0 && <ChevronRight size={12} className="text-white/30" />}
+            {crumb.to ? (
+              <Link
+                to={crumb.to}
+                className="inline-flex items-center gap-1 transition-colors hover:text-primary-gold"
+              >
+                {index === 0 && <Home size={12} />}
+                {crumb.label}
+              </Link>
+            ) : (
+              <span className="text-primary-gold">{crumb.label}</span>
+            )}
+          </span>
+        ))}
+      </nav>
 
-      <div className="site-container w-full">
-        {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 mb-6">
-          {breadcrumbs.map((crumb, i) => (
-            <React.Fragment key={i}>
-              {i > 0 && <ChevronRight className="h-3.5 w-3.5 text-white/40" />}
-              {crumb.to ? (
-                <Link to={crumb.to} className="text-white/60 text-[11px] font-bold uppercase tracking-widest hover:text-white transition-colors">
-                  {crumb.label}
-                </Link>
-              ) : (
-                <span className="text-[#F59E0B] text-[11px] font-bold uppercase tracking-widest">{crumb.label}</span>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
+      <h1 className="font-georgia text-3xl font-bold text-white md:text-4xl lg:text-[2.5rem]">{title}</h1>
 
-        <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight mb-4">
-          {title}
-          {highlight && <span className="text-[#F59E0B]"> {highlight}</span>}
-        </h1>
-        <p className="text-white/60 text-base font-medium max-w-xl leading-relaxed">
+      {subtitle && (
+        <p className="mx-auto mt-4 max-w-2xl text-sm font-medium leading-relaxed text-white/80 md:text-base">
           {subtitle}
         </p>
-      </div>
+      )}
     </div>
-
-    {/* Bottom fade */}
-    <div className="absolute inset-x-0 bottom-0 h-16 page-hero-bottom-fade" />
-
-  </section>
+  </div>
 );
 
 export default PageHero;

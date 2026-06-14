@@ -542,6 +542,26 @@
   height: var(--bar-height);
 }
 
+/* ── SHIMMER SKELETON LOADER ── */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
 
-
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #f3f4f6 0%,
+    #eceff1 20%,
+    #ffffff 50%,
+    #eceff1 80%,
+    #f3f4f6 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
 

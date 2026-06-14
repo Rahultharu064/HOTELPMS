@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronRight, Home } from "lucide-react";
 import { resolveVenueIcon } from "../../data/venues";
 import type { GalleryVenue } from "../../data/venues";
 import { galleryService } from "../../services/galleryService";
 import { getImageUrl } from "../../services/api";
 import { ApiStatus } from "../../components/ui/ApiStatus";
+import PageHero from "../../components/publicwebsite/Homepage/layout/PageHero";
 import VenuesSection from "../../components/publicwebsite/Homepage/Sections/VenuesSection";
 
 export const GalleryPage = () => {
@@ -48,21 +48,13 @@ export const GalleryPage = () => {
 
   return (
     <main className="min-h-screen bg-[#FAFAF8]">
-      <div className="bg-gradient-to-r from-primary-dark via-primary-green to-primary-dark py-12 md:py-16">
-        <div className="container-custom text-center">
-          <nav className="mb-5 flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
-            <Link to="/" className="inline-flex items-center gap-1 transition-colors hover:text-primary-gold">
-              <Home size={12} />
-              Home
-            </Link>
-            <ChevronRight size={12} className="text-white/30" />
-            <span className="text-primary-gold">Photo Gallery</span>
-          </nav>
-          <h1 className="font-georgia text-3xl font-bold text-white md:text-4xl lg:text-[2.5rem]">
-            Photo Gallery
-          </h1>
-        </div>
-      </div>
+      <PageHero
+        title="Photo Gallery"
+        breadcrumbs={[
+          { label: "Home", to: "/" },
+          { label: "Photo Gallery" },
+        ]}
+      />
 
       <VenuesSection showViewAll={false} hideHeader />
 

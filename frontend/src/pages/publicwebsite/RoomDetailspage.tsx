@@ -26,8 +26,8 @@ import {
   Star,
   Check,
   CalendarDays,
-  Home,
 } from "lucide-react";
+import PageHero from "../../components/publicwebsite/Homepage/layout/PageHero";
 import { roomService } from "../../services/roomService";
 import type { Room } from "../../services/roomService";
 import { getImageUrl } from "../../services/api";
@@ -194,26 +194,14 @@ export const RoomDetailspage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Page header */}
-      <div className="bg-gradient-to-r from-primary-dark via-primary-green to-primary-dark py-10 md:py-12">
-        <div className="container-custom">
-          <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-white/60">
-            <Link to="/" className="inline-flex items-center gap-1 transition-colors hover:text-primary-gold">
-              <Home size={12} />
-              Home
-            </Link>
-            <ChevronRight size={12} className="text-white/30" />
-            <Link to="/rooms" className="transition-colors hover:text-primary-gold">
-              Rooms
-            </Link>
-            <ChevronRight size={12} className="text-white/30" />
-            <span className="text-primary-gold">{room.name}</span>
-          </nav>
-          <h1 className="font-georgia text-3xl font-bold leading-tight text-white md:text-4xl lg:text-[2.5rem]">
-            {room.name}
-          </h1>
-        </div>
-      </div>
+      <PageHero
+        title={room.name}
+        breadcrumbs={[
+          { label: "Home", to: "/" },
+          { label: "Rooms", to: "/rooms" },
+          { label: room.name },
+        ]}
+      />
 
       <div className="container-custom py-10 lg:py-14">
         <div className="grid gap-10 lg:grid-cols-3 lg:gap-12">

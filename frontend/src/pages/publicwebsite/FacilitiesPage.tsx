@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaWifi, FaSwimmingPool, FaParking, FaCoffee, FaDumbbell, FaSpa } from 'react-icons/fa';
+import PageHero from '../../components/publicwebsite/Homepage/layout/PageHero';
 
 export const FacilitiesPage: React.FC = () => {
   const facilities = [
@@ -44,27 +45,14 @@ export const FacilitiesPage: React.FC = () => {
 
   return (
     <main className="min-h-screen bg-neutral-light">
-      {/* Header Banner */}
-      <div className="relative h-80 bg-gradient-to-r from-primary-dark to-primary-green">
-        <div className="absolute inset-0 bg-black/40"></div>
-        <div className="relative h-full flex flex-col items-center justify-center text-center text-white px-4">
-          <motion.h1 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold mb-4 font-poppins"
-          >
-            Our Facilities
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl max-w-2xl mx-auto font-inter"
-          >
-            Experience premium amenities designed for your absolute comfort and convenience.
-          </motion.p>
-        </div>
-      </div>
+      <PageHero
+        title="Our Facilities"
+        subtitle="Experience premium amenities designed for your absolute comfort and convenience."
+        breadcrumbs={[
+          { label: "Home", to: "/" },
+          { label: "Facilities" },
+        ]}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

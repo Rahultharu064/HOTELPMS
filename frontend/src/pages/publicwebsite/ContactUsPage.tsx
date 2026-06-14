@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import PageHero from '../../components/publicwebsite/Homepage/layout/PageHero';
 
 interface ContactForm {
   name: string;
@@ -35,16 +36,14 @@ export const ContactUsPage: React.FC = () => {
 
   return (
     <main>
-      {/* Header Banner */}
-      <div className="relative h-64 bg-gradient-to-r from-primary-dark to-primary-green">
-        <div className="absolute inset-0 bg-black/50"></div>
-        <div className="relative h-full flex items-center justify-center text-center text-white">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
-            <p className="text-lg">We'd love to hear from you. Get in touch with us today!</p>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        title="Contact Us"
+        subtitle="We'd love to hear from you. Get in touch with us today!"
+        breadcrumbs={[
+          { label: "Home", to: "/" },
+          { label: "Contact" },
+        ]}
+      />
 
       <div className="container-custom section-padding">
         <div className="grid lg:grid-cols-3 gap-12">

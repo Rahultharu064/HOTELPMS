@@ -7,7 +7,39 @@ import { roomTypeService, type RoomType } from "../../services/roomTypeService";
 import { getImageUrl } from "../../services/api";
 import { ApiStatus } from "../../components/ui/ApiStatus";
 
-import { Users, BedDouble, Maximize, Star, SlidersHorizontal, X, Loader2 } from "lucide-react";
+import { Users, BedDouble, Maximize, Star, SlidersHorizontal, X } from "lucide-react";
+import PageHero from "../../components/publicwebsite/Homepage/layout/PageHero";
+
+const RoomCardSkeleton = ({ delay = 0 }: { delay?: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 24 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
+    className="overflow-hidden rounded-3xl border border-neutral-border/40 bg-white shadow-sm"
+  >
+    <div className="relative aspect-[4/3] skeleton-shimmer">
+      <div className="absolute bottom-4 left-5 right-5 space-y-2">
+        <div className="h-2.5 w-16 rounded-full bg-white/40" />
+        <div className="h-5 w-2/3 rounded-full bg-white/50" />
+      </div>
+    </div>
+    <div className="space-y-4 p-5">
+      <div className="space-y-2">
+        <div className="h-3 w-full rounded-full skeleton-shimmer" />
+        <div className="h-3 w-4/5 rounded-full skeleton-shimmer" />
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="h-14 rounded-xl skeleton-shimmer" />
+        ))}
+      </div>
+      <div className="flex gap-2.5">
+        <div className="h-9 flex-1 rounded-lg skeleton-shimmer" />
+        <div className="h-9 flex-1 rounded-lg skeleton-shimmer" />
+      </div>
+    </div>
+  </motion.div>
+);
 
 
 const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
@@ -127,22 +159,20 @@ export const Roompage: React.FC = () => {
 
   return (
     <main className="bg-neutral-light min-h-screen pb-24">
-      {/* Header Banner */}
-      <div className="pt-12 pb-16 lg:pt-20 lg:pb-24 relative overflow-hidden">
-        <div className="container-custom relative z-10">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="inline-block px-3 py-1 bg-primary-gold/10 rounded-full text-xs font-bold uppercase tracking-widest text-primary-gold mb-4 border border-primary-gold/20">Accommodation</span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary-dark tracking-tight mb-4 drop-shadow-sm">Our Signature Rooms</h1>
-            <p className="text-lg text-neutral-text-secondary max-w-2xl font-medium leading-relaxed">Find the perfect sanctuary tailored for your stay. Experience unparalleled comfort, breathtaking views, and modern luxury.</p>
-          </motion.div>
-        </div>
-      </div>
+      <PageHero
+        title="Our Signature Rooms"
+        subtitle="Find the perfect sanctuary tailored for your stay. Experience comfort, breathtaking views, and modern luxury."
+        breadcrumbs={[
+          { label: "Home", to: "/" },
+          { label: "Rooms" },
+        ]}
+      />
 
-      <div className="container-custom mt-2 relative z-20">
-        <div className="flex flex-col lg:flex-row gap-8">
+      <div className="container-custom relative z-20 pt-10 md:pt-12 lg:pt-14">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10 xl:gap-12">
           
           {/* Mobile Filter Toggle */}
-          <div className="lg:hidden flex items-center justify-between bg-white p-4 rounded-xl shadow-md border border-neutral-border/50 backdrop-blur-md relative overflow-hidden">
+          <div className="lg:hidden flex items-center justify-between rounded-2xl border border-neutral-border/60 bg-white p-4 shadow-[0_8px_32px_rgba(20,83,45,0.06)] relative overflow-hidden">
             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary-gold" />
             <span className="font-extrabold text-primary-dark ml-3 tracking-tight">{filteredRooms.length} Rooms match your search</span>
             <Button variant="outline" size="sm" onClick={() => setShowFilters(true)} className="border-neutral-border text-primary-dark font-bold bg-neutral-light shadow-sm">
@@ -174,12 +204,12 @@ export const Roompage: React.FC = () => {
           </AnimatePresence>
 
           {/* Desktop Sidebar */}
-          <aside className="hidden lg:block w-72 shrink-0">
+          <aside className="hidden lg:block w-72 shrink-0 lg:pt-1">
             <motion.div 
               initial={{ opacity: 0, x: -30 }} 
               animate={{ opacity: 1, x: 0 }} 
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="sticky top-28 bg-white border border-neutral-border rounded-3xl shadow-xl p-8 relative overflow-hidden"
+              className="sticky top-28 bg-white border border-neutral-border/60 rounded-2xl shadow-[0_8px_32px_rgba(20,83,45,0.06)] p-8 relative overflow-hidden"
             >
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-green to-primary-gold" />
               <h3 className="font-extrabold text-xl text-primary-dark mb-8 tracking-tight flex items-center gap-2.5">
@@ -193,27 +223,37 @@ export const Roompage: React.FC = () => {
           </aside>
 
           {/* Room Grid */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0 lg:pt-1">
             {error ? (
               <ApiStatus
                 status="error"
                 errorMessage={error}
                 onRetry={fetchData}
               />
+            ) : loading ? (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <RoomCardSkeleton key={i} delay={i * 0.07} />
+                ))}
+              </div>
             ) : (
             <>
-            <div className="hidden lg:flex justify-between items-center mb-6 pl-2">
-              {loading ? (
-                <div className="flex items-center gap-2 text-primary-green animate-pulse">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-xs font-extrabold uppercase tracking-[0.15em]">Refining your sanctuaries...</span>
-                </div>
-              ) : (
-                <p className="text-xs font-extrabold text-neutral-text-secondary uppercase tracking-[0.15em]">Showing {filteredRooms.length} curated rooms</p>
+            <div className="mb-6 hidden lg:flex items-center justify-between rounded-2xl border border-neutral-border/50 bg-white px-5 py-4 shadow-sm">
+              <p className="text-xs font-extrabold uppercase tracking-[0.15em] text-neutral-text-secondary">
+                Showing {filteredRooms.length} curated rooms
+              </p>
+              {(typeFilters.length > 0 || maxPrice < 15000) && (
+                <button
+                  type="button"
+                  onClick={() => { setTypeFilters([]); setMaxPrice(15000); }}
+                  className="text-[11px] font-bold uppercase tracking-wider text-primary-green transition-colors hover:text-primary-dark"
+                >
+                  Clear filters
+                </button>
               )}
             </div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
               {filteredRooms.map((room, i) => {
                 const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url || "https://images.unsplash.com/photo-1566665797739-1674de7a421a";
                 const imageUrl = getImageUrl(primaryImage);

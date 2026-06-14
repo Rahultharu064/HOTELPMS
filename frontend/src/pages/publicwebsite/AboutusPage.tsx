@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaAward, FaUsers, FaHotel, FaCalendarAlt, FaStar, FaHeart } from 'react-icons/fa';
+import PageHero from '../../components/publicwebsite/Homepage/layout/PageHero';
 
 export const AboutusPage: React.FC = () => {
   const values = [
@@ -11,18 +12,14 @@ export const AboutusPage: React.FC = () => {
 
   return (  
     <main>
-      {/* Header Banner */}
-      <div className="relative h-96 bg-gradient-to-r from-primary-dark to-primary-green">
-        <div className="absolute inset-0 bg-black/50"></div>
-        <div className="relative h-full flex items-center justify-center text-center text-white">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">About Itahari Namuna</h1>
-            <p className="text-lg max-w-2xl mx-auto">
-              Where academic excellence meets luxurious hospitality
-            </p>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        title="About Itahari Namuna"
+        subtitle="Where academic excellence meets luxurious hospitality"
+        breadcrumbs={[
+          { label: "Home", to: "/" },
+          { label: "About" },
+        ]}
+      />
 
       <div className="container-custom section-padding">
         {/* Introduction */}

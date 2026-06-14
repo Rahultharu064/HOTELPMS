@@ -13,6 +13,39 @@ import { v4 as uuidv4 } from 'uuid';
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export class AuthController {
+  private buildOtpResponse(email: string, otp: string, emailSent: boolean) {
+    const payload: Record<string, unknown> = {
+      message: emailSent
+        ? 'Registration successful. Please verify your email with the OTP sent.'
+        : 'Registration successful, but the verification email could not be sent. Use resend OTP or contact support.',
+      email,
+      emailSent,
+    };
+
+    if (config.nodeEnv === 'development') {
+      payload.otp = otp;
+    }
+
+    return payload;
+  }
+
+  private async sendOtpOrFail(email: string, otp: string, context: string): Promise<boolean> {
+    const sent = await sendOTPEmail(email, otp);
+    if (sent) return true;
+
+    console.error(`[${context}] Failed to send OTP email to ${email}`);
+
+    if (config.nodeEnv === 'development') {
+      console.warn(`[DevMode] OTP for ${email}: ${otp}`);
+      return false;
+    }
+
+    throw new ApiError(
+      HttpStatus.SERVICE_UNAVAILABLE,
+      'Unable to send verification email. Please try again in a few minutes.'
+    );
+  }
+
   /**
    * Register a new guest (requires OTP verification)
    */
@@ -46,17 +79,10 @@ export class AuthController {
       },
     });
 
-    // Send OTP email — non-blocking, failure does NOT crash the endpoint
-    sendOTPEmail(normalizedEmail, otp).catch((err) => {
-      console.error('[RegistrationEmailError]:', err);
-    });
+    // Send OTP email
+    const emailSent = await this.sendOtpOrFail(normalizedEmail, otp, 'RegistrationEmailError');
 
-
-    res.status(HttpStatus.CREATED).json({
-      message: 'Registration successful. Please verify your email with the OTP sent.',
-      email: normalizedEmail,
-    });
-
+    res.status(HttpStatus.CREATED).json(this.buildOtpResponse(normalizedEmail, otp, emailSent));
   });
 
   /**
@@ -84,11 +110,8 @@ export class AuthController {
         data: { otp, otpExpires },
       });
 
-      await sendOTPEmail(guest.email, otp).catch((err) => {
-        console.error('[LoginResendOTPError]:', err);
-      });
+      await this.sendOtpOrFail(guest.email, otp, 'LoginResendOTPError');
 
-      
       throw new ApiError(HttpStatus.FORBIDDEN, 'Account not verified. A new OTP has been sent to your email.');
     }
 
@@ -192,16 +215,20 @@ export class AuthController {
       data: { otp, otpExpires },
     });
 
-    // Non-blocking — don't crash if SMTP is down
-    sendOTPEmail(email, otp).catch((err) => {
-      console.error('[ResendOTPError]:', err);
-    });
+    const emailSent = await this.sendOtpOrFail(normalizedEmail, otp, 'ResendOTPError');
 
+    const payload: Record<string, unknown> = {
+      message: emailSent
+        ? 'A new OTP has been sent to your email'
+        : 'OTP regenerated, but email delivery failed. Try again shortly.',
+      emailSent,
+    };
 
-    res.json({
-      message: 'A new OTP has been sent to your email',
-    });
+    if (config.nodeEnv === 'development') {
+      payload.otp = otp;
+    }
 
+    res.json(payload);
   });
 
   /**
@@ -229,9 +256,21 @@ export class AuthController {
       data: { resetToken, resetTokenExpires },
     });
 
-    await sendResetPasswordEmail(email, resetToken);
+    const emailSent = await sendResetPasswordEmail(normalizedEmail, resetToken);
 
-    res.json({ message: 'Password reset link sent to your email' });
+    if (!emailSent && config.nodeEnv !== 'development') {
+      throw new ApiError(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        'Unable to send password reset email. Please try again later.'
+      );
+    }
+
+    res.json({
+      message: emailSent
+        ? 'Password reset link sent to your email'
+        : 'Password reset prepared, but email delivery failed. Check SMTP configuration.',
+      emailSent,
+    });
   });
 
   /**

@@ -16,7 +16,7 @@ export const VerifyOTPPage: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const state = location.state as { email?: string };
+    const state = location.state as { email?: string; devOtp?: string };
     const savedEmail = localStorage.getItem('pending_verify_email');
     
     if (state?.email) {
@@ -27,6 +27,11 @@ export const VerifyOTPPage: React.FC = () => {
     } else {
       toast.error('Session expired. Please try logging in.');
       navigate('/login');
+    }
+
+    if (state?.devOtp) {
+      setOtp(state.devOtp);
+      toast(`Dev OTP pre-filled: ${state.devOtp}`, { icon: '🔑', duration: 10000 });
     }
   }, [location, navigate]);
 
@@ -59,8 +64,16 @@ export const VerifyOTPPage: React.FC = () => {
   const handleResend = async () => {
     setResending(true);
     try {
-      await authService.resendOTP(email);
-      toast.success('A new code has been sent to your email');
+      const data = await authService.resendOTP(email) as { message?: string; otp?: string; emailSent?: boolean };
+      if (data.emailSent === false) {
+        toast.error('Email could not be sent. Check SMTP configuration.');
+      } else {
+        toast.success('A new code has been sent to your email');
+      }
+      if (data.otp) {
+        setOtp(data.otp);
+        toast(`Dev OTP: ${data.otp}`, { icon: '🔑', duration: 15000 });
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to resend code');
     } finally {

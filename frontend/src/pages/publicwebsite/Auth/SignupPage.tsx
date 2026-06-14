@@ -28,12 +28,25 @@ export const SignupPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await authService.register(formData);
+      const data = await authService.register(formData) as {
+        message?: string;
+        email?: string;
+        otp?: string;
+        emailSent?: boolean;
+      };
 
-      toast.success('Registration successful! Please verify your email.');
-      // In dev mode the backend sends back the OTP directly
+      if (data.emailSent === false) {
+        toast.error('Email could not be sent. Check SMTP settings or use the dev code below.');
+      } else {
+        toast.success('Registration successful! Please verify your email.');
+      }
+
+      if (data.otp) {
+        toast(`Dev OTP: ${data.otp}`, { icon: '🔑', duration: 15000 });
+      }
+
       navigate('/verify-otp', {
-        state: { email: formData.email },
+        state: { email: formData.email, devOtp: data.otp },
       });
 
     } catch (error: any) {

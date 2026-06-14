@@ -1,39 +1,96 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { type Transporter } from 'nodemailer';
 import { config } from '../config';
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: config.email.user,
-    pass: config.email.pass,
-  },
-  tls: {
-    // Do not fail on invalid certs
-    rejectUnauthorized: false
-  },
-  // Shorter connection timeout so a bad network doesn't block the request for >30s
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-});
+let transporter: Transporter | null = null;
 
+export const isEmailConfigured = (): boolean =>
+  Boolean(config.email.user && config.email.pass);
 
-export const sendEmail = async (to: string, subject: string, html: string): Promise<void> => {
+const resolveSmtpHost = (): string | undefined => {
+  if (config.email.host) return config.email.host;
+
+  const user = config.email.user?.toLowerCase() ?? '';
+  if (user.includes('@gmail.com') || user.includes('@googlemail.com')) {
+    return 'smtp.gmail.com';
+  }
+
+  return undefined;
+};
+
+const getTransporter = (): Transporter => {
+  if (transporter) return transporter;
+
+  const { port, user, pass } = config.email;
+  if (!user || !pass) {
+    throw new Error('SMTP is not configured. Set SMTP_USER and SMTP_PASS in backend/.env');
+  }
+
+  const host = resolveSmtpHost();
+
+  transporter = host
+    ? nodemailer.createTransport({
+        host,
+        port,
+        secure: port === 465,
+        auth: { user, pass },
+        tls: { minVersion: 'TLSv1.2' },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 10000,
+      })
+    : nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user, pass },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 10000,
+      });
+
+  return transporter;
+};
+
+/** Verify SMTP connection on server startup */
+export const verifyEmailConfig = async (): Promise<boolean> => {
+  if (!isEmailConfigured()) {
+    console.warn('⚠️ Email service disabled: SMTP_USER and/or SMTP_PASS missing in backend/.env');
+    return false;
+  }
+
   try {
-    const info = await transporter.sendMail({
-      from: `"Itahari Namuna Hotel" <${config.email.user}>`,
+    await getTransporter().verify();
+    const host = resolveSmtpHost() || 'gmail';
+    console.log(`✅ Email service ready (${host}:${config.email.port} as ${config.email.user})`);
+    return true;
+  } catch (error) {
+    console.error('❌ Email service verification failed:', error);
+    console.error('   Fix SMTP_USER, SMTP_PASS, SMTP_HOST, SMTP_PORT in backend/.env');
+    console.error('   Gmail users must use an App Password: https://support.google.com/accounts/answer/185833');
+    return false;
+  }
+};
+
+export const sendEmail = async (to: string, subject: string, html: string): Promise<boolean> => {
+  if (!isEmailConfigured()) {
+    console.error('[EmailError] SMTP not configured — set SMTP_USER and SMTP_PASS');
+    return false;
+  }
+
+  try {
+    const info = await getTransporter().sendMail({
+      from: `"Itahari Namuna Hotel" <${config.email.from}>`,
       to,
       subject,
       html,
     });
-    console.log('Email sent: %s', info.messageId);
+    console.log(`📧 Email sent to ${to}: ${info.messageId}`);
+    return true;
   } catch (error) {
-    // Log but DO NOT rethrow — email failures should never crash the API
-    console.error('Error sending email (non-fatal):', error);
+    console.error(`[EmailError] Failed to send to ${to}:`, error);
+    return false;
   }
 };
 
-export const sendOTPEmail = async (to: string, otp: string): Promise<void> => {
+export const sendOTPEmail = async (to: string, otp: string): Promise<boolean> => {
   const subject = 'Your OTP Code - Itahari Namuna Hotel';
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
@@ -48,10 +105,10 @@ export const sendOTPEmail = async (to: string, otp: string): Promise<void> => {
       <p style="font-size: 12px; color: #888; text-align: center;">&copy; 2026 Itahari Namuna Hotel. All rights reserved.</p>
     </div>
   `;
-  await sendEmail(to, subject, html);
+  return sendEmail(to, subject, html);
 };
 
-export const sendResetPasswordEmail = async (to: string, token: string): Promise<void> => {
+export const sendResetPasswordEmail = async (to: string, token: string): Promise<boolean> => {
   const origin = Array.isArray(config.corsOrigin) ? config.corsOrigin[0] : config.corsOrigin;
   const resetUrl = `${origin}/reset-password?token=${token}`;
   const subject = 'Reset Your Password - Itahari Namuna Hotel';
@@ -69,14 +126,15 @@ export const sendResetPasswordEmail = async (to: string, token: string): Promise
       <p style="font-size: 12px; color: #888; text-align: center;">&copy; 2026 Itahari Namuna Hotel. All rights reserved.</p>
     </div>
   `;
-  await sendEmail(to, subject, html);
+  return sendEmail(to, subject, html);
 };
-export const sendBookingConfirmationEmail = async (to: string, bookingDetails: any): Promise<void> => {
+
+export const sendBookingConfirmationEmail = async (to: string, bookingDetails: any): Promise<boolean> => {
   const origin = Array.isArray(config.corsOrigin) ? config.corsOrigin[0] : config.corsOrigin;
   const subject = `Booking Confirmed - ${bookingDetails.bookingNumber}`;
   const html = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; padding: 0; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background-color: #ffffff;">
-      <div style="background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%); padding: 40px 20px; text-align: center; color: white;">
+      <div style="background: linear-gradient(135deg, #14532D 0%, #1F7A3A 100%); padding: 40px 20px; text-align: center; color: white;">
         <h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.025em;">Booking Confirmed!</h1>
         <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 16px;">Thank you for choosing Itahari Namuna Hotel</p>
       </div>
@@ -107,37 +165,42 @@ export const sendBookingConfirmationEmail = async (to: string, bookingDetails: a
             </tr>
             <tr>
               <td style="padding: 16px 0 8px 0; color: #1e293b; font-size: 16px; font-weight: 700; border-top: 1px solid #e2e8f0;">Total Amount:</td>
-              <td style="padding: 16px 0 8px 0; color: #1e40af; font-size: 18px; font-weight: 800; text-align: right; border-top: 1px solid #e2e8f0;">Rs. ${bookingDetails.totalAmount}</td>
+              <td style="padding: 16px 0 8px 0; color: #14532D; font-size: 18px; font-weight: 800; text-align: right; border-top: 1px solid #e2e8f0;">Rs. ${bookingDetails.totalAmount}</td>
             </tr>
           </table>
         </div>
         
         <div style="text-align: center; margin-top: 32px;">
-          <a href="${origin}/profile" style="background-color: #1e40af; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block; transition: background-color 0.2s;">View Your Booking</a>
+          <a href="${origin}/profile" style="background-color: #14532D; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block;">View Your Booking</a>
         </div>
       </div>
       
       <div style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
-        <p style="margin: 0; font-size: 14px; color: #64748b;">Need help? Contact us at info@itaharinamuna.com</p>
+        <p style="margin: 0; font-size: 14px; color: #64748b;">Need help? Contact us at info@itaharinamuna.edu.np</p>
         <div style="margin-top: 20px; font-size: 12px; color: #94a3b8;">
           &copy; 2026 Itahari Namuna Hotel. All rights reserved.
         </div>
       </div>
     </div>
   `;
-  await sendEmail(to, subject, html);
+  return sendEmail(to, subject, html);
 };
 
-export const sendStaffWelcomeEmail = async (to: string, staffName: string, role: string, temporaryPassword: string): Promise<void> => {
+export const sendStaffWelcomeEmail = async (
+  to: string,
+  staffName: string,
+  role: string,
+  temporaryPassword: string
+): Promise<boolean> => {
   const origin = Array.isArray(config.corsOrigin) ? config.corsOrigin[0] : config.corsOrigin;
   const loginUrl = `${origin}/admin/login`;
   const subject = 'Welcome to the Team - Itahari Namuna Hotel';
-  
-  const roleDisplay = role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-  
+
+  const roleDisplay = role.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+
   const html = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; padding: 0; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background-color: #ffffff;">
-      <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 40px 20px; text-align: center; color: white;">
+      <div style="background: linear-gradient(135deg, #14532D 0%, #1F7A3A 100%); padding: 40px 20px; text-align: center; color: white;">
         <h1 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.025em;">Welcome to ITNAMUNA</h1>
         <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em;">Staff Portal Invitation</p>
       </div>
@@ -163,7 +226,7 @@ export const sendStaffWelcomeEmail = async (to: string, staffName: string, role:
         </div>
         
         <div style="text-align: center; margin-top: 32px;">
-          <a href="${loginUrl}" style="background-color: #0f172a; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block;">Access Staff Portal</a>
+          <a href="${loginUrl}" style="background-color: #14532D; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block;">Access Staff Portal</a>
         </div>
       </div>
       
@@ -175,5 +238,5 @@ export const sendStaffWelcomeEmail = async (to: string, staffName: string, role:
       </div>
     </div>
   `;
-  await sendEmail(to, subject, html);
+  return sendEmail(to, subject, html);
 };

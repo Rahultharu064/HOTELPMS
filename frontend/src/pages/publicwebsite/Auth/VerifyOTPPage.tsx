@@ -55,7 +55,13 @@ export const VerifyOTPPage: React.FC = () => {
         toast.error('Server returned an invalid response');
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Verification failed');
+      const message = error.response?.data?.message || 'Verification failed';
+      if (message.includes('already verified')) {
+        toast(message);
+        navigate('/login', { state: { email } });
+        return;
+      }
+      toast.error(message);
     } finally {
       setLoading(false);
     }

@@ -3,17 +3,26 @@ import passport from 'passport';
 import { AuthController } from '../controllers/authController';
 import { validate } from '../middlewares/validateMiddleware';
 import { authenticate } from '../middlewares/authMiddleware';
+import {
+  authForgotPasswordLimiter,
+  authLoginLimiter,
+  authOtpLimiter,
+  authRegisterLimiter,
+  authResendOtpLimiter,
+} from '../middlewares/authRateLimiters';
 import { z } from 'zod';
 import { upload } from '../middlewares/uploadMiddleware';
 
 const router = Router();
 const authController = new AuthController();
 
+const passwordSchema = z.string().min(8, 'Password must be at least 8 characters');
+
 const registerSchema = z.object({
   body: z.object({
     email: z.string().email(),
     phone: z.string().min(8),
-    password: z.string().min(6),
+    password: passwordSchema,
     firstName: z.string().min(2),
     lastName: z.string().min(2),
   }),
@@ -22,7 +31,7 @@ const registerSchema = z.object({
 const loginSchema = z.object({
   body: z.object({
     email: z.string().email(),
-    password: z.string(),
+    password: z.string().min(1),
   }),
 });
 
@@ -54,14 +63,14 @@ const forgotPasswordSchema = z.object({
 const resetPasswordSchema = z.object({
   body: z.object({
     token: z.string(),
-    newPassword: z.string().min(6),
+    newPassword: passwordSchema,
   }),
 });
 
 
-router.post('/register', validate(registerSchema), authController.register);
-router.post('/login', validate(loginSchema), authController.login);
-router.post('/google', validate(googleLoginSchema), authController.googleLogin);
+router.post('/register', authRegisterLimiter, validate(registerSchema), authController.register);
+router.post('/login', authLoginLimiter, validate(loginSchema), authController.login);
+router.post('/google', authLoginLimiter, validate(googleLoginSchema), authController.googleLogin);
 
 // Passport Google Routes
 router.get('/google/login', (req, res, next) => {
@@ -75,10 +84,10 @@ router.get('/google/login', (req, res, next) => {
 });
 router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/login' }), authController.passportGoogleCallback);
 
-router.post('/verify-otp', validate(verifyOTPSchema), authController.verifyOTP);
-router.post('/resend-otp', validate(requestOTPSchema), authController.resendOTP);
-router.post('/forgot-password', validate(forgotPasswordSchema), authController.forgotPassword);
-router.post('/reset-password', validate(resetPasswordSchema), authController.resetPassword);
+router.post('/verify-otp', authOtpLimiter, validate(verifyOTPSchema), authController.verifyOTP);
+router.post('/resend-otp', authResendOtpLimiter, validate(requestOTPSchema), authController.resendOTP);
+router.post('/forgot-password', authForgotPasswordLimiter, validate(forgotPasswordSchema), authController.forgotPassword);
+router.post('/reset-password', authForgotPasswordLimiter, validate(resetPasswordSchema), authController.resetPassword);
 
 // Protected routes
 router.get('/me', authenticate as any, authController.getMe);

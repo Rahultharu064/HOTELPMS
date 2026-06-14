@@ -32,6 +32,10 @@ import galleryRoutes from './routes/galleryRoute';
 
 const app: Express = express();
 
+if (config.isProduction) {
+  app.set('trust proxy', 1);
+}
+
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }

@@ -12,6 +12,8 @@ import { config } from './config';
 import { prisma } from './config/database';
 import { ensureGallerySchema } from './utils/ensureGallerySchema';
 import { verifyEmailConfig } from './utils/mail';
+import { ensureDevAccounts } from './utils/ensureDevAccounts';
+import { validateEnvironment } from './utils/validateEnv';
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -300,8 +302,14 @@ process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
 });
 
 server.listen(config.port, async () => {
+  validateEnvironment();
   await ensureGallerySchema();
-  await verifyEmailConfig();
+  await ensureDevAccounts();
+  const emailReady = await verifyEmailConfig();
+  if (config.isProduction && !emailReady) {
+    console.error('❌ Email service is required in production. Shutting down.');
+    process.exit(1);
+  }
   console.log(`🚀 Server running in ${config.nodeEnv} mode on port ${config.port}`);
   console.log(`📡 WebSocket server ready for connections`);
   console.log(`🔗 API endpoint: http://localhost:${config.port}/api`);

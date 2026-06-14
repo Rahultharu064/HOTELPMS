@@ -21,7 +21,11 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, config.jwt.secret) as { id: number };
+    const decoded = jwt.verify(token, config.jwt.secret) as { id: number; type?: string };
+
+    if (decoded.type && decoded.type !== 'guest') {
+      throw new ApiError(HttpStatus.FORBIDDEN, 'Invalid token type. Guest access required.');
+    }
 
     const guest = await prisma.guest.findUnique({
       where: { id: decoded.id },
@@ -29,6 +33,10 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 
     if (!guest) {
       throw new ApiError(HttpStatus.UNAUTHORIZED, 'User not found');
+    }
+
+    if (config.isProduction && !guest.isVerified) {
+      throw new ApiError(HttpStatus.FORBIDDEN, 'Email verification required');
     }
 
     req.user = {

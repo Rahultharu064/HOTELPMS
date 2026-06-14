@@ -8,11 +8,39 @@ import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
 import { asyncHandler } from '../utils/asyncHandler';
 import { sendOTPEmail, sendResetPasswordEmail } from '../utils/mail';
+import { generateOtp } from '../utils/generateOtp';
 import { v4 as uuidv4 } from 'uuid';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export class AuthController {
+  private guestUserPayload(guest: {
+    id: number;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+  }) {
+    return {
+      id: guest.id,
+      email: guest.email,
+      firstName: guest.firstName,
+      lastName: guest.lastName,
+    };
+  }
+
+  private buildAuthResponse(guest: {
+    id: number;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+  }, message: string) {
+    return {
+      message,
+      token: this.generateToken(guest.id),
+      user: this.guestUserPayload(guest),
+    };
+  }
+
   private buildOtpResponse(email: string, otp: string, emailSent: boolean) {
     const payload: Record<string, unknown> = {
       message: emailSent
@@ -22,7 +50,7 @@ export class AuthController {
       emailSent,
     };
 
-    if (config.nodeEnv === 'development') {
+    if (config.dev.exposeOtpInResponses) {
       payload.otp = otp;
     }
 
@@ -35,7 +63,7 @@ export class AuthController {
 
     console.error(`[${context}] Failed to send OTP email to ${email}`);
 
-    if (config.nodeEnv === 'development') {
+    if (config.dev.helpersEnabled) {
       console.warn(`[DevMode] OTP for ${email}: ${otp}`);
       return false;
     }
@@ -63,26 +91,33 @@ export class AuthController {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = generateOtp();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const autoVerify = config.dev.autoVerifyGuest;
 
-    await prisma.guest.create({
+    const guest = await prisma.guest.create({
       data: {
         email: normalizedEmail,
         phone,
         password: hashedPassword,
         firstName,
         lastName,
-        otp,
-        otpExpires,
-        isVerified: false,
+        otp: autoVerify ? null : otp,
+        otpExpires: autoVerify ? null : otpExpires,
+        isVerified: autoVerify,
       },
     });
+
+    if (autoVerify) {
+      return res.status(HttpStatus.CREATED).json(
+        this.buildAuthResponse(guest, 'Registration successful. You are logged in.')
+      );
+    }
 
     // Send OTP email
     const emailSent = await this.sendOtpOrFail(normalizedEmail, otp, 'RegistrationEmailError');
 
-    res.status(HttpStatus.CREATED).json(this.buildOtpResponse(normalizedEmail, otp, emailSent));
+    return res.status(HttpStatus.CREATED).json(this.buildOtpResponse(normalizedEmail, otp, emailSent));
   });
 
   /**
@@ -101,8 +136,24 @@ export class AuthController {
     }
 
     if (!guest.isVerified) {
+      if (config.dev.autoVerifyGuest) {
+        const isMatch = await bcrypt.compare(password, guest.password!);
+        if (!isMatch) {
+          throw new ApiError(HttpStatus.UNAUTHORIZED, 'Invalid credentials');
+        }
+
+        const verifiedGuest = await prisma.guest.update({
+          where: { id: guest.id },
+          data: { isVerified: true, otp: null, otpExpires: null },
+        });
+
+        return res.json(
+          this.buildAuthResponse(verifiedGuest, 'Login successful')
+        );
+      }
+
       // If not verified, resend OTP and tell them to verify
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = generateOtp();
       const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
       await prisma.guest.update({
@@ -122,16 +173,7 @@ export class AuthController {
 
     const token = this.generateToken(guest.id);
 
-    res.json({
-      message: 'Login successful',
-      token,
-      user: {
-        id: guest.id,
-        email: guest.email,
-        firstName: guest.firstName,
-        lastName: guest.lastName,
-      },
-    });
+    return res.json(this.buildAuthResponse(guest, 'Login successful'));
   });
 
   /**
@@ -149,26 +191,18 @@ export class AuthController {
       throw new ApiError(HttpStatus.NOT_FOUND, 'No account found with this email');
     }
 
-    // If already verified, just login (handles double clicks/refreshes)
+    // Already verified accounts must use password login
     if (guest.isVerified) {
-      const token = this.generateToken(guest.id);
-      return res.json({
-        message: 'Email already verified',
-        token,
-        user: {
-          id: guest.id,
-          email: guest.email,
-          firstName: guest.firstName,
-          lastName: guest.lastName,
-        },
-      });
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'Email already verified. Please log in with your password.');
     }
 
-    if (guest.otp !== otp) {
+    const devBypass = config.dev.helpersEnabled && otp === config.dev.bypassOtp;
+
+    if (!devBypass && guest.otp !== otp) {
       throw new ApiError(HttpStatus.UNAUTHORIZED, 'Invalid verification code');
     }
 
-    if (guest.otpExpires && guest.otpExpires < new Date()) {
+    if (!devBypass && guest.otpExpires && guest.otpExpires < new Date()) {
       throw new ApiError(HttpStatus.UNAUTHORIZED, 'Verification code has expired. Please request a new one.');
     }
 
@@ -204,10 +238,17 @@ export class AuthController {
     });
 
     if (!guest) {
+      if (config.isProduction) {
+        return res.json({ message: 'If an account exists with this email, a new OTP has been sent.' });
+      }
       throw new ApiError(HttpStatus.NOT_FOUND, 'Guest not found');
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    if (guest.isVerified) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'Email is already verified. Please log in.');
+    }
+
+    const otp = generateOtp();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     await prisma.guest.update({
@@ -224,11 +265,11 @@ export class AuthController {
       emailSent,
     };
 
-    if (config.nodeEnv === 'development') {
+    if (config.dev.exposeOtpInResponses) {
       payload.otp = otp;
     }
 
-    res.json(payload);
+    return res.json(payload);
   });
 
   /**
@@ -243,9 +284,9 @@ export class AuthController {
     });
 
     if (!guest) {
-      // Don't reveal if user exists for security, but user requested professional code
-      // and usually for guests it's better to tell them
-      throw new ApiError(HttpStatus.NOT_FOUND, 'If an account exists with this email, a reset link will be sent.');
+      return res.json({
+        message: 'If an account exists with this email, a reset link will be sent.',
+      });
     }
 
     const resetToken = uuidv4();
@@ -258,17 +299,15 @@ export class AuthController {
 
     const emailSent = await sendResetPasswordEmail(normalizedEmail, resetToken);
 
-    if (!emailSent && config.nodeEnv !== 'development') {
+    if (!emailSent && config.isProduction) {
       throw new ApiError(
         HttpStatus.SERVICE_UNAVAILABLE,
         'Unable to send password reset email. Please try again later.'
       );
     }
 
-    res.json({
-      message: emailSent
-        ? 'Password reset link sent to your email'
-        : 'Password reset prepared, but email delivery failed. Check SMTP configuration.',
+    return res.json({
+      message: 'If an account exists with this email, a reset link will be sent.',
       emailSent,
     });
   });
@@ -477,17 +516,15 @@ export class AuthController {
 
     const token = this.generateToken(guest.id);
     
-    // Redirect securely back to the production frontend
-    const frontendUrl = 'https://hotelpms-three.vercel.app';
-      
-    res.redirect(`${frontendUrl}/login-success?token=${token}`);
+    // Redirect securely back to the frontend
+    res.redirect(`${config.frontendUrl}/login-success?token=${token}`);
   });
 
   /**
    * Helper: Generate JWT
    */
   public generateToken(id: number): string {
-    return jwt.sign({ id }, config.jwt.secret as string, {
+    return jwt.sign({ id, type: 'guest' }, config.jwt.secret as string, {
       expiresIn: config.jwt.expire,
     } as jwt.SignOptions);
   }

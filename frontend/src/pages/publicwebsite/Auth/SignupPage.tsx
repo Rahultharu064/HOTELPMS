@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../../services/authService';
+import { useAuth } from '../../../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import { Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,6 +20,7 @@ export const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,7 +35,16 @@ export const SignupPage: React.FC = () => {
         email?: string;
         otp?: string;
         emailSent?: boolean;
+        token?: string;
+        user?: { id: number; email: string; firstName?: string; lastName?: string };
       };
+
+      if (data.token && data.user) {
+        login(data.user as any, data.token);
+        toast.success('Account created! Welcome.');
+        navigate('/profile');
+        return;
+      }
 
       if (data.emailSent === false) {
         toast.error('Email could not be sent. Check SMTP settings or use the dev code below.');
@@ -189,6 +200,7 @@ export const SignupPage: React.FC = () => {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   required
+                  minLength={8}
                   value={formData.password}
                   onChange={handleChange}
                   className="block w-full pl-11 pr-12 py-3 bg-gray-50/50 border border-gray-200 rounded-2xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400"

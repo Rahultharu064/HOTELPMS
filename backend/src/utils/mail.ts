@@ -4,12 +4,19 @@ import { config } from '../config';
 
 let transporter: Transporter | null = null;
 
+type SmtpLookupCallback = (
+  err: NodeJS.ErrnoException | null,
+  address: string,
+  family: number
+) => void;
+
 /** Prefer IPv4 — avoids ENETUNREACH when IPv6 is broken (common on Windows/local networks). */
-const ipv4Lookup: typeof dns.lookup = (hostname, options, callback) => {
-  if (typeof options === 'function') {
-    return dns.lookup(hostname, { family: 4 }, options);
-  }
-  return dns.lookup(hostname, { ...(options as dns.LookupOptions), family: 4 }, callback);
+const ipv4Lookup = (
+  hostname: string,
+  _options: dns.LookupOptions,
+  callback: SmtpLookupCallback
+): void => {
+  dns.lookup(hostname, { family: 4 }, callback);
 };
 
 export const isEmailConfigured = (): boolean =>

@@ -220,6 +220,9 @@ export const RoomDetailspage = () => {
                     src={images[activeImage]}
                     alt={room.name}
                     className="h-full w-full object-cover"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                   />
                 </AnimatePresence>
                 {room.videos?.[0] && (
@@ -250,7 +253,13 @@ export const RoomDetailspage = () => {
                           : "border-transparent opacity-60 hover:opacity-100"
                       }`}
                     >
-                      <img src={img} alt="" className="h-full w-full object-cover" />
+                      <img
+                        src={img}
+                        alt={`${room.name} view ${i + 1}`}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </button>
                   ))}
                 </div>
@@ -586,7 +595,7 @@ export const RoomDetailspage = () => {
                     />
                   );
                 }
-                return <video src={fullUrl} className="h-full w-full" controls autoPlay poster={images[0]} />;
+                return <video src={fullUrl} className="h-full w-full" controls autoPlay poster={images[0]} preload="metadata" />;
               })()}
             </motion.div>
           </motion.div>

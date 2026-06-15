@@ -1,12 +1,21 @@
 import nodemailer, { type Transporter } from 'nodemailer';
+import dns from 'dns';
 import { config } from '../config';
 
 let transporter: Transporter | null = null;
 
+/** Prefer IPv4 — avoids ENETUNREACH when IPv6 is broken (common on Windows/local networks). */
+const ipv4Lookup: typeof dns.lookup = (hostname, options, callback) => {
+  if (typeof options === 'function') {
+    return dns.lookup(hostname, { family: 4 }, options);
+  }
+  return dns.lookup(hostname, { ...(options as dns.LookupOptions), family: 4 }, callback);
+};
+
 export const isEmailConfigured = (): boolean =>
   Boolean(config.email.user && config.email.pass);
 
-const resolveSmtpHost = (): string | undefined => {
+const resolveSmtpHost = (): string => {
   if (config.email.host) return config.email.host;
 
   const user = config.email.user?.toLowerCase() ?? '';
@@ -14,12 +23,10 @@ const resolveSmtpHost = (): string | undefined => {
     return 'smtp.gmail.com';
   }
 
-  return undefined;
+  throw new Error('SMTP_HOST is required (e.g. smtp.gmail.com)');
 };
 
-const getTransporter = (): Transporter => {
-  if (transporter) return transporter;
-
+const buildTransportOptions = () => {
   const { port, user, pass } = config.email;
   if (!user || !pass) {
     throw new Error('SMTP is not configured. Set SMTP_USER and SMTP_PASS in backend/.env');
@@ -27,26 +34,28 @@ const getTransporter = (): Transporter => {
 
   const host = resolveSmtpHost();
 
-  transporter = host
-    ? nodemailer.createTransport({
-        host,
-        port,
-        secure: port === 465,
-        auth: { user, pass },
-        tls: { minVersion: 'TLSv1.2' },
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 10000,
-      })
-    : nodemailer.createTransport({
-        service: 'gmail',
-        auth: { user, pass },
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 10000,
-      });
+  return {
+    host,
+    port,
+    secure: port === 465,
+    auth: { user, pass },
+    tls: { minVersion: 'TLSv1.2' as const },
+    lookup: ipv4Lookup,
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 15000,
+  };
+};
 
+const getTransporter = (): Transporter => {
+  if (transporter) return transporter;
+  transporter = nodemailer.createTransport(buildTransportOptions());
   return transporter;
+};
+
+/** Reset cached transporter (e.g. after env change). */
+export const resetEmailTransporter = (): void => {
+  transporter = null;
 };
 
 /** Verify SMTP connection on server startup */
@@ -62,9 +71,14 @@ export const verifyEmailConfig = async (): Promise<boolean> => {
     console.log(`✅ Email service ready (${host}:${config.email.port} as ${config.email.user})`);
     return true;
   } catch (error) {
+    const err = error as NodeJS.ErrnoException;
     console.error('❌ Email service verification failed:', error);
-    console.error('   Fix SMTP_USER, SMTP_PASS, SMTP_HOST, SMTP_PORT in backend/.env');
-    console.error('   Gmail users must use an App Password: https://support.google.com/accounts/answer/185833');
+    if (err.code === 'ENETUNREACH' || err.code === 'ESOCKET') {
+      console.error('   Network blocked IPv6 route to SMTP. IPv4 fallback is enabled — restart the server.');
+    }
+    console.error('   Check SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in backend/.env');
+    console.error('   Gmail: use an App Password (not your login password): https://support.google.com/accounts/answer/185833');
+    console.error('   SMTP_FROM should match SMTP_USER (or a verified Gmail alias).');
     return false;
   }
 };

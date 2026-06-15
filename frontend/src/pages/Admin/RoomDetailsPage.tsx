@@ -119,7 +119,14 @@ export default function RoomDetailsPage() {
           <Card className="overflow-hidden rounded-[40px] border-none shadow-soft bg-white">
              <div className="relative aspect-video bg-gray-100">
                 {imageUrl ? (
-                  <img src={imageUrl} alt={room.name} className="w-full h-full object-cover" />
+                  <img
+                    src={imageUrl}
+                    alt={room.name}
+                    className="w-full h-full object-cover"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                  />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-200">
                     <LayoutGrid size={64} />
@@ -185,7 +192,13 @@ export default function RoomDetailsPage() {
           <div className="grid grid-cols-3 gap-6">
              {room.images?.filter(img => !img.isPrimary).map(img => (
                 <div key={img.id} className="aspect-square rounded-3xl overflow-hidden bg-gray-100 shadow-sm hover:shadow-lg transition-all border border-gray-100">
-                   <img src={getImageUrl(img.url)} className="w-full h-full object-cover" alt="Gallery" />
+                   <img
+                     src={getImageUrl(img.url)}
+                     className="w-full h-full object-cover"
+                     alt="Gallery"
+                     loading="lazy"
+                     decoding="async"
+                   />
                 </div>
              ))}
              <button className="aspect-square rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 text-gray-400 hover:bg-gray-50 hover:border-[#14532D] hover:text-[#14532D] transition-all">

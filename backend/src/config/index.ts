@@ -31,11 +31,12 @@ export const config = {
   },
   documentEncryptionKey: process.env.DOCUMENT_ENCRYPTION_KEY || 'default-enc-key',
   email: {
-    host: process.env.SMTP_HOST,
+    host: process.env.SMTP_HOST?.trim(),
     port: parseInt(process.env.SMTP_PORT || '587', 10),
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    user: process.env.SMTP_USER?.trim().replace(/^["']|["']$/g, ''),
+    // Gmail app passwords are 16 chars; strip spaces/quotes from .env
+    pass: process.env.SMTP_PASS?.trim().replace(/^["']|["']$/g, '').replace(/\s+/g, ''),
+    from: (process.env.SMTP_FROM || process.env.SMTP_USER)?.trim().replace(/^["']|["']$/g, ''),
   },
   payment: {
     esewa: {

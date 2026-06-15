@@ -1,9 +1,11 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import StatsCards from "../../components/frontoffice/Dashboard/StatsCards";
-import QuickActions from "../../components/frontoffice/Dashboard/QuickActions";
-import BookingsTable from "../../components/frontoffice/Dashboard/BookingsTable";
-import CheckInOutForm from "../../components/frontoffice/Dashboard/CheckInOutForm";
-import GuestManagement from "../../components/frontoffice/Dashboard/GuestManagement";
+import { SectionLoader } from "../../components/ui/PageLoader";
+
+const QuickActions = lazy(() => import("../../components/frontoffice/Dashboard/QuickActions"));
+const BookingsTable = lazy(() => import("../../components/frontoffice/Dashboard/BookingsTable"));
+const CheckInOutForm = lazy(() => import("../../components/frontoffice/Dashboard/CheckInOutForm"));
+const GuestManagement = lazy(() => import("../../components/frontoffice/Dashboard/GuestManagement"));
 
 const DashboardHome: React.FC = () => {
   return (
@@ -26,20 +28,24 @@ const DashboardHome: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Main Content Area */}
         <div className="lg:col-span-2 space-y-12">
-          {/* Quick Actions Panel */}
-          <QuickActions />
+          <Suspense fallback={<SectionLoader />}>
+            <QuickActions />
+          </Suspense>
 
-          {/* Bookings Table Section */}
-          <BookingsTable />
+          <Suspense fallback={<SectionLoader />}>
+            <BookingsTable />
+          </Suspense>
         </div>
 
         {/* Sidebar Sections */}
         <div className="space-y-12">
-          {/* Check-in / Out Form */}
-          <CheckInOutForm />
+          <Suspense fallback={<SectionLoader />}>
+            <CheckInOutForm />
+          </Suspense>
 
-          {/* Guest Management Section */}
-          <GuestManagement />
+          <Suspense fallback={<SectionLoader />}>
+            <GuestManagement />
+          </Suspense>
         </div>
       </div>
     </div>

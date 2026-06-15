@@ -3,7 +3,14 @@ import { Homepage } from '../pages/publicwebsite/Homepage';
 import { AboutusPage } from '../pages/publicwebsite/AboutusPage';
 import { ContactUsPage } from '../pages/publicwebsite/ContactUsPage';
 import { Roompage } from '../pages/publicwebsite/Roompage';
-import {RoomDetailspage}from '../pages/publicwebsite/RoomDetailspage';
+import {
+  RoomDetailspage,
+  AdminDashboardPage,
+  FrontOfficeDashboardPage,
+  HousekeepingDashboardPage,
+  AdminRoomDetailsPage,
+  HousekeepingRoomDetailsPage,
+} from './lazyPages';
 import { BookingsPage as PublicBookingsPage } from '../pages/publicwebsite/BookingsPage';
 import { FacilitiesPage } from '../pages/publicwebsite/FacilitiesPage';
 import { GalleryPage } from '../pages/publicwebsite/GalleryPage';
@@ -21,7 +28,6 @@ import { AuthGuard } from '../components/auth/AuthGuard';
 
 // Front Office
 import { FrontOfficeLayout } from '../components/frontoffice/Layout/FrontOfficeLayout';
-import DashboardPage from '../pages/frontoffice/DashboardPage';
 import CheckInOutPage from '../pages/frontoffice/CheckInOutPage';
 import RoomsPageFO from '../pages/frontoffice/RoomsPage';
 import PaymentsPage from '../pages/frontoffice/PaymentsPage';
@@ -35,15 +41,12 @@ import GuestFolioPage from '../pages/frontoffice/GuestFolioPage';
 
 // Housekeeping
 import { HousekeepingLayout } from '../components/Housekeeping/Layout/HousekeepingLayout';
-import HKDashboardPage from '../pages/Housekeeping/DashboardPage';
 import RoomStatusPage from '../pages/Housekeeping/RoomStatusPage';
 import CleaningTasksPage from '../pages/Housekeeping/CleaningTasksPage';
 import StaffAssignmentPage from '../pages/Housekeeping/StaffAssignmentPage';
-import HousekeepingRoomDetailsPage from '../pages/Housekeeping/RoomDetailsPage';
 
 // Admin
 import { AdminLayout } from '../components/Admin/Layout/AdminLayout';
-import AdminDashboardPage from '../pages/Admin/DashboardPage';
 import AdminSettingsPage from '../pages/Admin/SettingsPage';
 import RoomTypesPage from '../pages/Admin/RoomTypesPage';
 import RoomsPage from '../pages/Admin/RoomsPage';
@@ -53,7 +56,6 @@ import ExtraServicesPage from '../pages/Admin/ExtraServicesPage';
 import GalleryVenuesPage from '../pages/Admin/GalleryVenuesPage';
 import AdminUsersPage from '../pages/Admin/UsersPage';
 import RoomEditPage from '../pages/Admin/RoomEditPage';
-import AdminRoomDetailsPage from '../pages/Admin/RoomDetailsPage';
 import { AdminLoginPage } from '../pages/Admin/Auth/AdminLoginPage';
 import { StaffResetPasswordPage } from '../pages/Admin/Auth/StaffResetPasswordPage';
 import { AdminAuthGuard } from '../components/auth/AdminAuthGuard';
@@ -175,11 +177,11 @@ const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <DashboardPage />,
+        element: <FrontOfficeDashboardPage />,
       },
       {
         path: 'dashboard',
-        element: <DashboardPage />,
+        element: <FrontOfficeDashboardPage />,
       },
       {
         path: 'bookings',
@@ -236,11 +238,11 @@ const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <HKDashboardPage />,
+        element: <HousekeepingDashboardPage />,
       },
       {
         path: 'dashboard',
-        element: <HKDashboardPage />,
+        element: <HousekeepingDashboardPage />,
       },
       {
         path: 'room-status',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import { 
   CreditCard, 
   Activity,
@@ -11,8 +11,14 @@ import {
 import { bookingService } from "../../services/bookingService";
 import { toast } from "react-hot-toast";
 import { StatCard } from "../../components/Admin/Dashboard/StatCard";
-import { RecentBookingsTable } from "../../components/Admin/Dashboard/RecentBookingsTable";
-import { SystemControlHub } from "../../components/Admin/Dashboard/SystemControlHub";
+import { SectionLoader } from "../../components/ui/PageLoader";
+
+const RecentBookingsTable = lazy(() =>
+  import("../../components/Admin/Dashboard/RecentBookingsTable").then((m) => ({ default: m.RecentBookingsTable }))
+);
+const SystemControlHub = lazy(() =>
+  import("../../components/Admin/Dashboard/SystemControlHub").then((m) => ({ default: m.SystemControlHub }))
+);
 
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
@@ -139,13 +145,15 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Main Content: Global Activity Table */}
         <div className="lg:col-span-2">
-           <RecentBookingsTable bookings={recentLogs} loading={loading} />
+          <Suspense fallback={<SectionLoader />}>
+            <RecentBookingsTable bookings={recentLogs} loading={loading} />
+          </Suspense>
         </div>
 
-        {/* Sidebar: System Control Hub */}
-        <SystemControlHub />
+        <Suspense fallback={<SectionLoader />}>
+          <SystemControlHub />
+        </Suspense>
       </div>
     </div>
   );

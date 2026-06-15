@@ -9,13 +9,13 @@ import { SocketProvider } from './context/SocketContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import ScrollToTop from './components/ScrollToTop';
-import PageLoader from './components/ui/PageLoader';
+import RouteAwareFallback from './components/ui/RouteAwareFallback';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const AppRoutes = () => {
   const element = useRoutes(routes);
-  return <Suspense fallback={<PageLoader />}>{element}</Suspense>;
+  return <Suspense fallback={<RouteAwareFallback />}>{element}</Suspense>;
 };
 
 const App = () => {

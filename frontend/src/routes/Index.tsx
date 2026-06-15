@@ -1,4 +1,5 @@
 import type { RouteObject } from 'react-router-dom';
+import { Suspense } from 'react';
 import { Homepage } from '../pages/publicwebsite/Homepage';
 import { AboutusPage } from '../pages/publicwebsite/AboutusPage';
 import { ContactUsPage } from '../pages/publicwebsite/ContactUsPage';
@@ -59,6 +60,7 @@ import AdminUsersPage from '../pages/Admin/UsersPage';
 import RoomEditPage from '../pages/Admin/RoomEditPage';
 import { StaffResetPasswordPage } from '../pages/Admin/Auth/StaffResetPasswordPage';
 import { AdminAuthGuard } from '../components/auth/AdminAuthGuard';
+import { RoomDetailsPageSkeleton } from '../components/ui/skeletons/PageSkeletons';
 
 // Simple placeholder components for missing routes
 const FinancialsPage = () => (
@@ -107,7 +109,11 @@ const routes: RouteObject[] = [
       },
       {
         path: 'rooms/:slug',
-        element: <RoomDetailspage />,
+        element: (
+          <Suspense fallback={<RoomDetailsPageSkeleton />}>
+            <RoomDetailspage />
+          </Suspense>
+        ),
       },
       {
         path: 'booking/:id',

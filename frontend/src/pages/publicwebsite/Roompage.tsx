@@ -6,40 +6,10 @@ import { roomService, type Room } from "../../services/roomService";
 import { roomTypeService, type RoomType } from "../../services/roomTypeService";
 import { getImageUrl } from "../../services/api";
 import { ApiStatus } from "../../components/ui/ApiStatus";
+import { RoomCardSkeleton } from "../../components/ui/skeletons/PageSkeletons";
 
 import { Users, BedDouble, Maximize, Star, SlidersHorizontal, X } from "lucide-react";
 import PageHero from "../../components/publicwebsite/Homepage/layout/PageHero";
-
-const RoomCardSkeleton = ({ delay = 0 }: { delay?: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 24 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
-    className="overflow-hidden rounded-3xl border border-neutral-border/40 bg-white shadow-sm"
-  >
-    <div className="relative aspect-[4/3] skeleton-shimmer">
-      <div className="absolute bottom-4 left-5 right-5 space-y-2">
-        <div className="h-2.5 w-16 rounded-full bg-white/40" />
-        <div className="h-5 w-2/3 rounded-full bg-white/50" />
-      </div>
-    </div>
-    <div className="space-y-4 p-5">
-      <div className="space-y-2">
-        <div className="h-3 w-full rounded-full skeleton-shimmer" />
-        <div className="h-3 w-4/5 rounded-full skeleton-shimmer" />
-      </div>
-      <div className="grid grid-cols-3 gap-2">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="h-14 rounded-xl skeleton-shimmer" />
-        ))}
-      </div>
-      <div className="flex gap-2.5">
-        <div className="h-9 flex-1 rounded-lg skeleton-shimmer" />
-        <div className="h-9 flex-1 rounded-lg skeleton-shimmer" />
-      </div>
-    </div>
-  </motion.div>
-);
 
 
 const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (

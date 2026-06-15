@@ -9,7 +9,7 @@ import VenuesSection from '../../components/publicwebsite/Homepage/Sections/Venu
 import FacilitiesSection from '../../components/publicwebsite/Homepage/Sections/FacilitiesSection';
 import { GuestFavoritesSection, ReviewsSection } from '../../routes/lazyPages';
 import { Button } from '../../components/ui/Button';
-import { SectionLoader } from '../../components/ui/PageLoader';
+import { GuestFavoritesSectionSkeleton, ReviewsSectionSkeleton } from '../../components/ui/skeletons/PageSkeletons';
 
 
 export const Homepage: React.FC = () => {
@@ -22,12 +22,12 @@ export const Homepage: React.FC = () => {
       </div>
       <AboutUsSection />
       <FeaturedRoomsSection />
-      <Suspense fallback={<SectionLoader />}>
+      <Suspense fallback={<GuestFavoritesSectionSkeleton />}>
         <GuestFavoritesSection />
       </Suspense>
       <VenuesSection />
       <FacilitiesSection />
-      <Suspense fallback={<SectionLoader />}>
+      <Suspense fallback={<ReviewsSectionSkeleton />}>
         <ReviewsSection />
       </Suspense>
       

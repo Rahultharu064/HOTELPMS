@@ -17,7 +17,6 @@ import {
   Play,
   X,
   ShieldCheck,
-  Loader2,
   ChevronRight,
   Shield,
   Dumbbell,
@@ -27,6 +26,7 @@ import {
   Check,
   CalendarDays,
 } from "lucide-react";
+import { RoomDetailsPageSkeleton } from "../../components/ui/skeletons/PageSkeletons";
 import PageHero from "../../components/publicwebsite/Homepage/layout/PageHero";
 import { roomService } from "../../services/roomService";
 import type { Room } from "../../services/roomService";
@@ -164,12 +164,7 @@ export const RoomDetailspage = () => {
   }, [room?.status]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Loader2 className="h-10 w-10 animate-spin text-primary-green" />
-        <p className="text-sm font-medium text-neutral-text-secondary">Loading room details...</p>
-      </div>
-    );
+    return <RoomDetailsPageSkeleton />;
   }
 
   if (!room) {

@@ -15,13 +15,39 @@ if (process.env.CLOUDINARY_URL) {
 }
 
 
+const parseOrigins = (value?: string): string[] =>
+  (value || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+/** Public frontend URL for OAuth redirects, password-reset links, email CTAs. */
+const resolveFrontendUrl = (): string => {
+  const explicit = process.env.FRONTEND_URL?.trim();
+  if (explicit) return explicit;
+
+  const origins = parseOrigins(process.env.CORS_ORIGIN);
+  if (origins.length === 0) return 'http://localhost:5173';
+
+  // In production, prefer the live URL (skip localhost entries in CORS_ORIGIN)
+  if (process.env.NODE_ENV === 'production') {
+    const live = origins.find((o) => !/localhost|127\.0\.0\.1/.test(o));
+    if (live) return live;
+  }
+
+  return origins[0];
+};
+
+const corsOrigins = parseOrigins(process.env.CORS_ORIGIN);
+
 export const config = {
   port: parseInt(process.env.PORT || '5000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   isProduction: process.env.NODE_ENV === 'production',
+  isRender: process.env.RENDER === 'true',
   databaseUrl: process.env.DATABASE_URL || '',
-  frontendUrl: (process.env.FRONTEND_URL || process.env.CORS_ORIGIN?.split(',')[0] || 'http://localhost:5173').trim(),
-  corsOrigin: (process.env.CORS_ORIGIN || 'http://localhost:5173').split(',').map(o => o.trim()),
+  frontendUrl: resolveFrontendUrl(),
+  corsOrigin: corsOrigins.length > 0 ? corsOrigins : ['http://localhost:5173'],
   uploadDir: process.env.UPLOAD_DIR || 'uploads',
   maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760', 10),
   jwt: {

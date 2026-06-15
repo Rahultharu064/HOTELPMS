@@ -314,6 +314,8 @@ const startServer = async (): Promise<void> => {
 
     server.listen(config.port, () => {
       console.log(`🚀 Server running in ${config.nodeEnv} mode on port ${config.port}`);
+      console.log(`🌐 Frontend URL: ${config.frontendUrl}`);
+      console.log(`🔒 CORS origins: ${config.corsOrigin.join(', ')}`);
       console.log(`📡 WebSocket server ready for connections`);
       console.log(`🔗 API endpoint: http://localhost:${config.port}/api`);
     });

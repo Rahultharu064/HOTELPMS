@@ -49,29 +49,32 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 const DEFAULT_AMENITIES = [
-  "Air Conditioning",
-  "High-Speed Wi-Fi",
-  "Smart Television",
-  "Mini Refrigerator",
-  "In-Room Safe",
-  "Daily Housekeeping",
-  "Complimentary Toiletries",
-  "Tea & Coffee Maker",
+  "Air conditioning",
+  "Wi-Fi",
+  "Television",
+  "Mini fridge",
+  "In-room safe",
+  "Daily housekeeping",
+  "Toiletries",
+  "Tea and coffee",
 ];
 
 const DEFAULT_INCLUDED = [
-  "Daily breakfast for registered guests",
-  "High-speed Wi-Fi throughout the room",
-  "Daily housekeeping and turndown service",
-  "Complimentary bottled water on arrival",
+  "Breakfast (where included in rate)",
+  "Wi-Fi",
+  "Daily housekeeping",
+  "Drinking water on arrival",
 ];
 
 const DEFAULT_SERVICES = [
-  "24/7 front desk concierge",
-  "Luggage storage and assistance",
-  "Airport transfer on request",
-  "Laundry and dry-cleaning service",
+  "24-hour reception",
+  "Luggage storage",
+  "Airport pickup on request",
+  "Laundry service",
 ];
+
+const DEFAULT_DESCRIPTION =
+  "A clean, comfortable room with standard hotel amenities and an attached bathroom.";
 
 const formatBedType = (bedType?: string) => {
   if (!bedType) return "1 King Size Bed";
@@ -119,6 +122,14 @@ export const RoomDetailspage = () => {
     fetchRoom();
     window.scrollTo(0, 0);
   }, [slug]);
+
+  useEffect(() => {
+    if (!loading && room && window.location.hash === '#book-room') {
+      requestAnimationFrame(() => {
+        document.getElementById('book-room')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }, [loading, room]);
 
   const images = useMemo(() => {
     if (!room?.images?.length) {
@@ -265,8 +276,7 @@ export const RoomDetailspage = () => {
             <section>
               <SectionHeading>About This Room</SectionHeading>
               <p className="mt-4 text-[15px] leading-[1.85] text-neutral-text-secondary">
-                {room.description ||
-                  "Our rooms are designed to offer the ultimate retreat after a long day. Experience unmatched tranquility combined with state-of-the-art facilities, premium bedding, and thoughtful touches throughout."}
+                {room.description || DEFAULT_DESCRIPTION}
               </p>
             </section>
 
@@ -289,7 +299,7 @@ export const RoomDetailspage = () => {
               <section>
                 <SectionHeading>Room View</SectionHeading>
                 <p className="mt-4 text-[15px] leading-relaxed text-neutral-text-secondary">
-                  Enjoy a beautiful {room.view.toLowerCase()} view from your private sanctuary.
+                  {room.view} view from this room.
                 </p>
               </section>
             )}
@@ -323,10 +333,10 @@ export const RoomDetailspage = () => {
               <h2 className="font-georgia text-xl font-bold text-primary-dark md:text-2xl">Room Features</h2>
               <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
                 {[
-                  { icon: Maximize, label: "Room Size", value: room.size ? `${room.size} sq ft` : "Spacious" },
+                  { icon: Maximize, label: "Room size", value: room.size ? `${room.size} sq ft` : "—" },
                   { icon: BedDouble, label: "Beds", value: formatBedType(room.bedType) },
                   { icon: Bath, label: "Bathroom", value: "1 En-suite" },
-                  { icon: Users, label: "Occupancy", value: `Up to ${room.capacity} Guests` },
+                  { icon: Users, label: "Guests", value: `Up to ${room.capacity}` },
                 ].map(({ icon: Icon, label, value }) => (
                   <div
                     key={label}
@@ -378,7 +388,7 @@ export const RoomDetailspage = () => {
                         </div>
                       </div>
                       <p className="text-sm leading-relaxed text-neutral-text-secondary">
-                        &ldquo;{r.comment || "A wonderful experience!"}&rdquo;
+                        &ldquo;{r.comment || "Good stay."}&rdquo;
                       </p>
                     </div>
                   ))}
@@ -389,11 +399,11 @@ export const RoomDetailspage = () => {
 
           {/* Booking sidebar */}
           <div>
-            <div className="sticky top-28">
+            <div id="book-room" className="sticky top-28 scroll-mt-28">
               <div className="overflow-hidden rounded-2xl border border-neutral-border/60 bg-white shadow-[0_12px_48px_rgba(20,83,45,0.10)]">
                 {/* Price header */}
                 <div className="bg-gradient-to-r from-primary-dark to-primary-green px-6 py-5">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/60">Starting from</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/60">From</p>
                   <div className="mt-1 font-georgia leading-none text-white">
                     <span className="text-sm text-white/70">NPR </span>
                     <span className="text-3xl font-bold text-primary-gold">{formattedPrice}</span>
@@ -508,7 +518,7 @@ export const RoomDetailspage = () => {
 
                   <div className="flex items-center justify-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-neutral-text-secondary">
                     <Shield size={13} className="text-primary-green" />
-                    Secure booking · Instant confirmation
+                    Secure online booking
                   </div>
                 </div>
               </div>
@@ -520,7 +530,7 @@ export const RoomDetailspage = () => {
         <section className="mt-14 rounded-2xl border border-neutral-border/60 bg-neutral-light/30 p-6 md:p-8">
           <div className="mb-6 flex items-center gap-2">
             <CalendarDays size={20} className="text-primary-green" />
-            <h2 className="font-georgia text-xl font-bold text-primary-dark md:text-2xl">Availability Status</h2>
+            <h2 className="font-georgia text-xl font-bold text-primary-dark md:text-2xl">Availability (next 14 days)</h2>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-7 lg:grid-cols-14">
             {availabilityDays.map(({ date, label, available }) => (

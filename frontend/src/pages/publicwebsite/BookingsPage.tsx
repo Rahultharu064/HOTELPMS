@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../components/ui/Button";
-import { Check, Download, Calendar, Users, CreditCard, ShieldCheck, Mail, Phone, Globe, MessageSquare, Loader2, Info, Upload } from "lucide-react";
+import { Check, Download, Calendar, Users, CreditCard, ShieldCheck, Mail, Phone, Globe, MessageSquare, Info, Upload } from "lucide-react";
+import { BookingPageSkeleton } from "../../components/ui/skeletons/PageSkeletons";
 import { roomService } from "../../services/roomService";
 import { bookingService } from "../../services/bookingService";
 import { paymentService } from "../../services/paymentService";
@@ -259,12 +260,7 @@ export const BookingsPage: React.FC = () => {
   };
 
   if (loadingRoom) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-neutral-light">
-        <Loader2 className="h-12 w-12 text-primary-green animate-spin" />
-        <p className="text-sm font-black uppercase tracking-widest text-neutral-text-secondary animate-pulse">Syncing with Sanctuary...</p>
-      </div>
-    );
+    return <BookingPageSkeleton />;
   }
 
   if (!selectedRoom && !roomParam) {
@@ -293,26 +289,25 @@ export const BookingsPage: React.FC = () => {
           <motion.span 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-primary-gold font-black text-xs uppercase tracking-[0.3em] block mb-4"
+            className="text-primary-gold font-bold text-xs uppercase tracking-[0.2em] block mb-4"
           >
-            Reservation Journey
+            Book a room
           </motion.span>
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-black text-primary-dark tracking-tighter"
+            className="text-4xl md:text-5xl font-bold text-primary-dark tracking-tight"
           >
-            Finalize Your <span className="text-primary-green">Escape</span>
+            Complete your <span className="text-primary-green">booking</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-neutral-text-secondary mt-4 font-medium max-w-xl text-lg leading-relaxed"
+            className="text-neutral-text-secondary mt-4 font-medium max-w-xl text-base leading-relaxed"
           >
-            Experience pure serenity. Connect with our heritage through a seamless, 
-            secure booking experience tailored to your exact needs.
+            Enter your details, choose dates, and pay securely online.
           </motion.p>
         </div>
       </div>

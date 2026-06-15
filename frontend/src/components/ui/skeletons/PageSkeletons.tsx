@@ -184,7 +184,26 @@ export const ReviewsSectionSkeleton = () => (
   </section>
 );
 
-/** Room list page with category sidebar */
+/** Booking page skeleton */
+export const BookingPageSkeleton = () => (
+  <div className="min-h-screen bg-neutral-light">
+    <div className="border-b border-neutral-border bg-white py-16 lg:py-20">
+      <div className="container-custom space-y-4">
+        <div className="h-3 w-32 rounded-full skeleton-shimmer" />
+        <div className="h-12 w-2/3 max-w-lg rounded-2xl skeleton-shimmer" />
+        <div className="h-4 w-full max-w-md rounded-full skeleton-shimmer" />
+      </div>
+    </div>
+    <div className="container-custom grid gap-10 py-12 lg:grid-cols-3 lg:py-16">
+      <div className="space-y-6 lg:col-span-2">
+        <div className="h-64 rounded-2xl skeleton-shimmer" />
+        <div className="h-48 rounded-2xl skeleton-shimmer" />
+      </div>
+      <div className="h-80 rounded-2xl skeleton-shimmer" />
+    </div>
+  </div>
+);
+
 export const RoomListPageSkeleton = () => (
   <div className="min-h-screen bg-[#FAFAF8]">
     <div className="h-48 bg-gradient-to-r from-primary-dark/80 to-primary-green/70 skeleton-shimmer" />

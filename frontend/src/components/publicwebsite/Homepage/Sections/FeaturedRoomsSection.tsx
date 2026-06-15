@@ -7,6 +7,7 @@ import type { Room } from "../../../../services/roomService";
 import { Button } from "../../../ui/Button";
 import { ApiStatus } from "../../../ui/ApiStatus";
 import { getImageUrl } from "../../../../services/api";
+import { prefetchRoomDetails } from "../../../../utils/prefetchRoomDetails";
 
 const ScrollReveal = ({
   children,
@@ -37,7 +38,7 @@ const formatBedLabel = (bedType?: string) => {
 
 const formatSizeLabel = (size?: number) => {
   if (size) return `${size} sq ft`;
-  return "Large sq ft";
+  return "—";
 };
 
 const RoomCard = ({ room, index }: { room: Room; index: number }) => {
@@ -59,7 +60,11 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
   return (
     <ScrollReveal delay={index * 0.12} className="h-full">
       <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-border/70 bg-white shadow-[0_2px_20px_rgba(20,83,45,0.07)] transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-green/15 hover:shadow-[0_16px_48px_rgba(20,83,45,0.12)]">
-        <Link to={`/rooms/${room.slug}`} className="flex flex-1 flex-col">
+        <Link
+          to={`/rooms/${room.slug}`}
+          className="flex flex-1 flex-col"
+          onMouseEnter={prefetchRoomDetails}
+        >
           {/* Image */}
           <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-neutral-light">
             <img
@@ -123,7 +128,7 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
 
             <p className="mt-4 line-clamp-3 flex-1 text-[13px] leading-[1.65] text-neutral-text-secondary">
               {room.description ||
-                "Experience premium comfort and elegance in this beautifully designed room, thoughtfully appointed for a restful stay."}
+                "Comfortable room with clean bedding and standard amenities."}
             </p>
           </div>
         </Link>
@@ -137,14 +142,15 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
           </div>
 
           <Link
-            to={isAvailable ? `/booking?room=${room.id}` : `/rooms/${room.slug}`}
+            to={isAvailable ? `/rooms/${room.slug}#book-room` : `/rooms/${room.slug}`}
+            onMouseEnter={prefetchRoomDetails}
             className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 rounded-full px-5 text-[11px] font-bold tracking-wide shadow-sm transition-all duration-300 ${
               isAvailable
                 ? "bg-primary-dark text-primary-gold hover:bg-primary-green hover:text-white"
                 : "cursor-pointer bg-neutral-border/80 text-neutral-text-secondary hover:bg-neutral-border"
             }`}
           >
-            {isAvailable ? "Book" : "Unavailable"}
+            {isAvailable ? "Book" : "Details"}
             <ArrowRight size={13} strokeWidth={2.5} />
           </Link>
         </div>
@@ -202,7 +208,7 @@ export const FeaturedRoomsSection: React.FC = () => {
             </h2>
 
             <p className="mx-auto mt-4 max-w-lg text-sm font-medium leading-relaxed text-neutral-text-secondary md:text-base">
-              Elegantly designed spaces crafted for your ultimate comfort and relaxation.
+              Comfortable rooms for business and leisure stays in Itahari.
             </p>
           </ScrollReveal>
         </div>

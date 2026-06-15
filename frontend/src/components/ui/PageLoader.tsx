@@ -1,9 +1,9 @@
 import { Loader2 } from 'lucide-react';
 
+/** Minimal spinner — no loading text */
 export const PageLoader = () => (
-  <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+  <div className="flex min-h-[50vh] items-center justify-center">
     <Loader2 className="h-10 w-10 animate-spin text-primary-green" />
-    <p className="text-sm font-medium text-neutral-text-secondary">Loading page...</p>
   </div>
 );
 

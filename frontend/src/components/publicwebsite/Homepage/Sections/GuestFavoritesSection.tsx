@@ -8,6 +8,7 @@ import type { Room } from "../../../../services/roomService";
 import { Button } from "../../../ui/Button";
 import { ApiStatus } from "../../../ui/ApiStatus";
 import { getImageUrl } from "../../../../services/api";
+import { prefetchRoomDetails } from "../../../../utils/prefetchRoomDetails";
 
 
 const ScrollReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
@@ -84,7 +85,11 @@ export const GuestFavoritesSection: React.FC = () => {
                             const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url;
                             return (
                                 <ScrollReveal key={room.id} delay={i * 0.1}>
-                                    <Link to={`/rooms/${room.slug}`} className="group relative block bg-neutral-light/50 rounded-3xl overflow-hidden border border-neutral-border/50 hover:border-primary-green/30 transition-all duration-500 hover:shadow-xl">
+                                    <Link
+                                        to={`/rooms/${room.slug}`}
+                                        onMouseEnter={prefetchRoomDetails}
+                                        className="group relative block bg-neutral-light/50 rounded-3xl overflow-hidden border border-neutral-border/50 hover:border-primary-green/30 transition-all duration-500 hover:shadow-xl"
+                                    >
                                         <div className="flex gap-4 p-4">
                                             <div className="relative h-24 w-24 shrink-0 rounded-2xl overflow-hidden shadow-md">
                                                 <img 

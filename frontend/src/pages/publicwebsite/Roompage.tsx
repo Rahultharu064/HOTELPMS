@@ -10,6 +10,7 @@ import { RoomCardSkeleton } from "../../components/ui/skeletons/PageSkeletons";
 
 import { Users, BedDouble, Maximize, Star, SlidersHorizontal, X } from "lucide-react";
 import PageHero from "../../components/publicwebsite/Homepage/layout/PageHero";
+import { prefetchRoomDetails } from "../../utils/prefetchRoomDetails";
 
 
 const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
@@ -277,7 +278,7 @@ export const Roompage: React.FC = () => {
                         
                         <div className="flex gap-2.5 mt-auto">
                           <Button variant="outline" size="sm" className="flex-1 font-bold shadow-sm rounded-lg border-neutral-border text-primary-dark hover:bg-neutral-light text-xs" asChild>
-                            <Link to={`/rooms/${room.slug}`}>Preview</Link>
+                            <Link to={`/rooms/${room.slug}`} onMouseEnter={prefetchRoomDetails}>Preview</Link>
                           </Button>
                           <Button variant="primary" size="sm" className="flex-1 font-extrabold shadow-md shadow-primary-green/20 rounded-lg text-xs" asChild>
                             <Link to={`/booking?room=${room.id}`}>Reserve</Link>

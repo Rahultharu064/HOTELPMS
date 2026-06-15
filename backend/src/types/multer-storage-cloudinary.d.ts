@@ -19,19 +19,16 @@ declare module 'multer-storage-cloudinary' {
           req: Request,
           file: Express.Multer.File
         ) => CloudinaryStorageParams | Promise<CloudinaryStorageParams>);
+    filename?: string | ((req: Request, file: Express.Multer.File) => string | Promise<string>);
+    folder?: string | ((req: Request, file: Express.Multer.File) => string | Promise<string>);
+    transformation?:
+      | Record<string, unknown>
+      | ((req: Request, file: Express.Multer.File) => Record<string, unknown> | Promise<Record<string, unknown>>);
+    allowedFormats?: string[];
   }
 
-  export class CloudinaryStorage implements StorageEngine {
-    constructor(options: CloudinaryStorageOptions);
-    _handleFile(
-      req: Request,
-      file: Express.Multer.File,
-      callback: (error?: unknown, info?: Partial<Express.Multer.File>) => void
-    ): void;
-    _removeFile(
-      req: Request,
-      file: Express.Multer.File,
-      callback: (error: Error | null) => void
-    ): void;
-  }
+  /** Factory — returns a multer StorageEngine (not a class constructor). */
+  function cloudinaryStorage(options: CloudinaryStorageOptions): StorageEngine;
+
+  export = cloudinaryStorage;
 }

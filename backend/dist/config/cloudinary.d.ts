@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
-export declare const cloudinaryStorage: CloudinaryStorage;
+export declare const cloudinaryStorage: import("multer").StorageEngine;
 export default cloudinary;
 //# sourceMappingURL=cloudinary.d.ts.map

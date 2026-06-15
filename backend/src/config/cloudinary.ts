@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary';
 import type { Request } from 'express';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import createCloudinaryStorage from 'multer-storage-cloudinary';
 import { config } from './index';
 
 if (!config.cloudinary.cloudName || !config.cloudinary.apiKey || !config.cloudinary.apiSecret) {
@@ -20,7 +20,7 @@ cloudinary.config({
 
 console.log('☁️ Cloudinary initialized with cloud_name:', config.cloudinary.cloudName);
 
-export const cloudinaryStorage = new CloudinaryStorage({
+export const cloudinaryStorage = createCloudinaryStorage({
   cloudinary: cloudinary,
   params: async (_req: Request, file: Express.Multer.File) => {
     // Sanitize filename: remove extension and special characters

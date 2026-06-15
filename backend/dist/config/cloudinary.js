@@ -1,8 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cloudinaryStorage = void 0;
 const cloudinary_1 = require("cloudinary");
-const multer_storage_cloudinary_1 = require("multer-storage-cloudinary");
+const multer_storage_cloudinary_1 = __importDefault(require("multer-storage-cloudinary"));
 const index_1 = require("./index");
 if (!index_1.config.cloudinary.cloudName || !index_1.config.cloudinary.apiKey || !index_1.config.cloudinary.apiSecret) {
     console.error('❌ Cloudinary configuration missing!', {
@@ -18,7 +21,7 @@ cloudinary_1.v2.config({
     secure: true
 });
 console.log('☁️ Cloudinary initialized with cloud_name:', index_1.config.cloudinary.cloudName);
-exports.cloudinaryStorage = new multer_storage_cloudinary_1.CloudinaryStorage({
+exports.cloudinaryStorage = (0, multer_storage_cloudinary_1.default)({
     cloudinary: cloudinary_1.v2,
     params: async (_req, file) => {
         // Sanitize filename: remove extension and special characters

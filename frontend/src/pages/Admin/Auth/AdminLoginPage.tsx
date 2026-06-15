@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../../../services/api';
+import { AuthBrandLogo } from '../../../components/ui/AuthBrandLogo';
 
 export const AdminLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -72,10 +73,8 @@ export const AdminLoginPage: React.FC = () => {
         className="max-w-md w-full space-y-10 bg-white p-12 rounded-[40px] shadow-premium border border-gray-100 relative z-10"
       >
         <div>
-          <div className="mx-auto flex justify-center mb-8">
-            <img src="/Logos1.png" alt="Logo" className="h-20 w-auto object-contain hover:scale-105 transition-transform" />
-          </div>
-          <div className="space-y-2 text-center">
+          <AuthBrandLogo variant="staff" size="lg" />
+          <div className="space-y-2 text-center mt-6">
             <h2 className="text-2xl font-black text-[#111827] tracking-tight uppercase">
               System Access
             </h2>

@@ -5,8 +5,13 @@ import { ContactUsPage } from '../pages/publicwebsite/ContactUsPage';
 import { Roompage } from '../pages/publicwebsite/Roompage';
 import {
   RoomDetailspage,
+  LoginPage,
+  SignupPage,
+  GuestProfilePage,
+  AdminLoginPage,
   AdminDashboardPage,
   FrontOfficeDashboardPage,
+  FrontOfficeProfilePage,
   HousekeepingDashboardPage,
   AdminRoomDetailsPage,
   HousekeepingRoomDetailsPage,
@@ -16,13 +21,10 @@ import { FacilitiesPage } from '../pages/publicwebsite/FacilitiesPage';
 import { GalleryPage } from '../pages/publicwebsite/GalleryPage';
 import { PaymentSuccessPage } from '../pages/publicwebsite/PaymentSuccessPage';
 import { PaymentFailurePage } from '../pages/publicwebsite/PaymentFailurePage';
-import { LoginPage } from '../pages/publicwebsite/Auth/LoginPage';
-import { SignupPage } from '../pages/publicwebsite/Auth/SignupPage';
 import { ForgotPasswordPage } from '../pages/publicwebsite/Auth/ForgotPasswordPage';
 import { ResetPasswordPage } from '../pages/publicwebsite/Auth/ResetPasswordPage';
 import { VerifyOTPPage } from '../pages/publicwebsite/Auth/VerifyOTPPage';
 import { LoginSuccess } from '../pages/publicwebsite/Auth/LoginSuccess';
-import { GuestProfilePage } from '../pages/publicwebsite/Guest/GuestProfilePage';
 import PublicLayout from '../components/publicwebsite/Homepage/Sections/PublicLayout';
 import { AuthGuard } from '../components/auth/AuthGuard';
 
@@ -34,7 +36,6 @@ import PaymentsPage from '../pages/frontoffice/PaymentsPage';
 import ReportsPage from '../pages/frontoffice/ReportsPage';
 import SettingsPage from '../pages/frontoffice/SettingsPage';
 import NotificationsPage from '../pages/frontoffice/NotificationsPage';
-import ProfilePage from '../pages/frontoffice/ProfilePage';
 import ServicePOSPage from '../pages/frontoffice/ServicePOSPage';
 import GuestFolioPage from '../pages/frontoffice/GuestFolioPage';
 
@@ -56,7 +57,6 @@ import ExtraServicesPage from '../pages/Admin/ExtraServicesPage';
 import GalleryVenuesPage from '../pages/Admin/GalleryVenuesPage';
 import AdminUsersPage from '../pages/Admin/UsersPage';
 import RoomEditPage from '../pages/Admin/RoomEditPage';
-import { AdminLoginPage } from '../pages/Admin/Auth/AdminLoginPage';
 import { StaffResetPasswordPage } from '../pages/Admin/Auth/StaffResetPasswordPage';
 import { AdminAuthGuard } from '../components/auth/AdminAuthGuard';
 
@@ -221,7 +221,7 @@ const routes: RouteObject[] = [
       },
       {
         path: 'profile',
-        element: <ProfilePage />,
+        element: <FrontOfficeProfilePage />,
       },
       {
         path: 'folio',

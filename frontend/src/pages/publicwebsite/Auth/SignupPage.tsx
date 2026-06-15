@@ -7,6 +7,7 @@ import { Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { FcGoogle } from 'react-icons/fc';
+import { AuthBrandLogo } from '../../../components/ui/AuthBrandLogo';
 
 export const SignupPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -82,16 +83,8 @@ export const SignupPage: React.FC = () => {
         className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/50 relative z-10"
       >
         <div className="text-center">
-          <motion.div 
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            className="mx-auto flex justify-center mb-6"
-          >
-            <div className="p-3 bg-white rounded-2xl shadow-sm border border-gray-100">
-              <img src="/Logos1.png" alt="Itahari Namuna Logo" className="h-16 w-auto object-contain" />
-            </div>
-          </motion.div>
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+          <AuthBrandLogo variant="guest" />
+          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight mt-2">
             Create Account
           </h2>
           <p className="mt-3 text-sm text-gray-500 font-medium">

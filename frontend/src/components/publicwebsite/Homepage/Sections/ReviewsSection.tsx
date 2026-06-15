@@ -5,12 +5,12 @@ import { motion } from "framer-motion";
 import { Button } from "../../../ui/Button";
 import { SubmitReviewModal } from "./SubmitReviewModal";
 import { ApiStatus } from "../../../ui/ApiStatus";
+import { SectionHeading } from "../layout/SectionHeading";
 
 const ReviewsSection: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [show, setShow] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const ref = useRef<HTMLElement>(null);
 
@@ -32,13 +32,6 @@ const ReviewsSection: React.FC = () => {
 
   useEffect(() => {
     fetchReviews();
-
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setShow(true); obs.disconnect(); } },
-      { threshold: 0.1 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
   }, [fetchReviews]);
 
   return (
@@ -50,24 +43,13 @@ const ReviewsSection: React.FC = () => {
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-primary-green/5 rounded-full blur-[130px] -ml-80 -mb-80 opacity-60" />
 
       <div className="container-custom relative z-10">
-        
-        <div
-          className={`text-center mb-20 max-w-3xl mx-auto transition-all duration-1000 ease-out ${
-            show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-          }`}
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-green/10 rounded-full mb-4">
-            <MessageSquare className="h-4 w-4 text-primary-green" />
-            <span className="text-[10px] font-bold tracking-[0.2em] text-primary-green uppercase">Guest Experiences</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-black text-primary-dark mb-6 leading-tight tracking-tight">
-            World-Class <span className="text-primary-green">Testimonials</span>
-          </h2>
-          <div className="h-1.5 w-16 bg-primary-gold mx-auto rounded-full mb-6" />
-          <p className="text-lg text-neutral-text-secondary font-medium leading-relaxed">
-            The stories of our guests are the true measure of our success. Discover why travelers choose us for their stay.
-          </p>
-        </div>
+        <SectionHeading
+          badge="Guest Experiences"
+          badgeIcon={MessageSquare}
+          title={<>Voices of <span className="text-primary-green">Excellence</span></>}
+          subtitle="Real stories from travelers who experienced our hospitality firsthand — the true measure of a world-class stay."
+          accent="green"
+        />
 
         {loading ? (
           <ApiStatus status="loading" skeletonCount={4} skeletonVariant="card" />

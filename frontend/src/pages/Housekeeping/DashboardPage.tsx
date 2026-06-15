@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import {
-  Sparkles,
   DoorOpen,
   Hammer,
   Clock,
   CheckCircle2,
-  UserSquare2,
   Loader2,
   RefreshCcw,
 } from "lucide-react";
@@ -14,6 +12,10 @@ import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
 import { Modal } from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
+import { SectionLoader } from "../../components/ui/PageLoader";
+
+const HousekeepingRoomGrid = lazy(() => import("../../components/Housekeeping/Dashboard/HousekeepingRoomGrid"));
+const HousekeepingStaffPanel = lazy(() => import("../../components/Housekeeping/Dashboard/HousekeepingStaffPanel"));
 
 const DashboardPage: React.FC = () => {
   const [rooms, setRooms] = useState<any[]>([]);
@@ -105,14 +107,6 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  const filteredRooms = rooms.filter(r => {
-    if (filter === "All") return true;
-    if (filter === "Dirty") return r.status === "cleaning";
-    if (filter === "Clean") return r.status === "available";
-    if (filter === "Occupied") return r.status === "occupied";
-    return true;
-  });
-
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-40 gap-4">
@@ -172,104 +166,22 @@ const DashboardPage: React.FC = () => {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
-        <div className="xl:col-span-8 space-y-10">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 className="text-xl font-black text-[#111827] flex items-center gap-3 tracking-tighter uppercase">
-               <Sparkles className="text-[#F59E0B]" size={24} /> Room Command Center
-            </h2>
-            <div className="flex items-center bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
-              {["All", "Dirty", "Clean", "Occupied"].map(f => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === f ? "bg-white text-[#14532D] shadow-md border border-gray-100" : "text-gray-400 hover:text-gray-600"}`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredRooms.map((room) => {
-              const isDirty = room.status === 'cleaning';
-              const isClean = room.status === 'available';
-
-              return (
-                <div key={room.id} className="bg-white p-7 rounded-[40px] border border-gray-100 hover:shadow-2xl transition-all relative overflow-hidden group">
-                  <div className={`absolute top-0 right-0 w-16 h-16 rounded-bl-[32px] ${isClean ? 'bg-emerald-50' : isDirty ? 'bg-amber-50' : 'bg-blue-50'
-                    } opacity-40 group-hover:scale-110 transition-transform duration-500`} />
-
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-6">
-                      <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">FLOOR {room.floor}</span>
-                      <div className={`w-2.5 h-2.5 rounded-full ${isClean ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : isDirty ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]'
-                        }`} />
-                    </div>
-                    <h4 className="text-3xl font-black text-[#111827] leading-none mb-1 tracking-tighter">{room.roomNumber}</h4>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{room.status}</p>
-
-                    <div className="mt-8 flex flex-col gap-3">
-                      {isDirty ? (
-                        <button onClick={() => handleMarkClean(room.id)} className="w-full py-4 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/10 active:scale-95">
-                          Mark Ready
-                        </button>
-                      ) : isClean ? (
-                        <button onClick={() => handleStartCleaning(room)} className="w-full py-4 bg-[#14532D] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#111827] transition-all shadow-lg shadow-[#14532D]/10 active:scale-95">
-                          Assign Task
-                        </button>
-                      ) : (
-                        <div className="w-full py-4 bg-blue-50 text-blue-600 rounded-2xl text-[9px] font-black uppercase tracking-widest text-center border border-blue-100">Guest In Unit</div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        <div className="xl:col-span-8">
+          <Suspense fallback={<SectionLoader />}>
+            <HousekeepingRoomGrid
+              rooms={rooms}
+              filter={filter}
+              onFilterChange={setFilter}
+              onMarkClean={handleMarkClean}
+              onStartCleaning={handleStartCleaning}
+            />
+          </Suspense>
         </div>
 
-        {/* Sidebar: Recent Activity */}
-        <div className="xl:col-span-4 space-y-12">
-          <div className="bg-gradient-to-br from-[#111827] to-[#1F2937] p-10 rounded-[48px] text-white relative overflow-hidden group border border-white/5 shadow-2xl">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#F59E0B]/10 rounded-full blur-[100px] pointer-events-none group-hover:scale-150 transition-transform duration-[2000ms]" />
-            <UserSquare2 className="text-[#F59E0B] mb-8" size={32} />
-            <h3 className="text-3xl font-black mb-2 leading-tight">Staff Core</h3>
-            <p className="text-white/40 text-[11px] font-black uppercase tracking-widest mb-10 leading-relaxed">Manage active cleaning shifts and assignments.</p>
-            <div className="space-y-4">
-              {staff.slice(0, 3).map((s: any) => (
-                <div key={s.id} className="flex items-center justify-between p-5 bg-white/5 rounded-3xl border border-white/10 group/item hover:bg-white/10 transition-all">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-[11px] font-black">{s.name.slice(0, 2).toUpperCase()}</div>
-                    <span className="text-[12px] font-black uppercase">{s.name}</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Active</span>
-                </div>
-              ))}
-              {staff.length === 0 && <p className="text-center py-6 text-white/20 text-[10px] font-black uppercase tracking-widest">No staff online</p>}
-            </div>
-          </div>
-
-          <div className="space-y-8">
-            <h2 className="text-xl font-black text-[#111827] flex items-center gap-3 tracking-tighter uppercase">
-              <Clock className="text-[#F59E0B]" size={24} /> Real-time Logs
-            </h2>
-            <div className="space-y-4">
-              {rooms.filter(r => r.housekeepingLogs?.length > 0).slice(0, 4).map((room, i) => (
-                <div key={i} className="bg-white p-6 rounded-[32px] border border-gray-100 flex items-center gap-5 hover:shadow-xl transition-all group">
-                  <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-[#14532D] transition-colors">
-                    <Clock size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-[13px] font-black text-[#111827] uppercase">Room {room.roomNumber}</p>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{room.housekeepingLogs[0].staffId || 'System'}</p>
-                  </div>
-                  <div className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${room.housekeepingLogs[0].status === 'available' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
-                    }`}>{room.housekeepingLogs[0].status}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="xl:col-span-4">
+          <Suspense fallback={<SectionLoader />}>
+            <HousekeepingStaffPanel staff={staff} rooms={rooms} />
+          </Suspense>
         </div>
       </div>
 

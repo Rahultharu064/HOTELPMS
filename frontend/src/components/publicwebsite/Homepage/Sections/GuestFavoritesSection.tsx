@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Heart, Star, Users, ArrowRight, TrendingUp } from "lucide-react";
+import { SectionHeading } from "../layout/SectionHeading";
 import { roomService } from "../../../../services/roomService";
 import type { Room } from "../../../../services/roomService";
 import { Button } from "../../../ui/Button";
@@ -56,14 +57,13 @@ export const GuestFavoritesSection: React.FC = () => {
             <div className="absolute -right-20 top-1/4 w-72 h-72 bg-primary-green/5 rounded-full blur-[80px] pointer-events-none" />
 
             <div className="container-custom relative z-10">
-                <ScrollReveal className="text-center mb-16">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-gold/10 rounded-full mb-4">
-                        <TrendingUp className="h-4 w-4 text-primary-gold" />
-                        <span className="text-primary-gold font-bold text-[10px] uppercase tracking-widest">Most Loved by Guests</span>
-                    </div>
-                    <h2 className="text-4xl md:text-5xl font-black text-primary-dark tracking-tight mb-4">Guest <span className="gradient-text">Favorites</span></h2>
-                    <p className="text-neutral-text-secondary font-medium max-w-2xl mx-auto">Discover the rooms that our guests can't stop talking about. Based on real booking data and glowing reviews.</p>
-                </ScrollReveal>
+                <SectionHeading
+                    badge="Most Loved by Guests"
+                    badgeIcon={TrendingUp}
+                    title={<>Guest <span className="gradient-text">Favorites</span></>}
+                    subtitle="Discover the rooms our guests return to again and again — curated from real bookings, ratings, and heartfelt reviews."
+                    accent="gold"
+                />
 
                 {loading ? (
                     <ApiStatus status="loading" skeletonCount={3} skeletonVariant="row" />

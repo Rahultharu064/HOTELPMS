@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { authService } from '../../../services/authService';
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -9,13 +9,17 @@ import {
   Calendar, 
   Settings, 
   LogOut,
-  ChevronRight,
-  Package,
-  History
 } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { getImageUrl } from '../../../services/api';
+import { PageLoader } from '../../../components/ui/PageLoader';
+
+const GuestBookingsPanel = lazy(() =>
+  import('../../../components/publicwebsite/Guest/GuestBookingsPanel').then((m) => ({
+    default: m.GuestBookingsPanel,
+  }))
+);
 
 
 export const GuestProfilePage: React.FC = () => {
@@ -89,17 +93,15 @@ export const GuestProfilePage: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
       {/* Header/Cover Section */}
-      <div className="h-48 bg-gradient-to-r from-blue-600 to-indigo-700"></div>
+      <div className="h-48 bg-gradient-to-r from-primary-dark via-primary-green to-primary-dark relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,175,55,0.15)_0%,_transparent_60%)]" />
+      </div>
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -264,73 +266,9 @@ export const GuestProfilePage: React.FC = () => {
                 </form>
               </div>
             ) : (
-              <div className="space-y-6">
-                <div className="bg-white rounded-2xl shadow-xl p-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-6">Booking History</h3>
-                  
-                  {guest?.bookings?.length > 0 ? (
-                    <div className="space-y-4">
-                      {guest.bookings.map((booking: any) => (
-                        <div key={booking.id} className="border border-gray-100 rounded-2xl p-6 hover:border-blue-200 transition-all group">
-                          <div className="flex flex-col md:flex-row justify-between gap-4">
-                            <div className="flex gap-4">
-                              <div className="w-20 h-20 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
-                                {booking.room?.images?.[0]?.url ? (
-                                  <img 
-                                    src={getImageUrl(booking.room.images[0].url)} 
-                                    alt={booking.room.name || "Room preview"} 
-                                    className="w-full h-full object-cover" 
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-gray-400"><Package size={24} /></div>
-                                )}
-                              </div>
-                              <div>
-                                <h4 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                                  {booking.room?.name || 'Room Details'}
-                                </h4>
-                                <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
-                                  <Calendar size={14} />
-                                  <span>{new Date(booking.checkIn).toLocaleDateString()} - {new Date(booking.checkOut).toLocaleDateString()}</span>
-                                </div>
-                                <div className="mt-2 flex gap-2">
-                                  <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-full ${
-                                    booking.status === 'confirmed' ? 'bg-green-100 text-green-600' :
-                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-600' :
-                                    'bg-gray-100 text-gray-600'
-                                  }`}>
-                                    {booking.status}
-                                  </span>
-                                  <span className="text-[10px] font-black uppercase px-2 py-1 rounded-full bg-blue-100 text-blue-600">
-                                    #{booking.bookingNumber}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex flex-col justify-between items-end">
-                              <span className="text-xl font-black text-gray-900">${booking.totalAmount}</span>
-                              <button className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700">
-                                View Details <ChevronRight size={14} />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-                      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-gray-300 mx-auto mb-4">
-                        <History size={32} />
-                      </div>
-                      <h4 className="text-lg font-bold text-gray-900">No bookings yet</h4>
-                      <p className="text-sm text-gray-500 mb-6">You haven't made any reservations at Antigravity Hotel yet.</p>
-                      <Button className="px-6 py-2 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-lg hover:bg-blue-700 transition-all">
-                        Book a Room Now
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <Suspense fallback={<PageLoader />}>
+                <GuestBookingsPanel bookings={guest?.bookings ?? []} />
+              </Suspense>
             )}
           </div>
         </div>

@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import HeroSection from '../../components/publicwebsite/Homepage/Sections/HeroSection';
 import { RoomTypeSection } from '../../components/publicwebsite/Homepage/Sections/RoomTypeSection';
 import { FeaturedRoomsSection } from '../../components/publicwebsite/Homepage/Sections/FeaturedRoomsSection';
-import { GuestFavoritesSection } from '../../components/publicwebsite/Homepage/Sections/GuestFavoritesSection';
 import AboutUsSection from '../../components/publicwebsite/Homepage/Sections/AboutUsSection';
 import VenuesSection from '../../components/publicwebsite/Homepage/Sections/VenuesSection';
-import ReviewsSection from '../../components/publicwebsite/Homepage/Sections/ReviewsSection';
 import FacilitiesSection from '../../components/publicwebsite/Homepage/Sections/FacilitiesSection';
+import { GuestFavoritesSection, ReviewsSection } from '../../routes/lazyPages';
 import { Button } from '../../components/ui/Button';
+import { SectionLoader } from '../../components/ui/PageLoader';
 
 
 export const Homepage: React.FC = () => {
@@ -22,10 +22,14 @@ export const Homepage: React.FC = () => {
       </div>
       <AboutUsSection />
       <FeaturedRoomsSection />
-      <GuestFavoritesSection />
+      <Suspense fallback={<SectionLoader />}>
+        <GuestFavoritesSection />
+      </Suspense>
       <VenuesSection />
       <FacilitiesSection />
-      <ReviewsSection />
+      <Suspense fallback={<SectionLoader />}>
+        <ReviewsSection />
+      </Suspense>
       
       {/* CTA Section */}
       <section className="relative overflow-hidden bg-gradient-to-r from-primary-dark via-primary-green to-primary-dark py-20">

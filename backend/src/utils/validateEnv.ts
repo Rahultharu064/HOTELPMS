@@ -16,6 +16,13 @@ const DEV_ONLY_ENV_KEYS = [
   'DEV_AUTO_VERIFY_GUEST',
 ] as const;
 
+function isEmailConfigured(): boolean {
+  return Boolean(
+    config.email.resendApiKey ||
+    (config.email.user && config.email.pass)
+  );
+}
+
 export function validateEnvironment(): void {
   if (config.isProduction) {
     for (const key of DEV_ONLY_ENV_KEYS) {
@@ -37,7 +44,7 @@ export function validateEnvironment(): void {
 
     if (!isEmailConfigured()) {
       throw new Error(
-        'SMTP_USER and SMTP_PASS are required in production for email verification and password reset.'
+        'Email is required in production: set SMTP_USER/SMTP_PASS or RESEND_API_KEY.'
       );
     }
 
@@ -56,8 +63,4 @@ export function validateEnvironment(): void {
   if (!isEmailConfigured()) {
     console.warn('⚠️ SMTP not configured. OTP and password reset emails will fail outside dev helpers mode.');
   }
-}
-
-function isEmailConfigured(): boolean {
-  return Boolean(config.email.user && config.email.pass);
 }

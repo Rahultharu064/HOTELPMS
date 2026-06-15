@@ -31,12 +31,14 @@ export const config = {
   },
   documentEncryptionKey: process.env.DOCUMENT_ENCRYPTION_KEY || 'default-enc-key',
   email: {
+    /** smtp | resend | auto (auto tries SMTP, falls back to Resend) */
+    provider: (process.env.EMAIL_PROVIDER || 'auto').trim().toLowerCase() as 'smtp' | 'resend' | 'auto',
     host: process.env.SMTP_HOST?.trim(),
-    port: parseInt(process.env.SMTP_PORT || '587', 10),
+    port: parseInt(process.env.SMTP_PORT || '465', 10),
     user: process.env.SMTP_USER?.trim().replace(/^["']|["']$/g, ''),
-    // Gmail app passwords are 16 chars; strip spaces/quotes from .env
     pass: process.env.SMTP_PASS?.trim().replace(/^["']|["']$/g, '').replace(/\s+/g, ''),
     from: (process.env.SMTP_FROM || process.env.SMTP_USER)?.trim().replace(/^["']|["']$/g, ''),
+    resendApiKey: process.env.RESEND_API_KEY?.trim(),
   },
   payment: {
     esewa: {

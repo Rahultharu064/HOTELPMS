@@ -1,112 +1,112 @@
-import nodemailer, { type Transporter } from 'nodemailer';
-import dns from 'dns';
 import { config } from '../config';
+import { createVerifiedSmtpTransporter, type SmtpTransportResult } from './email/smtpTransport';
+import { isResendConfigured, sendViaResend } from './email/resendProvider';
 
-let transporter: Transporter | null = null;
+export type EmailProvider = 'smtp' | 'resend';
 
-type SmtpLookupCallback = (
-  err: NodeJS.ErrnoException | null,
-  address: string,
-  family: number
-) => void;
-
-/** Prefer IPv4 — avoids ENETUNREACH when IPv6 is broken (common on Windows/local networks). */
-const ipv4Lookup = (
-  hostname: string,
-  _options: dns.LookupOptions,
-  callback: SmtpLookupCallback
-): void => {
-  dns.lookup(hostname, { family: 4 }, callback);
-};
+let smtpSession: SmtpTransportResult | null = null;
+let activeProvider: EmailProvider | null = null;
 
 export const isEmailConfigured = (): boolean =>
-  Boolean(config.email.user && config.email.pass);
+  isResendConfigured() || Boolean(config.email.user && config.email.pass);
 
-const resolveSmtpHost = (): string => {
-  if (config.email.host) return config.email.host;
+export const getActiveEmailProvider = (): EmailProvider | null => activeProvider;
 
-  const user = config.email.user?.toLowerCase() ?? '';
-  if (user.includes('@gmail.com') || user.includes('@googlemail.com')) {
-    return 'smtp.gmail.com';
-  }
-
-  throw new Error('SMTP_HOST is required (e.g. smtp.gmail.com)');
-};
-
-const buildTransportOptions = () => {
-  const { port, user, pass } = config.email;
-  if (!user || !pass) {
-    throw new Error('SMTP is not configured. Set SMTP_USER and SMTP_PASS in backend/.env');
-  }
-
-  const host = resolveSmtpHost();
-
-  return {
-    host,
-    port,
-    secure: port === 465,
-    auth: { user, pass },
-    tls: { minVersion: 'TLSv1.2' as const },
-    lookup: ipv4Lookup,
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 15000,
-  };
-};
-
-const getTransporter = (): Transporter => {
-  if (transporter) return transporter;
-  transporter = nodemailer.createTransport(buildTransportOptions());
-  return transporter;
-};
-
-/** Reset cached transporter (e.g. after env change). */
+/** Reset cached transport (e.g. after env change). */
 export const resetEmailTransporter = (): void => {
-  transporter = null;
+  smtpSession = null;
+  activeProvider = null;
 };
 
-/** Verify SMTP connection on server startup */
+const preferResend = (): boolean => {
+  if (!isResendConfigured()) return false;
+  if (config.email.provider === 'resend') return true;
+  if (config.email.provider === 'smtp') return false;
+  // auto: Resend in production (Render blocks SMTP), SMTP in local dev
+  return config.isProduction;
+};
+
+const initializeSmtp = async (): Promise<SmtpTransportResult> => {
+  if (smtpSession) return smtpSession;
+  smtpSession = await createVerifiedSmtpTransporter();
+  activeProvider = 'smtp';
+  return smtpSession;
+};
+
+/** Verify email delivery capability on server startup. */
 export const verifyEmailConfig = async (): Promise<boolean> => {
   if (!isEmailConfigured()) {
-    console.warn('⚠️ Email service disabled: SMTP_USER and/or SMTP_PASS missing in backend/.env');
+    console.warn('⚠️ Email service disabled: configure SMTP or RESEND_API_KEY in backend/.env');
     return false;
   }
 
+  if (preferResend()) {
+    activeProvider = 'resend';
+    console.log('✅ Email service ready (Resend HTTP API — recommended for Render)');
+    return true;
+  }
+
   try {
-    await getTransporter().verify();
-    const host = resolveSmtpHost() || 'gmail';
-    console.log(`✅ Email service ready (${host}:${config.email.port} as ${config.email.user})`);
+    const session = await initializeSmtp();
+    console.log(
+      `✅ Email service ready (SMTP ${session.hostname}:${session.port} via IPv4 ${session.connectHost} as ${config.email.user})`
+    );
     return true;
   } catch (error) {
     const err = error as NodeJS.ErrnoException;
     console.error('❌ Email service verification failed:', error);
+
     if (err.code === 'ENETUNREACH' || err.code === 'ESOCKET') {
-      console.error('   Network blocked IPv6 route to SMTP. IPv4 fallback is enabled — restart the server.');
+      console.error('   Cause: IPv6 route unreachable or SMTP port blocked by host.');
+      console.error('   Fix: set RESEND_API_KEY + EMAIL_PROVIDER=resend on Render (free tier blocks SMTP).');
+      console.error('   Or upgrade Render to a paid instance and use SMTP_PORT=465.');
+    } else if (err.code === 'ETIMEDOUT' || err.code === 'ESOCKETTIMEDOUT') {
+      console.error('   Cause: SMTP port timeout — Render free tier blocks ports 25/465/587.');
+      console.error('   Fix: use Resend (RESEND_API_KEY) or upgrade Render plan.');
     }
-    console.error('   Check SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in backend/.env');
-    console.error('   Gmail: use an App Password (not your login password): https://support.google.com/accounts/answer/185833');
-    console.error('   SMTP_FROM should match SMTP_USER (or a verified Gmail alias).');
+
+    if (isResendConfigured()) {
+      activeProvider = 'resend';
+      console.warn('⚠️ SMTP unavailable — falling back to Resend HTTP API');
+      return true;
+    }
+
+    console.error('   Check SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in environment.');
+    console.error('   Gmail: App Password required — https://support.google.com/accounts/answer/185833');
     return false;
   }
 };
 
 export const sendEmail = async (to: string, subject: string, html: string): Promise<boolean> => {
   if (!isEmailConfigured()) {
-    console.error('[EmailError] SMTP not configured — set SMTP_USER and SMTP_PASS');
+    console.error('[EmailError] Email not configured — set SMTP or RESEND_API_KEY');
     return false;
   }
 
+  if (activeProvider === 'resend' || (preferResend() && isResendConfigured())) {
+    return sendViaResend(to, subject, html);
+  }
+
   try {
-    const info = await getTransporter().sendMail({
+    const session = smtpSession ?? (await initializeSmtp());
+    const info = await session.transporter.sendMail({
       from: `"Itahari Namuna Hotel" <${config.email.from}>`,
       to,
       subject,
       html,
     });
-    console.log(`📧 Email sent to ${to}: ${info.messageId}`);
+    console.log(`📧 Email sent via SMTP to ${to}: ${info.messageId}`);
     return true;
   } catch (error) {
-    console.error(`[EmailError] Failed to send to ${to}:`, error);
+    console.error(`[EmailError] SMTP failed for ${to}:`, error);
+
+    if (isResendConfigured()) {
+      console.warn('[Email] Retrying via Resend HTTP API...');
+      const sent = await sendViaResend(to, subject, html);
+      if (sent) activeProvider = 'resend';
+      return sent;
+    }
+
     return false;
   }
 };
@@ -130,8 +130,7 @@ export const sendOTPEmail = async (to: string, otp: string): Promise<boolean> =>
 };
 
 export const sendResetPasswordEmail = async (to: string, token: string): Promise<boolean> => {
-  const origin = Array.isArray(config.corsOrigin) ? config.corsOrigin[0] : config.corsOrigin;
-  const resetUrl = `${origin}/reset-password?token=${token}`;
+  const resetUrl = `${config.frontendUrl}/reset-password?token=${token}`;
   const subject = 'Reset Your Password - Itahari Namuna Hotel';
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
@@ -151,7 +150,6 @@ export const sendResetPasswordEmail = async (to: string, token: string): Promise
 };
 
 export const sendBookingConfirmationEmail = async (to: string, bookingDetails: any): Promise<boolean> => {
-  const origin = Array.isArray(config.corsOrigin) ? config.corsOrigin[0] : config.corsOrigin;
   const subject = `Booking Confirmed - ${bookingDetails.bookingNumber}`;
   const html = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; padding: 0; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background-color: #ffffff;">
@@ -192,7 +190,7 @@ export const sendBookingConfirmationEmail = async (to: string, bookingDetails: a
         </div>
         
         <div style="text-align: center; margin-top: 32px;">
-          <a href="${origin}/profile" style="background-color: #14532D; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block;">View Your Booking</a>
+          <a href="${config.frontendUrl}/profile" style="background-color: #14532D; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block;">View Your Booking</a>
         </div>
       </div>
       
@@ -213,10 +211,8 @@ export const sendStaffWelcomeEmail = async (
   role: string,
   temporaryPassword: string
 ): Promise<boolean> => {
-  const origin = Array.isArray(config.corsOrigin) ? config.corsOrigin[0] : config.corsOrigin;
-  const loginUrl = `${origin}/admin/login`;
+  const loginUrl = `${config.frontendUrl}/admin/login`;
   const subject = 'Welcome to the Team - Itahari Namuna Hotel';
-
   const roleDisplay = role.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 
   const html = `

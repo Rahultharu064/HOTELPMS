@@ -48,15 +48,20 @@ export const RoomRowSkeleton = ({ delay = 0 }: { delay?: number }) => (
 );
 
 const SectionHeaderSkeleton = () => (
-  <div className="mx-auto mb-14 max-w-3xl text-center space-y-4">
-    <div className="mx-auto h-8 w-40 rounded-full skeleton-shimmer" />
-    <div className="mx-auto h-12 w-4/5 max-w-md rounded-2xl skeleton-shimmer" />
-    <div className="mx-auto flex items-center justify-center gap-3">
-      <span className="h-1.5 w-14 rounded-full skeleton-shimmer" />
-      <span className="h-1 w-1 rounded-full bg-neutral-border/60" />
-      <span className="h-1 w-8 rounded-full skeleton-shimmer opacity-60" />
+  <div className="mx-auto mb-14 max-w-4xl text-center space-y-5">
+    <div className="flex items-center justify-center gap-4">
+      <span className="hidden h-px w-10 skeleton-shimmer sm:block" />
+      <div className="h-9 w-48 rounded-full skeleton-shimmer" />
+      <span className="hidden h-px w-10 skeleton-shimmer sm:block" />
     </div>
-    <div className="mx-auto h-4 w-full max-w-lg rounded-full skeleton-shimmer" />
+    <div className="mx-auto h-12 w-4/5 max-w-lg rounded-2xl skeleton-shimmer" />
+    <div className="flex items-center justify-center gap-2.5">
+      <span className="h-[2px] w-12 rounded-full skeleton-shimmer" />
+      <span className="h-1.5 w-1.5 rounded-full bg-neutral-border/50" />
+      <span className="h-[2px] w-8 rounded-full skeleton-shimmer opacity-60" />
+    </div>
+    <div className="mx-auto h-4 w-full max-w-xl rounded-full skeleton-shimmer" />
+    <div className="mx-auto h-4 w-3/4 max-w-md rounded-full skeleton-shimmer" />
   </div>
 );
 

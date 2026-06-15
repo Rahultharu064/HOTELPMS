@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
-import { Wifi, Waves, Dumbbell, Utensils, Zap, Smartphone, Leaf, Monitor } from "lucide-react";
+import React, { useRef } from "react";
+import { Wifi, Waves, Dumbbell, Utensils, Zap, Smartphone, Leaf, Monitor, Sparkles } from "lucide-react";
+import { SectionHeading } from "../layout/SectionHeading";
 
 const ITEMS = [
   { icon: Wifi,       label: "1Gbps Fiber Wi-Fi",  sub: "Seamless connectivity throughout the entire estate.",        color: "#1F7A3A" },
@@ -14,17 +15,7 @@ const ITEMS = [
 
 
 const FacilitiesSection: React.FC = () => {
-  const [show, setShow] = useState(false);
   const ref = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setShow(true); obs.disconnect(); } },
-      { threshold: 0.1 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
 
   return (
     <section id="facilities" ref={ref} className="section-padding bg-gray-50/50 border-y border-neutral-border/50 relative">
@@ -32,29 +23,23 @@ const FacilitiesSection: React.FC = () => {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-green-50/50 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
       <div className="container-custom relative z-10">
-        
-        <div
-          className={`text-center mb-20 max-w-3xl mx-auto transition-all duration-1000 ease-out ${
-            show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-          }`}
-        >
-          <span className="text-[10px] font-bold tracking-[0.4em] text-[#1F7A3A] uppercase mb-4 block">Future-Ready Hospitality</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold text-primary-dark mb-4 leading-tight tracking-tight">
-            Elevated <span className="text-primary-green">Facilities</span>
-          </h2>
-          <div className="h-1.5 w-16 bg-[#F59E0B] mx-auto rounded-full mb-6" />
-          <p className="text-base text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
-            We are constantly evolving. Our facilities are designed to meet the needs of today while anticipating the technology of tomorrow.
-          </p>
-        </div>
+        <SectionHeading
+          badge="Future-Ready Hospitality"
+          badgeIcon={Sparkles}
+          title={
+            <>
+              Elevated <span className="gradient-text">Facilities</span>
+            </>
+          }
+          subtitle="Thoughtfully designed amenities for today — with smart technology and sustainable touches that anticipate tomorrow's traveler."
+          accent="green"
+        />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+        <div className="mb-20 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {ITEMS.map((item, i) => (
             <div
               key={i}
-              className={`group bg-white rounded-[32px] p-8 border border-gray-100/80 hover:border-[#1F7A3A]/10 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] transition-all duration-700 relative overflow-hidden facility-card ${
-                show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
-              }`}
+              className="group relative overflow-hidden rounded-[32px] border border-gray-100/80 bg-white p-8 transition-all duration-700 hover:border-[#1F7A3A]/10 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] facility-card opacity-100"
               ref={(el) => {
                 if (el) el.style.setProperty('--delay', `${i * 100}ms`);
               }}

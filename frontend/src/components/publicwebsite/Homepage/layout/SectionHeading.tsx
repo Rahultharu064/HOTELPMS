@@ -18,34 +18,63 @@ export const SectionHeading = ({
   accent = 'gold',
   align = 'center',
 }: SectionHeadingProps) => {
-  const accentStyles = accent === 'gold'
-    ? { badge: 'bg-primary-gold/10 text-primary-gold', bar: 'bg-primary-gold', highlight: 'gradient-text' }
-    : { badge: 'bg-primary-green/10 text-primary-green', bar: 'bg-primary-green', highlight: 'text-primary-green' };
+  const isGold = accent === 'gold';
+
+  const styles = isGold
+    ? {
+        line: 'bg-primary-gold/60',
+        badge: 'bg-primary-gold/8 text-primary-gold border-primary-gold/20',
+        bar: 'bg-primary-gold',
+        dot: 'bg-primary-green',
+        iconRing: 'ring-primary-gold/25',
+      }
+    : {
+        line: 'bg-primary-green/50',
+        badge: 'bg-primary-green/8 text-primary-green border-primary-green/20',
+        bar: 'bg-primary-green',
+        dot: 'bg-primary-gold',
+        iconRing: 'ring-primary-green/25',
+      };
+
+  const alignClass = align === 'center' ? 'mx-auto text-center' : 'text-left';
+  const decorAlign = align === 'center' ? 'justify-center' : 'justify-start';
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className={`mb-16 max-w-3xl ${align === 'center' ? 'mx-auto text-center' : 'text-left'}`}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+      className={`mb-16 max-w-4xl md:mb-20 ${alignClass}`}
     >
-      <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5 ${accentStyles.badge}`}>
-        <BadgeIcon className="h-4 w-4" />
-        <span className="font-bold text-[10px] uppercase tracking-[0.25em]">{badge}</span>
+      {/* Eyebrow badge with flanking lines */}
+      <div className={`mb-6 flex items-center gap-3 md:gap-4 ${decorAlign}`}>
+        <span className={`hidden h-px w-8 sm:block md:w-14 ${styles.line}`} />
+        <div
+          className={`inline-flex items-center gap-2.5 rounded-full border px-4 py-2 shadow-sm backdrop-blur-sm ${styles.badge}`}
+        >
+          <span className={`flex h-7 w-7 items-center justify-center rounded-full bg-white/80 ring-1 ${styles.iconRing}`}>
+            <BadgeIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
+          </span>
+          <span className="text-[10px] font-extrabold uppercase tracking-[0.3em]">{badge}</span>
+        </div>
+        <span className={`hidden h-px w-8 sm:block md:w-14 ${styles.line}`} />
       </div>
 
-      <h2 className="text-4xl md:text-5xl lg:text-[3.25rem] font-black text-primary-dark tracking-tight leading-[1.1] mb-5">
+      {/* Main headline */}
+      <h2 className="font-georgia text-[2.125rem] font-bold leading-[1.12] tracking-tight text-primary-dark md:text-4xl lg:text-[3.35rem]">
         {title}
       </h2>
 
-      <div className={`flex items-center gap-3 mb-6 ${align === 'center' ? 'justify-center' : ''}`}>
-        <span className={`h-1.5 w-14 rounded-full ${accentStyles.bar}`} />
-        <span className="h-1 w-1 rounded-full bg-primary-dark/20" />
-        <span className={`h-1 w-8 rounded-full ${accentStyles.bar} opacity-40`} />
+      {/* Decorative divider */}
+      <div className={`my-6 flex items-center gap-2.5 ${decorAlign}`}>
+        <span className={`h-[2px] w-12 rounded-full ${styles.bar}`} />
+        <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
+        <span className={`h-[2px] w-8 rounded-full ${styles.bar} opacity-45`} />
       </div>
 
-      <p className="text-lg text-neutral-text-secondary font-medium leading-relaxed">
+      {/* Subtitle */}
+      <p className="max-w-2xl text-base font-medium leading-relaxed text-neutral-text-secondary md:text-lg md:leading-relaxed">
         {subtitle}
       </p>
     </motion.div>

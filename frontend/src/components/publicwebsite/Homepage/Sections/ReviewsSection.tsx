@@ -46,8 +46,12 @@ const ReviewsSection: React.FC = () => {
         <SectionHeading
           badge="Guest Experiences"
           badgeIcon={MessageSquare}
-          title={<>Voices of <span className="text-primary-green">Excellence</span></>}
-          subtitle="Real stories from travelers who experienced our hospitality firsthand — the true measure of a world-class stay."
+          title={
+            <>
+              Voices of <span className="italic text-primary-green">Excellence</span>
+            </>
+          }
+          subtitle="Authentic stories from travelers who chose us — every review reflects the warmth, care, and luxury that define our hospitality."
           accent="green"
         />
 

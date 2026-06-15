@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Heart, Star, Users, ArrowRight, TrendingUp } from "lucide-react";
+import { Heart, Star, Users, ArrowRight } from "lucide-react";
 import { SectionHeading } from "../layout/SectionHeading";
 import { roomService } from "../../../../services/roomService";
 import type { Room } from "../../../../services/roomService";
@@ -59,9 +59,14 @@ export const GuestFavoritesSection: React.FC = () => {
             <div className="container-custom relative z-10">
                 <SectionHeading
                     badge="Most Loved by Guests"
-                    badgeIcon={TrendingUp}
-                    title={<>Guest <span className="gradient-text">Favorites</span></>}
-                    subtitle="Discover the rooms our guests return to again and again — curated from real bookings, ratings, and heartfelt reviews."
+                    badgeIcon={Heart}
+                    title={
+                      <>
+                        Guest <span className="italic text-primary-green">&</span>{' '}
+                        <span className="gradient-text">Favorites</span>
+                      </>
+                    }
+                    subtitle="Hand-picked sanctuaries adored by our guests — ranked by bookings, ratings, and the stories they leave behind."
                     accent="gold"
                 />
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../components/ui/Button";
-import { Check, Download, Calendar, Users, CreditCard, ShieldCheck, Mail, Phone, Globe, MessageSquare, Info, Upload } from "lucide-react";
+import { Check, Download, Calendar, Users, CreditCard, ShieldCheck, Mail, Phone, Globe, MessageSquare, Info, Upload, Loader2 } from "lucide-react";
 import { BookingPageSkeleton } from "../../components/ui/skeletons/PageSkeletons";
 import { roomService } from "../../services/roomService";
 import { bookingService } from "../../services/bookingService";

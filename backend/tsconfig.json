@@ -19,9 +19,6 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "Node16",
     "allowSyntheticDefaultImports": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "prisma"]

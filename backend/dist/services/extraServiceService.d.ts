@@ -10,11 +10,11 @@ export declare class ExtraServiceService {
         discountAllowed?: boolean;
     }): Promise<{
         image: string | null;
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         price: Prisma.Decimal;
         active: boolean;
         categoryId: number;
@@ -24,22 +24,22 @@ export declare class ExtraServiceService {
     getExtraServices(): Promise<({
         category: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.ServiceStatus;
             slug: string;
             icon: string | null;
         };
     } & {
         image: string | null;
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         price: Prisma.Decimal;
         active: boolean;
         categoryId: number;
@@ -57,11 +57,11 @@ export declare class ExtraServiceService {
         image: string;
     }>): Promise<{
         image: string | null;
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         price: Prisma.Decimal;
         active: boolean;
         categoryId: number;
@@ -70,11 +70,11 @@ export declare class ExtraServiceService {
     }>;
     deleteExtraService(id: number): Promise<{
         image: string | null;
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         price: Prisma.Decimal;
         active: boolean;
         categoryId: number;
@@ -90,22 +90,22 @@ export declare class ExtraServiceService {
         extraService: {
             category: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 status: import(".prisma/client").$Enums.ServiceStatus;
                 slug: string;
                 icon: string | null;
             };
         } & {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             price: Prisma.Decimal;
             active: boolean;
             categoryId: number;
@@ -154,11 +154,11 @@ export declare class ExtraServiceService {
     getBookingExtraServices(bookingId: number): Promise<({
         extraService: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             price: Prisma.Decimal;
             active: boolean;
             categoryId: number;

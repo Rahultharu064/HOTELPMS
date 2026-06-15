@@ -11,11 +11,11 @@ export declare class ServiceOrderService {
     }): Promise<{
         orders: ({
             room: {
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 status: import(".prisma/client").$Enums.RoomStatus;
                 slug: string;
                 roomNumber: string;
@@ -31,11 +31,8 @@ export declare class ServiceOrderService {
             booking: ({
                 guest: {
                     id: number;
-                    createdAt: Date;
-                    updatedAt: Date;
-                    isVerified: boolean;
                     email: string;
-                    phone: string;
+                    phone: string | null;
                     password: string | null;
                     firstName: string;
                     lastName: string;
@@ -52,8 +49,11 @@ export declare class ServiceOrderService {
                     otpExpires: Date | null;
                     resetToken: string | null;
                     resetTokenExpires: Date | null;
+                    isVerified: boolean;
                     totalBookings: number;
                     totalSpent: Prisma.Decimal;
+                    createdAt: Date;
+                    updatedAt: Date;
                 };
             } & {
                 id: number;
@@ -73,11 +73,8 @@ export declare class ServiceOrderService {
             }) | null;
             guest: {
                 id: number;
-                createdAt: Date;
-                updatedAt: Date;
-                isVerified: boolean;
                 email: string;
-                phone: string;
+                phone: string | null;
                 password: string | null;
                 firstName: string;
                 lastName: string;
@@ -94,17 +91,20 @@ export declare class ServiceOrderService {
                 otpExpires: Date | null;
                 resetToken: string | null;
                 resetTokenExpires: Date | null;
+                isVerified: boolean;
                 totalBookings: number;
                 totalSpent: Prisma.Decimal;
+                createdAt: Date;
+                updatedAt: Date;
             } | null;
             items: ({
                 service: {
                     image: string | null;
-                    description: string | null;
-                    name: string;
                     id: number;
                     createdAt: Date;
                     updatedAt: Date;
+                    name: string;
+                    description: string | null;
                     status: import(".prisma/client").$Enums.ServiceStatus;
                     slug: string;
                     price: Prisma.Decimal;
@@ -126,9 +126,9 @@ export declare class ServiceOrderService {
             roomId: number | null;
             guestId: number | null;
             bookingId: number | null;
+            priority: import(".prisma/client").$Enums.ServicePriority;
             totalAmount: Prisma.Decimal;
             orderNumber: string;
-            priority: import(".prisma/client").$Enums.ServicePriority;
             notes: string | null;
             requestedBy: string | null;
             assignedTo: string | null;
@@ -140,11 +140,11 @@ export declare class ServiceOrderService {
     }>;
     getOrderById(id: number): Promise<{
         room: {
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -160,11 +160,8 @@ export declare class ServiceOrderService {
         booking: ({
             guest: {
                 id: number;
-                createdAt: Date;
-                updatedAt: Date;
-                isVerified: boolean;
                 email: string;
-                phone: string;
+                phone: string | null;
                 password: string | null;
                 firstName: string;
                 lastName: string;
@@ -181,8 +178,11 @@ export declare class ServiceOrderService {
                 otpExpires: Date | null;
                 resetToken: string | null;
                 resetTokenExpires: Date | null;
+                isVerified: boolean;
                 totalBookings: number;
                 totalSpent: Prisma.Decimal;
+                createdAt: Date;
+                updatedAt: Date;
             };
         } & {
             id: number;
@@ -203,11 +203,11 @@ export declare class ServiceOrderService {
         items: ({
             service: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 status: import(".prisma/client").$Enums.ServiceStatus;
                 slug: string;
                 price: Prisma.Decimal;
@@ -229,9 +229,9 @@ export declare class ServiceOrderService {
         roomId: number | null;
         guestId: number | null;
         bookingId: number | null;
+        priority: import(".prisma/client").$Enums.ServicePriority;
         totalAmount: Prisma.Decimal;
         orderNumber: string;
-        priority: import(".prisma/client").$Enums.ServicePriority;
         notes: string | null;
         requestedBy: string | null;
         assignedTo: string | null;
@@ -250,11 +250,11 @@ export declare class ServiceOrderService {
         }>;
     }): Promise<{
         room: {
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -269,11 +269,8 @@ export declare class ServiceOrderService {
         } | null;
         guest: {
             id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            isVerified: boolean;
             email: string;
-            phone: string;
+            phone: string | null;
             password: string | null;
             firstName: string;
             lastName: string;
@@ -290,17 +287,20 @@ export declare class ServiceOrderService {
             otpExpires: Date | null;
             resetToken: string | null;
             resetTokenExpires: Date | null;
+            isVerified: boolean;
             totalBookings: number;
             totalSpent: Prisma.Decimal;
+            createdAt: Date;
+            updatedAt: Date;
         } | null;
         items: ({
             service: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 status: import(".prisma/client").$Enums.ServiceStatus;
                 slug: string;
                 price: Prisma.Decimal;
@@ -322,20 +322,20 @@ export declare class ServiceOrderService {
         roomId: number | null;
         guestId: number | null;
         bookingId: number | null;
+        priority: import(".prisma/client").$Enums.ServicePriority;
         totalAmount: Prisma.Decimal;
         orderNumber: string;
-        priority: import(".prisma/client").$Enums.ServicePriority;
         notes: string | null;
         requestedBy: string | null;
         assignedTo: string | null;
     }>;
     updateOrderStatus(id: number, status: ServiceOrderStatus, assignedTo?: string): Promise<{
         room: {
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -351,11 +351,8 @@ export declare class ServiceOrderService {
         booking: ({
             guest: {
                 id: number;
-                createdAt: Date;
-                updatedAt: Date;
-                isVerified: boolean;
                 email: string;
-                phone: string;
+                phone: string | null;
                 password: string | null;
                 firstName: string;
                 lastName: string;
@@ -372,8 +369,11 @@ export declare class ServiceOrderService {
                 otpExpires: Date | null;
                 resetToken: string | null;
                 resetTokenExpires: Date | null;
+                isVerified: boolean;
                 totalBookings: number;
                 totalSpent: Prisma.Decimal;
+                createdAt: Date;
+                updatedAt: Date;
             };
         } & {
             id: number;
@@ -394,11 +394,11 @@ export declare class ServiceOrderService {
         items: ({
             service: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 status: import(".prisma/client").$Enums.ServiceStatus;
                 slug: string;
                 price: Prisma.Decimal;
@@ -420,9 +420,9 @@ export declare class ServiceOrderService {
         roomId: number | null;
         guestId: number | null;
         bookingId: number | null;
+        priority: import(".prisma/client").$Enums.ServicePriority;
         totalAmount: Prisma.Decimal;
         orderNumber: string;
-        priority: import(".prisma/client").$Enums.ServicePriority;
         notes: string | null;
         requestedBy: string | null;
         assignedTo: string | null;
@@ -435,9 +435,9 @@ export declare class ServiceOrderService {
         roomId: number | null;
         guestId: number | null;
         bookingId: number | null;
+        priority: import(".prisma/client").$Enums.ServicePriority;
         totalAmount: Prisma.Decimal;
         orderNumber: string;
-        priority: import(".prisma/client").$Enums.ServicePriority;
         notes: string | null;
         requestedBy: string | null;
         assignedTo: string | null;

@@ -2,7 +2,7 @@ import { prisma } from '../config/database';
 import { Prisma, BookingStatus, PaymentMethod } from '@prisma/client';
 import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { encryptFile, validateBase64Image } from '../utils/security';
@@ -311,7 +311,7 @@ export class BookingService {
             amount: data.payment.amount,
             method: data.payment.method,
             status: isOnline ? 'pending' : 'completed',
-            transactionId: data.payment.transactionId || uuidv4(),
+            transactionId: data.payment.transactionId || randomUUID(),
           },
         });
       }

@@ -12,9 +12,9 @@ export declare class PaymentService {
             createdAt: Date;
             status: import(".prisma/client").$Enums.PaymentStatus;
             bookingId: number | null;
+            method: import(".prisma/client").$Enums.PaymentMethod;
             serviceOrderId: number | null;
             amount: Prisma.Decimal;
-            method: import(".prisma/client").$Enums.PaymentMethod;
             transactionId: string | null;
             paymentData: Prisma.JsonValue | null;
         };
@@ -27,9 +27,9 @@ export declare class PaymentService {
             createdAt: Date;
             status: import(".prisma/client").$Enums.PaymentStatus;
             bookingId: number | null;
+            method: import(".prisma/client").$Enums.PaymentMethod;
             serviceOrderId: number | null;
             amount: Prisma.Decimal;
-            method: import(".prisma/client").$Enums.PaymentMethod;
             transactionId: string | null;
             paymentData: Prisma.JsonValue | null;
         };
@@ -56,9 +56,9 @@ export declare class PaymentService {
             createdAt: Date;
             status: import(".prisma/client").$Enums.PaymentStatus;
             bookingId: number | null;
+            method: import(".prisma/client").$Enums.PaymentMethod;
             serviceOrderId: number | null;
             amount: Prisma.Decimal;
-            method: import(".prisma/client").$Enums.PaymentMethod;
             transactionId: string | null;
             paymentData: Prisma.JsonValue | null;
         };
@@ -108,11 +108,8 @@ export declare class PaymentService {
             booking: {
                 guest: {
                     id: number;
-                    createdAt: Date;
-                    updatedAt: Date;
-                    isVerified: boolean;
                     email: string;
-                    phone: string;
+                    phone: string | null;
                     password: string | null;
                     firstName: string;
                     lastName: string;
@@ -129,8 +126,11 @@ export declare class PaymentService {
                     otpExpires: Date | null;
                     resetToken: string | null;
                     resetTokenExpires: Date | null;
+                    isVerified: boolean;
                     totalBookings: number;
                     totalSpent: Prisma.Decimal;
+                    createdAt: Date;
+                    updatedAt: Date;
                 };
                 bookingNumber: string;
             } | null;
@@ -143,9 +143,9 @@ export declare class PaymentService {
             createdAt: Date;
             status: import(".prisma/client").$Enums.PaymentStatus;
             bookingId: number | null;
+            method: import(".prisma/client").$Enums.PaymentMethod;
             serviceOrderId: number | null;
             amount: Prisma.Decimal;
-            method: import(".prisma/client").$Enums.PaymentMethod;
             transactionId: string | null;
             paymentData: Prisma.JsonValue | null;
         })[];

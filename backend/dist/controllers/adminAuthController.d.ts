@@ -9,6 +9,10 @@ export declare class AdminAuthController {
      */
     changePassword: (req: Request, res: Response, next: import("express").NextFunction) => void;
     /**
+     * Skip forced password change
+     */
+    skipPasswordChange: (req: Request, res: Response, next: import("express").NextFunction) => void;
+    /**
      * Update Admin Avatar
      */
     updateAvatar: (req: Request, res: Response, next: import("express").NextFunction) => void;

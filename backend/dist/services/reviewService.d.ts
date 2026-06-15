@@ -10,11 +10,11 @@ export declare class ReviewService {
         reviews: ({
             roomType: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
             } | null;
             booking: {
                 id: number;
@@ -34,11 +34,8 @@ export declare class ReviewService {
             } | null;
             guest: {
                 id: number;
-                createdAt: Date;
-                updatedAt: Date;
-                isVerified: boolean;
                 email: string;
-                phone: string;
+                phone: string | null;
                 password: string | null;
                 firstName: string;
                 lastName: string;
@@ -55,11 +52,15 @@ export declare class ReviewService {
                 otpExpires: Date | null;
                 resetToken: string | null;
                 resetTokenExpires: Date | null;
+                isVerified: boolean;
                 totalBookings: number;
                 totalSpent: Prisma.Decimal;
+                createdAt: Date;
+                updatedAt: Date;
             };
         } & {
             id: number;
+            isVerified: boolean;
             createdAt: Date;
             updatedAt: Date;
             status: import(".prisma/client").$Enums.ReviewStatus;
@@ -68,8 +69,8 @@ export declare class ReviewService {
             bookingId: number | null;
             rating: number;
             comment: string | null;
+            proofImage: string | null;
             staffReply: string | null;
-            isVerified: boolean;
         })[];
         total: number;
         page: number;
@@ -79,11 +80,11 @@ export declare class ReviewService {
     getReviewById(id: number): Promise<{
         roomType: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         } | null;
         booking: {
             id: number;
@@ -103,11 +104,8 @@ export declare class ReviewService {
         } | null;
         guest: {
             id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            isVerified: boolean;
             email: string;
-            phone: string;
+            phone: string | null;
             password: string | null;
             firstName: string;
             lastName: string;
@@ -124,11 +122,15 @@ export declare class ReviewService {
             otpExpires: Date | null;
             resetToken: string | null;
             resetTokenExpires: Date | null;
+            isVerified: boolean;
             totalBookings: number;
             totalSpent: Prisma.Decimal;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: number;
+        isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
         status: import(".prisma/client").$Enums.ReviewStatus;
@@ -137,8 +139,8 @@ export declare class ReviewService {
         bookingId: number | null;
         rating: number;
         comment: string | null;
+        proofImage: string | null;
         staffReply: string | null;
-        isVerified: boolean;
     }>;
     createReview(data: {
         guestId: number;
@@ -146,22 +148,20 @@ export declare class ReviewService {
         roomTypeId?: number;
         rating: number;
         comment?: string;
+        proofImage?: string;
     }): Promise<{
         roomType: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         } | null;
         guest: {
             id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            isVerified: boolean;
             email: string;
-            phone: string;
+            phone: string | null;
             password: string | null;
             firstName: string;
             lastName: string;
@@ -178,11 +178,15 @@ export declare class ReviewService {
             otpExpires: Date | null;
             resetToken: string | null;
             resetTokenExpires: Date | null;
+            isVerified: boolean;
             totalBookings: number;
             totalSpent: Prisma.Decimal;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: number;
+        isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
         status: import(".prisma/client").$Enums.ReviewStatus;
@@ -191,25 +195,22 @@ export declare class ReviewService {
         bookingId: number | null;
         rating: number;
         comment: string | null;
+        proofImage: string | null;
         staffReply: string | null;
-        isVerified: boolean;
     }>;
     updateReviewStatus(id: number, status: ReviewStatus, staffReply?: string): Promise<{
         roomType: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         } | null;
         guest: {
             id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            isVerified: boolean;
             email: string;
-            phone: string;
+            phone: string | null;
             password: string | null;
             firstName: string;
             lastName: string;
@@ -226,11 +227,15 @@ export declare class ReviewService {
             otpExpires: Date | null;
             resetToken: string | null;
             resetTokenExpires: Date | null;
+            isVerified: boolean;
             totalBookings: number;
             totalSpent: Prisma.Decimal;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: number;
+        isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
         status: import(".prisma/client").$Enums.ReviewStatus;
@@ -239,11 +244,12 @@ export declare class ReviewService {
         bookingId: number | null;
         rating: number;
         comment: string | null;
+        proofImage: string | null;
         staffReply: string | null;
-        isVerified: boolean;
     }>;
     deleteReview(id: number): Promise<{
         id: number;
+        isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
         status: import(".prisma/client").$Enums.ReviewStatus;
@@ -252,8 +258,8 @@ export declare class ReviewService {
         bookingId: number | null;
         rating: number;
         comment: string | null;
+        proofImage: string | null;
         staffReply: string | null;
-        isVerified: boolean;
     }>;
     getRoomTypeRating(roomTypeId: number): Promise<{
         averageRating: number;

@@ -15,11 +15,8 @@ export declare class FrontOfficeService {
         currentBooking: {
             guest: {
                 id: number;
-                createdAt: Date;
-                updatedAt: Date;
-                isVerified: boolean;
                 email: string;
-                phone: string;
+                phone: string | null;
                 password: string | null;
                 firstName: string;
                 lastName: string;
@@ -36,17 +33,20 @@ export declare class FrontOfficeService {
                 otpExpires: Date | null;
                 resetToken: string | null;
                 resetTokenExpires: Date | null;
+                isVerified: boolean;
                 totalBookings: number;
                 totalSpent: import("@prisma/client/runtime/library").Decimal;
+                createdAt: Date;
+                updatedAt: Date;
             };
             payments: {
                 id: number;
                 createdAt: Date;
                 status: import(".prisma/client").$Enums.PaymentStatus;
                 bookingId: number | null;
+                method: import(".prisma/client").$Enums.PaymentMethod;
                 serviceOrderId: number | null;
                 amount: import("@prisma/client/runtime/library").Decimal;
-                method: import(".prisma/client").$Enums.PaymentMethod;
                 transactionId: string | null;
                 paymentData: import("@prisma/client/runtime/library").JsonValue | null;
             }[];
@@ -69,20 +69,17 @@ export declare class FrontOfficeService {
         occupancyStatus: string;
         roomType: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         };
         bookings: ({
             guest: {
                 id: number;
-                createdAt: Date;
-                updatedAt: Date;
-                isVerified: boolean;
                 email: string;
-                phone: string;
+                phone: string | null;
                 password: string | null;
                 firstName: string;
                 lastName: string;
@@ -99,17 +96,20 @@ export declare class FrontOfficeService {
                 otpExpires: Date | null;
                 resetToken: string | null;
                 resetTokenExpires: Date | null;
+                isVerified: boolean;
                 totalBookings: number;
                 totalSpent: import("@prisma/client/runtime/library").Decimal;
+                createdAt: Date;
+                updatedAt: Date;
             };
             payments: {
                 id: number;
                 createdAt: Date;
                 status: import(".prisma/client").$Enums.PaymentStatus;
                 bookingId: number | null;
+                method: import(".prisma/client").$Enums.PaymentMethod;
                 serviceOrderId: number | null;
                 amount: import("@prisma/client/runtime/library").Decimal;
-                method: import(".prisma/client").$Enums.PaymentMethod;
                 transactionId: string | null;
                 paymentData: import("@prisma/client/runtime/library").JsonValue | null;
             }[];
@@ -129,11 +129,11 @@ export declare class FrontOfficeService {
             source: import(".prisma/client").$Enums.BookingSource;
             specialRequests: string | null;
         })[];
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.RoomStatus;
         slug: string;
         roomNumber: string;
@@ -151,18 +151,18 @@ export declare class FrontOfficeService {
             room: {
                 roomType: {
                     image: string | null;
-                    description: string | null;
-                    name: string;
                     id: number;
                     createdAt: Date;
                     updatedAt: Date;
+                    name: string;
+                    description: string | null;
                 };
             } & {
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 status: import(".prisma/client").$Enums.RoomStatus;
                 slug: string;
                 roomNumber: string;
@@ -177,11 +177,8 @@ export declare class FrontOfficeService {
             };
             guest: {
                 id: number;
-                createdAt: Date;
-                updatedAt: Date;
-                isVerified: boolean;
                 email: string;
-                phone: string;
+                phone: string | null;
                 password: string | null;
                 firstName: string;
                 lastName: string;
@@ -198,8 +195,11 @@ export declare class FrontOfficeService {
                 otpExpires: Date | null;
                 resetToken: string | null;
                 resetTokenExpires: Date | null;
+                isVerified: boolean;
                 totalBookings: number;
                 totalSpent: import("@prisma/client/runtime/library").Decimal;
+                createdAt: Date;
+                updatedAt: Date;
             };
         } & {
             id: number;
@@ -219,11 +219,8 @@ export declare class FrontOfficeService {
         })[];
         guests: {
             id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            isVerified: boolean;
             email: string;
-            phone: string;
+            phone: string | null;
             password: string | null;
             firstName: string;
             lastName: string;
@@ -240,16 +237,19 @@ export declare class FrontOfficeService {
             otpExpires: Date | null;
             resetToken: string | null;
             resetTokenExpires: Date | null;
+            isVerified: boolean;
             totalBookings: number;
             totalSpent: import("@prisma/client/runtime/library").Decimal;
+            createdAt: Date;
+            updatedAt: Date;
         }[];
     }>;
     updateHousekeeping(roomId: number, status: RoomStatus): Promise<{
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.RoomStatus;
         slug: string;
         roomNumber: string;
@@ -266,18 +266,18 @@ export declare class FrontOfficeService {
         room: {
             roomType: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
             };
         } & {
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -292,11 +292,8 @@ export declare class FrontOfficeService {
         };
         guest: {
             id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            isVerified: boolean;
             email: string;
-            phone: string;
+            phone: string | null;
             password: string | null;
             firstName: string;
             lastName: string;
@@ -313,8 +310,11 @@ export declare class FrontOfficeService {
             otpExpires: Date | null;
             resetToken: string | null;
             resetTokenExpires: Date | null;
+            isVerified: boolean;
             totalBookings: number;
             totalSpent: import("@prisma/client/runtime/library").Decimal;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: number;
@@ -336,18 +336,18 @@ export declare class FrontOfficeService {
         room: {
             roomType: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
             };
         } & {
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -362,11 +362,8 @@ export declare class FrontOfficeService {
         };
         guest: {
             id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            isVerified: boolean;
             email: string;
-            phone: string;
+            phone: string | null;
             password: string | null;
             firstName: string;
             lastName: string;
@@ -383,8 +380,11 @@ export declare class FrontOfficeService {
             otpExpires: Date | null;
             resetToken: string | null;
             resetTokenExpires: Date | null;
+            isVerified: boolean;
             totalBookings: number;
             totalSpent: import("@prisma/client/runtime/library").Decimal;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: number;
@@ -405,18 +405,18 @@ export declare class FrontOfficeService {
     getAlternativeRooms(bookingId: number): Promise<({
         roomType: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         };
     } & {
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.RoomStatus;
         slug: string;
         roomNumber: string;
@@ -433,18 +433,18 @@ export declare class FrontOfficeService {
         room: {
             roomType: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
             };
         } & {
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -478,18 +478,18 @@ export declare class FrontOfficeService {
             room: {
                 roomType: {
                     image: string | null;
-                    description: string | null;
-                    name: string;
                     id: number;
                     createdAt: Date;
                     updatedAt: Date;
+                    name: string;
+                    description: string | null;
                 };
             } & {
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 status: import(".prisma/client").$Enums.RoomStatus;
                 slug: string;
                 roomNumber: string;
@@ -504,11 +504,8 @@ export declare class FrontOfficeService {
             };
             guest: {
                 id: number;
-                createdAt: Date;
-                updatedAt: Date;
-                isVerified: boolean;
                 email: string;
-                phone: string;
+                phone: string | null;
                 password: string | null;
                 firstName: string;
                 lastName: string;
@@ -525,18 +522,21 @@ export declare class FrontOfficeService {
                 otpExpires: Date | null;
                 resetToken: string | null;
                 resetTokenExpires: Date | null;
+                isVerified: boolean;
                 totalBookings: number;
                 totalSpent: import("@prisma/client/runtime/library").Decimal;
+                createdAt: Date;
+                updatedAt: Date;
             };
             serviceOrders: ({
                 items: ({
                     service: {
                         image: string | null;
-                        description: string | null;
-                        name: string;
                         id: number;
                         createdAt: Date;
                         updatedAt: Date;
+                        name: string;
+                        description: string | null;
                         status: import(".prisma/client").$Enums.ServiceStatus;
                         slug: string;
                         price: import("@prisma/client/runtime/library").Decimal;
@@ -558,9 +558,9 @@ export declare class FrontOfficeService {
                 roomId: number | null;
                 guestId: number | null;
                 bookingId: number | null;
+                priority: import(".prisma/client").$Enums.ServicePriority;
                 totalAmount: import("@prisma/client/runtime/library").Decimal;
                 orderNumber: string;
-                priority: import(".prisma/client").$Enums.ServicePriority;
                 notes: string | null;
                 requestedBy: string | null;
                 assignedTo: string | null;
@@ -570,9 +570,9 @@ export declare class FrontOfficeService {
                 createdAt: Date;
                 status: import(".prisma/client").$Enums.PaymentStatus;
                 bookingId: number | null;
+                method: import(".prisma/client").$Enums.PaymentMethod;
                 serviceOrderId: number | null;
                 amount: import("@prisma/client/runtime/library").Decimal;
-                method: import(".prisma/client").$Enums.PaymentMethod;
                 transactionId: string | null;
                 paymentData: import("@prisma/client/runtime/library").JsonValue | null;
             }[];

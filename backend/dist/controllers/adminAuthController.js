@@ -4,8 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminAuthController = void 0;
-const path_1 = __importDefault(require("path"));
-const fs_1 = __importDefault(require("fs"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const database_1 = require("../config/database");
@@ -100,39 +98,32 @@ class AdminAuthController {
         res.status(constants_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Password updated successfully. You can now access your workstation.'));
     });
     /**
+     * Skip forced password change
+     */
+    skipPasswordChange = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
+        const userId = req.user.id;
+        await database_1.prisma.admin.update({
+            where: { id: userId },
+            data: {
+                mustChangePassword: false,
+            },
+        });
+        res.status(constants_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Security requirement bypassed for this session.'));
+    });
+    /**
      * Update Admin Avatar
      */
     updateAvatar = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
-        try {
-            const userId = req.user.id;
-            if (!req.file) {
-                throw new ApiError_1.ApiError(constants_1.HttpStatus.BAD_REQUEST, 'No file uploaded');
-            }
-            // Get the relative path for storage
-            const avatarUrl = `/uploads/${req.file.filename}`;
-            // Optional: Delete old avatar file
-            const admin = await database_1.prisma.admin.findUnique({
-                where: { id: userId },
-                select: { avatar: true }
-            });
-            if (admin?.avatar) {
-                // Remove the leading slash if it exists for path.join
-                const relativePath = admin.avatar.startsWith('/') ? admin.avatar.substring(1) : admin.avatar;
-                const oldPath = path_1.default.join(process.cwd(), relativePath);
-                if (fs_1.default.existsSync(oldPath)) {
-                    fs_1.default.unlinkSync(oldPath);
-                }
-            }
-            await database_1.prisma.admin.update({
-                where: { id: userId },
-                data: { avatar: avatarUrl }
-            });
-            res.status(constants_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Avatar updated successfully', { avatar: avatarUrl }));
+        const userId = req.user.id;
+        if (!req.file) {
+            throw new ApiError_1.ApiError(constants_1.HttpStatus.BAD_REQUEST, 'No file uploaded');
         }
-        catch (error) {
-            console.error('Avatar Upload Error:', error);
-            throw error;
-        }
+        const avatarUrl = req.file.path; // Cloudinary URL
+        await database_1.prisma.admin.update({
+            where: { id: userId },
+            data: { avatar: avatarUrl }
+        });
+        res.status(constants_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Avatar updated successfully', { avatar: avatarUrl }));
     });
     /**
      * Get Current Admin Details

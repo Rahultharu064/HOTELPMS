@@ -26,11 +26,11 @@ export declare class RoomService {
             currentOccupancy: number;
             roomType: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
             };
             _count: {
                 bookings: number;
@@ -53,18 +53,18 @@ export declare class RoomService {
                 thumbnail: string | null;
             }[];
             amenities: {
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
+                name: string;
+                description: string | null;
                 icon: string | null;
                 category: import(".prisma/client").$Enums.AmenityCategory;
             }[];
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -92,37 +92,17 @@ export declare class RoomService {
         };
         roomType: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         };
-        images: {
-            id: number;
-            createdAt: Date;
-            isPrimary: boolean;
-            url: string;
-            alt: string | null;
-            roomId: number | null;
-            sortOrder: number;
-        }[];
-        videos: {
-            id: number;
-            createdAt: Date;
-            url: string;
-            roomId: number | null;
-            title: string | null;
-            thumbnail: string | null;
-        }[];
         bookings: ({
             guest: {
                 id: number;
-                createdAt: Date;
-                updatedAt: Date;
-                isVerified: boolean;
                 email: string;
-                phone: string;
+                phone: string | null;
                 password: string | null;
                 firstName: string;
                 lastName: string;
@@ -139,17 +119,20 @@ export declare class RoomService {
                 otpExpires: Date | null;
                 resetToken: string | null;
                 resetTokenExpires: Date | null;
+                isVerified: boolean;
                 totalBookings: number;
                 totalSpent: Prisma.Decimal;
+                createdAt: Date;
+                updatedAt: Date;
             };
             payments: {
                 id: number;
                 createdAt: Date;
                 status: import(".prisma/client").$Enums.PaymentStatus;
                 bookingId: number | null;
+                method: import(".prisma/client").$Enums.PaymentMethod;
                 serviceOrderId: number | null;
                 amount: Prisma.Decimal;
-                method: import(".prisma/client").$Enums.PaymentMethod;
                 transactionId: string | null;
                 paymentData: Prisma.JsonValue | null;
             }[];
@@ -169,19 +152,36 @@ export declare class RoomService {
             source: import(".prisma/client").$Enums.BookingSource;
             specialRequests: string | null;
         })[];
-        amenities: {
-            description: string | null;
-            name: string;
+        images: {
             id: number;
             createdAt: Date;
+            isPrimary: boolean;
+            url: string;
+            alt: string | null;
+            roomId: number | null;
+            sortOrder: number;
+        }[];
+        videos: {
+            id: number;
+            createdAt: Date;
+            url: string;
+            roomId: number | null;
+            title: string | null;
+            thumbnail: string | null;
+        }[];
+        amenities: {
+            id: number;
+            createdAt: Date;
+            name: string;
+            description: string | null;
             icon: string | null;
             category: import(".prisma/client").$Enums.AmenityCategory;
         }[];
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.RoomStatus;
         slug: string;
         roomNumber: string;
@@ -202,11 +202,11 @@ export declare class RoomService {
             roomNumber: string;
             roomType: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
             };
         };
         price: {
@@ -246,18 +246,18 @@ export declare class RoomService {
     }): Promise<{
         roomType: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         };
     } & {
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.RoomStatus;
         slug: string;
         roomNumber: string;
@@ -285,11 +285,11 @@ export declare class RoomService {
     }): Promise<{
         roomType: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         };
         images: {
             id: number;
@@ -309,11 +309,11 @@ export declare class RoomService {
             thumbnail: string | null;
         }[];
     } & {
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.RoomStatus;
         slug: string;
         roomNumber: string;
@@ -332,18 +332,18 @@ export declare class RoomService {
     updateRoomStatus(id: number, status: RoomStatus): Promise<{
         roomType: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         };
     } & {
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.RoomStatus;
         slug: string;
         roomNumber: string;
@@ -370,11 +370,11 @@ export declare class RoomService {
     getSimilarRooms(roomId: number, limit?: number): Promise<({
         roomType: {
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         };
         images: {
             id: number;
@@ -386,11 +386,11 @@ export declare class RoomService {
             sortOrder: number;
         }[];
     } & {
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.RoomStatus;
         slug: string;
         roomNumber: string;

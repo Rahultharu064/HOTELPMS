@@ -10,20 +10,20 @@ export declare class RoomTypeService {
             availableRooms: number;
             totalRooms: number;
             occupancyRate: number;
+            _count: {
+                rooms: number;
+            };
             rooms: {
                 id: number;
                 status: import(".prisma/client").$Enums.RoomStatus;
                 roomNumber: string;
             }[];
-            _count: {
-                rooms: number;
-            };
             image: string | null;
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
         }[];
         pagination: {
             page: number;
@@ -35,6 +35,9 @@ export declare class RoomTypeService {
     getRoomTypeById(id: number): Promise<{
         availableRooms: number;
         occupancyRate: number;
+        _count: {
+            rooms: number;
+        };
         rooms: ({
             images: {
                 id: number;
@@ -46,11 +49,11 @@ export declare class RoomTypeService {
                 sortOrder: number;
             }[];
         } & {
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -63,15 +66,12 @@ export declare class RoomTypeService {
             view: string | null;
             isFeatured: boolean;
         })[];
-        _count: {
-            rooms: number;
-        };
         image: string | null;
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
     }>;
     createRoomType(data: {
         name: string;
@@ -79,11 +79,11 @@ export declare class RoomTypeService {
         description?: string;
     }): Promise<{
         image: string | null;
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
     }>;
     updateRoomType(id: number, data: {
         name?: string;
@@ -101,11 +101,11 @@ export declare class RoomTypeService {
                 sortOrder: number;
             }[];
         } & {
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -120,11 +120,11 @@ export declare class RoomTypeService {
         })[];
     } & {
         image: string | null;
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
     }>;
     deleteRoomType(id: number): Promise<{
         message: string;

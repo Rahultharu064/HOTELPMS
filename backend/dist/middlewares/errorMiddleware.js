@@ -15,10 +15,15 @@ const errorHandler = (err, req, res, next) => {
         switch (err.code) {
             case 'P2002':
                 return res.status(constants_1.HttpStatus.CONFLICT).json(ApiResponse_1.ApiResponse.error(`Duplicate field: ${err.meta?.target}`));
+            case 'P2021':
+                return res.status(503).json(ApiResponse_1.ApiResponse.error('Database schema is out of date. Run: npx prisma migrate deploy && npx prisma generate'));
             case 'P2025':
                 return res.status(constants_1.HttpStatus.NOT_FOUND).json(ApiResponse_1.ApiResponse.error('Record not found'));
             default:
-                return res.status(constants_1.HttpStatus.INTERNAL_SERVER_ERROR).json(ApiResponse_1.ApiResponse.error('Database error occurred'));
+                console.error('Prisma error code:', err.code, err.message);
+                return res.status(constants_1.HttpStatus.INTERNAL_SERVER_ERROR).json(ApiResponse_1.ApiResponse.error(process.env.NODE_ENV === 'production'
+                    ? 'Database error occurred'
+                    : `Database error: ${err.code} — ${err.message}`));
         }
     }
     // Handle validation errors
@@ -28,7 +33,7 @@ const errorHandler = (err, req, res, next) => {
     // Default error
     const statusCode = res.statusCode !== 200 ? res.statusCode : constants_1.HttpStatus.INTERNAL_SERVER_ERROR;
     return res.status(statusCode).json(ApiResponse_1.ApiResponse.error(process.env.NODE_ENV === 'production'
-        ? 'Internal server error'
+        ? `Internal server error: ${err.message}`
         : err.message));
 };
 exports.errorHandler = errorHandler;

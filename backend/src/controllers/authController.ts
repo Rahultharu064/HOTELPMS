@@ -9,7 +9,7 @@ import { HttpStatus } from '../constants';
 import { asyncHandler } from '../utils/asyncHandler';
 import { sendOTPEmail, sendResetPasswordEmail } from '../utils/mail';
 import { generateOtp } from '../utils/generateOtp';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -289,7 +289,7 @@ export class AuthController {
       });
     }
 
-    const resetToken = uuidv4();
+    const resetToken = randomUUID();
     const resetTokenExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
     await prisma.guest.update({

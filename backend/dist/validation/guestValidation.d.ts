@@ -146,36 +146,36 @@ export declare const getGuestsSchema: z.ZodObject<{
         sort: z.ZodOptional<z.ZodEnum<["name_asc", "name_desc", "bookings_desc", "spent_desc"]>>;
     }, "strip", z.ZodTypeAny, {
         search?: string | undefined;
+        email?: string | undefined;
+        phone?: string | undefined;
         page?: number | undefined;
         limit?: number | undefined;
         sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
-        email?: string | undefined;
-        phone?: string | undefined;
     }, {
         search?: string | undefined;
+        email?: string | undefined;
+        phone?: string | undefined;
         page?: string | undefined;
         limit?: string | undefined;
         sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
-        email?: string | undefined;
-        phone?: string | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
     query: {
         search?: string | undefined;
+        email?: string | undefined;
+        phone?: string | undefined;
         page?: number | undefined;
         limit?: number | undefined;
         sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
-        email?: string | undefined;
-        phone?: string | undefined;
     };
 }, {
     query: {
         search?: string | undefined;
+        email?: string | undefined;
+        phone?: string | undefined;
         page?: string | undefined;
         limit?: string | undefined;
         sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
-        email?: string | undefined;
-        phone?: string | undefined;
     };
 }>;
 export declare const guestBookingsSchema: z.ZodObject<{

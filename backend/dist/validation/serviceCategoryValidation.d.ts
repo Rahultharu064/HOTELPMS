@@ -58,15 +58,15 @@ export declare const updateServiceCategorySchema: z.ZodObject<{
         status: z.ZodOptional<z.ZodEnum<["active", "inactive", "maintenance"]>>;
     }, "strip", z.ZodTypeAny, {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "inactive" | undefined;
         slug?: string | undefined;
         icon?: string | undefined;
     }, {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "inactive" | undefined;
         slug?: string | undefined;
         icon?: string | undefined;
@@ -77,8 +77,8 @@ export declare const updateServiceCategorySchema: z.ZodObject<{
     };
     body: {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "inactive" | undefined;
         slug?: string | undefined;
         icon?: string | undefined;
@@ -89,8 +89,8 @@ export declare const updateServiceCategorySchema: z.ZodObject<{
     };
     body: {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "inactive" | undefined;
         slug?: string | undefined;
         icon?: string | undefined;
@@ -161,16 +161,16 @@ export declare const updateServiceSchema: z.ZodObject<{
         status: z.ZodOptional<z.ZodEnum<["active", "inactive", "maintenance"]>>;
     }, "strip", z.ZodTypeAny, {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "inactive" | undefined;
         slug?: string | undefined;
         price?: number | undefined;
         categoryId?: number | undefined;
     }, {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "inactive" | undefined;
         slug?: string | undefined;
         price?: number | undefined;
@@ -182,8 +182,8 @@ export declare const updateServiceSchema: z.ZodObject<{
     };
     body: {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "inactive" | undefined;
         slug?: string | undefined;
         price?: number | undefined;
@@ -195,8 +195,8 @@ export declare const updateServiceSchema: z.ZodObject<{
     };
     body: {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "inactive" | undefined;
         slug?: string | undefined;
         price?: number | undefined;

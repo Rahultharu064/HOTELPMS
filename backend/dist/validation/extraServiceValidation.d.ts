@@ -8,15 +8,15 @@ export declare const createExtraServiceSchema: z.ZodObject<{
         discountPercentage: z.ZodEffects<z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodNumber]>>, number, string | number | undefined>;
         discountAllowed: z.ZodEffects<z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodBoolean]>>, boolean, string | boolean | undefined>;
     }, "strip", z.ZodTypeAny, {
-        description: string;
         name: string;
+        description: string;
         price: number;
         categoryId: number;
         discountPercentage: number;
         discountAllowed: boolean;
     }, {
-        description: string;
         name: string;
+        description: string;
         price: string | number;
         categoryId: string | number;
         discountPercentage?: string | number | undefined;
@@ -24,8 +24,8 @@ export declare const createExtraServiceSchema: z.ZodObject<{
     }>;
 }, "strip", z.ZodTypeAny, {
     body: {
-        description: string;
         name: string;
+        description: string;
         price: number;
         categoryId: number;
         discountPercentage: number;
@@ -33,8 +33,8 @@ export declare const createExtraServiceSchema: z.ZodObject<{
     };
 }, {
     body: {
-        description: string;
         name: string;
+        description: string;
         price: string | number;
         categoryId: string | number;
         discountPercentage?: string | number | undefined;
@@ -60,14 +60,14 @@ export declare const updateExtraServiceSchema: z.ZodObject<{
     }, "strip", z.ZodTypeAny, {
         active: boolean;
         discountAllowed: boolean;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         price?: number | undefined;
         categoryId?: number | undefined;
         discountPercentage?: number | undefined;
     }, {
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         price?: string | number | undefined;
         active?: string | boolean | undefined;
         categoryId?: string | number | undefined;
@@ -81,8 +81,8 @@ export declare const updateExtraServiceSchema: z.ZodObject<{
     body: {
         active: boolean;
         discountAllowed: boolean;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         price?: number | undefined;
         categoryId?: number | undefined;
         discountPercentage?: number | undefined;
@@ -92,8 +92,8 @@ export declare const updateExtraServiceSchema: z.ZodObject<{
         id: string;
     };
     body: {
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         price?: string | number | undefined;
         active?: string | boolean | undefined;
         categoryId?: string | number | undefined;

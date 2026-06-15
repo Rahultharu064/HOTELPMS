@@ -63,16 +63,16 @@ export declare const updateFacilitySchema: z.ZodObject<{
         category: z.ZodOptional<z.ZodEnum<["restaurant", "pool", "gym", "spa", "business_center", "parking", "other"]>>;
         location: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "closed" | undefined;
         slug?: string | undefined;
         category?: "other" | "restaurant" | "pool" | "gym" | "spa" | "business_center" | "parking" | undefined;
         openingHours?: string | undefined;
         location?: string | undefined;
     }, {
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "closed" | undefined;
         slug?: string | undefined;
         category?: "other" | "restaurant" | "pool" | "gym" | "spa" | "business_center" | "parking" | undefined;
@@ -84,8 +84,8 @@ export declare const updateFacilitySchema: z.ZodObject<{
         id: number;
     };
     body: {
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "closed" | undefined;
         slug?: string | undefined;
         category?: "other" | "restaurant" | "pool" | "gym" | "spa" | "business_center" | "parking" | undefined;
@@ -97,8 +97,8 @@ export declare const updateFacilitySchema: z.ZodObject<{
         id: string;
     };
     body: {
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: "maintenance" | "active" | "closed" | undefined;
         slug?: string | undefined;
         category?: "other" | "restaurant" | "pool" | "gym" | "spa" | "business_center" | "parking" | undefined;

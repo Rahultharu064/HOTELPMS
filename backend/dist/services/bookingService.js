@@ -8,10 +8,11 @@ const database_1 = require("../config/database");
 const client_1 = require("@prisma/client");
 const ApiError_1 = require("../utils/ApiError");
 const constants_1 = require("../constants");
-const uuid_1 = require("uuid");
+const crypto_1 = require("crypto");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const security_1 = require("../utils/security");
+const mail_1 = require("../utils/mail");
 class BookingService {
     async getAllBookings(filters) {
         const { page = 1, limit = 10, status, guestId, roomId, startDate, endDate, search, } = filters;
@@ -245,7 +246,7 @@ class BookingService {
                         amount: data.payment.amount,
                         method: data.payment.method,
                         status: isOnline ? 'pending' : 'completed',
-                        transactionId: data.payment.transactionId || (0, uuid_1.v4)(),
+                        transactionId: data.payment.transactionId || (0, crypto_1.randomUUID)(),
                     },
                 });
             }
@@ -267,7 +268,14 @@ class BookingService {
             }
             return newBooking;
         });
-        return await this.getBookingById(booking.id);
+        const finalBooking = await this.getBookingById(booking.id);
+        // Send confirmation email — non-blocking
+        if (finalBooking.guest.email) {
+            (0, mail_1.sendBookingConfirmationEmail)(finalBooking.guest.email, finalBooking).catch((err) => {
+                console.error('[BookingConfirmationEmailError]:', err);
+            });
+        }
+        return finalBooking;
     }
     async updateBooking(id, data, userId) {
         const booking = await database_1.prisma.booking.findUnique({

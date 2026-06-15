@@ -3,12 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const reviewController_1 = require("../controllers/reviewController");
 const validateMiddleware_1 = require("../middlewares/validateMiddleware");
+const uploadMiddleware_1 = require("../middlewares/uploadMiddleware");
 const reviewValidation_1 = require("../validation/reviewValidation");
 const router = (0, express_1.Router)();
 const reviewController = new reviewController_1.ReviewController();
 // List and create reviews
 router.get('/', (0, validateMiddleware_1.validate)(reviewValidation_1.getReviewsSchema), reviewController.getAllReviews);
-router.post('/', (0, validateMiddleware_1.validate)(reviewValidation_1.createReviewSchema), reviewController.createReview);
+router.post('/', uploadMiddleware_1.upload.single('proofImage'), (0, validateMiddleware_1.validate)(reviewValidation_1.createReviewSchema), reviewController.createReview);
 // Specific review details and status management
 router.get('/:id', reviewController.getReviewById);
 router.patch('/:id/status', (0, validateMiddleware_1.validate)(reviewValidation_1.updateReviewStatusSchema), reviewController.updateReviewStatus);

@@ -9,6 +9,8 @@ const helmet_1 = __importDefault(require("helmet"));
 const compression_1 = __importDefault(require("compression"));
 const morgan_1 = __importDefault(require("morgan"));
 const path_1 = __importDefault(require("path"));
+const passport_1 = __importDefault(require("passport"));
+require("./config/passport");
 const config_1 = require("./config");
 const errorMiddleware_1 = require("./middlewares/errorMiddleware");
 // Import routes
@@ -28,9 +30,13 @@ const adminAuthRoute_1 = __importDefault(require("./routes/adminAuthRoute"));
 const staffRoute_1 = __importDefault(require("./routes/staffRoute"));
 const checkInOutRoute_1 = __importDefault(require("./routes/checkInOutRoute"));
 const extraServiceRoute_1 = __importDefault(require("./routes/extraServiceRoute"));
+const galleryRoute_1 = __importDefault(require("./routes/galleryRoute"));
 // import facilityRoutes from './routes/facilityRoute';
 // import facilityRoutes from './routes/facilityRoute';
 const app = (0, express_1.default)();
+if (config_1.config.isProduction) {
+    app.set('trust proxy', 1);
+}
 // Security middleware
 app.use((0, helmet_1.default)({
     crossOriginResourcePolicy: { policy: "cross-origin" }
@@ -51,10 +57,19 @@ else {
 // Body parsing middleware
 app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
+app.use(passport_1.default.initialize());
 // Static files
 const uploadsPath = path_1.default.join(process.cwd(), config_1.config.uploadDir);
 console.log('Serving static files from:', uploadsPath);
 app.use('/uploads', express_1.default.static(uploadsPath));
+// Root route
+app.get('/', (_req, res) => {
+    res.status(200).json({
+        message: 'Welcome to the HOTELPMS API',
+        status: 'running',
+        docs: '/api' // Or wherever documentation might be
+    });
+});
 // Health check
 app.get('/health', (_req, res) => {
     res.status(200).json({
@@ -80,6 +95,7 @@ app.use('/api/auth', authRoute_1.default);
 app.use('/api/admin/auth', adminAuthRoute_1.default);
 app.use('/api/admin/staff', staffRoute_1.default);
 app.use('/api/extra-services', extraServiceRoute_1.default);
+app.use('/api/gallery', galleryRoute_1.default);
 // app.use('/api/facilities', facilityRoutes);
 // app.use('/api/facilities', facilityRoutes);
 // 404 handler

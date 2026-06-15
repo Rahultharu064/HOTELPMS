@@ -7,27 +7,27 @@ export declare const initiatePaymentSchema: z.ZodObject<{
         returnUrl: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         bookingId: number;
-        amount: number;
         method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
+        amount: number;
         returnUrl?: string | undefined;
     }, {
         bookingId: number;
-        amount: number;
         method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
+        amount: number;
         returnUrl?: string | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
     body: {
         bookingId: number;
-        amount: number;
         method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
+        amount: number;
         returnUrl?: string | undefined;
     };
 }, {
     body: {
         bookingId: number;
-        amount: number;
         method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
+        amount: number;
         returnUrl?: string | undefined;
     };
 }>;
@@ -149,17 +149,17 @@ export declare const getPaymentsSchema: z.ZodObject<{
         limit?: number | undefined;
         status?: "pending" | "completed" | "failed" | "refunded" | undefined;
         bookingId?: number | undefined;
+        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
         startDate?: string | undefined;
         endDate?: string | undefined;
-        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
     }, {
         page?: string | undefined;
         limit?: string | undefined;
         status?: "pending" | "completed" | "failed" | "refunded" | undefined;
         bookingId?: string | undefined;
+        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
         startDate?: string | undefined;
         endDate?: string | undefined;
-        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
     query: {
@@ -167,9 +167,9 @@ export declare const getPaymentsSchema: z.ZodObject<{
         limit?: number | undefined;
         status?: "pending" | "completed" | "failed" | "refunded" | undefined;
         bookingId?: number | undefined;
+        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
         startDate?: string | undefined;
         endDate?: string | undefined;
-        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
     };
 }, {
     query: {
@@ -177,9 +177,9 @@ export declare const getPaymentsSchema: z.ZodObject<{
         limit?: string | undefined;
         status?: "pending" | "completed" | "failed" | "refunded" | undefined;
         bookingId?: string | undefined;
+        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
         startDate?: string | undefined;
         endDate?: string | undefined;
-        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
     };
 }>;
 export declare const esewaWebhookSchema: z.ZodObject<{
@@ -244,16 +244,16 @@ export declare const khaltiWebhookSchema: z.ZodObject<{
         idx: string;
         transaction_id: string;
         product_identity: string;
-        mobile?: string | undefined;
         user?: any;
+        mobile?: string | undefined;
     }, {
         status: "Completed" | "Failed" | "Pending";
         amount: number;
         idx: string;
         transaction_id: string;
         product_identity: string;
-        mobile?: string | undefined;
         user?: any;
+        mobile?: string | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
     body: {
@@ -262,8 +262,8 @@ export declare const khaltiWebhookSchema: z.ZodObject<{
         idx: string;
         transaction_id: string;
         product_identity: string;
-        mobile?: string | undefined;
         user?: any;
+        mobile?: string | undefined;
     };
 }, {
     body: {
@@ -272,8 +272,8 @@ export declare const khaltiWebhookSchema: z.ZodObject<{
         idx: string;
         transaction_id: string;
         product_identity: string;
-        mobile?: string | undefined;
         user?: any;
+        mobile?: string | undefined;
     };
 }>;
 //# sourceMappingURL=paymentValidation.d.ts.map

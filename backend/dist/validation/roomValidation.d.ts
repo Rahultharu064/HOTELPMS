@@ -87,8 +87,8 @@ export declare const updateRoomSchema: z.ZodObject<{
         capacity: z.ZodOptional<z.ZodNumber>;
         basePrice: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: string | undefined;
         roomNumber?: string | undefined;
         roomTypeId?: number | undefined;
@@ -99,8 +99,8 @@ export declare const updateRoomSchema: z.ZodObject<{
         bedType?: "single" | "double" | "queen" | "king" | "twin" | undefined;
         view?: string | undefined;
     }, {
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: string | undefined;
         roomNumber?: string | undefined;
         roomTypeId?: number | undefined;
@@ -116,8 +116,8 @@ export declare const updateRoomSchema: z.ZodObject<{
         id: number;
     };
     body: {
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: string | undefined;
         roomNumber?: string | undefined;
         roomTypeId?: number | undefined;
@@ -133,8 +133,8 @@ export declare const updateRoomSchema: z.ZodObject<{
         id: string;
     };
     body: {
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
         status?: string | undefined;
         roomNumber?: string | undefined;
         roomTypeId?: number | undefined;

@@ -48,8 +48,8 @@ export declare const createOfflineReservationSchema: z.ZodObject<{
             method: z.ZodDefault<z.ZodEnum<["cash", "esewa", "khalti"]>>;
             transactionId: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
-            amount: number;
             method: "cash" | "esewa" | "khalti";
+            amount: number;
             transactionId?: string | undefined;
         }, {
             amount: number;
@@ -64,8 +64,8 @@ export declare const createOfflineReservationSchema: z.ZodObject<{
         adults: number;
         children: number;
         payment?: {
-            amount: number;
             method: "cash" | "esewa" | "khalti";
+            amount: number;
             transactionId?: string | undefined;
         } | undefined;
         specialRequests?: string | undefined;
@@ -116,8 +116,8 @@ export declare const createOfflineReservationSchema: z.ZodObject<{
         adults: number;
         children: number;
         payment?: {
-            amount: number;
             method: "cash" | "esewa" | "khalti";
+            amount: number;
             transactionId?: string | undefined;
         } | undefined;
         specialRequests?: string | undefined;
@@ -170,8 +170,8 @@ export declare const createOfflineReservationSchema: z.ZodObject<{
         adults: number;
         children: number;
         payment?: {
-            amount: number;
             method: "cash" | "esewa" | "khalti";
+            amount: number;
             transactionId?: string | undefined;
         } | undefined;
         specialRequests?: string | undefined;

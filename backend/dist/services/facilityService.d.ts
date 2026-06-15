@@ -38,16 +38,17 @@ export declare class FacilityService {
                 thumbnail: string | null;
                 facilityId: number;
             }[];
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.FacilityStatus;
             slug: string;
             category: import(".prisma/client").$Enums.FacilityCategory;
             openingHours: string | null;
             location: string | null;
+            plannedUpgrade: string | null;
         }[];
         pagination: {
             page: number;
@@ -83,16 +84,17 @@ export declare class FacilityService {
             thumbnail: string | null;
             facilityId: number;
         }[];
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.FacilityStatus;
         slug: string;
         category: import(".prisma/client").$Enums.FacilityCategory;
         openingHours: string | null;
         location: string | null;
+        plannedUpgrade: string | null;
     }>;
     createFacility(data: {
         name: string;
@@ -121,16 +123,17 @@ export declare class FacilityService {
             facilityId: number;
         }[];
     } & {
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.FacilityStatus;
         slug: string;
         category: import(".prisma/client").$Enums.FacilityCategory;
         openingHours: string | null;
         location: string | null;
+        plannedUpgrade: string | null;
     }>;
     updateFacility(id: number, data: {
         name?: string;
@@ -159,16 +162,17 @@ export declare class FacilityService {
             facilityId: number;
         }[];
     } & {
-        description: string | null;
-        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
         status: import(".prisma/client").$Enums.FacilityStatus;
         slug: string;
         category: import(".prisma/client").$Enums.FacilityCategory;
         openingHours: string | null;
         location: string | null;
+        plannedUpgrade: string | null;
     }>;
     deleteFacility(id: number): Promise<{
         message: string;

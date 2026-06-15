@@ -3,12 +3,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// Sanitize CLOUDINARY_URL before ANY imports, as cloudinary SDK throws on import if it's invalid
+if (process.env.CLOUDINARY_URL && !process.env.CLOUDINARY_URL.startsWith('cloudinary://')) {
+    console.warn('⚠️ Invalid CLOUDINARY_URL detected. Removing from environment to prevent crash.');
+    delete process.env.CLOUDINARY_URL;
+}
 const app_1 = __importDefault(require("./app"));
 console.log('App initialized and starting server...');
 const http_1 = __importDefault(require("http"));
 const socket_io_1 = require("socket.io");
 const config_1 = require("./config");
 const database_1 = require("./config/database");
+const ensureGallerySchema_1 = require("./utils/ensureGallerySchema");
+const mail_1 = require("./utils/mail");
+const ensureDevAccounts_1 = require("./utils/ensureDevAccounts");
+const validateEnv_1 = require("./utils/validateEnv");
 const server = http_1.default.createServer(app_1.default);
 const io = new socket_io_1.Server(server, {
     cors: {
@@ -192,9 +201,23 @@ const gracefulShutdown = async () => {
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    // Don't crash for specific service errors like Cloudinary configuration
+    const errorMsg = reason?.message || '';
+    if (errorMsg.includes('cloud_name') || errorMsg.includes('Cloudinary')) {
+        console.warn('⚠️ Service configuration error detected. Server will remain running, but some features may fail.');
+        return;
+    }
     gracefulShutdown();
 });
-server.listen(config_1.config.port, () => {
+server.listen(config_1.config.port, async () => {
+    (0, validateEnv_1.validateEnvironment)();
+    await (0, ensureGallerySchema_1.ensureGallerySchema)();
+    await (0, ensureDevAccounts_1.ensureDevAccounts)();
+    const emailReady = await (0, mail_1.verifyEmailConfig)();
+    if (config_1.config.isProduction && !emailReady) {
+        console.error('❌ Email service is required in production. Shutting down.');
+        process.exit(1);
+    }
     console.log(`🚀 Server running in ${config_1.config.nodeEnv} mode on port ${config_1.config.port}`);
     console.log(`📡 WebSocket server ready for connections`);
     console.log(`🔗 API endpoint: http://localhost:${config_1.config.port}/api`);

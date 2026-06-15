@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
 export declare class AuthController {
+    private guestUserPayload;
+    private buildAuthResponse;
+    private buildOtpResponse;
+    private sendOtpOrFail;
     /**
      * Register a new guest (requires OTP verification)
      */
@@ -25,7 +29,7 @@ export declare class AuthController {
      */
     resetPassword: (req: Request, res: Response, next: import("express").NextFunction) => void;
     /**
-     * Google Login
+     * Professional Google Login
      */
     googleLogin: (req: Request, res: Response, next: import("express").NextFunction) => void;
     /**
@@ -41,8 +45,12 @@ export declare class AuthController {
      */
     updateProfile: (req: Request, res: Response, next: import("express").NextFunction) => void;
     /**
+     * Passport Google Auth Callback
+     */
+    passportGoogleCallback: (req: Request, res: Response, next: import("express").NextFunction) => void;
+    /**
      * Helper: Generate JWT
      */
-    private generateToken;
+    generateToken(id: number): string;
 }
 //# sourceMappingURL=authController.d.ts.map

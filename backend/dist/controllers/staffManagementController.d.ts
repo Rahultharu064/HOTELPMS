@@ -12,5 +12,13 @@ export declare class StaffManagementController {
      * Toggle staff active status
      */
     toggleStatus: (req: Request, res: Response, next: import("express").NextFunction) => void;
+    /**
+     * Update staff details
+     */
+    updateStaff: (req: Request, res: Response, next: import("express").NextFunction) => void;
+    /**
+     * Reset staff password and force change on next login
+     */
+    resetPassword: (req: Request, res: Response, next: import("express").NextFunction) => void;
 }
 //# sourceMappingURL=staffManagementController.d.ts.map

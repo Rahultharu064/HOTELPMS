@@ -31,6 +31,7 @@ router.post('/login', loginLimiter, (0, validateMiddleware_1.validate)(adminLogi
 // Protected routes
 router.get('/me', adminAuthMiddleware_1.authenticateAdmin, adminAuthController.getMe);
 router.post('/change-password', adminAuthMiddleware_1.authenticateAdmin, adminAuthController.changePassword);
+router.post('/skip-password-change', adminAuthMiddleware_1.authenticateAdmin, adminAuthController.skipPasswordChange);
 router.post('/avatar', adminAuthMiddleware_1.authenticateAdmin, uploadMiddleware_1.upload.single('avatar'), adminAuthController.updateAvatar);
 exports.default = router;
 //# sourceMappingURL=adminAuthRoute.js.map

@@ -9,25 +9,22 @@ export declare class GuestService {
         sort?: string;
     }): Promise<{
         guests: ({
-            _count: {
-                bookings: number;
-            };
             bookings: ({
                 room: {
                     roomType: {
                         image: string | null;
-                        description: string | null;
-                        name: string;
                         id: number;
                         createdAt: Date;
                         updatedAt: Date;
+                        name: string;
+                        description: string | null;
                     };
                 } & {
-                    description: string | null;
-                    name: string;
                     id: number;
                     createdAt: Date;
                     updatedAt: Date;
+                    name: string;
+                    description: string | null;
                     status: import(".prisma/client").$Enums.RoomStatus;
                     slug: string;
                     roomNumber: string;
@@ -56,13 +53,13 @@ export declare class GuestService {
                 source: import(".prisma/client").$Enums.BookingSource;
                 specialRequests: string | null;
             })[];
+            _count: {
+                bookings: number;
+            };
         } & {
             id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            isVerified: boolean;
             email: string;
-            phone: string;
+            phone: string | null;
             password: string | null;
             firstName: string;
             lastName: string;
@@ -79,8 +76,11 @@ export declare class GuestService {
             otpExpires: Date | null;
             resetToken: string | null;
             resetTokenExpires: Date | null;
+            isVerified: boolean;
             totalBookings: number;
             totalSpent: Prisma.Decimal;
+            createdAt: Date;
+            updatedAt: Date;
         })[];
         pagination: {
             page: number;
@@ -103,11 +103,11 @@ export declare class GuestService {
             room: {
                 roomType: {
                     image: string | null;
-                    description: string | null;
-                    name: string;
                     id: number;
                     createdAt: Date;
                     updatedAt: Date;
+                    name: string;
+                    description: string | null;
                 };
                 images: {
                     id: number;
@@ -119,11 +119,11 @@ export declare class GuestService {
                     sortOrder: number;
                 }[];
             } & {
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 status: import(".prisma/client").$Enums.RoomStatus;
                 slug: string;
                 roomNumber: string;
@@ -141,9 +141,9 @@ export declare class GuestService {
                 createdAt: Date;
                 status: import(".prisma/client").$Enums.PaymentStatus;
                 bookingId: number | null;
+                method: import(".prisma/client").$Enums.PaymentMethod;
                 serviceOrderId: number | null;
                 amount: Prisma.Decimal;
-                method: import(".prisma/client").$Enums.PaymentMethod;
                 transactionId: string | null;
                 paymentData: Prisma.JsonValue | null;
             }[];
@@ -164,11 +164,8 @@ export declare class GuestService {
             specialRequests: string | null;
         })[];
         id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        isVerified: boolean;
         email: string;
-        phone: string;
+        phone: string | null;
         password: string | null;
         firstName: string;
         lastName: string;
@@ -185,8 +182,11 @@ export declare class GuestService {
         otpExpires: Date | null;
         resetToken: string | null;
         resetTokenExpires: Date | null;
+        isVerified: boolean;
         totalBookings: number;
         totalSpent: Prisma.Decimal;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     createGuest(data: {
         email: string;
@@ -201,11 +201,8 @@ export declare class GuestService {
         idNumber?: string;
     }): Promise<{
         id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        isVerified: boolean;
         email: string;
-        phone: string;
+        phone: string | null;
         password: string | null;
         firstName: string;
         lastName: string;
@@ -222,8 +219,11 @@ export declare class GuestService {
         otpExpires: Date | null;
         resetToken: string | null;
         resetTokenExpires: Date | null;
+        isVerified: boolean;
         totalBookings: number;
         totalSpent: Prisma.Decimal;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     updateGuest(id: number, data: {
         email?: string;
@@ -238,11 +238,8 @@ export declare class GuestService {
         idNumber?: string;
     }): Promise<{
         id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        isVerified: boolean;
         email: string;
-        phone: string;
+        phone: string | null;
         password: string | null;
         firstName: string;
         lastName: string;
@@ -259,8 +256,11 @@ export declare class GuestService {
         otpExpires: Date | null;
         resetToken: string | null;
         resetTokenExpires: Date | null;
+        isVerified: boolean;
         totalBookings: number;
         totalSpent: Prisma.Decimal;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     deleteGuest(id: number): Promise<{
         message: string;
@@ -274,11 +274,11 @@ export declare class GuestService {
             room: {
                 roomType: {
                     image: string | null;
-                    description: string | null;
-                    name: string;
                     id: number;
                     createdAt: Date;
                     updatedAt: Date;
+                    name: string;
+                    description: string | null;
                 };
                 images: {
                     id: number;
@@ -290,11 +290,11 @@ export declare class GuestService {
                     sortOrder: number;
                 }[];
             } & {
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 status: import(".prisma/client").$Enums.RoomStatus;
                 slug: string;
                 roomNumber: string;
@@ -312,9 +312,9 @@ export declare class GuestService {
                 createdAt: Date;
                 status: import(".prisma/client").$Enums.PaymentStatus;
                 bookingId: number | null;
+                method: import(".prisma/client").$Enums.PaymentMethod;
                 serviceOrderId: number | null;
                 amount: Prisma.Decimal;
-                method: import(".prisma/client").$Enums.PaymentMethod;
                 transactionId: string | null;
                 paymentData: Prisma.JsonValue | null;
             }[];

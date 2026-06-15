@@ -55,6 +55,7 @@ class ReviewService {
                 roomTypeId: data.roomTypeId,
                 rating: data.rating,
                 comment: data.comment,
+                proofImage: data.proofImage,
                 isVerified: !!data.bookingId, // Verified if linked to a booking
                 status: 'pending'
             },

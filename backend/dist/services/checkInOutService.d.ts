@@ -50,11 +50,11 @@ export declare class CheckInOutService {
         extraServices: ({
             extraService: {
                 image: string | null;
-                description: string | null;
-                name: string;
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 price: import("@prisma/client/runtime/library").Decimal;
                 active: boolean;
                 categoryId: number;
@@ -78,11 +78,11 @@ export declare class CheckInOutService {
             items: ({
                 service: {
                     image: string | null;
-                    description: string | null;
-                    name: string;
                     id: number;
                     createdAt: Date;
                     updatedAt: Date;
+                    name: string;
+                    description: string | null;
                     status: import(".prisma/client").$Enums.ServiceStatus;
                     slug: string;
                     price: import("@prisma/client/runtime/library").Decimal;
@@ -104,9 +104,9 @@ export declare class CheckInOutService {
             roomId: number | null;
             guestId: number | null;
             bookingId: number | null;
+            priority: import(".prisma/client").$Enums.ServicePriority;
             totalAmount: import("@prisma/client/runtime/library").Decimal;
             orderNumber: string;
-            priority: import(".prisma/client").$Enums.ServicePriority;
             notes: string | null;
             requestedBy: string | null;
             assignedTo: string | null;
@@ -121,9 +121,9 @@ export declare class CheckInOutService {
             createdAt: Date;
             status: import(".prisma/client").$Enums.PaymentStatus;
             bookingId: number | null;
+            method: import(".prisma/client").$Enums.PaymentMethod;
             serviceOrderId: number | null;
             amount: import("@prisma/client/runtime/library").Decimal;
-            method: import(".prisma/client").$Enums.PaymentMethod;
             transactionId: string | null;
             paymentData: import("@prisma/client/runtime/library").JsonValue | null;
         }[];

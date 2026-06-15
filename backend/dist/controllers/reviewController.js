@@ -23,7 +23,11 @@ class ReviewController {
         res.status(constants_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Review retrieved successfully', review));
     });
     createReview = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
-        const review = await reviewService.createReview(req.body);
+        const reviewData = {
+            ...req.body,
+            proofImage: req.file ? req.file.path || req.file.url : undefined
+        };
+        const review = await reviewService.createReview(reviewData);
         const io = req.app.get('io');
         if (io) {
             io.emit('review-created', review);

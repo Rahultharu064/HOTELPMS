@@ -40,12 +40,12 @@ export declare const updateRoomTypeSchema: z.ZodObject<{
         description: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
     }, {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
     params: {
@@ -53,8 +53,8 @@ export declare const updateRoomTypeSchema: z.ZodObject<{
     };
     body: {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
     };
 }, {
     params: {
@@ -62,8 +62,8 @@ export declare const updateRoomTypeSchema: z.ZodObject<{
     };
     body: {
         image?: string | undefined;
-        description?: string | undefined;
         name?: string | undefined;
+        description?: string | undefined;
     };
 }>;
 export declare const getRoomTypesSchema: z.ZodObject<{

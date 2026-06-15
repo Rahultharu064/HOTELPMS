@@ -1,8 +1,8 @@
 import { Prisma, RoomStatus, HousekeepingType } from '@prisma/client';
 export declare class HousekeepingService {
     getRoomStatuses(): Promise<{
-        name: string;
         id: number;
+        name: string;
         status: import(".prisma/client").$Enums.RoomStatus;
         roomNumber: string;
         floor: number | null;
@@ -24,11 +24,11 @@ export declare class HousekeepingService {
         notes?: string;
     }): Promise<{
         room: {
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -59,11 +59,11 @@ export declare class HousekeepingService {
         endDate?: Date;
     }): Promise<({
         room: {
-            description: string | null;
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             status: import(".prisma/client").$Enums.RoomStatus;
             slug: string;
             roomNumber: string;
@@ -94,12 +94,12 @@ export declare class HousekeepingService {
         dirty: number;
     }>;
     getStaff(): Promise<{
-        name: string;
         id: number;
+        phone: string | null;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
         status: string;
-        phone: string | null;
         staffId: string;
         role: string | null;
     }[]>;
@@ -109,22 +109,22 @@ export declare class HousekeepingService {
         role?: string;
         phone?: string;
     }): Promise<{
-        name: string;
         id: number;
+        phone: string | null;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
         status: string;
-        phone: string | null;
         staffId: string;
         role: string | null;
     }>;
     updateStaffStatus(id: number, status: string): Promise<{
-        name: string;
         id: number;
+        phone: string | null;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
         status: string;
-        phone: string | null;
         staffId: string;
         role: string | null;
     }>;

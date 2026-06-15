@@ -8,7 +8,7 @@ const asyncHandler_1 = require("../utils/asyncHandler");
 const index_1 = require("../constants/index");
 class RoomController {
     getAllRooms = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
-        const { status, roomTypeId, search, isFeatured } = req.query;
+        const { status, roomTypeId, search, isFeatured, limit } = req.query;
         const where = {};
         if (status)
             where.status = status;
@@ -22,8 +22,10 @@ class RoomController {
                 { roomNumber: { contains: search } },
             ];
         }
+        const takeLimit = limit ? Number(limit) : undefined;
         const rooms = await database_1.prisma.room.findMany({
             where,
+            take: takeLimit,
             include: {
                 roomType: true,
                 images: true,
@@ -82,7 +84,7 @@ class RoomController {
         if (files && files['images']) {
             await Promise.all(files['images'].map((file, index) => database_1.prisma.image.create({
                 data: {
-                    url: `/uploads/${file.filename}`,
+                    url: file.path, // Cloudinary URL
                     roomId: room.id,
                     isPrimary: index === 0,
                 },
@@ -92,7 +94,7 @@ class RoomController {
         if (files && files['videos']) {
             await Promise.all(files['videos'].map(file => database_1.prisma.video.create({
                 data: {
-                    url: `/uploads/${file.filename}`,
+                    url: file.path, // Cloudinary URL
                     roomId: room.id,
                 },
             })));
@@ -172,7 +174,7 @@ class RoomController {
         if (files && files['images']) {
             await Promise.all(files['images'].map((file, index) => database_1.prisma.image.create({
                 data: {
-                    url: `/uploads/${file.filename}`,
+                    url: file.path, // Cloudinary URL
                     roomId: updatedRoom.id,
                     isPrimary: index === 0 && !currentRoom.id, // simplified logic
                 },

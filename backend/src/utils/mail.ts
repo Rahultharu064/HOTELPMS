@@ -57,12 +57,16 @@ export const verifyEmailConfig = async (): Promise<boolean> => {
 
     const resendOk = await verifyResendConfig();
     if (!resendOk) {
-      console.error('❌ Resend API key check failed. Update RESEND_API_KEY on Render.');
+      console.error('❌ Resend API key invalid. Create a key at https://resend.com/api-keys');
+      console.error('   Use "Sending access" permission. Paste into Render as RESEND_API_KEY (no quotes).');
       return false;
     }
 
     activeProvider = 'resend';
     console.log('✅ Email service ready (Resend HTTP API — required on Render)');
+    if ((config.email.from || '').includes('@gmail.com')) {
+      console.warn('⚠️ SMTP_FROM is Gmail — Resend will send from onboarding@resend.dev until you verify a domain.');
+    }
     return true;
   }
 

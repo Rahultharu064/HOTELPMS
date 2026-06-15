@@ -64,7 +64,7 @@ export const config = {
     user: process.env.SMTP_USER?.trim().replace(/^["']|["']$/g, ''),
     pass: process.env.SMTP_PASS?.trim().replace(/^["']|["']$/g, '').replace(/\s+/g, ''),
     from: (process.env.SMTP_FROM || process.env.SMTP_USER)?.trim().replace(/^["']|["']$/g, ''),
-    resendApiKey: process.env.RESEND_API_KEY?.trim(),
+    resendApiKey: process.env.RESEND_API_KEY?.trim().replace(/^["']|["']$/g, ''),
   },
   payment: {
     esewa: {

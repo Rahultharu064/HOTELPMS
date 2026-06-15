@@ -3,6 +3,7 @@ import { config } from '../config';
 const INSECURE_JWT_SECRETS = new Set([
   'default-secret-key',
   'your-super-secret-jwt-key-change-this',
+  'replace-with-a-long-random-secret-at-least-32-chars',
   'change-me',
 ]);
 
@@ -38,7 +39,13 @@ export function validateEnvironment(): void {
     const jwtSecret = config.jwt.secret;
     if (!jwtSecret || jwtSecret.length < 32 || INSECURE_JWT_SECRETS.has(jwtSecret)) {
       throw new Error(
-        'JWT_SECRET must be set to a unique random string of at least 32 characters in production.'
+        [
+          'JWT_SECRET is missing or insecure in production.',
+          'On Render: Dashboard → your service → Environment → add',
+          '  JWT_SECRET=<random string, at least 32 characters>',
+          'Generate one locally: node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"',
+          'Do not use placeholder values from .env.example.',
+        ].join('\n')
       );
     }
 

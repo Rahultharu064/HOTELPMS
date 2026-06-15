@@ -301,16 +301,27 @@ process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
   gracefulShutdown();
 });
 
-server.listen(config.port, async () => {
-  validateEnvironment();
-  await ensureGallerySchema();
-  await ensureDevAccounts();
-  const emailReady = await verifyEmailConfig();
-  if (config.isProduction && !emailReady) {
-    console.error('❌ Email service is required in production. Shutting down.');
+const startServer = async (): Promise<void> => {
+  try {
+    validateEnvironment();
+    await ensureGallerySchema();
+    await ensureDevAccounts();
+    const emailReady = await verifyEmailConfig();
+    if (config.isProduction && !emailReady) {
+      console.error('❌ Email service is required in production. Shutting down.');
+      process.exit(1);
+    }
+
+    server.listen(config.port, () => {
+      console.log(`🚀 Server running in ${config.nodeEnv} mode on port ${config.port}`);
+      console.log(`📡 WebSocket server ready for connections`);
+      console.log(`🔗 API endpoint: http://localhost:${config.port}/api`);
+    });
+  } catch (error) {
+    console.error('❌ Server startup failed:');
+    console.error(error instanceof Error ? error.message : error);
     process.exit(1);
   }
-  console.log(`🚀 Server running in ${config.nodeEnv} mode on port ${config.port}`);
-  console.log(`📡 WebSocket server ready for connections`);
-  console.log(`🔗 API endpoint: http://localhost:${config.port}/api`);
-});
+};
+
+void startServer();

@@ -2,7 +2,7 @@
   "status": "commited",
   "scope": "codebase",
   "type": "frontend",
-  "localEndpoint": "http://127.0.0.1:5173/",
+  "localEndpoint": "http://localhost:5173/",
   "serverMode": "development",
   "loginUser": "admin@hotelpms.com",
   "loginPassword": "admin123",
@@ -10,11 +10,11 @@
     "projectName": "HOTELPMS",
     "projectPath": "d:\\HOTELPMS",
     "testIds": [],
-    "additionalInstruction": "Test the complete Hotel PMS application including public website, admin panel, front office, and housekeeping flows. Use admin@hotelpms.com / admin123 for staff login at /admin/login.",
+    "additionalInstruction": "Re-run frontend regression after recent auth and API fixes.",
     "serverMode": "development",
     "envs": {
       "API_KEY": "sk-user-VPalVYd-b6BseB8MBd5paEOol9EGsPtvpw5UU1g91yJI5yMgz0mEuBy4v6ZMfO0YWSnPw7YyqIUdoPNPElAgbDqR9SCgjdYo4Sxn3s3VFFKIztIPJa2SRZoX5EnKUw6i5Fw"
     }
   },
-  "serverPort": 64208
+  "serverPort": 49678
 }

@@ -1,0 +1,123 @@
+project_name: HOTELPMS
+description: Hotel Property Management System - full-stack web application for hotel operations, guest bookings, and staff management.
+
+tech_stack:
+  frontend:
+    - React 19
+    - TypeScript
+    - Vite
+    - React Router v7
+    - Tailwind CSS v4
+    - Socket.io Client
+    - React Hook Form
+    - Google OAuth
+  backend:
+    - Node.js
+    - Express
+    - TypeScript
+    - Prisma ORM
+    - MySQL
+    - Socket.io
+    - JWT Authentication
+    - Zod Validation
+    - Cloudinary
+    - Passport Google OAuth
+
+ports:
+  frontend: 5173
+  backend: 5000
+
+modules:
+  public_website:
+    path: /
+    features:
+      - Homepage with hero, room types, testimonials
+      - Room browsing and filtering
+      - Room detail pages
+      - Guest registration and login
+      - OTP verification and password reset
+      - Guest profile and bookings
+      - Online booking and payment
+      - Facilities and gallery pages
+      - Contact and about pages
+
+  admin_panel:
+    path: /admin
+    features:
+      - Admin login
+      - Dashboard
+      - User and staff management
+      - Room types and room inventory CRUD
+      - Bookings management
+      - Guest management
+      - Extra services management
+      - Gallery and venues management
+      - Settings
+
+  front_office:
+    path: /frontoffice
+    features:
+      - Dashboard
+      - Check-in and check-out
+      - Room status
+      - Guest folio
+      - Service POS
+      - Payments
+      - Reports
+      - Notifications
+      - Profile and settings
+
+  housekeeping:
+    path: /housekeeping
+    features:
+      - Dashboard
+      - Room status grid
+      - Cleaning tasks
+      - Staff assignment
+      - Room details
+
+api_endpoints:
+  - /api/auth - Guest authentication
+  - /api/admin/auth - Admin and staff authentication
+  - /api/room-types - Room type management
+  - /api/rooms - Room inventory
+  - /api/bookings - Booking management
+  - /api/payments - Payment processing
+  - /api/offline-reservations - Walk-in reservations
+  - /api/service-categories - Service categories
+  - /api/service-orders - Service orders
+  - /api/frontoffice - Front office operations
+  - /api/housekeeping - Housekeeping operations
+  - /api/reviews - Guest reviews
+  - /api/guests - Guest management
+  - /api/admin/staff - Staff management
+  - /api/extra-services - Extra services
+  - /api/gallery - Gallery management
+  - /health - Health check
+
+authentication:
+  guest:
+    methods:
+      - Email and password with OTP verification
+      - Google OAuth
+      - JWT tokens
+    test_credentials:
+      email: john.doe@example.com
+      password: password123
+  staff:
+    methods:
+      - Admin login at /admin/login
+      - Role-based access
+      - JWT tokens
+    test_credentials:
+      email: admin@hotelpms.com
+      password: admin123
+
+key_features:
+  - Real-time notifications via Socket.io
+  - Multi-role staff portal
+  - Online and offline booking
+  - Payment gateway integration
+  - Thermal receipt and invoice generation
+  - Room housekeeping workflow
+  - Image upload via Cloudinary

@@ -5,18 +5,21 @@ import { authenticateAdmin } from '../middlewares/adminAuthMiddleware';
 import { upload } from '../middlewares/uploadMiddleware';
 import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
+import { config } from '../config';
 
 const router = Router();
 const adminAuthController = new AdminAuthController();
 
-// Strict rate limiter specifically for admin logins to prevent brute force
+// Strict rate limiter for production; relaxed in development for automated testing
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 requests per IP
+  windowMs: 15 * 60 * 1000,
+  max: config.isProduction ? 5 : 200,
+  standardHeaders: true,
+  legacyHeaders: false,
   message: {
     success: false,
-    message: 'Too many login attempts from this IP, please try again after 15 minutes'
-  }
+    message: 'Too many login attempts from this IP, please try again after 15 minutes',
+  },
 });
 
 const adminLoginSchema = z.object({

@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 import { toast } from 'react-hot-toast';
 import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../../../services/api';
+import { Button } from '../../../components/ui/Button';
 import { AuthBrandLogo } from '../../../components/ui/AuthBrandLogo';
 
 export const AdminLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const submittingRef = useRef(false);
 
   const { admin, adminLogin, isAdminAuthenticated } = useAdminAuth();
   const navigate = useNavigate();
 
-  // Auto-redirect if already authenticated
   useEffect(() => {
     if (isAdminAuthenticated && admin) {
       const homeMap: Record<string, string> = {
@@ -23,7 +24,7 @@ export const AdminLoginPage: React.FC = () => {
         admin: '/admin',
         manager: '/admin',
         front_office: '/frontoffice',
-        housekeeping: '/housekeeping'
+        housekeeping: '/housekeeping',
       };
       navigate(admin.mustChangePassword ? '/admin/auth/reset-password' : (homeMap[admin.role] || '/admin'));
     }
@@ -31,42 +32,48 @@ export const AdminLoginPage: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submittingRef.current || loading) return;
+
     if (!email || !password) {
       toast.error('Please enter both email and password');
       return;
     }
 
+    submittingRef.current = true;
     setLoading(true);
-    try {
-      // Logic enhancement: Use a small delay for better "authentication" UX feel
-      const response = await api.post<any>('/admin/auth/login', { email, password });
-      
-      // Delay success action slightly to show authenticating state
-      setTimeout(() => {
-        adminLogin(response.user, response.token);
-        toast.success(`Welcome back, ${response.user.firstName || 'Admin'}`);
 
-        const role = response.user.role;
-        const target = response.user.mustChangePassword ? '/admin/auth/reset-password' : 
-                       (role === 'front_office' ? '/frontoffice' : (role === 'housekeeping' ? '/housekeeping' : '/admin'));
-        navigate(target);
-      }, 800);
+    try {
+      const response = await api.post<any>('/admin/auth/login', { email, password });
+      adminLogin(response.user, response.token);
+      toast.success(`Welcome back, ${response.user.name || response.user.firstName || 'Admin'}`);
+
+      const role = response.user.role;
+      const target = response.user.mustChangePassword
+        ? '/admin/auth/reset-password'
+        : (role === 'front_office' ? '/frontoffice' : (role === 'housekeeping' ? '/housekeeping' : '/admin'));
+      navigate(target);
     } catch (error: any) {
       console.error('Admin Login error:', error);
-      toast.error(error.response?.data?.message || 'Authentication failed. Please check your credentials.');
+      const status = error.response?.status;
+      const message = error.response?.data?.message
+        || (status === 429
+          ? 'Too many login attempts. Please wait a moment and try again.'
+          : 'Authentication failed. Please check your credentials.');
+      toast.error(message);
+    } finally {
+      submittingRef.current = false;
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      {/* Background decoration to keep it professional */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-primary-green/5 blur-3xl"></div>
         <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary-gold/5 blur-3xl"></div>
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -98,6 +105,7 @@ export const AdminLoginPage: React.FC = () => {
                 <input
                   type="email"
                   required
+                  autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="appearance-none rounded-2xl relative block w-full px-12 py-4 border border-gray-100 placeholder-gray-300 text-[#111827] focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green/30 sm:text-sm bg-gray-50/50 transition-all font-medium"
@@ -115,6 +123,7 @@ export const AdminLoginPage: React.FC = () => {
                 <input
                   type="password"
                   required
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="appearance-none rounded-2xl relative block w-full px-12 py-4 border border-gray-100 placeholder-gray-300 text-[#111827] focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green/30 sm:text-sm bg-gray-50/50 transition-all font-medium"
@@ -141,9 +150,10 @@ export const AdminLoginPage: React.FC = () => {
             </button>
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
+            aria-busy={loading}
             className="group relative w-full flex justify-center py-5 px-4 border border-transparent text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl text-white bg-primary-green hover:bg-primary-dark focus:outline-none transition-all shadow-2xl shadow-primary-green/20 disabled:opacity-70 active:scale-95"
           >
             {loading ? (
@@ -153,18 +163,12 @@ export const AdminLoginPage: React.FC = () => {
               </span>
             ) : (
               <span className="flex items-center gap-3">
-              successfully login <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
+                successfully login <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
               </span>
             )}
-          </button>
+          </Button>
         </form>
       </motion.div>
-
-    
     </div>
   );
 };
-
-
-
-

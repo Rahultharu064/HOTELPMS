@@ -27,6 +27,23 @@ export const getImageUrl = (url?: string) => {
  */
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+async function parseResponseBody(response: Response): Promise<any> {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { message: text };
+  }
+}
+
+function toRequestError(response: Response, result: any) {
+  const message = result?.message || `Request failed with status ${response.status}`;
+  const error = new Error(message) as Error & { response?: { data: any; status: number } };
+  error.response = { data: result, status: response.status };
+  return error;
+}
+
 /**
  * Retry wrapper with exponential backoff for resilient API calls
  */
@@ -79,7 +96,14 @@ async function fetchWithRetry(
     }
   }
 
-  throw lastError || new Error('Request failed after retries');
+  const networkError = lastError || new Error('Network error: unable to reach the server');
+  if (networkError.name === 'AbortError') {
+    throw new Error('Network error: request timed out');
+  }
+  if (networkError.message?.includes('Failed to fetch')) {
+    throw new Error('Network error: unable to reach the server');
+  }
+  throw networkError;
 }
 
 const getHeaders = (isFormData: boolean = false, isAdminEndpoint: boolean = false) => {
@@ -139,10 +163,10 @@ export const api = {
     }
     const response = await fetchWithRetry(url, {
       headers: getHeaders(false, isAdminEndpoint),
-    });
-    const result = await response.json();
+    }, 3);
+    const result = await parseResponseBody(response);
     if (!response.ok) {
-      throw { response: { data: result, status: response.status } };
+      throw toRequestError(response, result);
     }
     return result;
   },
@@ -155,10 +179,10 @@ export const api = {
       method: 'POST',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    }, 1); // Fewer retries for mutations
-    const result = await response.json();
+    }, endpoint.includes('/auth/') ? 2 : 1);
+    const result = await parseResponseBody(response);
     if (!response.ok) {
-      throw { response: { data: result, status: response.status } };
+      throw toRequestError(response, result);
     }
     return result;
   },
@@ -172,9 +196,9 @@ export const api = {
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
     }, 1);
-    const result = await response.json();
+    const result = await parseResponseBody(response);
     if (!response.ok) {
-      throw { response: { data: result, status: response.status } };
+      throw toRequestError(response, result);
     }
     return result;
   },
@@ -188,9 +212,9 @@ export const api = {
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
     }, 1);
-    const result = await response.json();
+    const result = await parseResponseBody(response);
     if (!response.ok) {
-      throw { response: { data: result, status: response.status } };
+      throw toRequestError(response, result);
     }
     return result;
   },
@@ -198,27 +222,21 @@ export const api = {
   async delete<T = any>(endpoint: string): Promise<T> {
     const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
 
-
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
       headers: getHeaders(false, isAdminEndpoint),
     }, 1);
-    
+
     if (!response.ok) {
-      const result = await response.json();
-      throw { response: { data: result, status: response.status } };
+      const result = await parseResponseBody(response);
+      throw toRequestError(response, result);
     }
 
-    // Handle empty response for 204 No Content
     if (response.status === 204) {
       return {} as T;
     }
 
-    try {
-      return await response.json();
-    } catch {
-      return {} as T;
-    }
+    return parseResponseBody(response);
   },
 };
 

@@ -47,7 +47,8 @@ export const Roompage: React.FC = () => {
       if (typesRes.success) setRoomTypes(typesRes.data.roomTypes);
     } catch (err: any) {
       console.error("Failed to fetch room data:", err);
-      setError(err?.message || 'Failed to load rooms');
+      const message = err?.message || err?.response?.data?.message || 'Failed to load rooms';
+      setError(message);
     } finally {
       setLoading(false);
     }

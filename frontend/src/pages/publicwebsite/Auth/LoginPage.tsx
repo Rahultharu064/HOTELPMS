@@ -58,6 +58,9 @@ export const LoginPage: React.FC = () => {
           <p className="mt-3 text-sm text-gray-500 font-medium">
             Manage your stay with luxury and ease
           </p>
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-2xl text-center text-xs text-blue-800 font-medium">
+            <span className="font-bold">Test guest:</span> john.doe@example.com / password123
+          </div>
         </div>
 
         <div className="mt-8 space-y-6">

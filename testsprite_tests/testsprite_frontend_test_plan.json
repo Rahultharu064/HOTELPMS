@@ -1,0 +1,1294 @@
+[
+  {
+    "id": "TC001",
+    "title": "Complete guest check-in and mark room occupied",
+    "description": "Front office staff can complete the guest arrival workflow and see the room become occupied.",
+    "category": "Front office daily operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the front office area"
+      },
+      {
+        "type": "action",
+        "description": "Open the check-in workflow"
+      },
+      {
+        "type": "action",
+        "description": "Complete the guest arrival steps"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the room is marked as occupied"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the check-in is reflected in the workflow"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Complete guest check-out and free the room",
+    "description": "Front office staff can review a stay, complete departure steps, and see the room become available.",
+    "category": "Front office daily operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the front office area"
+      },
+      {
+        "type": "action",
+        "description": "Open the check-out workflow"
+      },
+      {
+        "type": "action",
+        "description": "Review the guest stay details"
+      },
+      {
+        "type": "action",
+        "description": "Complete the departure steps"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the room is marked as available"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the checkout is reflected in the workflow"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Complete guest sign up with verification",
+    "description": "A new guest can create an account, verify access, and reach the authenticated area.",
+    "category": "Guest authentication and account access",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Open the guest sign-up flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Complete verification in the guest onboarding flow"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify authenticated guest access is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the account area is available"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Admin can sign in and reach the dashboard",
+    "description": "Verifies an authorized staff user can sign in to the admin area and see the dashboard after submission.",
+    "category": "Admin staff login and dashboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the admin dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dashboard metrics are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Sign in as an existing guest",
+    "description": "A returning guest can log in with valid credentials and reach their authenticated account area.",
+    "category": "Guest authentication and account access",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Open the guest login flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify authenticated guest access is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the account area is available"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Browse rooms from the homepage",
+    "description": "A guest can view available room types from the homepage and reach a room detail page to begin booking.",
+    "category": "Public room browsing and booking",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the room listings section"
+      },
+      {
+        "type": "action",
+        "description": "Apply a room type filter"
+      },
+      {
+        "type": "action",
+        "description": "Open a room detail page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify room details are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a booking start action is available"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "View front office dashboard summary after sign-in",
+    "description": "Front office staff can sign in and reach the operational dashboard with summary metrics visible.",
+    "category": "Front office daily operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the front office area"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the front office dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify operational summary metrics are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "View housekeeping room status grid",
+    "description": "Housekeeping staff can sign in and review rooms by visual status indicators.",
+    "category": "Housekeeping room status and task management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the housekeeping area"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /housekeeping"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the room status grid is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify room status indicators are visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Start a booking from room details",
+    "description": "A guest can review a room detail page and begin the reservation journey from there.",
+    "category": "Public room browsing and booking",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open a room detail page"
+      },
+      {
+        "type": "action",
+        "description": "Review the room amenities and pricing"
+      },
+      {
+        "type": "action",
+        "description": "Start a booking journey"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the reservation flow is opened"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify booking details can be entered"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Admin can view the dashboard after signing in",
+    "description": "Verifies an authorized staff user can open the admin dashboard and see operational summary information.",
+    "category": "Admin staff login and dashboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /admin"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the admin dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify summary metrics are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Filter rooms to find matching options",
+    "description": "A guest can narrow room choices using filters and see only matching available rooms.",
+    "category": "Public room browsing and booking",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the room listings section"
+      },
+      {
+        "type": "action",
+        "description": "Apply a room type filter"
+      },
+      {
+        "type": "action",
+        "description": "Apply a price filter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify matching room cards are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify unrelated room options are not shown"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Complete a cleaning task",
+    "description": "Housekeeping staff can review assigned tasks, mark one complete, and see it removed or updated in the list.",
+    "category": "Housekeeping room status and task management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the housekeeping area"
+      },
+      {
+        "type": "action",
+        "description": "Open cleaning tasks"
+      },
+      {
+        "type": "action",
+        "description": "Review assigned tasks"
+      },
+      {
+        "type": "action",
+        "description": "Mark a task as completed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the completed task is removed or updated in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task completion status is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Admin can create a room type and see it in the list",
+    "description": "Verifies an admin can add a new room type and confirm it appears in the room type list.",
+    "category": "Admin management of rooms, bookings, guests, staff, services, and gallery",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Open room types management"
+      },
+      {
+        "type": "action",
+        "description": "Create a room type using valid details"
+      },
+      {
+        "type": "action",
+        "description": "Save changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new room type appears in the list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "Record a payment against a guest folio",
+    "description": "Front office staff can open a folio, add a payment, and see the balance update.",
+    "category": "Front office daily operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the front office area"
+      },
+      {
+        "type": "action",
+        "description": "Open a guest folio"
+      },
+      {
+        "type": "action",
+        "description": "Review the folio charges and balance"
+      },
+      {
+        "type": "action",
+        "description": "Record a payment"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the folio balance is updated"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the payment entry is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Admin can update a room record and see the change persisted",
+    "description": "Verifies an admin can edit a room record and confirm the updated room information appears in the inventory list.",
+    "category": "Admin management of rooms, bookings, guests, staff, services, and gallery",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Open room inventory management"
+      },
+      {
+        "type": "action",
+        "description": "Update a room record with valid changes"
+      },
+      {
+        "type": "action",
+        "description": "Save changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated room information appears in the list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "Recover guest account access by password reset",
+    "description": "A guest can request password reset access, complete the reset flow, and sign in with the new password.",
+    "category": "Guest authentication and account access",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Open the forgot password flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the reset request"
+      },
+      {
+        "type": "action",
+        "description": "Complete the password reset flow"
+      },
+      {
+        "type": "action",
+        "description": "Sign in with the new password"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify authenticated guest access is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify account access is restored"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "Add a service charge to a guest account",
+    "description": "Front office staff can add a service through POS and see the charge reflected on the guest account.",
+    "category": "Front office daily operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the front office area"
+      },
+      {
+        "type": "action",
+        "description": "Open the service POS"
+      },
+      {
+        "type": "action",
+        "description": "Add an extra service to a guest folio"
+      },
+      {
+        "type": "action",
+        "description": "Save the service entry"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the service charge is reflected in the account"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new service entry is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC018",
+    "title": "Admin can update a booking status and see it in the list",
+    "description": "Verifies an admin can change a booking status and confirm the booking list reflects the updated status.",
+    "category": "Admin management of rooms, bookings, guests, staff, services, and gallery",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Open bookings management"
+      },
+      {
+        "type": "action",
+        "description": "Update a booking status"
+      },
+      {
+        "type": "action",
+        "description": "Save changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated booking appears in the list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC019",
+    "title": "Review guest profile and booking history",
+    "description": "A signed-in guest can view their profile information and booking history in the account area.",
+    "category": "Guest profile and bookings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Open the guest account area"
+      },
+      {
+        "type": "action",
+        "description": "Open the bookings section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify profile information is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify booking history is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC020",
+    "title": "Assign housekeeping work to a staff member",
+    "description": "Housekeeping staff can assign a room or task to a staff member and see the updated assignment.",
+    "category": "Housekeeping room status and task management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the housekeeping area"
+      },
+      {
+        "type": "action",
+        "description": "Open staff assignment"
+      },
+      {
+        "type": "action",
+        "description": "Assign a room or task to a staff member"
+      },
+      {
+        "type": "action",
+        "description": "Save the assignment"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated assignment is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the assigned staff member is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC021",
+    "title": "Admin can update a guest profile and see the saved record",
+    "description": "Verifies an admin can edit guest information and confirm the saved guest profile is shown in guest management.",
+    "category": "Admin management of rooms, bookings, guests, staff, services, and gallery",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Open guest management"
+      },
+      {
+        "type": "action",
+        "description": "Update a guest record with valid changes"
+      },
+      {
+        "type": "action",
+        "description": "Save changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the saved guest profile appears in the list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC022",
+    "title": "Open a guest reservation and check its status",
+    "description": "A signed-in guest can open a specific booking from history and review its reservation details and status.",
+    "category": "Guest profile and bookings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Open the guest account area"
+      },
+      {
+        "type": "action",
+        "description": "Open the bookings section"
+      },
+      {
+        "type": "action",
+        "description": "Open a booking from the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify reservation details are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify booking status is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC023",
+    "title": "Admin can create or edit a staff user and see the updated staff list",
+    "description": "Verifies an admin can save staff user changes and confirm the staff list reflects the update.",
+    "category": "Admin management of rooms, bookings, guests, staff, services, and gallery",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Open staff management"
+      },
+      {
+        "type": "action",
+        "description": "Create or edit a staff user using valid details"
+      },
+      {
+        "type": "action",
+        "description": "Save changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated staff list is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC024",
+    "title": "Review operational reports and payment summaries",
+    "description": "Front office staff can open reports and review operational and payment summary information.",
+    "category": "Front office daily operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the front office area"
+      },
+      {
+        "type": "action",
+        "description": "Open reports"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify operational reports are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify payment summaries are displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC025",
+    "title": "Admin can update a service and see it in the list",
+    "description": "Verifies an admin can save service changes and confirm the updated service appears in extra services management.",
+    "category": "Admin management of rooms, bookings, guests, staff, services, and gallery",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Open extra services management"
+      },
+      {
+        "type": "action",
+        "description": "Create or edit a service using valid details"
+      },
+      {
+        "type": "action",
+        "description": "Save changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated service list is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC026",
+    "title": "Review housekeeping notes for a room",
+    "description": "Housekeeping staff can open a room detail view and review room-specific notes and information.",
+    "category": "Housekeeping room status and task management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the housekeeping area"
+      },
+      {
+        "type": "action",
+        "description": "Open a room detail view"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify housekeeping notes are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify room-specific information is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC027",
+    "title": "Admin can update gallery content and see the saved entry",
+    "description": "Verifies an admin can modify gallery content and confirm the updated venue or image entry appears in gallery management.",
+    "category": "Admin management of rooms, bookings, guests, staff, services, and gallery",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Open gallery management"
+      },
+      {
+        "type": "action",
+        "description": "Add or update a gallery entry using valid details"
+      },
+      {
+        "type": "action",
+        "description": "Save changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated gallery content is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC028",
+    "title": "View real-time operational notifications",
+    "description": "Front office staff can open notifications and observe current operational updates.",
+    "category": "Front office daily operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the front office area"
+      },
+      {
+        "type": "action",
+        "description": "View notifications"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify operational notifications are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify recent updates are visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC029",
+    "title": "Admin can update hotel settings and see the saved configuration",
+    "description": "Verifies an admin can change hotel settings and confirm the updated configuration is shown in settings.",
+    "category": "Admin management of rooms, bookings, guests, staff, services, and gallery",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "action",
+        "description": "Open settings"
+      },
+      {
+        "type": "action",
+        "description": "Update hotel configuration using valid details"
+      },
+      {
+        "type": "action",
+        "description": "Save changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated settings are displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC030",
+    "title": "Handle no matching room search results",
+    "description": "A guest who applies restrictive filters sees a clear empty state when no rooms match.",
+    "category": "Public room browsing and booking",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the room listings section"
+      },
+      {
+        "type": "action",
+        "description": "Apply a room type filter"
+      },
+      {
+        "type": "action",
+        "description": "Apply a price filter that yields no matches"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty results message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify room cards are not displayed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC031",
+    "title": "Admin sees feedback for invalid sign in",
+    "description": "Verifies an admin login attempt with invalid credentials shows clear access denial or validation feedback.",
+    "category": "Admin staff login and dashboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin/login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff credentials with invalid values"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the staff password with invalid values"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access denied or validation feedback is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC032",
+    "title": "Show feedback for invalid guest login",
+    "description": "A guest entering invalid credentials sees access denied or validation feedback and remains signed out.",
+    "category": "Guest authentication and account access",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Open the guest login flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with invalid@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with invalid-password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a login error message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify authenticated access is not shown"
+      }
+    ],
+    "priority": "Low"
+  }
+]

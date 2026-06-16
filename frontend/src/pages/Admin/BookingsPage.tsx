@@ -4,7 +4,6 @@ import {
   Download,
   Calendar,
   Users,
-  Loader2,
   CheckCircle2,
   Clock,
   XCircle,
@@ -17,6 +16,7 @@ import { motion } from 'framer-motion';
 import { bookingService } from '../../services/bookingService';
 import type { Booking } from '../../services/bookingService';
 import { toast } from 'react-hot-toast';
+import { AdminTableSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
 
 import { useState, useEffect } from 'react';
 export default function AdminBookingsPage() {
@@ -117,10 +117,7 @@ export default function AdminBookingsPage() {
       {/* Content */}
       <div className="bg-white rounded-[40px] border border-neutral-border/40 shadow-soft overflow-hidden">
         {loading ? (
-          <div className="py-40 flex flex-col items-center justify-center gap-4">
-            <Loader2 className="h-12 w-12 text-primary-green animate-spin" />
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-text-secondary animate-pulse">Syncing reservations...</p>
-          </div>
+          <AdminTableSkeleton rows={6} cols={6} bare />
         ) : bookings.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">

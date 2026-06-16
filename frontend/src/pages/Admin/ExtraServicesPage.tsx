@@ -8,6 +8,7 @@ import { Card } from '../../components/ui/Card';
 import { Plus, Edit2, Trash2, Search, Filter, ImageOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { getImageUrl } from '../../services/api';
+import { AdminCardGridSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
 
 
 export default function ExtraServicesPage() {
@@ -132,9 +133,7 @@ export default function ExtraServicesPage() {
       </Card>
 
       {isLoading ? (
-        <div className="h-[400px] w-full flex items-center justify-center">
-          <div className="w-12 h-12 border-4 border-primary-green/20 border-t-primary-green rounded-full animate-spin" />
-        </div>
+        <AdminCardGridSkeleton count={8} />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredServices.map((service) => (

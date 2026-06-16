@@ -9,6 +9,7 @@ import { Modal } from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { getImageUrl } from "../../services/api";
+import { AdminCardGridSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 
 export default function GalleryVenuesPage() {
   const [venues, setVenues] = useState<GalleryVenue[]>([]);
@@ -128,9 +129,7 @@ export default function GalleryVenuesPage() {
       </Card>
 
       {isLoading ? (
-        <div className="py-20 text-center text-sm font-bold text-gray-400 uppercase tracking-widest">
-          Loading gallery venues...
-        </div>
+        <AdminCardGridSkeleton count={6} />
       ) : filteredVenues.length === 0 ? (
         <Card className="py-16 text-center border-dashed">
           <LayoutGrid size={40} className="mx-auto mb-4 text-gray-300" />

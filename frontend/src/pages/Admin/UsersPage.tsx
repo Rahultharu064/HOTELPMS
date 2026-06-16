@@ -9,7 +9,6 @@ import {
   XCircle,
   Edit2,
   Download,
-  Loader2,
   Copy,
   AlertTriangle
 } from "lucide-react";
@@ -20,6 +19,7 @@ import { Modal } from "../../components/ui/Modal";
 import { toast } from "react-hot-toast";
 import { staffService, type StaffMember } from "../../services/staffService";
 import { Select } from "../../components/ui/Select";
+import { AdminTableSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 
 const AdminUsersPage: React.FC = () => {
   const [staff, setStaff] = useState<StaffMember[]>([]);
@@ -227,6 +227,10 @@ const AdminUsersPage: React.FC = () => {
         </div>
 
         {/* Users Table */}
+        {loading ? (
+          <AdminTableSkeleton rows={6} cols={4} />
+        ) : (
+        <>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -238,14 +242,7 @@ const AdminUsersPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {loading ? (
-                <tr>
-                  <td colSpan={4} className="py-20 text-center">
-                    <Loader2 className="animate-spin mx-auto text-[#14532D]" size={32} />
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-4">Accessing Personnel Database...</p>
-                  </td>
-                </tr>
-              ) : filteredStaff.map((user, i) => (
+              {filteredStaff.map((user, i) => (
                   <motion.tr 
                     layout
                     initial={{ opacity: 0, y: 10 }}
@@ -308,11 +305,13 @@ const AdminUsersPage: React.FC = () => {
           </table>
         </div>
 
-        {!loading && filteredStaff.length === 0 && (
+        {filteredStaff.length === 0 && (
           <div className="py-32 flex flex-col items-center justify-center gap-6 opacity-30">
             <Users size={64} strokeWidth={1} />
             <p className="text-[11px] font-black uppercase tracking-[0.3em]">No personnel records found</p>
           </div>
+        )}
+        </>
         )}
       </Card>
 

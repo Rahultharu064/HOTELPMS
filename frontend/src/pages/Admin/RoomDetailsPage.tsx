@@ -13,11 +13,11 @@ import {
   LayoutGrid,
   Layers,
   Sparkles,
-  Loader2
 } from 'lucide-react';
 import { roomService } from '../../services/roomService';
 import type { Room } from '../../services/roomService';
 import { getImageUrl } from '../../services/api';
+import { AdminDetailPageSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
 
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -63,12 +63,7 @@ export default function RoomDetailsPage() {
   };
 
   if (loading) {
-    return (
-      <div className="py-40 flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-12 h-12 text-[#14532D] animate-spin" />
-        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Loading Room Profile...</p>
-      </div>
-    );
+    return <AdminDetailPageSkeleton />;
   }
 
   if (!room) return null;

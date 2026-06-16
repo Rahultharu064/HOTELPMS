@@ -7,7 +7,6 @@ import {
   Mail,
   Phone,
   Globe,
-  Loader2,
   Hotel,
   TrendingUp,
   CreditCard,
@@ -20,6 +19,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { guestService } from '../../services/guestService';
 import { toast } from 'react-hot-toast';
+import { AdminTableSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
 
 export default function AdminGuestsPage() {
   const [guests, setGuests] = useState<any[]>([]);
@@ -99,10 +99,7 @@ export default function AdminGuestsPage() {
       {/* Patron Table */}
       <div className="bg-white rounded-[56px] border border-neutral-border/40 shadow-soft overflow-hidden">
         {loading ? (
-          <div className="py-40 flex flex-col items-center justify-center gap-4">
-             <Loader2 className="h-12 w-12 text-primary-green animate-spin" />
-             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-text-secondary animate-pulse">Accessing archives...</p>
-          </div>
+          <AdminTableSkeleton rows={6} cols={6} bare />
         ) : guests.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">

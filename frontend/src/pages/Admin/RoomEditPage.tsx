@@ -18,6 +18,7 @@ import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { Textarea } from '../../components/ui/Textarea';
 import { getImageUrl } from '../../services/api';
+import { AdminDetailPageSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
 
 
 export default function RoomEditPage() {
@@ -125,12 +126,7 @@ export default function RoomEditPage() {
   };
 
   if (loading) {
-    return (
-      <div className="py-40 flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-12 h-12 text-[#14532D] animate-spin" />
-        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Loading Configuration Data...</p>
-      </div>
-    );
+    return <AdminDetailPageSkeleton />;
   }
 
   return (

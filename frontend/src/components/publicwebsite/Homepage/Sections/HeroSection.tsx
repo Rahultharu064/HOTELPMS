@@ -14,27 +14,32 @@ import { roomTypeService, type RoomType } from "../../../../services/roomTypeSer
 /* ─────────────────── Slide data ─────────────────── */
 const slides = [
   {
-    image: "/hero1.png",
-    badge: "WELCOME TO ITAHARI NAMUNA PMS",
-    title: "Best Stay in Itahari",
+    image: "/hero11.png",
+    imagePosition: "object-[center_28%]",
+    badge: "WELCOME TO ITAHARI NAMUNA",
+    title: "Best Hotel in Itahari",
     subtitle:
-      "Experience warm hospitality, elegant spaces, and timeless comfort in the heart of Sunsari.",
+      "Warm hospitality, modern comfort, and memorable stays in the heart of Sunsari.",
   },
   {
-    image: "/hero2.png",
-    badge: "EXPERIENCE ROYAL LUXURY",
-    title: "World-Class Comfort",
+    image: "/hero122.png",
+    imagePosition: "object-[center_35%]",
+    badge: "PREMIUM ACCOMMODATION",
+    title: "Comfort You Can Trust",
     subtitle:
-      "Redefining hospitality with state-of-the-art services and premium accommodations.",
+      "Elegant rooms, attentive service, and everything you need for a perfect stay.",
   },
   {
-    image: "/hero3.png",
+    image: "/Hero.webp",
+    imagePosition: "object-center",
     badge: "YOUR PERFECT ESCAPE",
-    title: "Luxury Rooms & Suites",
+    title: "World-Class Luxury",
     subtitle:
-      "Discover your private sanctuary designed meticulously for the modern luxury traveler.",
+      "Redefining hospitality with refined spaces and exceptional guest experiences.",
   },
 ];
+
+const AUTO_PLAY_MS = 6500;
 
 /* ─────────────────── Transition phases ─────────────────── */
 type Phase = "idle" | "out" | "in";
@@ -149,6 +154,13 @@ const HeroSection = () => {
     [current, goTo]
   );
 
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      if (!isBusy.current) goNext();
+    }, AUTO_PLAY_MS);
+    return () => window.clearInterval(timer);
+  }, [goNext]);
+
   const handleSearch = () => {
     let query = "";
     if (selectedRoomType && selectedRoomType !== "all") {
@@ -187,7 +199,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="relative w-full overflow-visible bg-[#F9FAFB] lg:bg-black max-lg:pb-0 lg:h-[75vh] lg:min-h-[560px] lg:max-h-[760px]">
+    <section className="relative w-full overflow-visible bg-black lg:h-[75vh] lg:min-h-[560px] lg:max-h-[760px]">
 
       {/* ── Slide backgrounds ── */}
       <div className="relative max-lg:h-[min(70vh,540px)] max-lg:min-h-[480px] lg:absolute lg:inset-0 overflow-hidden">
@@ -199,12 +211,13 @@ const HeroSection = () => {
             <img
               src={slide.image}
               alt={slide.title}
-              className={`hero-slide-image${i === current ? " is-active" : ""}`}
+              fetchPriority={i === 0 ? "high" : "auto"}
+              loading={i === 0 ? "eager" : "lazy"}
+              className={`hero-slide-image ${slide.imagePosition}${i === current ? " is-active" : ""}`}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black/50" />
           </div>
         ))}
-        <div className="absolute inset-x-0 bottom-0 h-24 max-lg:h-20 bg-gradient-to-t from-[#F9FAFB] via-[#F9FAFB]/80 to-transparent pointer-events-none z-[2]" />
       </div>
 
       {/* ── Centered content ── */}
@@ -212,16 +225,16 @@ const HeroSection = () => {
         <div
           className={`max-w-3xl w-full transition-all duration-500 ease-out ${contentClass}`}
         >
-          <div className="inline-flex items-center gap-2 border border-primary-gold/40 text-primary-gold px-5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.28em] bg-white/5 backdrop-blur-sm mb-4 max-lg:mb-3 lg:mb-5">
+          <div className="inline-flex items-center gap-2 border border-primary-gold/50 text-primary-gold px-5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.28em] bg-black/20 backdrop-blur-md mb-4 max-lg:mb-3 lg:mb-5 shadow-[0_4px_24px_rgba(0,0,0,0.18)]">
             <span className="w-1.5 h-1.5 rounded-full bg-primary-gold animate-pulse shrink-0" />
             {slides[current].badge}
           </div>
 
-          <h1 className="text-white font-georgia text-[40px] leading-[1.06] sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-3 max-lg:mb-3 lg:mb-4 drop-shadow-lg">
+          <h1 className="text-white font-georgia text-[38px] leading-[1.08] sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-3 max-lg:mb-3 lg:mb-4 drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)]">
             {slides[current].title}
           </h1>
 
-          <p className="text-white/80 text-sm md:text-base max-w-xl mx-auto leading-relaxed mb-6 max-lg:mb-7 lg:mb-8 font-medium px-1">
+          <p className="text-white/85 text-sm md:text-base max-w-xl mx-auto leading-relaxed mb-6 max-lg:mb-7 lg:mb-8 font-medium px-1 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
             {slides[current].subtitle}
           </p>
 
@@ -243,19 +256,20 @@ const HeroSection = () => {
             </Link>
           </div>
 
-          <div className="hidden lg:flex gap-2.5 justify-center">
+          <div className="flex gap-2 justify-center">
             {slides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goTo(i)}
                 aria-label={`Go to slide ${i + 1}`}
+                aria-current={i === current ? "true" : undefined}
                 className="group py-2 cursor-pointer"
               >
                 <div
                   className={`h-[3px] rounded-full transition-all duration-500 ${
                     i === current
-                      ? "w-10 bg-primary-gold shadow-[0_0_8px_rgba(245,158,11,0.6)]"
-                      : "w-5 bg-white/30 group-hover:bg-white/55"
+                      ? "w-9 max-lg:w-8 bg-primary-gold shadow-[0_0_10px_rgba(245,158,11,0.65)]"
+                      : "w-4 max-lg:w-3 bg-white/35 group-hover:bg-white/60"
                   }`}
                 />
               </button>
@@ -268,7 +282,7 @@ const HeroSection = () => {
       <button
         onClick={goPrev}
         disabled={isBusy.current}
-        className="absolute left-5 md:left-8 top-[38%] max-lg:top-[42%] lg:top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full border border-white/25 bg-black/25 hover:bg-black/55 backdrop-blur-sm flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/50 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
+        className="absolute left-4 md:left-8 top-[38%] max-lg:top-[40%] lg:top-1/2 -translate-y-1/2 z-20 h-10 w-10 max-lg:h-9 max-lg:w-9 lg:h-11 lg:w-11 rounded-full border border-white/30 bg-black/30 hover:bg-black/55 backdrop-blur-md flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/55 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
         aria-label="Previous slide"
       >
         <ChevronLeft className="h-5 w-5" />
@@ -277,7 +291,7 @@ const HeroSection = () => {
       <button
         onClick={goNext}
         disabled={isBusy.current}
-        className="absolute right-5 md:right-8 top-[38%] max-lg:top-[42%] lg:top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full border border-white/25 bg-black/25 hover:bg-black/55 backdrop-blur-sm flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/50 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
+        className="absolute right-4 md:right-8 top-[38%] max-lg:top-[40%] lg:top-1/2 -translate-y-1/2 z-20 h-10 w-10 max-lg:h-9 max-lg:w-9 lg:h-11 lg:w-11 rounded-full border border-white/30 bg-black/30 hover:bg-black/55 backdrop-blur-md flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/55 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
         aria-label="Next slide"
       >
         <ChevronRight className="h-5 w-5" />
@@ -298,8 +312,8 @@ const HeroSection = () => {
       </button>
 
       {/* ── Availability Search Bar ── */}
-      <div className="relative z-30 w-[94%] max-w-[1080px] mx-auto max-lg:mt-2 max-lg:mb-3 lg:absolute lg:mt-0 lg:bottom-[-44px] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
-        <div className="bg-white max-lg:rounded-[28px] lg:rounded-2xl max-lg:shadow-[0_18px_60px_rgba(17,24,39,0.12)] lg:shadow-[0_16px_48px_rgba(20,83,45,0.10)] border border-primary-green/10 max-lg:border-neutral-border/40 max-lg:px-6 max-lg:py-5 lg:px-6 lg:py-4">
+      <div className="relative z-30 w-[94%] max-w-[1080px] mx-auto max-lg:mt-3 max-lg:mb-4 lg:absolute lg:mt-0 lg:bottom-[-44px] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
+        <div className="bg-white max-lg:rounded-[28px] lg:rounded-2xl max-lg:shadow-[0_12px_40px_rgba(0,0,0,0.14)] lg:shadow-[0_16px_48px_rgba(20,83,45,0.10)] border border-white/80 max-lg:border-neutral-border/30 max-lg:px-6 max-lg:py-5 lg:px-6 lg:py-4 ring-1 ring-black/5">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center">
 
             <div className="flex items-center gap-3 max-lg:gap-4 flex-1 min-w-0 py-3 max-lg:py-4 lg:py-0 lg:pr-5 border-b lg:border-b-0 lg:border-r border-primary-green/10">

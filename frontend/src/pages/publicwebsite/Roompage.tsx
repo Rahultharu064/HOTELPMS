@@ -122,7 +122,7 @@ export const Roompage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex gap-3 pt-4 border-t border-neutral-border/50">
+      <div className="flex gap-3 pt-4 border-t border-neutral-border/50 lg:hidden">
         <Button size="md" variant="primary" className="flex-1 font-bold shadow-lg shadow-primary-green/20" onClick={() => setShowFilters(false)}>Apply ({filteredRooms.length})</Button>
         <Button size="md" variant="outline" className="flex-1 font-bold" onClick={() => { setTypeFilters([]); setMaxPrice(15000); }}>Reset</Button>
       </div>
@@ -130,7 +130,7 @@ export const Roompage: React.FC = () => {
   );
 
   return (
-    <main className="bg-neutral-light min-h-screen pb-24">
+    <main className="bg-neutral-light min-h-screen pb-24 lg:pb-8">
       <PageHero
         title="Our Signature Rooms"
         subtitle="Find the perfect sanctuary tailored for your stay. Experience comfort, breathtaking views, and modern luxury."
@@ -140,48 +140,49 @@ export const Roompage: React.FC = () => {
         ]}
       />
 
-      <div className="container-custom relative z-20 pt-10 md:pt-12 lg:pt-14">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10 xl:gap-12">
+      <div className="container-custom relative z-20 pt-10 md:pt-12 lg:pt-10">
+        {/* Mobile Filter Toggle — sticky below navbar */}
+        <div className="lg:hidden sticky top-20 z-30 mb-6 flex items-center justify-between rounded-2xl border border-neutral-border/60 bg-white/95 backdrop-blur-md p-4 shadow-[0_8px_32px_rgba(20,83,45,0.06)] relative overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary-gold" />
+          <span className="font-extrabold text-primary-dark ml-3 tracking-tight">{filteredRooms.length} Rooms match your search</span>
+          <Button variant="outline" size="sm" onClick={() => setShowFilters(true)} className="border-neutral-border text-primary-dark font-bold bg-neutral-light shadow-sm">
+            <SlidersHorizontal className="h-4 w-4 mr-2" /> Filters
+          </Button>
+        </div>
+
+        {/* Mobile Filters Modal */}
+        <AnimatePresence>
+          {showFilters && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[100] bg-white p-6 overflow-auto lg:hidden flex flex-col"
+            >
+              <div className="flex justify-between items-center mb-8 pb-4 border-b border-neutral-border">
+                <h3 className="font-extrabold text-2xl text-primary-dark tracking-tight">Refine Search</h3>
+                <button title="Close filters" aria-label="Close filters" onClick={() => setShowFilters(false)} className="h-10 w-10 bg-neutral-light rounded-full flex justify-center items-center text-primary-dark hover:bg-neutral-border transition-colors">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                 <FilterPanel />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Desktop: fixed-height split — sticky filters + scrollable cards only */}
+        <div className="lg:grid lg:grid-cols-[18rem_1fr] lg:gap-10 xl:gap-12 lg:items-start lg:h-[calc(100dvh-5rem)] lg:max-h-[calc(100dvh-5rem)]">
           
-          {/* Mobile Filter Toggle */}
-          <div className="lg:hidden flex items-center justify-between rounded-2xl border border-neutral-border/60 bg-white p-4 shadow-[0_8px_32px_rgba(20,83,45,0.06)] relative overflow-hidden">
-            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary-gold" />
-            <span className="font-extrabold text-primary-dark ml-3 tracking-tight">{filteredRooms.length} Rooms match your search</span>
-            <Button variant="outline" size="sm" onClick={() => setShowFilters(true)} className="border-neutral-border text-primary-dark font-bold bg-neutral-light shadow-sm">
-              <SlidersHorizontal className="h-4 w-4 mr-2" /> Filters
-            </Button>
-          </div>
-
-          {/* Mobile Filters Modal */}
-          <AnimatePresence>
-            {showFilters && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                transition={{ duration: 0.2 }}
-                className="fixed inset-0 z-[100] bg-white p-6 overflow-auto lg:hidden flex flex-col"
-              >
-                <div className="flex justify-between items-center mb-8 pb-4 border-b border-neutral-border">
-                  <h3 className="font-extrabold text-2xl text-primary-dark tracking-tight">Refine Search</h3>
-                  <button title="Close filters" aria-label="Close filters" onClick={() => setShowFilters(false)} className="h-10 w-10 bg-neutral-light rounded-full flex justify-center items-center text-primary-dark hover:bg-neutral-border transition-colors">
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-                <div className="flex-1 overflow-y-auto">
-                   <FilterPanel />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Desktop Sidebar */}
-          <aside className="hidden lg:block w-72 shrink-0 lg:pt-1">
+          {/* Filter sidebar — sticky, never scrolls */}
+          <aside className="hidden lg:block lg:sticky lg:top-20 lg:self-start lg:shrink-0">
             <motion.div 
               initial={{ opacity: 0, x: -30 }} 
               animate={{ opacity: 1, x: 0 }} 
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="sticky top-28 bg-white border border-neutral-border/60 rounded-2xl shadow-[0_8px_32px_rgba(20,83,45,0.06)] p-8 relative overflow-hidden"
+              className="bg-white border border-neutral-border/60 rounded-2xl shadow-[0_8px_32px_rgba(20,83,45,0.06)] p-8 relative overflow-hidden"
             >
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-green to-primary-gold" />
               <h3 className="font-extrabold text-xl text-primary-dark mb-8 tracking-tight flex items-center gap-2.5">
@@ -194,38 +195,41 @@ export const Roompage: React.FC = () => {
             </motion.div>
           </aside>
 
-          {/* Room Grid */}
-          <div className="flex-1 min-w-0 lg:pt-1">
+          {/* Room cards — only this column scrolls on desktop */}
+          <div className="flex min-h-0 flex-col lg:h-full lg:max-h-[calc(100dvh-5rem)] lg:overflow-hidden">
             {error ? (
               <ApiStatus
                 status="error"
                 errorMessage={error}
                 onRetry={fetchData}
               />
-            ) : loading ? (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <RoomCardSkeleton key={i} delay={i * 0.07} />
-                ))}
-              </div>
             ) : (
-            <>
-            <div className="mb-6 hidden lg:flex items-center justify-between rounded-2xl border border-neutral-border/50 bg-white px-5 py-4 shadow-sm">
-              <p className="text-xs font-extrabold uppercase tracking-[0.15em] text-neutral-text-secondary">
-                Showing {filteredRooms.length} curated rooms
-              </p>
-              {(typeFilters.length > 0 || maxPrice < 15000) && (
-                <button
-                  type="button"
-                  onClick={() => { setTypeFilters([]); setMaxPrice(15000); }}
-                  className="text-[11px] font-bold uppercase tracking-wider text-primary-green transition-colors hover:text-primary-dark"
-                >
-                  Clear filters
-                </button>
-              )}
-            </div>
-            
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+              <>
+                <div className="mb-6 hidden lg:flex shrink-0 items-center justify-between rounded-2xl border border-neutral-border/50 bg-white px-5 py-4 shadow-sm">
+                  <p className="text-xs font-extrabold uppercase tracking-[0.15em] text-neutral-text-secondary">
+                    Showing {filteredRooms.length} curated rooms
+                  </p>
+                  {(typeFilters.length > 0 || maxPrice < 15000) && (
+                    <button
+                      type="button"
+                      onClick={() => { setTypeFilters([]); setMaxPrice(15000); }}
+                      className="text-[11px] font-bold uppercase tracking-wider text-primary-green transition-colors hover:text-primary-dark"
+                    >
+                      Clear filters
+                    </button>
+                  )}
+                </div>
+
+                <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:overscroll-y-contain custom-scrollbar lg:pr-2">
+                  {loading ? (
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <RoomCardSkeleton key={i} delay={i * 0.07} />
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
               {filteredRooms.map((room, i) => {
                 const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url || "https://images.unsplash.com/photo-1566665797739-1674de7a421a";
                 const imageUrl = getImageUrl(primaryImage);
@@ -307,7 +311,10 @@ export const Roompage: React.FC = () => {
                 </Button>
               </motion.div>
             )}
-            </>
+                    </>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>

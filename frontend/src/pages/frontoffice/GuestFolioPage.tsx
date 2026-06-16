@@ -4,7 +4,7 @@ import {
   Utensils, Shirt, Flower, 
   ArrowRight, CreditCard, 
   Download,
-  CheckCircle2, AlertCircle, Trash2, 
+  CheckCircle2, AlertCircle, 
   Smartphone, Banknote, Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -14,7 +14,8 @@ import { frontOfficeService } from "../../services/frontofficeService";
 import { toast } from "react-hot-toast";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { Button } from "../../components/ui/Button";
+import { AdminDetailPageSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
+import { DeleteIconButton } from "../../components/ui/ActionIconButton";
 
 const GuestFolioPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -118,12 +119,7 @@ const GuestFolioPage: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="h-screen flex flex-col items-center justify-center gap-4 bg-[#F9FAFB]">
-        <Loader2 className="w-12 h-12 text-[#14532D] animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">Auditing Folio...</p>
-      </div>
-    );
+    return <AdminDetailPageSkeleton />;
   }
 
   if (!folioData) {
@@ -373,9 +369,7 @@ const GuestFolioPage: React.FC = () => {
             <div className="px-10 py-7 border-b border-gray-50 flex items-center justify-between">
               <h3 className="text-xs font-black uppercase tracking-widest text-[#111827]">Transaction Ledger</h3>
               <div className="flex items-center gap-2">
-                 <Button className="p-2 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 transition-all">
-                    <Trash2 size={16} />
-                 </Button>
+                 <DeleteIconButton title="Remove charge" />
               </div>
             </div>
             <div className="overflow-x-auto">

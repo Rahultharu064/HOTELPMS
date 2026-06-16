@@ -4,7 +4,6 @@ import {
   MoreVertical,
   Clock, ShieldCheck,
   Zap, ArrowRight,
-  Loader2,
   UserPlus
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -13,6 +12,7 @@ import { toast } from "react-hot-toast";
 import { Modal } from "../../components/ui/Modal";
 import { Select } from "../../components/ui/Select";
 import { Button } from "../../components/ui/Button";
+import { PortalPageSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 
 const StaffAssignmentPage: React.FC = () => {
   const [staff, setStaff] = useState<any[]>([]);
@@ -72,12 +72,7 @@ const StaffAssignmentPage: React.FC = () => {
   );
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-40 gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-[#14532D]" />
-        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Loading Staff Roster...</p>
-      </div>
-    );
+    return <PortalPageSkeleton variant="table" />;
   }
 
   return (

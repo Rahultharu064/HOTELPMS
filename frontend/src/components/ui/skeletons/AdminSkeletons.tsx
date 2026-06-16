@@ -195,3 +195,47 @@ export const AdminSectionSkeleton = () => (
     </div>
   </div>
 );
+
+/** Front office / housekeeping dashboard skeleton */
+export const PortalDashboardSkeleton = () => (
+  <div className="space-y-12 pb-10">
+    <AdminPageHeaderSkeleton />
+    <AdminStatCardsSkeleton count={4} />
+    <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
+      <div className="space-y-8 lg:col-span-2">
+        <AdminSectionSkeleton />
+        <AdminTableSkeleton rows={5} cols={5} />
+      </div>
+      <div className="space-y-8">
+        <AdminSectionSkeleton />
+        <AdminSectionSkeleton />
+      </div>
+    </div>
+  </div>
+);
+
+/** Small room tile grid — front office & housekeeping */
+export const PortalRoomGridSkeleton = ({ count = 12 }: { count?: number }) => (
+  <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+    {Array.from({ length: count }).map((_, i) => (
+      <motion.div
+        key={i}
+        {...fadeUp(i * 0.04)}
+        className="flex flex-col items-center rounded-[40px] border border-neutral-border/40 bg-white p-8 shadow-sm"
+      >
+        <div className="mb-4 h-14 w-14 rounded-2xl skeleton-shimmer" />
+        <div className="mb-2 h-7 w-16 rounded-lg skeleton-shimmer" />
+        <div className="h-3 w-20 rounded-full skeleton-shimmer" />
+        <div className="mt-6 h-8 w-full rounded-xl skeleton-shimmer" />
+      </motion.div>
+    ))}
+  </div>
+);
+
+/** Generic portal page with header + table or grid */
+export const PortalPageSkeleton = ({ variant = 'table' }: { variant?: 'table' | 'grid' }) => (
+  <div className="space-y-10 pb-10">
+    <AdminPageHeaderSkeleton />
+    {variant === 'grid' ? <PortalRoomGridSkeleton count={12} /> : <AdminTableSkeleton rows={8} cols={5} />}
+  </div>
+);

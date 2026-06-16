@@ -14,7 +14,6 @@ import {
   Edit,
   Trash2,
   Users,
-  Loader2,
   AlertCircle,
   ShieldCheck
 } from 'lucide-react';
@@ -23,6 +22,7 @@ import { GuestProfileModal } from '../../components/frontoffice/GuestProfileModa
 import { toast } from 'react-hot-toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { AdminTableSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
 
 const typeStyles: Record<string, string> = {
   'VIP':       'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/20',
@@ -157,12 +157,11 @@ const GuestsPage: React.FC = () => {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-neutral-border/10">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="py-20 text-center">
-                    <Loader2 className="animate-spin mx-auto text-[#1F7A3A]" size={32} />
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mt-4">Loading Guest Records...</p>
+                  <td colSpan={8} className="p-0">
+                    <AdminTableSkeleton rows={6} cols={8} bare />
                   </td>
                 </tr>
               ) : guests.length > 0 ? (
@@ -269,8 +268,8 @@ const GuestsPage: React.FC = () => {
                                 <Edit size={14} className="text-gray-400" /> Edit Guest
                               </Button>
                               <div className="border-t border-gray-50 my-1 mx-2" />
-                              <Button variant="destructive" >
-                                <Trash2 size={14} /> Delete Guest
+                              <Button variant="destructive" className="bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white">
+                                <Trash2 size={14} className="text-red-600 group-hover:text-white" /> Delete Guest
                               </Button>
                             </div>
                           </>

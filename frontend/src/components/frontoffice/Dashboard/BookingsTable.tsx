@@ -4,7 +4,6 @@ import {
   Filter,
   ArrowRight,
   FileText,
-  Loader2,
   ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,6 +11,7 @@ import { bookingService } from '../../../services/bookingService';
 import type { Booking } from '../../../services/bookingService';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { AdminTableSkeleton } from '../../ui/skeletons/AdminSkeletons';
 
 const statusStylesSelectors = {
   confirmed: 'bg-green-100 text-green-700 border-green-200',
@@ -52,16 +52,16 @@ const BookingsTable: React.FC = () => {
   );
 
   return (
-    <div className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
-      <div className="p-10 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-50/30">
+    <div className="bg-white rounded-[40px] border border-neutral-border/40 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
+      <div className="p-10 border-b border-neutral-border/20 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-neutral-light/30">
         <div>
-          <h3 className="text-xl font-black text-[#111827] flex items-center gap-3 uppercase tracking-tight">
+          <h3 className="text-xl font-black text-primary-dark flex items-center gap-3 tracking-tight">
             <div className="w-10 h-10 rounded-2xl bg-primary-green/10 flex items-center justify-center text-primary-green">
               <FileText size={20} strokeWidth={3} />
             </div>
             Recent Reservations
           </h3>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mt-2">LIVE RESV FEED — UPDATED REAL-TIME</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-text-secondary mt-2">Live feed — updated in real time</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -83,10 +83,7 @@ const BookingsTable: React.FC = () => {
 
       <div className="overflow-x-auto no-scrollbar flex-1">
         {loading ? (
-             <div className="h-64 flex flex-col items-center justify-center gap-4">
-                <Loader2 size={32} className="text-primary-green animate-spin" />
-                <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 animate-pulse">Accessing Data Ledger...</p>
-             </div>
+          <AdminTableSkeleton rows={5} cols={5} bare />
         ) : (
         <table className="w-full text-left border-collapse">
           <thead>

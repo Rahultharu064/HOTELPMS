@@ -27,7 +27,7 @@ export function HousekeepingLayout() {
   const title = pageTitles[location.pathname] || "Housekeeping Central Control";
 
   return (
-    <div className="flex min-h-screen w-full bg-[#F9FAFB] font-sans selection:bg-[#1F7A3A]/10 selection:text-[#1F7A3A]">
+    <div className="flex min-h-screen w-full bg-[#FAFAF8] font-sans selection:bg-primary-green/10 selection:text-primary-dark">
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
@@ -49,11 +49,11 @@ export function HousekeepingLayout() {
         </main>
         
         {/* Footer info for internal dash */}
-        <footer className="px-10 py-6 border-t border-gray-100 flex items-center justify-between text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white/50 backdrop-blur-md">
-          <p>© 2026 Itahari Namuna College PMS - Operations Module</p>
+        <footer className="px-10 py-6 border-t border-neutral-border/40 flex items-center justify-between text-[10px] font-bold text-neutral-text-secondary uppercase tracking-widest bg-white/50 backdrop-blur-md">
+          <p>© 2026 Itahari Namuna College PMS — Housekeeping Module</p>
           <div className="flex items-center gap-6">
-            <button className="hover:text-[#1F7A3A] transition-colors">Server Status: Online</button>
-            <button className="hover:text-[#1F7A3A] transition-colors">Documentation</button>
+            <button className="hover:text-primary-green transition-colors">Server Status: Online</button>
+            <button className="hover:text-primary-green transition-colors">Documentation</button>
           </div>
         </footer>
       </div>

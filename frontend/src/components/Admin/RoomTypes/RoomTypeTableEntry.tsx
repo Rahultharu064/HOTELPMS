@@ -1,6 +1,6 @@
-import { Edit2, Trash2, ImageOff } from 'lucide-react';
-import { Button } from '../../ui/Button';
+import { ImageOff } from 'lucide-react';
 import { Card } from '../../ui/Card';
+import { EditIconButton, DeleteIconButton } from '../../ui/ActionIconButton';
 import { getImageUrl } from '../../../services/api';
 import type { RoomType } from '../../../services/roomTypeService';
 
@@ -31,20 +31,8 @@ export function RoomTypeTableEntry({ roomType, onEdit, onDelete }: RoomTypeTable
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Button 
-          onClick={() => onEdit(roomType)} 
-          variant="ghost" 
-          className="h-10 w-10 p-0 rounded-xl bg-primary-green/10 text-primary-green hover:bg-primary-green hover:text-white transition-all"
-        >
-          <Edit2 size={16} />
-        </Button>
-        <Button 
-          onClick={() => onDelete(roomType.id)} 
-          variant="ghost" 
-          className="h-10 w-10 p-0 rounded-xl bg-error-red/10 text-error-red hover:bg-error-red hover:text-white transition-all"
-        >
-          <Trash2 size={16} />
-        </Button>
+        <EditIconButton onClick={() => onEdit(roomType)} title="Edit Room Type" />
+        <DeleteIconButton onClick={() => onDelete(roomType.id)} title="Delete Room Type" />
       </div>
     </Card>
   );

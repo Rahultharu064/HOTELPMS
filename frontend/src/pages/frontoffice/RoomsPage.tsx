@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { 
   Search, BedDouble, CheckCircle2, 
-  Plus, User, Hammer, Loader2, Sparkles, RefreshCw
+  Plus, User, Hammer, Sparkles, RefreshCw
 } from "lucide-react";
 import { frontOfficeService } from "../../services/frontofficeService";
 import { toast } from "react-hot-toast";
 import { CreateOfflineReservationModal } from "../../components/Admin/Dashboard/CreateOfflineReservationModal";
+import { PortalRoomGridSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 
 const roomStatusStyles: Record<string, { bg: string, text: string, icon: any, dot: string, border: string }> = {
   vacant: { bg: "bg-green-50", text: "text-green-700", icon: CheckCircle2, dot: "bg-green-500", border: "border-green-100" },
@@ -110,10 +111,7 @@ const RoomsPageFO: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="py-40 flex flex-col items-center gap-4">
-            <Loader2 size={40} className="text-[#14532D] animate-spin" />
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Updating Property Grid...</p>
-        </div>
+        <PortalRoomGridSkeleton count={12} />
       ) : (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
         {filteredRooms.map((r, i) => {

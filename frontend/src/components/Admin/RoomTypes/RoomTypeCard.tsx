@@ -1,5 +1,6 @@
-import { Edit2, Trash2, LayoutGrid } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
 import { Button } from '../../ui/Button';
+import { EditIconButton, DeleteIconButton } from '../../ui/ActionIconButton';
 import { getImageUrl } from '../../../services/api';
 import type { RoomType } from '../../../services/roomTypeService';
 
@@ -38,20 +39,8 @@ export function RoomTypeCard({ roomType, onEdit, onDelete, animationDelay }: Roo
           </div>
 
           <div className="absolute bottom-4 right-4 flex gap-2 translate-y-12 group-hover:translate-y-0 transition-transform duration-300">
-            <button 
-              onClick={() => onEdit(roomType)}
-              title="Edit Room Type"
-              className="p-2.5 rounded-xl bg-white/90 backdrop-blur-md text-primary-green shadow-xl hover:bg-primary-green hover:text-white transition-all"
-            >
-              <Edit2 size={16} />
-            </button>
-            <button 
-              onClick={() => onDelete(roomType.id)}
-              title="Delete Room Type"
-              className="p-2.5 rounded-xl bg-white/90 backdrop-blur-md text-error-red shadow-xl hover:bg-error-red hover:text-white transition-all"
-            >
-              <Trash2 size={16} />
-            </button>
+            <EditIconButton onClick={() => onEdit(roomType)} title="Edit Room Type" />
+            <DeleteIconButton onClick={() => onDelete(roomType.id)} title="Delete Room Type" />
           </div>
         </div>
         

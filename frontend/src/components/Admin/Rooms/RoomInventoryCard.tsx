@@ -1,4 +1,5 @@
-import { Edit2, Trash2, LayoutGrid, Users, BedDouble } from 'lucide-react';
+import { LayoutGrid, Users, BedDouble } from 'lucide-react';
+import { EditIconButton, DeleteIconButton } from '../../ui/ActionIconButton';
 import { Button } from '../../ui/Button';
 import { getImageUrl } from '../../../services/api';
 import type { Room } from '../../../services/roomService';
@@ -38,20 +39,8 @@ export function RoomInventoryCard({ room, onEdit, onDelete, onViewDetails }: Roo
           </span>
         </div>
         <div className="absolute bottom-4 right-4 flex gap-2 translate-y-12 group-hover:translate-y-0 transition-transform duration-300">
-          <button 
-            onClick={() => onEdit(room.id)}
-            title="Edit Room"
-            className="p-2.5 rounded-xl bg-white/90 backdrop-blur-md text-primary-dark shadow-xl hover:bg-primary-green hover:text-white transition-all"
-          >
-            <Edit2 size={16} />
-          </button>
-          <button 
-            onClick={() => onDelete(room.id)}
-            title="Delete Room"
-            className="p-2.5 rounded-xl bg-white/90 backdrop-blur-md text-red-500 shadow-xl hover:bg-red-500 hover:text-white transition-all"
-          >
-            <Trash2 size={16} />
-          </button>
+          <EditIconButton onClick={() => onEdit(room.id)} title="Edit Room" />
+          <DeleteIconButton onClick={() => onDelete(room.id)} title="Delete Room" />
         </div>
       </div>
       

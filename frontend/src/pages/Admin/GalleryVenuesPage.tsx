@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Edit2, Trash2, Search, ImageOff, LayoutGrid } from "lucide-react";
+import { Plus, Edit2, Search, ImageOff, LayoutGrid } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { galleryService } from "../../services/galleryService";
 import type { GalleryVenue } from "../../data/venues";
@@ -10,6 +10,7 @@ import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { getImageUrl } from "../../services/api";
 import { AdminCardGridSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
+import { DeleteIconButton } from "../../components/ui/ActionIconButton";
 
 export default function GalleryVenuesPage() {
   const [venues, setVenues] = useState<GalleryVenue[]>([]);
@@ -189,12 +190,12 @@ export default function GalleryVenuesPage() {
                     >
                       <Edit2 size={14} className="mr-2" /> Edit
                     </Button>
-                    <Button
+                    <DeleteIconButton
                       onClick={() => handleDelete(venue.id)}
-                      className="h-11 px-4 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white text-[10px] font-black uppercase tracking-widest"
-                    >
-                      <Trash2 size={14} />
-                    </Button>
+                      title="Delete Venue"
+                      className="h-11 w-11"
+                      size={14}
+                    />
                   </div>
                 </div>
               </Card>

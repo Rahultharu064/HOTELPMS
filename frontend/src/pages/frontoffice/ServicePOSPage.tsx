@@ -3,13 +3,14 @@ import {
   Search, ShoppingCart, Plus, Minus, X, 
   User, Utensils, Waves, 
   Wind, Ghost, Zap, Loader2,
-  Trash2, CreditCard, Receipt
+  CreditCard, Receipt
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { extraService } from '../../services/extraService';
 import { frontOfficeService } from '../../services/frontofficeService';
 import { toast } from 'react-hot-toast';
 import { Button } from '../../components/ui/Button';
+import { DeleteIconButton } from '../../components/ui/ActionIconButton';
 
 interface CartItem {
   id: number;
@@ -317,9 +318,7 @@ const ServicePOSPage: React.FC = () => {
                     </div>
                 </div>
                 {cart.length > 0 && (
-                    <Button onClick={() => setCart([])} className="text-white/20 hover:text-red-400 transition-colors">
-                        <Trash2 size={18} />
-                    </Button>
+                    <DeleteIconButton onClick={() => setCart([])} title="Clear cart" className="bg-red-600/20 border-red-400/40 text-white hover:bg-red-600" />
                 )}
             </div>
 

@@ -4,7 +4,6 @@ import {
   CheckCircle2,
   Clock,
   Hammer,
-  Loader2,
   RefreshCcw
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -13,6 +12,7 @@ import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
+import { PortalPageSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 
 const RoomStatusPage: React.FC = () => {
   const [rooms, setRooms] = useState<any[]>([]);
@@ -65,12 +65,7 @@ const RoomStatusPage: React.FC = () => {
   });
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-40 gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-[#14532D]" />
-        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Syncing Status Board...</p>
-      </div>
-    );
+    return <PortalPageSkeleton variant="grid" />;
   }
 
   return (

@@ -13,6 +13,7 @@ import { extraService } from "../../services/extraService";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { AdminTableSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 import { Button } from "../../components/ui/Button";
 
 const payStatusStyles: Record<string, { bg: string, text: string, dot: string }> = {
@@ -238,15 +239,7 @@ const PaymentsPage: React.FC = () => {
       {/* ── DATA TABLE ── */}
       <div className="bg-white rounded-[48px] border border-gray-100 shadow-sm overflow-hidden">
         {loading ? (
-          <div className="py-40 flex flex-col items-center justify-center gap-6">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full border-4 border-gray-100 border-t-[#14532D] animate-spin" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-8 h-8 bg-[#14532D]/10 rounded-full animate-pulse" />
-              </div>
-            </div>
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">Synchronizing Ledger...</p>
-          </div>
+          <AdminTableSkeleton rows={8} cols={6} bare />
         ) : data.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">

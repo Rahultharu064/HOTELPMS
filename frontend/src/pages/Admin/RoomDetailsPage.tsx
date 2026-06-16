@@ -101,7 +101,7 @@ export default function RoomDetailsPage() {
           </Button>
           <Button 
             onClick={handleDelete}
-            className="h-14 px-8 rounded-2xl bg-white border border-red-100 text-red-500 font-black uppercase tracking-widest text-[11px] flex items-center gap-3 hover:bg-red-50 transition-all"
+            className="h-14 px-8 rounded-2xl bg-red-50 border border-red-200 text-red-600 font-bold uppercase tracking-widest text-[11px] flex items-center gap-3 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all"
           >
             <Trash2 size={18} /> Delete
           </Button>

@@ -5,10 +5,11 @@ import { ExtraServiceForm } from '../../components/Admin/ExtraServices/ExtraServ
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { Plus, Edit2, Trash2, Search, Filter, ImageOff } from 'lucide-react';
+import { Plus, Edit2, Search, Filter, ImageOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { getImageUrl } from '../../services/api';
 import { AdminCardGridSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
+import { DeleteIconButton } from '../../components/ui/ActionIconButton';
 
 
 export default function ExtraServicesPage() {
@@ -154,9 +155,7 @@ export default function ExtraServicesPage() {
                   <Button onClick={() => handleOpenModal(service)} className="w-10 h-10 rounded-xl bg-white shadow-2xl hover:bg-primary-dark hover:text-white transition-all p-0 flex items-center justify-center">
                     <Edit2 size={16} />
                   </Button>
-                  <Button onClick={() => handleDelete(service.id)} className="w-10 h-10 rounded-xl bg-white shadow-2xl hover:bg-error-red hover:text-white transition-all p-0 flex items-center justify-center">
-                    <Trash2 size={16} />
-                  </Button>
+                  <DeleteIconButton onClick={() => handleDelete(service.id)} title="Delete Service" />
                 </div>
                 <div className="absolute bottom-4 left-4">
                   <span className="px-3 py-1 bg-white/90 backdrop-blur-md text-primary-dark text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">

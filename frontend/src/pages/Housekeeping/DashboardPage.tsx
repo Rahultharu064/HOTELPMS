@@ -4,7 +4,6 @@ import {
   Hammer,
   Clock,
   CheckCircle2,
-  Loader2,
   RefreshCcw,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -13,6 +12,7 @@ import { toast } from "react-hot-toast";
 import { Modal } from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import { SectionLoader } from "../../components/ui/PageLoader";
+import { PortalDashboardSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 
 const HousekeepingRoomGrid = lazy(() => import("../../components/Housekeeping/Dashboard/HousekeepingRoomGrid"));
 const HousekeepingStaffPanel = lazy(() => import("../../components/Housekeeping/Dashboard/HousekeepingStaffPanel"));
@@ -108,12 +108,7 @@ const DashboardPage: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-40 gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-[#14532D]" />
-        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Syncing Housekeeping Command...</p>
-      </div>
-    );
+    return <PortalDashboardSkeleton />;
   }
 
   return (
@@ -123,19 +118,20 @@ const DashboardPage: React.FC = () => {
       className="space-y-12 pb-20"
     >
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-        <div>
-          <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
-            <div className="w-2 h-8 bg-[#14532D] rounded-full" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-white/60 backdrop-blur-sm p-8 rounded-[40px] border border-neutral-border/40 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-green/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+        <div className="relative z-10">
+          <h1 className="text-3xl font-black text-primary-dark tracking-tight flex items-center gap-4">
+            <div className="w-2 h-8 bg-primary-green rounded-full" />
             Housekeeping Command
           </h1>
-          <p className="text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Live operational control for room turnover</p>
+          <p className="text-neutral-text-secondary text-[11px] font-bold uppercase tracking-[0.2em] mt-2 ml-6">Live operational control for room turnover</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button onClick={fetchData} className="p-4 bg-white border border-gray-100 rounded-2xl text-gray-400 hover:text-[#14532D] transition-all shadow-sm">
+        <div className="flex items-center gap-3 relative z-10">
+          <Button onClick={fetchData} className="p-4 bg-white border border-neutral-border/50 rounded-2xl text-neutral-text-secondary hover:text-primary-dark transition-all shadow-sm">
             <RefreshCcw size={18} />
           </Button>
-          <Button className="px-6 py-4 bg-[#111827] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all shadow-xl shadow-black/10">
+          <Button className="px-6 py-4 bg-primary-dark text-white rounded-2xl text-[11px] font-bold uppercase tracking-widest hover:bg-primary-green transition-all shadow-xl shadow-primary-dark/10">
             Daily Log Report
           </Button>
         </div>
@@ -149,14 +145,14 @@ const DashboardPage: React.FC = () => {
           { label: "Occupied", value: stats?.occupied || 0, icon: DoorOpen, light: "bg-blue-50", text: "text-blue-600" },
           { label: "Maintenance", value: stats?.maintenance || 0, icon: Hammer, light: "bg-red-50", text: "text-red-600" },
         ].map((s, i) => (
-          <div key={i} className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
+          <div key={i} className="bg-white p-8 rounded-[40px] border border-neutral-border/40 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
             <div className="flex items-start justify-between">
               <div className={`w-14 h-14 rounded-2xl ${s.light} ${s.text} flex items-center justify-center group-hover:scale-110 transition-transform`}>
                 <s.icon size={26} strokeWidth={2.5} />
               </div>
               <div className="text-right">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400">{s.label}</h3>
-                <p className="text-4xl font-black text-[#111827] mt-1 tracking-tighter">{s.value}</p>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-neutral-text-secondary">{s.label}</h3>
+                <p className="text-4xl font-black text-primary-dark mt-1 tracking-tighter">{s.value}</p>
               </div>
             </div>
             <div className={`absolute -bottom-6 -right-6 w-24 h-24 ${s.light} opacity-0 group-hover:opacity-40 rounded-full blur-3xl transition-opacity duration-500`} />

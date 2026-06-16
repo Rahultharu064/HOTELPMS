@@ -4,13 +4,13 @@ import {
   MoreVertical,
   Activity,
   Clock3,
-  Loader2,
   RefreshCcw
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
 import { Button } from "../../components/ui/Button";
+import { PortalPageSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 
 const CleaningTasksPage: React.FC = () => {
   const [rooms, setRooms] = useState<any[]>([]);
@@ -56,12 +56,7 @@ const CleaningTasksPage: React.FC = () => {
   });
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-40 gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-[#14532D]" />
-        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Loading Operations...</p>
-      </div>
-    );
+    return <PortalPageSkeleton variant="grid" />;
   }
 
   return (

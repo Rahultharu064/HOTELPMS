@@ -45,9 +45,9 @@ const StatsCards: React.FC = () => {
         <motion.div
           key={idx}
           whileHover={{ y: -8, scale: 1.02 }}
-          className="bg-white rounded-[40px] p-10 border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 relative overflow-hidden group"
+          className="bg-white rounded-[40px] p-10 border border-neutral-border/40 shadow-sm hover:shadow-2xl transition-all duration-500 relative overflow-hidden group"
         >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-gray-50 rounded-bl-[40px] pointer-events-none group-hover:bg-primary-green/5 transition-colors duration-500" />
+          <div className="absolute top-0 right-0 w-24 h-24 bg-primary-green/5 rounded-bl-[40px] pointer-events-none group-hover:bg-primary-green/10 transition-colors duration-500" />
           
           <div className="flex items-center justify-between mb-8 relative z-10">
             <div className={`w-14 h-14 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center shadow-lg shadow-black/5 group-hover:scale-110 transition-transform duration-500`}>
@@ -55,8 +55,8 @@ const StatsCards: React.FC = () => {
             </div>
           </div>
           <div className="relative z-10">
-            <h3 className="text-3xl font-black text-[#111827] tracking-tighter mb-1">{stat.value}</h3>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">{stat.label}</p>
+            <h3 className="text-3xl font-black text-primary-dark tracking-tighter mb-1">{stat.value}</h3>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-text-secondary">{stat.label}</p>
           </div>
         </motion.div>
       ))}

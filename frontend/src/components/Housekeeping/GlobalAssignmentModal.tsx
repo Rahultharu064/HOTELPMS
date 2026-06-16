@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 import { housekeepingService } from '../../services/housekeepingService';
 import { toast } from 'react-hot-toast';
-import { Loader2 } from 'lucide-react';
+import { AdminSectionSkeleton } from '../ui/skeletons/AdminSkeletons';
 
 export const GlobalAssignmentModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -72,10 +72,7 @@ export const GlobalAssignmentModal: React.FC = () => {
     <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Global Task Assignment">
       <div className="space-y-8 p-2">
         {loading ? (
-          <div className="py-20 flex flex-col items-center gap-4">
-            <Loader2 className="animate-spin text-[#14532D]" size={32} />
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Loading Operations...</p>
-          </div>
+          <AdminSectionSkeleton />
         ) : (
           <>
             <div className="space-y-4">

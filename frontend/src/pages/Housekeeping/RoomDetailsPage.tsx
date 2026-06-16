@@ -12,11 +12,11 @@ import {
   Tv, 
   Hammer,
   Plus,
-  Loader2
 } from "lucide-react";
 import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
 import { Button } from "../../components/ui/Button";
+import { AdminDetailPageSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 
 const RoomDetailsPage: React.FC = () => {
   const { id } = useParams();
@@ -67,12 +67,7 @@ const RoomDetailsPage: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-40 gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-[#14532D]" />
-        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Loading Room Details...</p>
-      </div>
-    );
+    return <AdminDetailPageSkeleton />;
   }
 
   if (!room) return <div className="p-20 text-center font-black uppercase tracking-widest">Room Not Found</div>;

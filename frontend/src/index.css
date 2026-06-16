@@ -134,6 +134,23 @@
     font-size: clamp(2rem, 5.5vw, 4.2rem);
   }
 
+  .hero-slide {
+    @apply absolute inset-0 opacity-0 z-0 transition-opacity duration-700 ease-in-out;
+  }
+
+  .hero-slide.is-active {
+    @apply opacity-100 z-[1];
+  }
+
+  .hero-slide-image {
+    @apply w-full h-full object-cover object-center scale-100 transition-transform ease-out;
+    transition-duration: 8s;
+  }
+
+  .hero-slide-image.is-active {
+    @apply scale-[1.04];
+  }
+
   .btn-gold {
     @apply px-8 py-3.5 font-bold text-[11px] uppercase transition-all duration-300 
            hover:scale-[1.03] active:scale-95 bg-[#D4A017] text-black border-none 

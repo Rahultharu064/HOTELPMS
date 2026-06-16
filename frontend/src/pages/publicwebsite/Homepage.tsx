@@ -17,7 +17,7 @@ export const Homepage: React.FC = () => {
   return (
     <main className="overflow-x-hidden">
       <HeroSection />
-      <div id="homepage-content" className="pt-14">
+      <div id="homepage-content" className="pt-0 lg:pt-14">
         <RoomTypeSection />
       </div>
       <AboutUsSection />

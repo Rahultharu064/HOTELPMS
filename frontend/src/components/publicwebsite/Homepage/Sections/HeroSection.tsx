@@ -79,7 +79,7 @@ const CustomSelect = ({ value, onChange, options, placeholder }: CustomSelectPro
         />
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-2 w-[180px] bg-white border border-gray-100 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-50 overflow-hidden py-1 animate-fadeIn">
+        <div className="absolute top-full left-0 mt-2 w-full lg:w-[180px] bg-white border border-gray-100 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-50 overflow-hidden py-1 animate-fadeIn">
           {options.map((opt) => (
             <button
               key={opt.value}
@@ -106,7 +106,6 @@ const HeroSection = () => {
   const [current, setCurrent] = useState(0);
   const [phase, setPhase] = useState<Phase>("idle");
 
-  // Search bar state
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [selectedRoomType, setSelectedRoomType] = useState("all");
   const [selectedPrice, setSelectedPrice] = useState("any");
@@ -114,7 +113,6 @@ const HeroSection = () => {
 
   const isBusy = useRef(false);
 
-  /* ── Room types ── */
   useEffect(() => {
     const fetchRooms = async () => {
       try {
@@ -127,7 +125,6 @@ const HeroSection = () => {
     fetchRooms();
   }, []);
 
-  /* ── Slide engine ── */
   const goTo = useCallback((idx: number) => {
     if (isBusy.current || idx === current) return;
     isBusy.current = true;
@@ -169,7 +166,6 @@ const HeroSection = () => {
     }
   };
 
-  /* ── Content visibility classes ── */
   const contentClass =
     phase === "out"
       ? "opacity-0 translate-y-3"
@@ -177,7 +173,6 @@ const HeroSection = () => {
       ? "opacity-0 translate-y-3"
       : "opacity-100 translate-y-0";
 
-  /* ── Price options ── */
   const priceOptions: DropdownOption[] = [
     { value: "any", label: "Any Price" },
     { value: "3000", label: "Under Rs. 3,000" },
@@ -192,60 +187,48 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="relative w-full h-[75vh] min-h-[560px] max-h-[760px] overflow-visible bg-black">
+    <section className="relative w-full overflow-visible bg-[#F9FAFB] lg:bg-black max-lg:pb-0 lg:h-[75vh] lg:min-h-[560px] lg:max-h-[760px]">
 
       {/* ── Slide backgrounds ── */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="relative max-lg:h-[min(70vh,540px)] max-lg:min-h-[480px] lg:absolute lg:inset-0 overflow-hidden">
         {slides.map((slide, i) => (
           <div
             key={i}
-            className="absolute inset-0 transition-opacity duration-700 ease-in-out"
-            style={{
-              opacity: i === current ? 1 : 0,
-              zIndex: i === current ? 1 : 0,
-            }}
+            className={`hero-slide${i === current ? " is-active" : ""}`}
           >
             <img
               src={slide.image}
               alt={slide.title}
-              className="w-full h-full object-cover object-center"
-              style={{
-                transform: i === current ? "scale(1.04)" : "scale(1)",
-                transition: "transform 8s ease-out",
-              }}
+              className={`hero-slide-image${i === current ? " is-active" : ""}`}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" />
           </div>
         ))}
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#F9FAFB] via-[#F9FAFB]/80 to-transparent pointer-events-none z-[2]" />
+        <div className="absolute inset-x-0 bottom-0 h-24 max-lg:h-20 bg-gradient-to-t from-[#F9FAFB] via-[#F9FAFB]/80 to-transparent pointer-events-none z-[2]" />
       </div>
 
       {/* ── Centered content ── */}
-      <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-6">
+      <div className="absolute inset-0 z-10 flex flex-col max-lg:justify-start max-lg:pt-20 max-lg:pb-4 lg:h-full lg:justify-center items-center text-center px-6">
         <div
           className={`max-w-3xl w-full transition-all duration-500 ease-out ${contentClass}`}
         >
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 border border-primary-gold/40 text-primary-gold px-5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.28em] bg-white/5 backdrop-blur-sm mb-5">
+          <div className="inline-flex items-center gap-2 border border-primary-gold/40 text-primary-gold px-5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.28em] bg-white/5 backdrop-blur-sm mb-4 max-lg:mb-3 lg:mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-primary-gold animate-pulse shrink-0" />
             {slides[current].badge}
           </div>
 
-          {/* Heading */}
-          <h1 className="text-white font-georgia text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] mb-4 drop-shadow-lg">
+          <h1 className="text-white font-georgia text-[40px] leading-[1.06] sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-3 max-lg:mb-3 lg:mb-4 drop-shadow-lg">
             {slides[current].title}
           </h1>
 
-          {/* Subtitle */}
-          <p className="text-white/80 text-sm md:text-base max-w-xl mx-auto leading-relaxed mb-8 font-medium">
+          <p className="text-white/80 text-sm md:text-base max-w-xl mx-auto leading-relaxed mb-6 max-lg:mb-7 lg:mb-8 font-medium px-1">
             {slides[current].subtitle}
           </p>
 
-          {/* CTA buttons */}
-          <div className="flex flex-wrap gap-3 justify-center items-center mb-10">
+          <div className="flex max-lg:flex-row max-lg:w-full max-lg:max-w-md max-lg:mx-auto flex-wrap gap-2.5 max-lg:gap-2 justify-center items-center mb-5 max-lg:mb-4 lg:mb-10">
             <Link
               to="/rooms"
-              className="flex items-center gap-2 px-7 py-3 bg-primary-gold hover:bg-[#D97706] text-[#14532D] font-bold text-[11px] uppercase tracking-widest rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
+              className="flex max-lg:flex-1 items-center justify-center gap-2 px-5 max-lg:px-4 py-3.5 max-lg:py-3 lg:px-7 lg:py-3 bg-primary-gold hover:bg-[#D97706] text-[#14532D] font-bold text-[10px] max-lg:text-[10px] lg:text-[11px] uppercase tracking-widest rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
             >
               <BedDouble size={15} />
               <span>Explore Rooms</span>
@@ -253,15 +236,14 @@ const HeroSection = () => {
 
             <Link
               to="/booking"
-              className="flex items-center gap-2 px-7 py-3 border-2 border-white/70 text-white hover:bg-white hover:text-[#14532D] hover:border-white font-bold text-[11px] uppercase tracking-widest rounded-full transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+              className="flex max-lg:flex-1 items-center justify-center gap-2 px-5 max-lg:px-4 py-3.5 max-lg:py-3 lg:px-7 lg:py-3 border-2 border-white/70 max-lg:bg-white/10 text-white hover:bg-white hover:text-[#14532D] hover:border-white font-bold text-[10px] max-lg:text-[10px] lg:text-[11px] uppercase tracking-widest rounded-full transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
             >
               <CalendarCheck size={15} />
               <span>Book Now</span>
             </Link>
           </div>
 
-          {/* Slide indicator dots */}
-          <div className="flex gap-2.5 justify-center">
+          <div className="hidden lg:flex gap-2.5 justify-center">
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -286,7 +268,7 @@ const HeroSection = () => {
       <button
         onClick={goPrev}
         disabled={isBusy.current}
-        className="absolute left-5 md:left-8 top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full border border-white/25 bg-black/25 hover:bg-black/55 backdrop-blur-sm flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/50 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
+        className="absolute left-5 md:left-8 top-[38%] max-lg:top-[42%] lg:top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full border border-white/25 bg-black/25 hover:bg-black/55 backdrop-blur-sm flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/50 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
         aria-label="Previous slide"
       >
         <ChevronLeft className="h-5 w-5" />
@@ -295,17 +277,17 @@ const HeroSection = () => {
       <button
         onClick={goNext}
         disabled={isBusy.current}
-        className="absolute right-5 md:right-8 top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full border border-white/25 bg-black/25 hover:bg-black/55 backdrop-blur-sm flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/50 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
+        className="absolute right-5 md:right-8 top-[38%] max-lg:top-[42%] lg:top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full border border-white/25 bg-black/25 hover:bg-black/55 backdrop-blur-sm flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/50 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
         aria-label="Next slide"
       >
         <ChevronRight className="h-5 w-5" />
       </button>
 
-      {/* ── Scroll-down indicator ── */}
+      {/* ── Scroll-down indicator (desktop only) ── */}
       <button
         onClick={scrollToContent}
         aria-label="Scroll down to content"
-        className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 group cursor-pointer"
+        className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 hidden lg:flex flex-col items-center gap-1 group cursor-pointer"
       >
         <span className="text-white/50 text-[9px] uppercase tracking-[0.22em] font-semibold group-hover:text-white/80 transition-colors duration-300">
           Discover
@@ -315,13 +297,12 @@ const HeroSection = () => {
         </div>
       </button>
 
-      {/* ── Floating Availability Search Bar ── */}
-      <div className="absolute bottom-[-44px] left-1/2 -translate-x-1/2 w-[94%] max-w-[1080px] z-30">
-        <div className="bg-white rounded-2xl shadow-[0_16px_48px_rgba(20,83,45,0.10)] border border-primary-green/10 px-6 py-4">
+      {/* ── Availability Search Bar ── */}
+      <div className="relative z-30 w-[94%] max-w-[1080px] mx-auto max-lg:mt-2 max-lg:mb-3 lg:absolute lg:mt-0 lg:bottom-[-44px] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
+        <div className="bg-white max-lg:rounded-[28px] lg:rounded-2xl max-lg:shadow-[0_18px_60px_rgba(17,24,39,0.12)] lg:shadow-[0_16px_48px_rgba(20,83,45,0.10)] border border-primary-green/10 max-lg:border-neutral-border/40 max-lg:px-6 max-lg:py-5 lg:px-6 lg:py-4">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center">
 
-            {/* Room Type */}
-            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:pr-5 border-b lg:border-b-0 lg:border-r border-primary-green/10">
+            <div className="flex items-center gap-3 max-lg:gap-4 flex-1 min-w-0 py-3 max-lg:py-4 lg:py-0 lg:pr-5 border-b lg:border-b-0 lg:border-r border-primary-green/10">
               <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center text-primary-gold shrink-0">
                 <BedDouble size={17} />
               </div>
@@ -337,8 +318,7 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Price Range */}
-            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:px-5 border-b lg:border-b-0 lg:border-r border-primary-green/10">
+            <div className="flex items-center gap-3 max-lg:gap-4 flex-1 min-w-0 py-3 max-lg:py-4 lg:py-0 lg:px-5 border-b lg:border-b-0 lg:border-r border-primary-green/10">
               <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center text-primary-gold shrink-0">
                 <Tag size={17} />
               </div>
@@ -354,8 +334,7 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Check-in */}
-            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:px-5 border-b lg:border-b-0 border-primary-green/10">
+            <div className="flex items-center gap-3 max-lg:gap-4 flex-1 min-w-0 py-3 max-lg:py-4 lg:py-0 lg:px-5 border-b lg:border-b-0 border-primary-green/10">
               <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center text-primary-gold shrink-0">
                 <CalendarCheck size={17} />
               </div>
@@ -377,11 +356,10 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Search button */}
-            <div className="pt-3 lg:pt-0 lg:pl-5 shrink-0">
+            <div className="pt-3 max-lg:pt-4 lg:pt-0 lg:pl-5 shrink-0">
               <button
                 onClick={handleSearch}
-                className="w-full lg:w-auto flex items-center justify-center gap-2 h-11 px-7 bg-[#14532D] hover:bg-primary-gold text-primary-gold hover:text-[#14532D] font-extrabold text-[10px] uppercase tracking-[0.22em] rounded-xl transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 cursor-pointer whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary-gold/45 focus-visible:ring-offset-2"
+                className="w-full lg:w-auto flex items-center justify-center gap-2 h-11 max-lg:h-12 px-7 max-lg:px-10 bg-[#14532D] hover:bg-primary-gold text-primary-gold hover:text-[#14532D] font-extrabold text-[10px] uppercase tracking-[0.22em] max-lg:tracking-[0.28em] rounded-xl max-lg:rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 cursor-pointer whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary-gold/45 focus-visible:ring-offset-2"
               >
                 <Search size={14} strokeWidth={2.5} />
                 <span>Search</span>

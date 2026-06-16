@@ -51,7 +51,7 @@ export const RoomTypeSection: React.FC = () => {
   }, [fetchRoomTypes]);
 
   return (
-    <section id="room-types" className="section-padding relative overflow-hidden border-b border-neutral-border/50 bg-[#FAFAF8]">
+    <section id="room-types" className="relative overflow-hidden border-b border-neutral-border/50 bg-[#FAFAF8] pt-8 pb-16 md:section-padding">
       <div className="pointer-events-none absolute right-0 top-0 -mr-40 -mt-40 h-80 w-80 rounded-full bg-primary-gold/5 blur-[90px]" />
       <div className="pointer-events-none absolute bottom-0 left-0 -mb-40 -ml-40 h-80 w-80 rounded-full bg-primary-green/5 blur-[90px]" />
 

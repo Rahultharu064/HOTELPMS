@@ -1,4 +1,5 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useAdminAuth } from "../../../context/AdminAuthContext";
 import {
   LayoutDashboard,
   DoorOpen,
@@ -27,6 +28,13 @@ interface AppSidebarProps {
 
 export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppSidebarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { adminLogout } = useAdminAuth();
+
+  const handleLogout = () => {
+    adminLogout();
+    navigate('/admin/login');
+  };
 
   const sidebarContent = (
     <div className={`flex flex-col h-full bg-[#14532D] text-white transition-all duration-300 ${collapsed ? "w-[80px]" : "w-[280px]"}`}>
@@ -137,14 +145,14 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
           </button>
         )}
 
-        <Link
-          to="/logout"
-          className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl bg-[#DC2626]/10 text-red-400 hover:bg-[#DC2626] hover:text-white transition-all duration-300 group ${collapsed ? "justify-center" : ""}`}
+        <button
+          onClick={handleLogout}
+          className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl bg-[#DC2626]/10 text-red-400 hover:bg-[#DC2626] hover:text-white transition-all duration-300 group ${collapsed ? "justify-center" : ""}`}
           title="Logout session"
         >
           <LogOut size={20} className="shrink-0 transition-transform group-hover:-translate-x-1" />
           {!collapsed && <span className="text-[11px] font-black uppercase tracking-[0.2em]">Logout</span>}
-        </Link>
+        </button>
       </div>
     </div>
   );

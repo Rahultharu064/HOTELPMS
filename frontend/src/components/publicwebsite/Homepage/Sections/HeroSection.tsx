@@ -30,7 +30,7 @@ const slides = [
       "Elegant rooms, attentive service, and everything you need for a perfect stay.",
   },
   {
-    image: "/Hero.webp",
+    image: "/Hero.png",
     imagePosition: "object-center",
     badge: "YOUR PERFECT ESCAPE",
     title: "World-Class Luxury",

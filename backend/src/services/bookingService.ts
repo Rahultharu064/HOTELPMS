@@ -181,7 +181,11 @@ export class BookingService {
             // Encrypt document before saving to disk
             const encryptedBuffer = encryptFile(validation.buffer);
             const fileName = `id_proof_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}.enc`;
-            const uploadPath = path.join(process.cwd(), 'uploads', fileName);
+            const uploadDir = path.join(process.cwd(), 'uploads');
+            if (!fs.existsSync(uploadDir)) {
+              fs.mkdirSync(uploadDir, { recursive: true });
+            }
+            const uploadPath = path.join(uploadDir, fileName);
             fs.writeFileSync(uploadPath, encryptedBuffer);
             idProofImagePath = `/uploads/${fileName}`;
           } catch (err) {

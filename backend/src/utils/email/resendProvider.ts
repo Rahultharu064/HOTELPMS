@@ -4,7 +4,7 @@ const RESEND_USER_AGENT = 'HOTELPMS/1.0 (https://hotelpms-three.vercel.app)';
 
 /** Render free/paid web services block outbound SMTP (ports 25, 465, 587). */
 export const isSmtpBlockedHost = (): boolean =>
-  config.isRender || config.isProduction;
+  config.isRender;
 
 export const isResendConfigured = (): boolean =>
   Boolean(config.email.resendApiKey);

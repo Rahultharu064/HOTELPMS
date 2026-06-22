@@ -5,27 +5,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authForgotPasswordLimiter = exports.authResendOtpLimiter = exports.authOtpLimiter = exports.authRegisterLimiter = exports.authLoginLimiter = void 0;
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
+const config_1 = require("../config");
 const rateLimitResponse = (message) => ({
     success: false,
     message,
 });
+const devMax = (productionMax) => (config_1.config.isProduction ? productionMax : 200);
 exports.authLoginLimiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
-    max: 10,
+    max: devMax(10),
     standardHeaders: true,
     legacyHeaders: false,
     message: rateLimitResponse('Too many login attempts. Please try again in 15 minutes.'),
 });
 exports.authRegisterLimiter = (0, express_rate_limit_1.default)({
     windowMs: 60 * 60 * 1000,
-    max: 5,
+    max: devMax(5),
     standardHeaders: true,
     legacyHeaders: false,
     message: rateLimitResponse('Too many registration attempts. Please try again later.'),
 });
 exports.authOtpLimiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
-    max: 10,
+    max: devMax(10),
     standardHeaders: true,
     legacyHeaders: false,
     message: rateLimitResponse('Too many verification attempts. Please try again in 15 minutes.'),

@@ -18,13 +18,41 @@ if (process.env.CLOUDINARY_URL) {
         delete process.env.CLOUDINARY_URL;
     }
 }
+const parseOrigins = (value) => (value || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+/** Public frontend URL for OAuth redirects, password-reset links, email CTAs. */
+const resolveFrontendUrl = () => {
+    const explicit = process.env.FRONTEND_URL?.trim();
+    if (explicit)
+        return explicit;
+    const origins = parseOrigins(process.env.CORS_ORIGIN);
+    if (origins.length === 0)
+        return 'http://localhost:5173';
+    // In production, prefer the live URL (skip localhost entries in CORS_ORIGIN)
+    if (process.env.NODE_ENV === 'production') {
+        const live = origins.find((o) => !/localhost|127\.0\.0\.1/.test(o));
+        if (live)
+            return live;
+    }
+    return origins[0];
+};
+const corsOrigins = parseOrigins(process.env.CORS_ORIGIN);
+const defaultDevOrigins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+];
 exports.config = {
     port: parseInt(process.env.PORT || '5000', 10),
     nodeEnv: process.env.NODE_ENV || 'development',
     isProduction: process.env.NODE_ENV === 'production',
+    isRender: process.env.RENDER === 'true',
     databaseUrl: process.env.DATABASE_URL || '',
-    frontendUrl: (process.env.FRONTEND_URL || process.env.CORS_ORIGIN?.split(',')[0] || 'http://localhost:5173').trim(),
-    corsOrigin: (process.env.CORS_ORIGIN || 'http://localhost:5173').split(',').map(o => o.trim()),
+    frontendUrl: resolveFrontendUrl(),
+    corsOrigin: corsOrigins.length > 0
+        ? corsOrigins
+        : (process.env.NODE_ENV === 'production' ? ['http://localhost:5173'] : defaultDevOrigins),
     uploadDir: process.env.UPLOAD_DIR || 'uploads',
     maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760', 10),
     jwt: {
@@ -41,7 +69,7 @@ exports.config = {
         user: process.env.SMTP_USER?.trim().replace(/^["']|["']$/g, ''),
         pass: process.env.SMTP_PASS?.trim().replace(/^["']|["']$/g, '').replace(/\s+/g, ''),
         from: (process.env.SMTP_FROM || process.env.SMTP_USER)?.trim().replace(/^["']|["']$/g, ''),
-        resendApiKey: process.env.RESEND_API_KEY?.trim(),
+        resendApiKey: process.env.RESEND_API_KEY?.trim().replace(/^["']|["']$/g, ''),
     },
     payment: {
         esewa: {

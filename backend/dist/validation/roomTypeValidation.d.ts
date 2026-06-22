@@ -74,28 +74,28 @@ export declare const getRoomTypesSchema: z.ZodObject<{
         sort: z.ZodOptional<z.ZodEnum<["name_asc", "name_desc"]>>;
     }, "strip", z.ZodTypeAny, {
         search?: string | undefined;
+        sort?: "name_asc" | "name_desc" | undefined;
         page?: number | undefined;
         limit?: number | undefined;
-        sort?: "name_asc" | "name_desc" | undefined;
     }, {
         search?: string | undefined;
+        sort?: "name_asc" | "name_desc" | undefined;
         page?: string | undefined;
         limit?: string | undefined;
-        sort?: "name_asc" | "name_desc" | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
     query: {
         search?: string | undefined;
+        sort?: "name_asc" | "name_desc" | undefined;
         page?: number | undefined;
         limit?: number | undefined;
-        sort?: "name_asc" | "name_desc" | undefined;
     };
 }, {
     query: {
         search?: string | undefined;
+        sort?: "name_asc" | "name_desc" | undefined;
         page?: string | undefined;
         limit?: string | undefined;
-        sort?: "name_asc" | "name_desc" | undefined;
     };
 }>;
 //# sourceMappingURL=roomTypeValidation.d.ts.map

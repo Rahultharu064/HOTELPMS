@@ -161,9 +161,9 @@ export declare const getRoomsSchema: z.ZodObject<{
         checkOut: z.ZodOptional<z.ZodString>;
         sort: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        sort?: string | undefined;
         page?: number | undefined;
         limit?: number | undefined;
-        sort?: string | undefined;
         status?: string | undefined;
         roomTypeId?: number | undefined;
         checkOut?: string | undefined;
@@ -174,9 +174,9 @@ export declare const getRoomsSchema: z.ZodObject<{
         maxPrice?: number | undefined;
         beds?: number | undefined;
     }, {
+        sort?: string | undefined;
         page?: string | undefined;
         limit?: string | undefined;
-        sort?: string | undefined;
         status?: string | undefined;
         roomTypeId?: string | undefined;
         checkOut?: string | undefined;
@@ -189,9 +189,9 @@ export declare const getRoomsSchema: z.ZodObject<{
     }>;
 }, "strip", z.ZodTypeAny, {
     query: {
+        sort?: string | undefined;
         page?: number | undefined;
         limit?: number | undefined;
-        sort?: string | undefined;
         status?: string | undefined;
         roomTypeId?: number | undefined;
         checkOut?: string | undefined;
@@ -204,9 +204,9 @@ export declare const getRoomsSchema: z.ZodObject<{
     };
 }, {
     query: {
+        sort?: string | undefined;
         page?: string | undefined;
         limit?: string | undefined;
-        sort?: string | undefined;
         status?: string | undefined;
         roomTypeId?: string | undefined;
         checkOut?: string | undefined;

@@ -209,17 +209,29 @@ process.on('unhandledRejection', (reason, promise) => {
     }
     gracefulShutdown();
 });
-server.listen(config_1.config.port, async () => {
-    (0, validateEnv_1.validateEnvironment)();
-    await (0, ensureGallerySchema_1.ensureGallerySchema)();
-    await (0, ensureDevAccounts_1.ensureDevAccounts)();
-    const emailReady = await (0, mail_1.verifyEmailConfig)();
-    if (config_1.config.isProduction && !emailReady) {
-        console.error('❌ Email service is required in production. Shutting down.');
+const startServer = async () => {
+    try {
+        (0, validateEnv_1.validateEnvironment)();
+        await (0, ensureGallerySchema_1.ensureGallerySchema)();
+        await (0, ensureDevAccounts_1.ensureDevAccounts)();
+        const emailReady = await (0, mail_1.verifyEmailConfig)();
+        if (config_1.config.isProduction && !emailReady) {
+            console.error('❌ Email service is required in production. Shutting down.');
+            process.exit(1);
+        }
+        server.listen(config_1.config.port, () => {
+            console.log(`🚀 Server running in ${config_1.config.nodeEnv} mode on port ${config_1.config.port}`);
+            console.log(`🌐 Frontend URL: ${config_1.config.frontendUrl}`);
+            console.log(`🔒 CORS origins: ${config_1.config.corsOrigin.join(', ')}`);
+            console.log(`📡 WebSocket server ready for connections`);
+            console.log(`🔗 API endpoint: http://localhost:${config_1.config.port}/api`);
+        });
+    }
+    catch (error) {
+        console.error('❌ Server startup failed:');
+        console.error(error instanceof Error ? error.message : error);
         process.exit(1);
     }
-    console.log(`🚀 Server running in ${config_1.config.nodeEnv} mode on port ${config_1.config.port}`);
-    console.log(`📡 WebSocket server ready for connections`);
-    console.log(`🔗 API endpoint: http://localhost:${config_1.config.port}/api`);
-});
+};
+void startServer();
 //# sourceMappingURL=server.js.map

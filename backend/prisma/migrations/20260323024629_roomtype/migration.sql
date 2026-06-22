@@ -10,10 +10,10 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `_roomtypeamenities` DROP FOREIGN KEY `_RoomTypeAmenities_A_fkey`;
+ALTER TABLE `_RoomTypeAmenities` DROP FOREIGN KEY `_RoomTypeAmenities_A_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `_roomtypeamenities` DROP FOREIGN KEY `_RoomTypeAmenities_B_fkey`;
+ALTER TABLE `_RoomTypeAmenities` DROP FOREIGN KEY `_RoomTypeAmenities_B_fkey`;
 
 -- DropIndex
 DROP INDEX `room_types_slug_key` ON `room_types`;
@@ -30,7 +30,7 @@ ALTER TABLE `rooms` ADD COLUMN `basePrice` DECIMAL(10, 2) NOT NULL,
     ADD COLUMN `capacity` INTEGER NOT NULL DEFAULT 2;
 
 -- DropTable
-DROP TABLE `_roomtypeamenities`;
+DROP TABLE `_RoomTypeAmenities`;
 
 -- CreateTable
 CREATE TABLE `service_categories` (

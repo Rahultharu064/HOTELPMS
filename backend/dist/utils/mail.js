@@ -10,22 +10,11 @@ const isEmailConfigured = () => (0, resendProvider_1.isResendConfigured)() || Bo
 exports.isEmailConfigured = isEmailConfigured;
 const getActiveEmailProvider = () => activeProvider;
 exports.getActiveEmailProvider = getActiveEmailProvider;
-/** Reset cached transport (e.g. after env change). */
 const resetEmailTransporter = () => {
     smtpSession = null;
     activeProvider = null;
 };
 exports.resetEmailTransporter = resetEmailTransporter;
-const preferResend = () => {
-    if (!(0, resendProvider_1.isResendConfigured)())
-        return false;
-    if (config_1.config.email.provider === 'resend')
-        return true;
-    if (config_1.config.email.provider === 'smtp')
-        return false;
-    // auto: Resend in production (Render blocks SMTP), SMTP in local dev
-    return config_1.config.isProduction;
-};
 const initializeSmtp = async () => {
     if (smtpSession)
         return smtpSession;
@@ -33,51 +22,71 @@ const initializeSmtp = async () => {
     activeProvider = 'smtp';
     return smtpSession;
 };
+const renderEmailSetupHelp = () => {
+    console.error([
+        '❌ Email cannot start on Render with Gmail SMTP (ports 465/587 are blocked).',
+        'Add these in Render → Environment:',
+        '  RESEND_API_KEY=re_xxxxxxxx   (from https://resend.com/api-keys)',
+        '  EMAIL_PROVIDER=resend',
+        '  SMTP_FROM=onboarding@resend.dev   (or your verified domain in Resend)',
+    ].join('\n'));
+};
 /** Verify email delivery capability on server startup. */
 const verifyEmailConfig = async () => {
     if (!(0, exports.isEmailConfigured)()) {
-        console.warn('⚠️ Email service disabled: configure SMTP or RESEND_API_KEY in backend/.env');
+        console.warn('⚠️ Email service disabled: configure RESEND_API_KEY or SMTP in environment.');
         return false;
     }
-    if (preferResend()) {
+    // Render / production cloud: never touch SMTP (blocked → long timeout → crash)
+    if ((0, resendProvider_1.isSmtpBlockedHost)()) {
+        if (!(0, resendProvider_1.isResendConfigured)()) {
+            renderEmailSetupHelp();
+            return false;
+        }
+        const resendOk = await (0, resendProvider_1.verifyResendConfig)();
+        if (!resendOk) {
+            console.error('❌ Resend API key invalid. Create a key at https://resend.com/api-keys');
+            console.error('   Use "Sending access" permission. Paste into Render as RESEND_API_KEY (no quotes).');
+            return false;
+        }
         activeProvider = 'resend';
-        console.log('✅ Email service ready (Resend HTTP API — recommended for Render)');
+        console.log('✅ Email service ready (Resend HTTP API — required on Render)');
+        if ((config_1.config.email.from || '').includes('@gmail.com')) {
+            console.warn('⚠️ SMTP_FROM is Gmail — Resend will send from onboarding@resend.dev until you verify a domain.');
+        }
         return true;
+    }
+    if ((0, resendProvider_1.shouldUseResend)()) {
+        activeProvider = 'resend';
+        console.log('✅ Email service ready (Resend HTTP API)');
+        return true;
+    }
+    if (!(0, resendProvider_1.canAttemptSmtp)()) {
+        console.warn('⚠️ No email transport configured.');
+        return false;
     }
     try {
         const session = await initializeSmtp();
-        console.log(`✅ Email service ready (SMTP ${session.hostname}:${session.port} via IPv4 ${session.connectHost} as ${config_1.config.email.user})`);
+        console.log(`✅ Email service ready (SMTP ${session.hostname}:${session.port} via IPv4 ${session.connectHost})`);
         return true;
     }
     catch (error) {
-        const err = error;
-        console.error('❌ Email service verification failed:', error);
-        if (err.code === 'ENETUNREACH' || err.code === 'ESOCKET') {
-            console.error('   Cause: IPv6 route unreachable or SMTP port blocked by host.');
-            console.error('   Fix: set RESEND_API_KEY + EMAIL_PROVIDER=resend on Render (free tier blocks SMTP).');
-            console.error('   Or upgrade Render to a paid instance and use SMTP_PORT=465.');
-        }
-        else if (err.code === 'ETIMEDOUT' || err.code === 'ESOCKETTIMEDOUT') {
-            console.error('   Cause: SMTP port timeout — Render free tier blocks ports 25/465/587.');
-            console.error('   Fix: use Resend (RESEND_API_KEY) or upgrade Render plan.');
-        }
+        console.error('❌ SMTP verification failed:', error);
         if ((0, resendProvider_1.isResendConfigured)()) {
             activeProvider = 'resend';
-            console.warn('⚠️ SMTP unavailable — falling back to Resend HTTP API');
+            console.warn('⚠️ SMTP unavailable — using Resend HTTP API');
             return true;
         }
-        console.error('   Check SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in environment.');
-        console.error('   Gmail: App Password required — https://support.google.com/accounts/answer/185833');
         return false;
     }
 };
 exports.verifyEmailConfig = verifyEmailConfig;
 const sendEmail = async (to, subject, html) => {
     if (!(0, exports.isEmailConfigured)()) {
-        console.error('[EmailError] Email not configured — set SMTP or RESEND_API_KEY');
+        console.error('[EmailError] Email not configured — set RESEND_API_KEY or SMTP');
         return false;
     }
-    if (activeProvider === 'resend' || (preferResend() && (0, resendProvider_1.isResendConfigured)())) {
+    if (activeProvider === 'resend' || (0, resendProvider_1.shouldUseResend)()) {
         return (0, resendProvider_1.sendViaResend)(to, subject, html);
     }
     try {

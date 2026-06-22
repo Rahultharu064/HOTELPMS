@@ -1,7 +1,6 @@
 export type EmailProvider = 'smtp' | 'resend';
 export declare const isEmailConfigured: () => boolean;
 export declare const getActiveEmailProvider: () => EmailProvider | null;
-/** Reset cached transport (e.g. after env change). */
 export declare const resetEmailTransporter: () => void;
 /** Verify email delivery capability on server startup. */
 export declare const verifyEmailConfig: () => Promise<boolean>;

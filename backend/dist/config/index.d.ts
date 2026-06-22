@@ -2,6 +2,7 @@ export declare const config: {
     readonly port: number;
     readonly nodeEnv: string;
     readonly isProduction: boolean;
+    readonly isRender: boolean;
     readonly databaseUrl: string;
     readonly frontendUrl: string;
     readonly corsOrigin: string[];

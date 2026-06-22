@@ -35,10 +35,10 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `_amenitytoroomtype` DROP FOREIGN KEY `_AmenityToRoomType_A_fkey`;
+ALTER TABLE `_AmenityToRoomType` DROP FOREIGN KEY `_AmenityToRoomType_A_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `_amenitytoroomtype` DROP FOREIGN KEY `_AmenityToRoomType_B_fkey`;
+ALTER TABLE `_AmenityToRoomType` DROP FOREIGN KEY `_AmenityToRoomType_B_fkey`;
 
 -- DropForeignKey
 ALTER TABLE `images` DROP FOREIGN KEY `images_roomId_fkey`;
@@ -134,7 +134,7 @@ ALTER TABLE `videos` DROP COLUMN `description`,
     MODIFY `title` VARCHAR(255) NULL;
 
 -- DropTable
-DROP TABLE `_amenitytoroomtype`;
+DROP TABLE `_AmenityToRoomType`;
 
 -- DropTable
 DROP TABLE `room_type_images`;

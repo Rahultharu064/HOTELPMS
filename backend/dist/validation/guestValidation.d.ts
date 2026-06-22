@@ -146,36 +146,36 @@ export declare const getGuestsSchema: z.ZodObject<{
         sort: z.ZodOptional<z.ZodEnum<["name_asc", "name_desc", "bookings_desc", "spent_desc"]>>;
     }, "strip", z.ZodTypeAny, {
         search?: string | undefined;
+        sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
         email?: string | undefined;
         phone?: string | undefined;
         page?: number | undefined;
         limit?: number | undefined;
-        sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
     }, {
         search?: string | undefined;
+        sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
         email?: string | undefined;
         phone?: string | undefined;
         page?: string | undefined;
         limit?: string | undefined;
-        sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
     query: {
         search?: string | undefined;
+        sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
         email?: string | undefined;
         phone?: string | undefined;
         page?: number | undefined;
         limit?: number | undefined;
-        sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
     };
 }, {
     query: {
         search?: string | undefined;
+        sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
         email?: string | undefined;
         phone?: string | undefined;
         page?: string | undefined;
         limit?: string | undefined;
-        sort?: "name_asc" | "name_desc" | "bookings_desc" | "spent_desc" | undefined;
     };
 }>;
 export declare const guestBookingsSchema: z.ZodObject<{

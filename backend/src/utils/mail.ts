@@ -280,3 +280,33 @@ export const sendStaffWelcomeEmail = async (
   `;
   return sendEmail(to, subject, html);
 };
+
+export const sendGuestWelcomeEmail = async (to: string, guestName: string): Promise<boolean> => {
+  const loginUrl = `${config.frontendUrl}/login`;
+  const subject = 'Welcome to Itahari Namuna Hotel';
+  const html = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; padding: 0; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background-color: #ffffff;">
+      <div style="background: linear-gradient(135deg, #14532D 0%, #1F7A3A 100%); padding: 40px 20px; text-align: center; color: white;">
+        <h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.025em;">Welcome!</h1>
+        <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 16px;">We are thrilled to have you here.</p>
+      </div>
+      
+      <div style="padding: 30px;">
+        <p style="font-size: 16px; color: #475569; margin-bottom: 24px;">Hello <strong>${guestName}</strong>,</p>
+        <p style="font-size: 16px; color: #475569; line-height: 1.6;">Thank you for registering at Itahari Namuna Hotel! Your account has been successfully created. You can now book rooms, view your booking history, and manage your profile easily through our portal.</p>
+        
+        <div style="text-align: center; margin-top: 32px;">
+          <a href="${loginUrl}" style="background-color: #14532D; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block;">Login to Your Account</a>
+        </div>
+      </div>
+      
+      <div style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+        <p style="margin: 0; font-size: 14px; color: #64748b;">Need help? Contact us at info@itaharinamuna.edu.np</p>
+        <div style="margin-top: 20px; font-size: 12px; color: #94a3b8;">
+          &copy; 2026 Itahari Namuna Hotel. All rights reserved.
+        </div>
+      </div>
+    </div>
+  `;
+  return sendEmail(to, subject, html);
+};

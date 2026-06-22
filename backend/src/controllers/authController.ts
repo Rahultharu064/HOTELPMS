@@ -7,7 +7,7 @@ import { config } from '../config';
 import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
 import { asyncHandler } from '../utils/asyncHandler';
-import { sendOTPEmail, sendResetPasswordEmail } from '../utils/mail';
+import { sendOTPEmail, sendResetPasswordEmail, sendGuestWelcomeEmail } from '../utils/mail';
 import { generateOtp } from '../utils/generateOtp';
 import { randomUUID } from 'crypto';
 
@@ -109,6 +109,9 @@ export class AuthController {
     });
 
     if (autoVerify) {
+      sendGuestWelcomeEmail(guest.email, guest.firstName || 'Guest').catch((err) => {
+        console.error('[WelcomeEmailError]:', err);
+      });
       return res.status(HttpStatus.CREATED).json(
         this.buildAuthResponse(guest, 'Registration successful. You are logged in.')
       );
@@ -210,6 +213,10 @@ export class AuthController {
     const updatedGuest = await prisma.guest.update({
       where: { id: guest.id },
       data: { otp: null, otpExpires: null, isVerified: true },
+    });
+
+    sendGuestWelcomeEmail(updatedGuest.email, updatedGuest.firstName || 'Guest').catch((err) => {
+      console.error('[WelcomeEmailError]:', err);
     });
 
     const token = this.generateToken(updatedGuest.id);
@@ -389,6 +396,9 @@ export class AuthController {
             isVerified: true,
             // phone is now optional in schema
           },
+        });
+        sendGuestWelcomeEmail(guest.email, guest.firstName || 'Guest').catch((err) => {
+          console.error('[WelcomeEmailError]:', err);
         });
       } else {
         // Update existing guest with Google ID and sync profile picture if missing

@@ -2,6 +2,7 @@ import { prisma } from '../config/database';
 import { Prisma } from '@prisma/client';
 import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
+import { sendGuestWelcomeEmail } from '../utils/mail';
 
 export class GuestService {
   async getAllGuests(filters: {
@@ -214,6 +215,10 @@ export class GuestService {
         idType: data.idType as any,
         idNumber: data.idNumber,
       },
+    });
+
+    sendGuestWelcomeEmail(guest.email, guest.firstName || 'Guest').catch((err) => {
+      console.error('[WelcomeEmailError]:', err);
     });
 
     return guest;

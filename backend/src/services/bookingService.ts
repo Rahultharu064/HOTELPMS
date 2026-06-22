@@ -6,7 +6,7 @@ import { randomUUID } from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { encryptFile, validateBase64Image } from '../utils/security';
-import { sendBookingConfirmationEmail } from '../utils/mail';
+import { sendBookingConfirmationEmail, sendGuestWelcomeEmail } from '../utils/mail';
 
 
 export class BookingService {
@@ -231,6 +231,11 @@ export class BookingService {
             idProofImage: idProofImagePath,
           }
         });
+
+        sendGuestWelcomeEmail(newGuest.email, newGuest.firstName || 'Guest').catch((err) => {
+          console.error('[WelcomeEmailError]:', err);
+        });
+
         finalGuestId = newGuest.id;
       }
     }

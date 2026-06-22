@@ -17,6 +17,12 @@ console.log('[API] Using environment:', import.meta.env.MODE);
 export const getImageUrl = (url?: string) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
+  
+  // Map dummy sample data paths to the frontend placeholder
+  if (url.startsWith('/images/')) {
+    return '/room-standard.png';
+  }
+
   // Ensure we don't have double slashes
   const cleanUrl = url.startsWith('/') ? url : `/${url}`;
   return `${BACKEND_ROOT}${cleanUrl}`;

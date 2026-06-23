@@ -9,7 +9,7 @@ export const AuthBrandLogo = ({ variant = 'guest', size = 'md' }: AuthBrandLogoP
   const logoHeight = size === 'lg' ? 'h-20' : 'h-16';
   const accent = variant === 'staff'
     ? 'from-primary-green/25 to-primary-gold/25 ring-primary-green/15'
-    : 'from-blue-500/15 to-indigo-500/15 ring-blue-500/10';
+    : 'from-[#c9a84c]/20 to-[#5c3d14]/20 ring-[#c9a84c]/15';
 
   return (
     <motion.div

@@ -3,22 +3,20 @@ import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../../services/authService';
 import { useAuth } from '../../../context/AuthContext';
 import { toast } from 'react-hot-toast';
-import { Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, Phone, UserPlus, LogIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { FcGoogle } from 'react-icons/fc';
 import { AuthBrandLogo } from '../../../components/ui/AuthBrandLogo';
 
 export const SignupPage: React.FC = () => {
   const [formData, setFormData] = useState({
+    fullName: '',
     email: '',
     phone: '',
     password: '',
-    firstName: '',
-    lastName: '',
+    confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -29,9 +27,26 @@ export const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
     setLoading(true);
     try {
-      const data = await authService.register(formData) as {
+      const [firstName, ...lastNameParts] = formData.fullName.trim().split(' ');
+      const lastName = lastNameParts.join(' ');
+
+      const payload = {
+        firstName: firstName || '',
+        lastName: lastName || '',
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+      };
+
+      const data = await authService.register(payload) as {
         message?: string;
         email?: string;
         otp?: string;
@@ -71,175 +86,157 @@ export const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] relative overflow-hidden py-12 px-4 sm:px-6 lg:px-8 font-['Outfit']">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-100 rounded-full blur-[120px] opacity-50 pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-100 rounded-full blur-[120px] opacity-50 pointer-events-none" />
-
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-['Outfit']">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/50 relative z-10"
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="max-w-md w-full bg-white p-8 sm:p-10 rounded shadow-sm border border-gray-100"
       >
-        <div className="text-center">
+        <div className="text-center flex flex-col items-center">
           <AuthBrandLogo variant="guest" />
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight mt-2">
+          <h2 className="text-3xl text-[#14532D] mt-6 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
             Create Account
           </h2>
-          <p className="mt-3 text-sm text-gray-500 font-medium">
-            Join our luxury property management system
+          <p className="text-sm text-[#14532D]/70 mb-8 font-medium">
+            Join Itahari Namuna Hotel family
           </p>
         </div>
 
-        <div className="mt-8 space-y-6">
-          <div className="flex flex-col items-center justify-center w-full">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-                window.location.href = `${backendUrl}/api/auth/google/login`;
-              }}
-              className="w-full flex items-center justify-center gap-3 px-6 py-3.5 border border-gray-200 rounded-2xl text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 transition-all shadow-sm group"
-            >
-              <FcGoogle size={22} />
-              <span className="group-hover:text-blue-600 transition-colors">Sign up with Google</span>
-            </motion.button>
-            
-            <div className="relative w-full mt-8 mb-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-100"></div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Full Name */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-bold text-[#14532D]">Full Name</label>
+            <div className="flex rounded border border-[#14532D]/20 overflow-hidden focus-within:border-[#14532D] focus-within:ring-1 focus-within:ring-[#14532D] transition-all bg-white">
+              <div className="bg-[#14532D]/5 flex items-center justify-center px-4 border-r border-[#14532D]/20">
+                <User className="text-[#14532D]" size={18} />
               </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="px-4 bg-white text-gray-400 font-bold uppercase tracking-widest">
-                  OR
-                </span>
-              </div>
+              <input
+                type="text"
+                name="fullName"
+                required
+                value={formData.fullName}
+                onChange={handleChange}
+                className="w-full py-3 px-4 outline-none text-gray-700 placeholder-gray-400 bg-transparent text-sm"
+                placeholder="Enter your full name"
+              />
             </div>
           </div>
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="group">
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1 group-focus-within:text-blue-600 transition-colors">First Name</label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
-                  <input
-                    type="text"
-                    name="firstName"
-                    required
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className="block w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-2xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400"
-                    placeholder="John"
-                  />
-                </div>
+          {/* Email Address */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-bold text-[#14532D]">Email Address</label>
+            <div className="flex rounded border border-[#14532D]/20 overflow-hidden focus-within:border-[#14532D] focus-within:ring-1 focus-within:ring-[#14532D] transition-all bg-white">
+              <div className="bg-[#14532D]/5 flex items-center justify-center px-4 border-r border-[#14532D]/20">
+                <Mail className="text-[#14532D]" size={18} />
               </div>
-              <div className="group">
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1 group-focus-within:text-blue-600 transition-colors">Last Name</label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
-                  <input
-                    type="text"
-                    name="lastName"
-                    required
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className="block w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-2xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400"
-                    placeholder="Doe"
-                  />
-                </div>
-              </div>
+              <input
+                type="email"
+                name="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full py-3 px-4 outline-none text-gray-700 placeholder-gray-400 bg-transparent text-sm"
+                placeholder="Enter your email"
+              />
             </div>
+          </div>
 
-            <div className="group">
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1 group-focus-within:text-blue-600 transition-colors">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="block w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-2xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400"
-                  placeholder="john@example.com"
-                />
+          {/* Phone Number */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-bold text-[#14532D]">Phone Number</label>
+            <div className="flex rounded border border-[#14532D]/20 overflow-hidden focus-within:border-[#14532D] focus-within:ring-1 focus-within:ring-[#14532D] transition-all bg-white">
+              <div className="bg-[#14532D]/5 flex items-center justify-center px-4 border-r border-[#14532D]/20">
+                <Phone className="text-[#14532D]" size={18} />
               </div>
+              <input
+                type="tel"
+                name="phone"
+                required
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full py-3 px-4 outline-none text-gray-700 placeholder-gray-400 bg-transparent text-sm"
+                placeholder="Enter your phone number"
+              />
             </div>
+          </div>
 
-            <div className="group">
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1 group-focus-within:text-blue-600 transition-colors">Phone Number</label>
-              <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
-                <input
-                  type="tel"
-                  name="phone"
-                  required
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="block w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-2xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400"
-                  placeholder="+977 98XXXXXXXX"
-                />
+          {/* Password */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-bold text-[#14532D]">Password</label>
+            <div className="flex rounded border border-[#14532D]/20 overflow-hidden focus-within:border-[#14532D] focus-within:ring-1 focus-within:ring-[#14532D] transition-all bg-white">
+              <div className="bg-[#14532D]/5 flex items-center justify-center px-4 border-r border-[#14532D]/20">
+                <Lock className="text-[#14532D]" size={18} />
               </div>
+              <input
+                type="password"
+                name="password"
+                required
+                minLength={8}
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full py-3 px-4 outline-none text-gray-700 placeholder-gray-400 bg-transparent text-sm"
+                placeholder="Create a password"
+              />
             </div>
+          </div>
 
-            <div className="group">
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1 group-focus-within:text-blue-600 transition-colors">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  required
-                  minLength={8}
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="block w-full pl-11 pr-12 py-3 bg-gray-50/50 border border-gray-200 rounded-2xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <span className="text-[10px] font-bold uppercase">{showPassword ? 'Hide' : 'Show'}</span>
-                </button>
+          {/* Confirm Password */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-bold text-[#14532D]">Confirm Password</label>
+            <div className="flex rounded border border-[#14532D]/20 overflow-hidden focus-within:border-[#14532D] focus-within:ring-1 focus-within:ring-[#14532D] transition-all bg-white">
+              <div className="bg-[#14532D]/5 flex items-center justify-center px-4 border-r border-[#14532D]/20">
+                <Lock className="text-[#14532D]" size={18} />
               </div>
+              <input
+                type="password"
+                name="confirmPassword"
+                required
+                minLength={8}
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full py-3 px-4 outline-none text-gray-700 placeholder-gray-400 bg-transparent text-sm"
+                placeholder="Confirm your password"
+              />
             </div>
+          </div>
 
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              type="submit"
-              disabled={loading}
-              className="relative w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl text-sm font-bold uppercase tracking-[0.2em] shadow-[0_10px_20px_rgba(37,99,235,0.2)] hover:shadow-[0_15px_30px_rgba(37,99,235,0.3)] transition-all disabled:opacity-50 flex items-center justify-center overflow-hidden mt-4"
-            >
-              <AnimatePresence mode="wait">
-                {loading ? (
-                  <motion.div key="loading" className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Creating Account...</span>
-                  </motion.div>
-                ) : (
-                  <motion.div key="submit" className="flex items-center gap-2">
-                    <span>Register Now</span>
-                    <ArrowRight size={18} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
-          </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-[#14532D] text-white rounded font-bold hover:bg-[#0f4023] transition-colors disabled:opacity-70 mt-6 shadow-sm"
+          >
+            <AnimatePresence mode="wait">
+              {loading ? (
+                <motion.div key="loading" className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Creating Account...</span>
+                </motion.div>
+              ) : (
+                <motion.div key="submit" className="flex items-center gap-2">
+                  <UserPlus size={18} />
+                  <span>Create Account</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
+        </form>
 
-          <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mt-8">
-            Already have an account?{' '}
-            <Link to="/login" className="text-blue-600 hover:text-indigo-600 transition-colors font-black">
-              Sign In
-            </Link>
-          </p>
+        <div className="relative flex items-center py-6 mt-2">
+          <div className="flex-grow border-t border-gray-200"></div>
+          <span className="flex-shrink-0 mx-4 text-[#14532D]/60 text-sm font-medium">Already have an account?</span>
+          <div className="flex-grow border-t border-gray-200"></div>
         </div>
+
+        <Link
+          to="/login"
+          className="w-full flex items-center justify-center gap-2 py-3.5 px-4 border border-[#14532D] text-[#14532D] rounded font-bold hover:bg-[#14532D]/5 transition-colors"
+        >
+          <LogIn size={18} />
+          <span>Sign In</span>
+        </Link>
       </motion.div>
     </div>
   );
 };
+

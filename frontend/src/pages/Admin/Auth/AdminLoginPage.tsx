@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 import { toast } from 'react-hot-toast';
-import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Lock, Mail, ArrowRight, Loader2, ArrowLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../../services/api';
-import { Button } from '../../../components/ui/Button';
 import { AuthBrandLogo } from '../../../components/ui/AuthBrandLogo';
 
 export const AdminLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const submittingRef = useRef(false);
 
   const { admin, adminLogin, isAdminAuthenticated } = useAdminAuth();
@@ -67,107 +67,123 @@ export const AdminLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-primary-green/5 blur-3xl"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary-gold/5 blur-3xl"></div>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-['Outfit']">
+      {/* Back Button */}
+      <motion.button
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+        onClick={() => navigate('/')}
+        className="absolute top-6 left-6 flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#14532D] transition-colors group"
+      >
+        <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
+        <span>Back</span>
+      </motion.button>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-md w-full space-y-10 bg-white p-12 rounded-[40px] shadow-premium border border-gray-100 relative z-10"
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="max-w-md w-full bg-white p-8 sm:p-10 rounded shadow-sm border border-gray-100"
       >
-        <div>
-          <AuthBrandLogo variant="staff" size="lg" />
-          <div className="space-y-2 text-center mt-6">
-            <h2 className="text-2xl font-black text-[#111827] tracking-tight uppercase">
-              System Access
-            </h2>
-            <p className="text-[10px] font-black text-primary-green uppercase tracking-[0.3em]">
-              Authorized Personnel Only
-            </p>
-            <div className="mt-4 p-3 bg-emerald-50 border border-emerald-100 rounded-2xl text-center text-xs text-emerald-800 font-medium">
-              <span className="font-bold">Default:</span> admin@hotelpms.com / admin123
-            </div>
-          </div>
+        {/* Brand Logo */}
+        <div className="text-center flex flex-col items-center mb-8">
+          <AuthBrandLogo variant="staff" />
+          <h2 className="text-3xl text-[#14532D] mt-6 mb-1" style={{ fontFamily: 'Georgia, serif' }}>
+            Welcome Back
+          </h2>
+          <p className="text-sm text-gray-500">Sign in to your staff account</p>
         </div>
 
-        <form className="space-y-8" onSubmit={handleLogin}>
-          <div className="space-y-5">
-            <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
-                Security Identity
-              </label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary-green transition-colors" size={18} />
-                <input
-                  type="email"
-                  required
-                  autoComplete="username"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none rounded-2xl relative block w-full px-12 py-4 border border-gray-100 placeholder-gray-300 text-[#111827] focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green/30 sm:text-sm bg-gray-50/50 transition-all font-medium"
-                  placeholder="admin@hotelpms.com"
-                />
+        <form onSubmit={handleLogin} className="space-y-5">
+          {/* Email Address */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-bold text-gray-700">Email Address</label>
+            <div className="flex rounded border border-[#14532D]/30 overflow-hidden focus-within:border-[#14532D] focus-within:ring-1 focus-within:ring-[#14532D] transition-all bg-white">
+              <div className="bg-[#14532D]/10 flex items-center justify-center px-4 border-r border-[#14532D]/20">
+                <Mail className="text-[#14532D]" size={18} />
               </div>
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
-                Access Credential
-              </label>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary-green transition-colors" size={18} />
-                <input
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none rounded-2xl relative block w-full px-12 py-4 border border-gray-100 placeholder-gray-300 text-[#111827] focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green/30 sm:text-sm bg-gray-50/50 transition-all font-medium"
-                  placeholder="admin123"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center">
               <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-primary-green focus:ring-primary-green border-gray-300 rounded-lg cursor-pointer"
+                type="email"
+                required
+                autoComplete="username"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full py-3 px-4 outline-none text-gray-700 placeholder-gray-400 bg-transparent text-sm"
+                placeholder="Enter your email"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-[10px] text-gray-400 font-black uppercase tracking-widest cursor-pointer">
-                Remember
-              </label>
             </div>
-            <button type="button" className="text-[10px] font-black text-primary-gold uppercase tracking-widest hover:text-primary-orange transition-colors">
-              Recovery
-            </button>
           </div>
 
-          <Button
+          {/* Password */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-bold text-gray-700">Password</label>
+            <div className="flex rounded border border-[#14532D]/30 overflow-hidden focus-within:border-[#14532D] focus-within:ring-1 focus-within:ring-[#14532D] transition-all bg-white">
+              <div className="bg-[#14532D]/10 flex items-center justify-center px-4 border-r border-[#14532D]/20">
+                <Lock className="text-[#14532D]" size={18} />
+              </div>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full py-3 px-4 outline-none text-gray-700 placeholder-gray-400 bg-transparent text-sm"
+                placeholder="Enter your password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="px-4 text-gray-400 hover:text-gray-600 transition-colors text-[11px] font-bold uppercase"
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+          </div>
+
+          {/* Sign In Button */}
+          <button
             type="submit"
             disabled={loading}
             aria-busy={loading}
-            className="group relative w-full flex justify-center py-5 px-4 border border-transparent text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl text-white bg-primary-green hover:bg-primary-dark focus:outline-none transition-all shadow-2xl shadow-primary-green/20 disabled:opacity-70 active:scale-95"
+            className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-[#14532D] text-white rounded font-bold hover:bg-[#0f4023] transition-colors disabled:opacity-70 mt-2 shadow-sm"
           >
-            {loading ? (
-              <span className="flex items-center gap-3">
-                <Loader2 className="animate-spin" size={18} />
-                Verifying...
-              </span>
-            ) : (
-              <span className="flex items-center gap-3">
-                successfully login <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
-              </span>
-            )}
-          </Button>
+            <AnimatePresence mode="wait">
+              {loading ? (
+                <motion.div key="loading" className="flex items-center gap-2">
+                  <Loader2 className="animate-spin" size={18} />
+                  <span>Signing In...</span>
+                </motion.div>
+              ) : (
+                <motion.div key="submit" className="flex items-center gap-2">
+                  <ArrowRight size={18} />
+                  <span>Sign In</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
         </form>
+
+        {/* Forgot Password */}
+        <div className="text-center mt-4">
+          <button
+            type="button"
+            className="text-sm font-semibold text-[#14532D] hover:text-[#0f4023] transition-colors"
+          >
+            Forgot your password?
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div className="relative flex items-center py-5 mt-2">
+          <div className="flex-grow border-t border-gray-200" />
+          <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">Staff Portal Access</span>
+          <div className="flex-grow border-t border-gray-200" />
+        </div>
+
+        <p className="text-center text-xs text-gray-400 font-medium">
+          Contact your administrator for account access.
+        </p>
       </motion.div>
     </div>
   );

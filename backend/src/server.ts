@@ -308,8 +308,7 @@ const startServer = async (): Promise<void> => {
     await ensureDevAccounts();
     const emailReady = await verifyEmailConfig();
     if (config.isProduction && !emailReady) {
-      console.error('❌ Email service is required in production. Shutting down.');
-      process.exit(1);
+      console.error('⚠️ Email service verification failed. Server will continue to run, but email features will not work.');
     }
 
     server.listen(config.port, () => {

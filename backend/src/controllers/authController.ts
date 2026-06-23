@@ -65,13 +65,9 @@ export class AuthController {
 
     if (config.dev.helpersEnabled) {
       console.warn(`[DevMode] OTP for ${email}: ${otp}`);
-      return false;
     }
 
-    throw new ApiError(
-      HttpStatus.SERVICE_UNAVAILABLE,
-      'Unable to send verification email. Please try again in a few minutes.'
-    );
+    return false;
   }
 
   /**
@@ -80,9 +76,16 @@ export class AuthController {
   register = asyncHandler(async (req: Request, res: Response) => {
     const { email, phone, password, firstName, lastName } = req.body;
     const normalizedEmail = email.toLowerCase();
+    
+    const validPhone = phone && phone.trim() !== '' ? phone.trim() : null;
+
+    const orConditions: any[] = [{ email: normalizedEmail }];
+    if (validPhone) {
+      orConditions.push({ phone: validPhone });
+    }
 
     const existingUser = await prisma.guest.findFirst({
-      where: { OR: [{ email: normalizedEmail }, { phone }] },
+      where: { OR: orConditions },
     });
 
     if (existingUser) {
@@ -98,7 +101,7 @@ export class AuthController {
     const guest = await prisma.guest.create({
       data: {
         email: normalizedEmail,
-        phone,
+        phone: validPhone,
         password: hashedPassword,
         firstName,
         lastName,

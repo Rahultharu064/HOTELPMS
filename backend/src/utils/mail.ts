@@ -1,83 +1,24 @@
 import { config } from '../config';
 import { createVerifiedSmtpTransporter, type SmtpTransportResult } from './email/smtpTransport';
-import {
-  canAttemptSmtp,
-  isResendConfigured,
-  isSmtpBlockedHost,
-  sendViaResend,
-  shouldUseResend,
-  verifyResendConfig,
-} from './email/resendProvider';
-
-export type EmailProvider = 'smtp' | 'resend';
 
 let smtpSession: SmtpTransportResult | null = null;
-let activeProvider: EmailProvider | null = null;
 
-export const isEmailConfigured = (): boolean =>
-  isResendConfigured() || Boolean(config.email.user && config.email.pass);
-
-export const getActiveEmailProvider = (): EmailProvider | null => activeProvider;
+export const isEmailConfigured = (): boolean => Boolean(config.email.user && config.email.pass);
 
 export const resetEmailTransporter = (): void => {
   smtpSession = null;
-  activeProvider = null;
 };
 
 const initializeSmtp = async (): Promise<SmtpTransportResult> => {
   if (smtpSession) return smtpSession;
   smtpSession = await createVerifiedSmtpTransporter();
-  activeProvider = 'smtp';
   return smtpSession;
-};
-
-const renderEmailSetupHelp = (): void => {
-  console.error([
-    '❌ Email cannot start on Render with Gmail SMTP (ports 465/587 are blocked).',
-    'Add these in Render → Environment:',
-    '  RESEND_API_KEY=re_xxxxxxxx   (from https://resend.com/api-keys)',
-    '  EMAIL_PROVIDER=resend',
-    '  SMTP_FROM=onboarding@resend.dev   (or your verified domain in Resend)',
-  ].join('\n'));
 };
 
 /** Verify email delivery capability on server startup. */
 export const verifyEmailConfig = async (): Promise<boolean> => {
   if (!isEmailConfigured()) {
-    console.warn('⚠️ Email service disabled: configure RESEND_API_KEY or SMTP in environment.');
-    return false;
-  }
-
-  // Render / production cloud: never touch SMTP (blocked → long timeout → crash)
-  if (isSmtpBlockedHost()) {
-    if (!isResendConfigured()) {
-      renderEmailSetupHelp();
-      return false;
-    }
-
-    const resendOk = await verifyResendConfig();
-    if (!resendOk) {
-      console.error('❌ Resend API key invalid. Create a key at https://resend.com/api-keys');
-      console.error('   Use "Sending access" permission. Paste into Render as RESEND_API_KEY (no quotes).');
-      return false;
-    }
-
-    activeProvider = 'resend';
-    console.log('✅ Email service ready (Resend HTTP API — required on Render)');
-    if ((config.email.from || '').includes('@gmail.com')) {
-      console.warn('⚠️ SMTP_FROM is Gmail — Resend will send from onboarding@resend.dev until you verify a domain.');
-    }
-    return true;
-  }
-
-  if (shouldUseResend()) {
-    activeProvider = 'resend';
-    console.log('✅ Email service ready (Resend HTTP API)');
-    return true;
-  }
-
-  if (!canAttemptSmtp()) {
-    console.warn('⚠️ No email transport configured.');
+    console.warn('⚠️ Email service disabled: configure SMTP_USER and SMTP_PASS in environment.');
     return false;
   }
 
@@ -89,31 +30,20 @@ export const verifyEmailConfig = async (): Promise<boolean> => {
     return true;
   } catch (error) {
     console.error('❌ SMTP verification failed:', error);
-
-    if (isResendConfigured()) {
-      activeProvider = 'resend';
-      console.warn('⚠️ SMTP unavailable — using Resend HTTP API');
-      return true;
-    }
-
     return false;
   }
 };
 
 export const sendEmail = async (to: string, subject: string, html: string): Promise<boolean> => {
   if (!isEmailConfigured()) {
-    console.error('[EmailError] Email not configured — set RESEND_API_KEY or SMTP');
+    console.error('[EmailError] Email not configured — set SMTP_USER and SMTP_PASS');
     return false;
-  }
-
-  if (activeProvider === 'resend' || shouldUseResend()) {
-    return sendViaResend(to, subject, html);
   }
 
   try {
     const session = smtpSession ?? (await initializeSmtp());
     const info = await session.transporter.sendMail({
-      from: `"Itahari Namuna Hotel" <${config.email.from}>`,
+      from: `"Itahari Namuna Hotel" <${config.email.from || config.email.user}>`,
       to,
       subject,
       html,
@@ -122,14 +52,6 @@ export const sendEmail = async (to: string, subject: string, html: string): Prom
     return true;
   } catch (error) {
     console.error(`[EmailError] SMTP failed for ${to}:`, error);
-
-    if (isResendConfigured()) {
-      console.warn('[Email] Retrying via Resend HTTP API...');
-      const sent = await sendViaResend(to, subject, html);
-      if (sent) activeProvider = 'resend';
-      return sent;
-    }
-
     return false;
   }
 };

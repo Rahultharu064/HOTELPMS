@@ -15,14 +15,7 @@ export type SmtpTransportResult = {
 };
 
 const resolveSmtpHostname = (): string => {
-  if (config.email.host) return config.email.host;
-
-  const user = config.email.user?.toLowerCase() ?? '';
-  if (user.includes('@gmail.com') || user.includes('@googlemail.com')) {
-    return 'smtp.gmail.com';
-  }
-
-  throw new Error('SMTP_HOST is required (e.g. smtp.gmail.com)');
+  return config.email.host || 'smtp.gmail.com';
 };
 
 const resolveIpv4 = async (hostname: string): Promise<string> => {
@@ -65,7 +58,7 @@ const createTransporterForPort = async (
  */
 export const createVerifiedSmtpTransporter = async (): Promise<SmtpTransportResult> => {
   const hostname = resolveSmtpHostname();
-  const ports = [...new Set([config.email.port, 465, 587])];
+  const ports = [...new Set([config.email.port || 587, 465, 587])];
   let lastError: unknown;
 
   for (const port of ports) {

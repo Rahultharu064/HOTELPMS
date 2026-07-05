@@ -64,14 +64,14 @@ const GuestManagement: React.FC = () => {
             </div>
 
             {/* Action Menu */}
-            <button
+            <Button
                type="button"
                title="Guest options"
                className="w-8 h-8 rounded-[10px] flex items-center justify-center text-gray-300 hover:text-[#1F7A3A] hover:bg-[#1F7A3A]/5 transition-colors shrink-0 bg-white border border-gray-100 shadow-sm"
                onClick={(e) => { e.stopPropagation(); }}
             >
                <MoreHorizontal size={14} />
-            </button>
+            </Button>
           </div>
         ))}
       </div>

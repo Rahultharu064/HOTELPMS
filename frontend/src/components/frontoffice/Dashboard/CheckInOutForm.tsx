@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { frontOfficeService } from '../../../services/frontofficeService';
 import { toast } from 'react-hot-toast';
 import { QuickCheckInModal } from '../QuickCheckInModal';
-
+import { Button } from '../../ui/Button.tsx';
 const CheckInOutForm: React.FC = () => {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
@@ -82,24 +82,24 @@ const CheckInOutForm: React.FC = () => {
                 </div>
              </div>
              
-             <button
+             <Button
                 type="button"
                 onClick={() => setIsModalOpen(true)}
                 className="w-full mt-6 py-4 bg-[#111827] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#14532D] transition-all"
              >
                 {result.status === 'checked_in' ? 'Manage Settle & Exit' : 'Execute Check-in'}
                 <ArrowRight size={14} strokeWidth={3} />
-             </button>
+             </Button>
           </motion.div>
         ) : (
-          <button
+          <Button
             type="submit"
             disabled={loading}
             className="w-full py-5 bg-[#111827] text-white text-[11px] font-black uppercase tracking-[0.3em] rounded-3xl shadow-xl shadow-black/10 flex items-center justify-center gap-3 transition-all mt-6"
           >
             {loading ? <Loader2 className="animate-spin" size={18} /> : 'Search Ledger'}
             <ArrowRight size={18} strokeWidth={3} />
-          </button>
+          </Button>
         )}
         </AnimatePresence>
       </form>

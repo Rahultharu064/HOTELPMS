@@ -12,6 +12,7 @@ import type { Booking } from '../../../services/bookingService';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { AdminTableSkeleton } from '../../ui/skeletons/AdminSkeletons';
+import { Button } from '../../ui/Button.tsx';
 
 const statusStylesSelectors = {
   confirmed: 'bg-green-100 text-green-700 border-green-200',
@@ -75,9 +76,9 @@ const BookingsTable: React.FC = () => {
               className="pl-14 pr-6 py-4 bg-white border border-gray-100 rounded-2xl text-[13px] font-medium outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green/20 transition-all w-64 shadow-inner"
             />
           </div>
-          <button title="Refine results" className="w-12 h-12 flex items-center justify-center border border-gray-100 rounded-2xl text-gray-400 hover:text-primary-green hover:bg-gray-50 transition-all shadow-sm">
+          <Button title="Refine results" className="w-12 h-12 flex items-center justify-center border border-gray-100 rounded-2xl text-gray-400 hover:text-primary-green hover:bg-gray-50 transition-all shadow-sm">
             <Filter size={20} strokeWidth={3} />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -147,12 +148,12 @@ const BookingsTable: React.FC = () => {
       </div>
 
       <div className="p-8 bg-gray-50/30 border-t border-gray-50 flex items-center justify-center">
-        <button 
+        <Button 
            onClick={() => navigate('/frontoffice/bookings')}
            className="text-primary-dark text-[11px] font-black flex items-center gap-2 hover:gap-4 transition-all uppercase tracking-[0.2em] group"
         >
           View Master Folio List <ArrowRight size={14} strokeWidth={3} className="text-primary-gold group-hover:translate-x-1 transition-transform" />
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -50,4 +50,15 @@ export const authService = {
     const response = await api.post('/auth/reset-password', data);
     return response;
   },
+
+  // Admin-specific methods
+  adminUpdateProfile: async (data: any) => {
+    const response = await api.put('/admin/auth/profile', data);
+    return response;
+  },
+
+  adminUpdateProfileImage: async (formData: FormData) => {
+    const response = await api.post('/admin/auth/avatar', formData);
+    return response;
+  },
 };

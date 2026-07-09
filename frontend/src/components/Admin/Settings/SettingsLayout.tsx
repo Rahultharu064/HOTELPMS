@@ -48,7 +48,8 @@ export function SettingsLayout({ userRole, onLogout }: SettingsLayoutProps) {
   const handleProfileUpdate = async () => {
     try {
       setLoading(true);
-      const response = await authService.updateProfile({
+      const updateMethod = userRole === "admin" ? authService.adminUpdateProfile : authService.updateProfile;
+      const response = await updateMethod({
         name: profileData.fullName,
         email: profileData.email,
       });
@@ -109,7 +110,8 @@ export function SettingsLayout({ userRole, onLogout }: SettingsLayoutProps) {
       const formData = new FormData();
       formData.append("image", file);
 
-      const response = await authService.updateProfileImage(formData);
+      const updateMethod = userRole === "admin" ? authService.adminUpdateProfileImage : authService.updateProfileImage;
+      const response = await updateMethod(formData);
       if (response.success) {
         toast.success("Avatar updated successfully");
         if (userRole === "admin" && admin) {

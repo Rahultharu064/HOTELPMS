@@ -3,18 +3,6 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 
-const pageTitles: Record<string, string> = {
-  "/admin": "Superuser Dashboard",
-  "/admin/dashboard": "Superuser Dashboard",
-  "/admin/users": "User & Access Management",
-  "/admin/rooms": "Global Asset Tracking",
-  "/admin/room-types": "Room Category Config",
-  "/admin/financials": "Master Financial View",
-  "/admin/reports": "Advanced System Analytics",
-  "/admin/settings": "Global System Config",
-  "/admin/profile": "Root User Settings",
-};
-
 export function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -24,8 +12,6 @@ export function AdminLayout() {
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
-
-  const title = pageTitles[location.pathname] || "Admin Control Center";
 
   return (
     <div className="flex min-h-screen w-full bg-[#FAFAF8] font-sans selection:bg-primary-green/10 selection:text-primary-dark">
@@ -37,7 +23,7 @@ export function AdminLayout() {
       />
 
       <div className={`flex-1 flex flex-col min-w-0 transition-all duration-500`}>
-        <Header title={title} onMobileMenuClick={() => setMobileOpen(true)} />
+        <Header onMobileMenuClick={() => setMobileOpen(true)} />
 
         <main className="flex-1 p-10 md:p-12 lg:p-14 relative overflow-x-hidden">
           {/* Subtle background decorative blur (Premium feel) */}

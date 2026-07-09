@@ -117,7 +117,7 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
       </div>
 
       {/* Right Section - Date, Icons, Profile */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 ml-auto">
         {/* Date */}
         <div className="hidden md:block text-sm font-medium text-neutral-text-secondary">
           {currentDate}

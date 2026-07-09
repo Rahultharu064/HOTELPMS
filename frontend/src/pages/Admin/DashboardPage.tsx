@@ -2,14 +2,16 @@ import React, { useState, useEffect, Suspense, lazy } from "react";
 import { 
   CreditCard, 
   Activity,
-  Plus,
   Hotel,
   Users,
-  LayoutDashboard
+  Search,
+  Bell,
+  User
 } from "lucide-react";
 import { bookingService } from "../../services/bookingService";
 import { toast } from "react-hot-toast";
 import { StatCard } from "../../components/Admin/Dashboard/StatCard";
+import { DashboardSidebar } from "../../components/Admin/Dashboard/DashboardSidebar";
 import { SectionLoader } from "../../components/ui/PageLoader";
 import { AdminDashboardSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 
@@ -58,6 +60,7 @@ const AdminDashboard: React.FC = () => {
       color: "text-emerald-600", 
       bg: "bg-emerald-50", 
       trend: "Operational", 
+      trendValue: "+2.5%",
       positive: true 
     },
     { 
@@ -67,6 +70,7 @@ const AdminDashboard: React.FC = () => {
       color: "text-amber-600", 
       bg: "bg-amber-50", 
       trend: `${stats?.pendingBookings || 0} Pending`, 
+      trendValue: "+1.3%",
       positive: true 
     },
     { 
@@ -76,6 +80,7 @@ const AdminDashboard: React.FC = () => {
       color: "text-blue-600", 
       bg: "bg-blue-50", 
       trend: "Live", 
+      trendValue: "+1.6%",
       positive: true 
     },
     { 
@@ -85,6 +90,7 @@ const AdminDashboard: React.FC = () => {
       color: "text-rose-600", 
       bg: "bg-rose-50", 
       trend: `${stats?.todayCheckIns || 0} In / ${stats?.todayCheckOuts || 0} Out`, 
+      trendValue: "+0.6%",
       positive: true 
     },
   ];
@@ -94,58 +100,68 @@ const AdminDashboard: React.FC = () => {
   }
 
   return (
-    <div className="space-y-12 animate-fade-in pb-10">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 bg-white/60 backdrop-blur-sm p-8 rounded-[40px] border border-neutral-border/40 shadow-sm relative overflow-hidden group">
-        {/* Subtle background decoration */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-green/5 rounded-full blur-[100px] -mr-32 -mt-32 transition-all duration-1000 group-hover:scale-150" />
-        
-        <div className="flex items-center gap-6 relative z-10">
-          <div className="w-16 h-16 rounded-[24px] bg-gradient-to-br from-primary-green to-primary-dark flex items-center justify-center shadow-2xl shadow-primary-dark/20 text-white transform hover:rotate-6 transition-transform">
-            <LayoutDashboard size={32} strokeWidth={2.5} />
+    <div className="space-y-6 animate-fade-in pb-10">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-2xl font-black text-primary-dark tracking-tight">Dashboard</h1>
+          <p className="text-[11px] font-bold text-neutral-text-secondary uppercase tracking-[0.2em] mt-1">
+            Command Center Overview
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-text-secondary w-4 h-4" />
+            <input 
+              type="text"
+              placeholder="Search places..."
+              className="pl-10 pr-4 py-2.5 bg-white border border-neutral-border/30 rounded-xl text-[12px] font-medium outline-none focus:border-primary-green/50 w-64 transition-all"
+            />
           </div>
-          <div className="min-w-0">
-            <h1 className="text-2xl md:text-3xl font-black text-primary-dark tracking-tight truncate">System Intelligence</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />
-              <p className="text-[10px] font-bold text-neutral-text-secondary uppercase tracking-[0.2em]">
-                Command Center Overview
-              </p>
+          
+          <button className="w-10 h-10 rounded-xl bg-white border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-green hover:border-primary-green/30 transition-all relative">
+            <Bell size={18} />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-primary-gold rounded-full" />
+          </button>
+          
+          <div className="flex items-center gap-3 px-4 py-2 bg-white border border-neutral-border/30 rounded-xl">
+            <div className="w-8 h-8 rounded-full bg-primary-green/10 flex items-center justify-center">
+              <User size={16} className="text-primary-green" />
+            </div>
+            <div className="hidden sm:block">
+              <p className="text-[12px] font-bold text-primary-dark">Admin User</p>
             </div>
           </div>
         </div>
-
-        <div className="flex items-center gap-4 relative z-10">
-          <button 
-            onClick={fetchDashboardData} 
-            className="px-6 h-14 bg-white border border-neutral-border/50 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-neutral-text-secondary hover:text-primary-dark hover:bg-neutral-light transition-all shadow-sm flex items-center gap-3 active:scale-95"
-          >
-            <Activity size={18} className="text-primary-gold" /> 
-            <span className="hidden sm:inline">Refresh Data</span>
-          </button>
-          <button className="px-8 h-14 bg-primary-dark text-white rounded-2xl text-[11px] font-bold uppercase tracking-widest hover:bg-primary-green transition-all shadow-xl shadow-primary-dark/20 flex items-center gap-3 active:scale-95">
-            <Plus size={18} strokeWidth={3} /> 
-            <span>New Action</span>
-          </button>
-        </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {statsConfig.map((s, i) => (
-          <StatCard key={i} {...s} />
-        ))}
-      </div>
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Content Area */}
+        <div className="lg:col-span-9 space-y-6">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {statsConfig.map((s, i) => (
+              <StatCard key={i} {...s} />
+            ))}
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        <div className="lg:col-span-2">
+          {/* Recent Bookings Table */}
           <Suspense fallback={<SectionLoader />}>
             <RecentBookingsTable bookings={recentLogs} loading={loading} />
           </Suspense>
+
+          {/* System Control Hub */}
+          <Suspense fallback={<SectionLoader />}>
+            <SystemControlHub />
+          </Suspense>
         </div>
 
-        <Suspense fallback={<SectionLoader />}>
-          <SystemControlHub />
-        </Suspense>
+        {/* Right Sidebar */}
+        <div className="lg:col-span-3">
+          <DashboardSidebar />
+        </div>
       </div>
     </div>
   );

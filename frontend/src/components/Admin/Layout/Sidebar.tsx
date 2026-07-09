@@ -20,7 +20,7 @@ import { Button } from "../../ui/Button";
 
 const menuItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
-  { title: "Registered Patrons", url: "/admin/guests", icon: Users },
+  { title: "Guests", url: "/admin/guests", icon: Users },
   { title: "Staff Management", url: "/admin/users", icon: ShieldCheck },
   { title: "Room Types", url: "/admin/room-types", icon: Building2 },
   { title: "Room Inventory", url: "/admin/rooms", icon: Warehouse },

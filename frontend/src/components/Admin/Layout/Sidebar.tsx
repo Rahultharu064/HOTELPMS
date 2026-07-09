@@ -26,7 +26,7 @@ const menuItems = [
   { title: "Room Inventory", url: "/admin/rooms", icon: Warehouse },
   { title: "Financials", url: "/admin/financials", icon: CreditCard },
   { title: "System Analytics", url: "/admin/reports", icon: BarChart3 },
-  { title: "Configuration", url: "/admin/settings", icon: Settings },
+  { title: "Settings", url: "/admin/settings", icon: Settings },
   { title: "Extra Services", url: "/admin/extra-services", icon: Zap },
   { title: "Gallery & Venues", url: "/admin/gallery", icon: Images },
 ];

@@ -7,10 +7,10 @@ const SettingsPage: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    window.location.href = "/frontoffice/login";
+    window.location.href = "/housekeeping/login";
   };
 
-  return <SettingsLayout userRole="frontoffice" onLogout={handleLogout} />;
+  return <SettingsLayout userRole="housekeeping" onLogout={handleLogout} />;
 };
 
 export default SettingsPage;

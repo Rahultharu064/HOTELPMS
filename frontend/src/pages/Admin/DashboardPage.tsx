@@ -98,16 +98,6 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div>
-          <h1 className="text-2xl font-black text-primary-dark tracking-tight">Dashboard</h1>
-          <p className="text-[11px] font-bold text-neutral-text-secondary uppercase tracking-[0.2em] mt-1">
-            Command Center Overview
-          </p>
-        </div>
-      </div>
-
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Content Area */}

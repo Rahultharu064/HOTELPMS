@@ -1,186 +1,158 @@
-import { useState, useRef } from "react";
-import { Search, User, Camera, Loader2, Moon, Bell, LogOut as BoxArrowRight } from "lucide-react";
-import { MobileMenuButton } from "./Sidebar";
+import { useState } from "react";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
-import { useNavigate, Link, useLocation } from "react-router-dom";
-import { api, getImageUrl } from "../../../services/api";
-import { toast } from "react-hot-toast";
-
-import { Input } from "../../ui/Input";
+import { getImageUrl } from "../../../services/api";
+import {
+  Search,
+  Bell,
+  User,
+  ChevronDown,
+  Settings,
+  LogOut,
+  Menu,
+} from "lucide-react";
 
 interface HeaderProps {
   onMobileMenuClick: () => void;
 }
 
 export function Header({ onMobileMenuClick }: HeaderProps) {
+  const [notificationOpen, setNotificationOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const { admin, adminLogout, updateAdminUser } = useAdminAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Generate breadcrumbs
-  const getBreadcrumbs = () => {
-    const pathSegments = location.pathname.split('/').filter(Boolean);
-    if (pathSegments.length === 0) return [{ label: 'Home', path: '/admin' }];
-    
-    const breadcrumbs = [{ label: 'Home', path: '/admin' }];
-    let currentPath = '';
-    
-    pathSegments.forEach((segment) => {
-      currentPath += `/${segment}`;
-      const label = segment.charAt(0).toUpperCase() + segment.slice(1);
-      breadcrumbs.push({ label, path: currentPath });
-    });
-    
-    return breadcrumbs;
-  };
+  const { admin, adminLogout } = useAdminAuth();
 
   const handleLogout = () => {
     adminLogout();
-    navigate('/admin/login');
+    window.location.href = '/admin/login';
   };
-
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('avatar', file);
-
-    setUploading(true);
-    try {
-      const response = await api.post<{ success: boolean, data: { avatar: string } }>('/admin/auth/avatar', formData);
-      if (response.success && admin) {
-        updateAdminUser({ ...admin, avatar: response.data.avatar });
-        toast.success("Identity image updated");
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Upload failed");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-[40] transition-all duration-300 px-6 h-14 flex items-center justify-between bg-white border-b border-neutral-border/30 shadow-sm">
-      <MobileMenuButton onClick={onMobileMenuClick} />
-      
-      <Input 
-        type="file" 
-        ref={fileInputRef} 
-        className="hidden" 
-        accept="image/*"
-        onChange={handleAvatarUpload}
-      />
+    <header className="h-20 bg-white border-b border-neutral-border/30 sticky top-0 z-40 flex items-center justify-between px-8 lg:px-12">
+      {/* Left Section - Search & Breadcrumb */}
+      <div className="flex items-center gap-6 flex-1">
+        {/* Mobile Menu Button */}
+        <button
+          onClick={onMobileMenuClick}
+          className="lg:hidden w-10 h-10 rounded-xl bg-neutral-light flex items-center justify-center text-primary-dark hover:bg-primary-green hover:text-white transition-all"
+        >
+          <Menu size={20} strokeWidth={2.5} />
+        </button>
 
-      {/* Left Section - Breadcrumbs */}
-      <div className="flex items-center gap-2 ml-4">
-        {breadcrumbs.map((crumb, index) => (
-          <div key={crumb.path} className="flex items-center">
-            {index > 0 && <span className="text-neutral-text-secondary text-xs mx-1">/</span>}
-            <Link 
-              to={crumb.path}
-              className={`text-xs font-medium ${
-                index === breadcrumbs.length - 1 
-                  ? "text-primary-dark font-bold" 
-                  : "text-neutral-text-secondary hover:text-primary-dark"
-              }`}
-            >
-              {crumb.label}
-            </Link>
+        {/* Search Bar */}
+        <div className="relative flex-1 max-w-md">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-text-secondary" strokeWidth={2.5} />
+            <input
+              type="text"
+              placeholder="Search guests, rooms, bookings..."
+              className="w-full pl-12 pr-4 py-3 bg-neutral-light/50 border border-neutral-border/30 rounded-xl text-sm font-medium text-primary-dark placeholder:text-neutral-text-secondary focus:outline-none focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green transition-all"
+            />
           </div>
-        ))}
-      </div>
-
-      {/* Center Section - Search */}
-      <div className="flex-1 max-w-xs mx-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-text-secondary w-3.5 h-3.5" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full pl-9 pr-3 py-1.5 bg-neutral-light/50 border border-neutral-border/30 rounded-lg text-xs font-medium text-primary-dark placeholder:text-neutral-text-secondary outline-none focus:border-[#14532D]/50 focus:bg-white transition-all"
-          />
         </div>
       </div>
 
-      {/* Right Section - Icons, Profile */}
-      <div className="flex items-center gap-2 ml-auto">
-        {/* Dark Mode Toggle */}
-        <button className="w-7 h-7 rounded-lg border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-dark hover:border-[#14532D]/30 transition-all">
-          <Moon size={14} />
-        </button>
-
+      {/* Right Section - Notifications & Profile */}
+      <div className="flex items-center gap-4">
         {/* Notifications */}
-        <button className="w-7 h-7 rounded-lg border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-dark hover:border-[#14532D]/30 transition-all relative">
-          <Bell size={14} />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#F59E0B] rounded-full" />
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setNotificationOpen(!notificationOpen)}
+            className="relative w-10 h-10 rounded-xl bg-neutral-light/50 border border-neutral-border/30 flex items-center justify-center text-primary-dark hover:bg-primary-green/10 hover:border-primary-green/30 transition-all group"
+          >
+            <Bell size={18} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              3
+            </span>
+          </button>
 
-        {/* User Profile */}
+          {/* Notification Dropdown */}
+          {notificationOpen && (
+            <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-neutral-border/30 overflow-hidden animate-fadeIn z-50">
+              <div className="p-4 border-b border-neutral-border/30">
+                <h3 className="text-sm font-bold text-primary-dark">Notifications</h3>
+              </div>
+              <div className="max-h-80 overflow-y-auto">
+                {[1, 2, 3].map((item) => (
+                  <div
+                    key={item}
+                    className="p-4 border-b border-neutral-border/20 hover:bg-neutral-light/30 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-2 h-2 mt-2 rounded-full bg-primary-green flex-shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-xs font-bold text-primary-dark">New booking received</p>
+                        <p className="text-[10px] text-neutral-text-secondary mt-1">Guest John Doe booked Room 101</p>
+                        <p className="text-[9px] text-neutral-text-secondary mt-2">2 minutes ago</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="p-3 border-t border-neutral-border/30">
+                <button className="w-full py-2 text-[10px] font-bold text-primary-green hover:text-primary-dark transition-all">
+                  View All Notifications
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Profile Dropdown */}
         <div className="relative">
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center gap-2 px-2 py-1 rounded-lg border border-neutral-border/30 hover:border-[#14532D]/30 transition-all"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-neutral-light/50 border border-neutral-border/30 hover:bg-primary-green/10 hover:border-primary-green/30 transition-all group"
           >
-            <div className="w-7 h-7 rounded-full bg-[#14532D]/10 flex items-center justify-center overflow-hidden">
-              {uploading ? (
-                <Loader2 size={12} className="animate-spin text-[#14532D]" />
-              ) : admin?.avatar ? (
-                <img 
-                  src={getImageUrl(admin.avatar)} 
-                  alt={admin.name} 
-                  className="w-full h-full object-cover"
-                />
+            <div className="w-9 h-9 rounded-xl bg-primary-green/10 flex items-center justify-center overflow-hidden border border-primary-green/20">
+              {admin?.avatar ? (
+                <img src={getImageUrl(admin.avatar)} alt={admin.name} className="w-full h-full object-cover" />
               ) : (
-                <User size={14} className="text-[#14532D]" />
+                <div className="text-[10px] font-black text-primary-green">
+                  {admin?.name ? admin.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'SA'}
+                </div>
               )}
             </div>
-            <div className="hidden sm:block text-left">
-              <p className="text-[11px] font-bold text-primary-dark">{admin?.name || 'Admin'}</p>
+            <div className="hidden md:block text-left">
+              <p className="text-xs font-bold text-primary-dark">{admin?.name || 'Super Admin'}</p>
+              <p className="text-[9px] font-bold text-primary-green uppercase tracking-wider">{admin?.role?.replace('_', ' ') || 'Administrator'}</p>
             </div>
+            <ChevronDown size={14} strokeWidth={2.5} className="text-neutral-text-secondary group-hover:text-primary-green transition-colors" />
           </button>
 
+          {/* Profile Dropdown */}
           {profileOpen && (
-            <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-neutral-border/30 overflow-hidden z-[60]">
-              <div className="p-3 border-b border-neutral-border/10">
+            <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-neutral-border/30 overflow-hidden animate-fadeIn z-50">
+              <div className="p-4 border-b border-neutral-border/30">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-[#14532D]/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-primary-green/10 flex items-center justify-center overflow-hidden border border-primary-green/20">
                     {admin?.avatar ? (
-                      <img 
-                        src={getImageUrl(admin.avatar)} 
-                        alt={admin.name} 
-                        className="w-full h-full object-cover rounded-full"
-                      />
+                      <img src={getImageUrl(admin.avatar)} alt={admin.name} className="w-full h-full object-cover" />
                     ) : (
-                      <User size={18} className="text-[#14532D]" />
+                      <div className="text-[11px] font-black text-primary-green">
+                        {admin?.name ? admin.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'SA'}
+                      </div>
                     )}
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-primary-dark">{admin?.name || 'Administrator'}</p>
-                    <p className="text-[10px] text-neutral-text-secondary">{admin?.email || 'admin@itahari-namuna.edu.np'}</p>
+                    <p className="text-xs font-bold text-primary-dark">{admin?.name || 'Super Admin'}</p>
+                    <p className="text-[9px] font-bold text-primary-green uppercase tracking-wider">{admin?.role?.replace('_', ' ') || 'Administrator'}</p>
                   </div>
                 </div>
               </div>
               <div className="p-2">
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-neutral-text-secondary hover:text-primary-dark hover:bg-neutral-light/50 rounded-lg transition-all"
-                >
-                  <Camera size={12} />
-                  Change Avatar
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[11px] font-bold text-primary-dark hover:bg-neutral-light/50 transition-all">
+                  <User size={14} strokeWidth={2.5} />
+                  <span>My Profile</span>
                 </button>
-                <div className="h-px bg-neutral-border/10 my-2 mx-2" />
-                <button 
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[11px] font-bold text-primary-dark hover:bg-neutral-light/50 transition-all">
+                  <Settings size={14} strokeWidth={2.5} />
+                  <span>Settings</span>
+                </button>
+                <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[11px] font-bold text-red-600 hover:bg-red-50 transition-all mt-1"
                 >
-                  <BoxArrowRight size={12} />
-                  Logout
+                  <LogOut size={14} strokeWidth={2.5} />
+                  <span>Logout</span>
                 </button>
               </div>
             </div>

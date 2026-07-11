@@ -32,34 +32,34 @@ export function DashboardSidebar() {
   const highlightedDays = [5, 12, 18, 25, 28];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Calendar Card */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="bg-white rounded-2xl border border-neutral-border/30 shadow-sm p-5"
+        className="bg-white rounded-2xl border border-neutral-border/30 shadow-sm p-4"
       >
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-primary-dark tracking-tight">Trip Listing</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs font-bold text-primary-dark tracking-tight">Trip Listing</h3>
           <div className="flex items-center gap-1">
             <button className="p-1 hover:bg-neutral-light rounded-lg transition-colors">
-              <ChevronLeft size={16} className="text-neutral-text-secondary" />
+              <ChevronLeft size={14} className="text-neutral-text-secondary" />
             </button>
             <button className="p-1 hover:bg-neutral-light rounded-lg transition-colors">
-              <ChevronRight size={16} className="text-neutral-text-secondary" />
+              <ChevronRight size={14} className="text-neutral-text-secondary" />
             </button>
           </div>
         </div>
         
-        <div className="text-center mb-4">
-          <p className="text-xs font-bold text-primary-green uppercase tracking-wider">
+        <div className="text-center mb-3">
+          <p className="text-[10px] font-bold text-[#14532D] uppercase tracking-wider">
             {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
           </p>
         </div>
 
         <div className="grid grid-cols-7 gap-1 text-center mb-2">
           {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-            <div key={day} className="text-[10px] font-bold text-neutral-text-secondary uppercase">
+            <div key={day} className="text-[9px] font-bold text-neutral-text-secondary uppercase">
               {day}
             </div>
           ))}
@@ -75,9 +75,9 @@ export function DashboardSidebar() {
             return (
               <div
                 key={day}
-                className={`aspect-square flex items-center justify-center text-xs font-bold rounded-lg cursor-pointer transition-all
+                className={`aspect-square flex items-center justify-center text-[10px] font-bold rounded-lg cursor-pointer transition-all
                   ${isHighlighted 
-                    ? "bg-primary-green text-white hover:bg-primary-dark" 
+                    ? "bg-[#14532D] text-white hover:bg-[#1F7A3A]" 
                     : "text-neutral-text-secondary hover:bg-neutral-light"
                   }`}
               >
@@ -93,17 +93,17 @@ export function DashboardSidebar() {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white rounded-2xl border border-neutral-border/30 shadow-sm p-5"
+        className="bg-white rounded-2xl border border-neutral-border/30 shadow-sm p-4"
       >
-        <h3 className="text-sm font-bold text-primary-dark tracking-tight mb-4">Upcoming Visitors</h3>
+        <h3 className="text-xs font-bold text-primary-dark tracking-tight mb-3">Upcoming Visitors</h3>
         
-        <div className="space-y-3">
+        <div className="space-y-2">
           {upcomingVisitors.map((visitor) => (
             <div
               key={visitor.id}
-              className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-light/50 transition-colors cursor-pointer"
+              className="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-neutral-light/50 transition-colors cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-green/20">
+              <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#14532D]/20">
                 <img
                   src={visitor.avatar}
                   alt={visitor.name}
@@ -111,10 +111,10 @@ export function DashboardSidebar() {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-primary-dark truncate">{visitor.name}</p>
-                <p className="text-[10px] font-medium text-neutral-text-secondary">{visitor.date}</p>
+                <p className="text-[10px] font-bold text-primary-dark truncate">{visitor.name}</p>
+                <p className="text-[9px] font-medium text-neutral-text-secondary">{visitor.date}</p>
               </div>
-              <button className="px-3 py-1.5 bg-primary-green/10 text-primary-green text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-primary-green hover:text-white transition-all">
+              <button className="px-2 py-1 bg-[#14532D]/10 text-[#14532D] text-[9px] font-bold uppercase tracking-wider rounded-lg hover:bg-[#14532D] hover:text-white transition-all">
                 Details
               </button>
             </div>

@@ -97,13 +97,13 @@ const AdminDashboard: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
+    <div className="space-y-5 animate-fade-in pb-10">
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Content Area */}
-        <div className="lg:col-span-9 space-y-6">
+        <div className="lg:col-span-9 space-y-5">
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             {statsConfig.map((s, i) => (
               <StatCard key={i} {...s} />
             ))}

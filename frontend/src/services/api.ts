@@ -57,14 +57,15 @@ async function fetchWithRetry(
   url: string,
   options: RequestInit,
   retries = 2,
-  baseDelay = 1000
+  baseDelay = 1000,
+  timeout = 60000
 ): Promise<Response> {
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout for Render cold starts
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
 
       const response = await fetch(url, {
         ...options,
@@ -201,7 +202,7 @@ export const api = {
       method: 'PUT',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    }, 1);
+    }, 2, 1000, 90000); // 90s timeout for room updates (Render cold starts)
     const result = await parseResponseBody(response);
     if (!response.ok) {
       throw toRequestError(response, result);

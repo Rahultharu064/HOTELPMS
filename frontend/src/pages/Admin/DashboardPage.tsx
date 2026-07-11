@@ -18,18 +18,18 @@ export function DashboardPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black text-primary-dark tracking-tight">Dashboard Overview</h1>
+          <h1 className="text-3xl font-black text-primary-dark tracking-tight">Dashboard</h1>
           <p className="text-sm font-medium text-neutral-text-secondary mt-2">
-            Welcome back! Here's what's happening with your hotel today.
+            Hotel overview and activity
           </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="px-4 py-2 bg-primary-green/10 border border-primary-green/20 rounded-xl">
-            <p className="text-[10px] font-bold text-primary-green uppercase tracking-wider">System Status</p>
-            <p className="text-xs font-bold text-primary-dark mt-0.5">All Systems Operational</p>
+            <p className="text-[10px] font-bold text-primary-green uppercase tracking-wider">Status</p>
+            <p className="text-xs font-bold text-primary-dark mt-0.5">Online</p>
           </div>
           <div className="px-4 py-2 bg-primary-gold/10 border border-primary-gold/20 rounded-xl">
-            <p className="text-[10px] font-bold text-primary-gold uppercase tracking-wider">Today's Date</p>
+            <p className="text-[10px] font-bold text-primary-gold uppercase tracking-wider">Date</p>
             <p className="text-xs font-bold text-primary-dark mt-0.5">{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
           </div>
         </div>
@@ -91,14 +91,14 @@ export function DashboardPage() {
                   <TrendingUp size={20} strokeWidth={2.5} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-primary-dark">Revenue Overview</h3>
-                  <p className="text-[10px] font-medium text-neutral-text-secondary">Monthly performance</p>
+                  <h3 className="text-sm font-bold text-primary-dark">Revenue</h3>
+                  <p className="text-[10px] font-medium text-neutral-text-secondary">This month</p>
                 </div>
               </div>
               <select className="px-3 py-2 bg-neutral-light/50 border border-neutral-border/30 rounded-lg text-xs font-medium text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green/20">
-                <option>Last 7 Days</option>
-                <option>Last 30 Days</option>
-                <option>Last 90 Days</option>
+                <option>7 Days</option>
+                <option>30 Days</option>
+                <option>90 Days</option>
               </select>
             </div>
             
@@ -137,8 +137,8 @@ export function DashboardPage() {
                     <Activity size={20} strokeWidth={2.5} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-primary-dark">Recent Bookings</h3>
-                    <p className="text-[10px] font-medium text-neutral-text-secondary">Latest reservations</p>
+                    <h3 className="text-sm font-bold text-primary-dark">Bookings</h3>
+                    <p className="text-[10px] font-medium text-neutral-text-secondary">Recent activity</p>
                   </div>
                 </div>
                 <button className="px-4 py-2 bg-primary-green text-white text-xs font-bold rounded-xl hover:bg-primary-dark transition-all">
@@ -216,8 +216,8 @@ export function DashboardPage() {
                 <Building2 size={20} strokeWidth={2.5} />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-primary-dark">Room Status</h3>
-                <p className="text-[10px] font-medium text-neutral-text-secondary">Current occupancy</p>
+                <h3 className="text-sm font-bold text-primary-dark">Rooms</h3>
+                <p className="text-[10px] font-medium text-neutral-text-secondary">Current status</p>
               </div>
             </div>
             
@@ -271,8 +271,8 @@ export function DashboardPage() {
                 <AlertTriangle size={20} strokeWidth={2.5} />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-primary-dark">System Alerts</h3>
-                <p className="text-[10px] font-medium text-neutral-text-secondary">Attention required</p>
+                <h3 className="text-sm font-bold text-primary-dark">Alerts</h3>
+                <p className="text-[10px] font-medium text-neutral-text-secondary">Needs attention</p>
               </div>
             </div>
             
@@ -281,8 +281,8 @@ export function DashboardPage() {
                 <div className="flex items-start gap-3">
                   <AlertTriangle size={14} className="text-red-500 flex-shrink-0 mt-0.5" strokeWidth={2.5} />
                   <div>
-                    <p className="text-[11px] font-bold text-red-700">Room 305 Maintenance</p>
-                    <p className="text-[9px] text-red-600 mt-1">Plumbing issue reported - needs attention</p>
+                    <p className="text-[11px] font-bold text-red-700">Room 305</p>
+                    <p className="text-[9px] text-red-600 mt-1">Plumbing issue</p>
                   </div>
                 </div>
               </div>
@@ -290,8 +290,8 @@ export function DashboardPage() {
                 <div className="flex items-start gap-3">
                   <Clock size={14} className="text-primary-gold flex-shrink-0 mt-0.5" strokeWidth={2.5} />
                   <div>
-                    <p className="text-[11px] font-bold text-primary-dark">Check-out Reminder</p>
-                    <p className="text-[9px] text-neutral-text-secondary mt-1">5 guests checking out today</p>
+                    <p className="text-[11px] font-bold text-primary-dark">Check-outs</p>
+                    <p className="text-[9px] text-neutral-text-secondary mt-1">5 guests today</p>
                   </div>
                 </div>
               </div>

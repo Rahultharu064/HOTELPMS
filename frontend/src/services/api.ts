@@ -182,11 +182,15 @@ export const api = {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
 
+    // Use longer timeout for FormData uploads (room creation with images)
+    const timeout = isFormData ? 120000 : 60000;
+    const retries = isFormData ? 3 : (endpoint.includes('/auth/') ? 2 : 1);
+
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    }, endpoint.includes('/auth/') ? 2 : 1);
+    }, retries, 2000, timeout);
     const result = await parseResponseBody(response);
     if (!response.ok) {
       throw toRequestError(response, result);
@@ -202,7 +206,7 @@ export const api = {
       method: 'PUT',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    }, 2, 1000, 90000); // 90s timeout for room updates (Render cold starts)
+    }, 3, 2000, 120000); // 120s timeout, 3 retries for room updates (Render cold starts)
     const result = await parseResponseBody(response);
     if (!response.ok) {
       throw toRequestError(response, result);
@@ -218,7 +222,7 @@ export const api = {
       method: 'PATCH',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    }, 1);
+    }, 3, 2000, 120000); // 120s timeout, 3 retries for room updates (Render cold starts)
     const result = await parseResponseBody(response);
     if (!response.ok) {
       throw toRequestError(response, result);

@@ -22,7 +22,9 @@ export const AdminLoginPage = lazy(() =>
 );
 
 /** Dashboards */
-export const AdminDashboardPage = lazy(() => import('../pages/Admin/DashboardPage'));
+export const AdminDashboardPage = lazy(() =>
+  import('../pages/Admin/DashboardPage').then((m) => ({ default: m.DashboardPage }))
+);
 export const FrontOfficeDashboardPage = lazy(() => import('../pages/frontoffice/DashboardPage'));
 export const HousekeepingDashboardPage = lazy(() => import('../pages/Housekeeping/DashboardPage'));
 

@@ -20,14 +20,6 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Get current date
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-
   // Generate breadcrumbs
   const getBreadcrumbs = () => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
@@ -74,7 +66,7 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-[40] transition-all duration-300 px-5 h-16 flex items-center justify-between bg-white/80 backdrop-blur-md border-b border-neutral-border/30 shadow-sm">
+    <header className="sticky top-0 z-[40] transition-all duration-300 px-6 h-14 flex items-center justify-between bg-white border-b border-neutral-border/30 shadow-sm">
       <MobileMenuButton onClick={onMobileMenuClick} />
       
       <Input 
@@ -89,7 +81,7 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
       <div className="flex items-center gap-2 ml-4">
         {breadcrumbs.map((crumb, index) => (
           <div key={crumb.path} className="flex items-center">
-            {index > 0 && <span className="text-neutral-text-secondary text-xs mx-2">/</span>}
+            {index > 0 && <span className="text-neutral-text-secondary text-xs mx-1">/</span>}
             <Link 
               to={crumb.path}
               className={`text-xs font-medium ${
@@ -105,32 +97,27 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
       </div>
 
       {/* Center Section - Search */}
-      <div className="flex-1 max-w-sm mx-6">
+      <div className="flex-1 max-w-xs mx-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-text-secondary w-3.5 h-3.5" />
           <input
             type="text"
             placeholder="Search..."
-            className="w-full pl-9 pr-3 py-2 bg-neutral-light/50 border border-neutral-border/30 rounded-lg text-xs font-medium text-primary-dark placeholder:text-neutral-text-secondary outline-none focus:border-[#14532D]/50 focus:bg-white transition-all"
+            className="w-full pl-9 pr-3 py-1.5 bg-neutral-light/50 border border-neutral-border/30 rounded-lg text-xs font-medium text-primary-dark placeholder:text-neutral-text-secondary outline-none focus:border-[#14532D]/50 focus:bg-white transition-all"
           />
         </div>
       </div>
 
-      {/* Right Section - Date, Icons, Profile */}
-      <div className="flex items-center gap-3 ml-auto">
-        {/* Date */}
-        <div className="hidden md:block text-xs font-medium text-neutral-text-secondary">
-          {currentDate}
-        </div>
-
+      {/* Right Section - Icons, Profile */}
+      <div className="flex items-center gap-2 ml-auto">
         {/* Dark Mode Toggle */}
-        <button className="w-8 h-8 rounded-lg border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-dark hover:border-[#14532D]/30 transition-all">
-          <Moon size={16} />
+        <button className="w-7 h-7 rounded-lg border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-dark hover:border-[#14532D]/30 transition-all">
+          <Moon size={14} />
         </button>
 
         {/* Notifications */}
-        <button className="w-8 h-8 rounded-lg border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-dark hover:border-[#14532D]/30 transition-all relative">
-          <Bell size={16} />
+        <button className="w-7 h-7 rounded-lg border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-dark hover:border-[#14532D]/30 transition-all relative">
+          <Bell size={14} />
           <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#F59E0B] rounded-full" />
         </button>
 
@@ -138,11 +125,11 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
         <div className="relative">
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-neutral-border/30 hover:border-[#14532D]/30 transition-all"
+            className="flex items-center gap-2 px-2 py-1 rounded-lg border border-neutral-border/30 hover:border-[#14532D]/30 transition-all"
           >
-            <div className="w-8 h-8 rounded-full bg-[#14532D]/10 flex items-center justify-center overflow-hidden">
+            <div className="w-7 h-7 rounded-full bg-[#14532D]/10 flex items-center justify-center overflow-hidden">
               {uploading ? (
-                <Loader2 size={14} className="animate-spin text-[#14532D]" />
+                <Loader2 size={12} className="animate-spin text-[#14532D]" />
               ) : admin?.avatar ? (
                 <img 
                   src={getImageUrl(admin.avatar)} 
@@ -150,19 +137,19 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User size={16} className="text-[#14532D]" />
+                <User size={14} className="text-[#14532D]" />
               )}
             </div>
             <div className="hidden sm:block text-left">
-              <p className="text-xs font-bold text-primary-dark">{admin?.name || 'Admin'}</p>
+              <p className="text-[11px] font-bold text-primary-dark">{admin?.name || 'Admin'}</p>
             </div>
           </button>
 
           {profileOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-neutral-border/30 overflow-hidden z-[60]">
+            <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-neutral-border/30 overflow-hidden z-[60]">
               <div className="p-3 border-b border-neutral-border/10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#14532D]/10 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-full bg-[#14532D]/10 flex items-center justify-center">
                     {admin?.avatar ? (
                       <img 
                         src={getImageUrl(admin.avatar)} 
@@ -170,7 +157,7 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
                         className="w-full h-full object-cover rounded-full"
                       />
                     ) : (
-                      <User size={20} className="text-[#14532D]" />
+                      <User size={18} className="text-[#14532D]" />
                     )}
                   </div>
                   <div>
@@ -184,7 +171,7 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
                   onClick={() => fileInputRef.current?.click()}
                   className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-neutral-text-secondary hover:text-primary-dark hover:bg-neutral-light/50 rounded-lg transition-all"
                 >
-                  <Camera size={14} />
+                  <Camera size={12} />
                   Change Avatar
                 </button>
                 <div className="h-px bg-neutral-border/10 my-2 mx-2" />
@@ -192,7 +179,7 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
                   onClick={handleLogout}
                   className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition-all"
                 >
-                  <BoxArrowRight size={14} />
+                  <BoxArrowRight size={12} />
                   Logout
                 </button>
               </div>

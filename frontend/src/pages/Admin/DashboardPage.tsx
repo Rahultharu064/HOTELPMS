@@ -3,10 +3,7 @@ import {
   CreditCard, 
   Activity,
   Hotel,
-  Users,
-  Search,
-  Bell,
-  User
+  Users
 } from "lucide-react";
 import { bookingService } from "../../services/bookingService";
 import { toast } from "react-hot-toast";
@@ -57,8 +54,8 @@ const AdminDashboard: React.FC = () => {
       label: "Total Revenue", 
       value: stats ? `Rs. ${Number(stats.totalRevenue).toLocaleString()}` : "Rs. 0", 
       icon: CreditCard, 
-      color: "text-emerald-600", 
-      bg: "bg-emerald-50", 
+      color: "text-[#14532D]", 
+      bg: "bg-[#14532D]/10", 
       trend: "Operational", 
       trendValue: "+2.5%",
       positive: true 
@@ -67,8 +64,8 @@ const AdminDashboard: React.FC = () => {
       label: "Total Bookings", 
       value: stats ? stats.totalBookings.toString() : "0", 
       icon: Hotel, 
-      color: "text-amber-600", 
-      bg: "bg-amber-50", 
+      color: "text-[#F59E0B]", 
+      bg: "bg-[#F59E0B]/10", 
       trend: `${stats?.pendingBookings || 0} Pending`, 
       trendValue: "+1.3%",
       positive: true 
@@ -77,8 +74,8 @@ const AdminDashboard: React.FC = () => {
       label: "Active Stays", 
       value: stats ? stats.activeStays.toString() : "0", 
       icon: Users, 
-      color: "text-blue-600", 
-      bg: "bg-blue-50", 
+      color: "text-[#14532D]", 
+      bg: "bg-[#14532D]/10", 
       trend: "Live", 
       trendValue: "+1.6%",
       positive: true 
@@ -87,8 +84,8 @@ const AdminDashboard: React.FC = () => {
       label: "Today's Flow", 
       value: stats ? (stats.todayCheckIns + stats.todayCheckOuts).toString() : "0", 
       icon: Activity, 
-      color: "text-rose-600", 
-      bg: "bg-rose-50", 
+      color: "text-[#F59E0B]", 
+      bg: "bg-[#F59E0B]/10", 
       trend: `${stats?.todayCheckIns || 0} In / ${stats?.todayCheckOuts || 0} Out`, 
       trendValue: "+0.6%",
       positive: true 
@@ -108,31 +105,6 @@ const AdminDashboard: React.FC = () => {
           <p className="text-[11px] font-bold text-neutral-text-secondary uppercase tracking-[0.2em] mt-1">
             Command Center Overview
           </p>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-text-secondary w-4 h-4" />
-            <input 
-              type="text"
-              placeholder="Search places..."
-              className="pl-10 pr-4 py-2.5 bg-white border border-neutral-border/30 rounded-xl text-[12px] font-medium outline-none focus:border-primary-green/50 w-64 transition-all"
-            />
-          </div>
-          
-          <button className="w-10 h-10 rounded-xl bg-white border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-green hover:border-primary-green/30 transition-all relative">
-            <Bell size={18} />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-primary-gold rounded-full" />
-          </button>
-          
-          <div className="flex items-center gap-3 px-4 py-2 bg-white border border-neutral-border/30 rounded-xl">
-            <div className="w-8 h-8 rounded-full bg-primary-green/10 flex items-center justify-center">
-              <User size={16} className="text-primary-green" />
-            </div>
-            <div className="hidden sm:block">
-              <p className="text-[12px] font-bold text-primary-dark">Admin User</p>
-            </div>
-          </div>
         </div>
       </div>
 

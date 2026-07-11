@@ -61,4 +61,9 @@ export const authService = {
     const response = await api.post('/admin/auth/avatar', formData);
     return response;
   },
+
+  adminChangePassword: async (data: any) => {
+    const response = await api.post('/admin/auth/change-password', data);
+    return response;
+  },
 };

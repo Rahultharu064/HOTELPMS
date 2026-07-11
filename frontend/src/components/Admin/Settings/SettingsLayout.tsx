@@ -82,9 +82,9 @@ export function SettingsLayout({ userRole, onLogout }: SettingsLayoutProps) {
 
     try {
       setLoading(true);
-      const response = await authService.resetPassword({
-        email: profileData.email,
-        otp: passwordData.currentPassword, // Using current password as OTP for this flow
+      const changeMethod = userRole === "admin" ? authService.adminChangePassword : authService.resetPassword;
+      const response = await changeMethod({
+        currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword,
       });
 

@@ -74,7 +74,7 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-[40] transition-all duration-300 px-6 h-20 flex items-center justify-between bg-white/80 backdrop-blur-md border-b border-neutral-border/30 shadow-sm">
+    <header className="sticky top-0 z-[40] transition-all duration-300 px-5 h-16 flex items-center justify-between bg-white/80 backdrop-blur-md border-b border-neutral-border/30 shadow-sm">
       <MobileMenuButton onClick={onMobileMenuClick} />
       
       <Input 
@@ -86,13 +86,13 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
       />
 
       {/* Left Section - Breadcrumbs */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 ml-4">
         {breadcrumbs.map((crumb, index) => (
           <div key={crumb.path} className="flex items-center">
-            {index > 0 && <span className="text-neutral-text-secondary text-sm mx-2">/</span>}
+            {index > 0 && <span className="text-neutral-text-secondary text-xs mx-2">/</span>}
             <Link 
               to={crumb.path}
-              className={`text-sm font-medium ${
+              className={`text-xs font-medium ${
                 index === breadcrumbs.length - 1 
                   ? "text-primary-dark font-bold" 
                   : "text-neutral-text-secondary hover:text-primary-dark"
@@ -104,45 +104,45 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
         ))}
       </div>
 
-      {/* left-center Section - Search */}
-      <div className="flex-1 max-w-md mx-8">
+      {/* Center Section - Search */}
+      <div className="flex-1 max-w-sm mx-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-text-secondary w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-text-secondary w-3.5 h-3.5" />
           <input
             type="text"
-            placeholder="Search anything..."
-            className="w-full pl-10 pr-4 py-2.5 bg-neutral-light/50 border border-neutral-border/30 rounded-xl text-sm font-medium text-primary-dark placeholder:text-neutral-text-secondary outline-none focus:border-primary-green/50 focus:bg-white transition-all"
+            placeholder="Search..."
+            className="w-full pl-9 pr-3 py-2 bg-neutral-light/50 border border-neutral-border/30 rounded-lg text-xs font-medium text-primary-dark placeholder:text-neutral-text-secondary outline-none focus:border-[#14532D]/50 focus:bg-white transition-all"
           />
         </div>
       </div>
 
       {/* Right Section - Date, Icons, Profile */}
-      <div className="flex items-center gap-4 ml-auto">
+      <div className="flex items-center gap-3 ml-auto">
         {/* Date */}
-        <div className="hidden md:block text-sm font-medium text-neutral-text-secondary">
+        <div className="hidden md:block text-xs font-medium text-neutral-text-secondary">
           {currentDate}
         </div>
 
         {/* Dark Mode Toggle */}
-        <button className="w-10 h-10 rounded-xl border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-dark hover:border-primary-green/30 transition-all">
-          <Moon size={18} />
+        <button className="w-8 h-8 rounded-lg border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-dark hover:border-[#14532D]/30 transition-all">
+          <Moon size={16} />
         </button>
 
         {/* Notifications */}
-        <button className="w-10 h-10 rounded-xl border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-dark hover:border-primary-green/30 transition-all relative">
-          <Bell size={18} />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
+        <button className="w-8 h-8 rounded-lg border border-neutral-border/30 flex items-center justify-center text-neutral-text-secondary hover:text-primary-dark hover:border-[#14532D]/30 transition-all relative">
+          <Bell size={16} />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#F59E0B] rounded-full" />
         </button>
 
         {/* User Profile */}
         <div className="relative">
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center gap-3 px-3 py-2 rounded-xl border border-neutral-border/30 hover:border-primary-green/30 transition-all"
+            className="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-neutral-border/30 hover:border-[#14532D]/30 transition-all"
           >
-            <div className="w-10 h-10 rounded-full bg-primary-green/10 flex items-center justify-center overflow-hidden">
+            <div className="w-8 h-8 rounded-full bg-[#14532D]/10 flex items-center justify-center overflow-hidden">
               {uploading ? (
-                <Loader2 size={16} className="animate-spin text-primary-green" />
+                <Loader2 size={14} className="animate-spin text-[#14532D]" />
               ) : admin?.avatar ? (
                 <img 
                   src={getImageUrl(admin.avatar)} 
@@ -150,20 +150,19 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User size={18} className="text-primary-green" />
+                <User size={16} className="text-[#14532D]" />
               )}
             </div>
             <div className="hidden sm:block text-left">
-              <p className="text-sm font-bold text-primary-dark">{admin?.name || 'Administrator'}</p>
-              <p className="text-xs text-neutral-text-secondary">{admin?.email || 'admin@itahari-namuna.edu.np'}</p>
+              <p className="text-xs font-bold text-primary-dark">{admin?.name || 'Admin'}</p>
             </div>
           </button>
 
           {profileOpen && (
-            <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-neutral-border/30 overflow-hidden z-[60]">
-              <div className="p-4 border-b border-neutral-border/10">
+            <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-neutral-border/30 overflow-hidden z-[60]">
+              <div className="p-3 border-b border-neutral-border/10">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary-green/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-[#14532D]/10 flex items-center justify-center">
                     {admin?.avatar ? (
                       <img 
                         src={getImageUrl(admin.avatar)} 
@@ -171,29 +170,29 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
                         className="w-full h-full object-cover rounded-full"
                       />
                     ) : (
-                      <User size={24} className="text-primary-green" />
+                      <User size={20} className="text-[#14532D]" />
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-primary-dark">{admin?.name || 'Administrator'}</p>
-                    <p className="text-xs text-neutral-text-secondary">{admin?.email || 'admin@itahari-namuna.edu.np'}</p>
+                    <p className="text-xs font-bold text-primary-dark">{admin?.name || 'Administrator'}</p>
+                    <p className="text-[10px] text-neutral-text-secondary">{admin?.email || 'admin@itahari-namuna.edu.np'}</p>
                   </div>
                 </div>
               </div>
               <div className="p-2">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-neutral-text-secondary hover:text-primary-dark hover:bg-neutral-light/50 rounded-lg transition-all"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-neutral-text-secondary hover:text-primary-dark hover:bg-neutral-light/50 rounded-lg transition-all"
                 >
-                  <Camera size={16} />
+                  <Camera size={14} />
                   Change Avatar
                 </button>
                 <div className="h-px bg-neutral-border/10 my-2 mx-2" />
                 <button 
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition-all"
                 >
-                  <BoxArrowRight size={16} />
+                  <BoxArrowRight size={14} />
                   Logout
                 </button>
               </div>

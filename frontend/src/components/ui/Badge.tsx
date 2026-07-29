@@ -1,6 +1,6 @@
 import React from 'react';
 
-type BadgeVariant =
+export type BadgeVariant =
   | 'default'
   | 'success'
   | 'warning'

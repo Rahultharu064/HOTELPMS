@@ -14,7 +14,7 @@ export function AdminLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen w-full bg-[#FAFAF8] font-sans selection:bg-primary-green/10 selection:text-primary-dark">
+    <div className="flex min-h-screen w-full bg-neutral-light font-sans selection:bg-primary-green/10 selection:text-primary-dark">
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}

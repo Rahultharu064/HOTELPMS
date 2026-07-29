@@ -14,9 +14,11 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { bookingService } from '../../services/bookingService';
-import type { Booking } from '../../services/bookingService';
+import type { Booking, BookingStatus } from '../../services/bookingService';
 import { toast } from 'react-hot-toast';
 import { AdminTableSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
+import { Badge } from '../../components/ui/Badge';
+import type { BadgeVariant } from '../../components/ui/Badge';
 
 import { useState, useEffect } from 'react';
 export default function AdminBookingsPage() {
@@ -35,7 +37,7 @@ export default function AdminBookingsPage() {
       if (res.success) {
         setBookings(res.data.bookings);
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch bookings');
     } finally {
       setLoading(false);
@@ -46,23 +48,20 @@ export default function AdminBookingsPage() {
     fetchBookings();
   }, [searchQuery, statusFilter]);
 
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
-      case 'pending': return 'bg-amber-50 text-amber-600 border-amber-100';
-      case 'checked_in': return 'bg-blue-50 text-blue-600 border-blue-100';
-      case 'checked_out': return 'bg-slate-50 text-slate-600 border-slate-100';
-      case 'cancelled': return 'bg-rose-50 text-rose-600 border-rose-100';
-      default: return 'bg-gray-50 text-gray-600 border-gray-100';
-    }
+  const statusVariant: Record<BookingStatus, BadgeVariant> = {
+    confirmed: 'success',
+    pending: 'warning',
+    checked_in: 'info',
+    checked_out: 'default',
+    cancelled: 'danger',
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: BookingStatus) => {
     switch (status) {
-      case 'confirmed': return <CheckCircle2 size={14} />;
-      case 'pending': return <Clock size={14} />;
-      case 'cancelled': return <XCircle size={14} />;
-      default: return <Hotel size={14} />;
+      case 'confirmed': return <CheckCircle2 size={10} />;
+      case 'pending': return <Clock size={10} />;
+      case 'cancelled': return <XCircle size={10} />;
+      default: return <Hotel size={10} />;
     }
   };
 
@@ -70,15 +69,15 @@ export default function AdminBookingsPage() {
     <div className="space-y-10 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
-            <div className="w-2 h-8 bg-[#14532D] rounded-full" />
-            Reservation Ledger
+          <h1 className="text-3xl font-black text-foreground tracking-tight uppercase flex items-center gap-4">
+            <div className="w-2 h-8 bg-primary-dark rounded-full" />
+            Bookings
           </h1>
-          <p className="text-[11px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] mt-2 ml-6">Global booking management & operational flow</p>
+          <p className="text-[11px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] mt-2 ml-6">Manage reservations and booking status</p>
         </div>
         <div className="flex items-center gap-3">
           <button className="h-14 px-6 bg-white border border-neutral-border/50 rounded-2xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:bg-neutral-light transition-all shadow-sm">
-            <Download size={16} /> Export Audit
+            <Download size={16} /> Export
           </button>
         </div>
       </div>
@@ -99,7 +98,7 @@ export default function AdminBookingsPage() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="h-16 px-8 bg-white border border-neutral-border/50 rounded-3xl text-[11px] font-black uppercase tracking-widest text-primary-dark focus:outline-none focus:ring-4 focus:ring-primary-green/5 shadow-sm appearance-none min-w-[200px] cursor-pointer"
-            title="Filter by Occupation Status"
+            title="Filter by booking status"
           >
             <option value="all">All Statuses</option>
             <option value="pending">Pending</option>
@@ -108,7 +107,7 @@ export default function AdminBookingsPage() {
             <option value="checked_out">Checked Out</option>
             <option value="cancelled">Cancelled</option>
           </select>
-          <button title="Apply Fine Filters" className="h-16 w-16 bg-primary-dark text-white rounded-3xl flex items-center justify-center hover:bg-primary-green transition-all shadow-xl shadow-primary-dark/10">
+          <button title="More filters" className="h-16 w-16 bg-primary-dark text-white rounded-3xl flex items-center justify-center hover:bg-primary-green transition-all shadow-xl shadow-primary-dark/10">
             <Filter size={20} />
           </button>
         </div>
@@ -123,11 +122,11 @@ export default function AdminBookingsPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-neutral-light/50">
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Identifier</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Patron</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Occupancy Details</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Valuation</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Operational Status</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Booking</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Guest</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Stay Details</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Amount</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Status</th>
                   <th className="px-10 py-8"></th>
                 </tr>
               </thead>
@@ -149,11 +148,11 @@ export default function AdminBookingsPage() {
                     <td className="px-10 py-8">
                       <div className="flex items-center gap-4">
                         <div className="h-10 w-10 rounded-xl bg-primary-green/10 text-primary-green flex items-center justify-center font-black text-xs">
-                          {(booking as any).guest?.firstName?.[0]}{(booking as any).guest?.lastName?.[0]}
+                          {booking.guest?.firstName?.[0]}{booking.guest?.lastName?.[0]}
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-[13px] font-black text-primary-dark">{(booking as any).guest?.firstName} {(booking as any).guest?.lastName}</span>
-                          <span className="text-[11px] font-medium text-neutral-text-secondary">{(booking as any).guest?.email}</span>
+                          <span className="text-[13px] font-black text-primary-dark">{booking.guest?.firstName} {booking.guest?.lastName}</span>
+                          <span className="text-[11px] font-medium text-neutral-text-secondary">{booking.guest?.email}</span>
                         </div>
                       </div>
                     </td>
@@ -171,7 +170,7 @@ export default function AdminBookingsPage() {
                               <Users size={10} /> {booking.adults + booking.children}
                             </span>
                             <span className="flex items-center gap-1 text-[10px] font-bold text-neutral-text-secondary bg-neutral-light px-2 py-0.5 rounded-md">
-                              <Hash size={10} /> Room {(booking as any).room?.roomNumber}
+                              <Hash size={10} /> Room {booking.room?.roomNumber}
                             </span>
                           </div>
                         </div>
@@ -181,13 +180,12 @@ export default function AdminBookingsPage() {
                       <span className="text-[15px] font-black text-primary-dark tracking-tight">Rs. {Number(booking.totalAmount).toLocaleString()}</span>
                     </td>
                     <td className="px-10 py-8">
-                      <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border ${getStatusStyle(booking.status)}`}>
-                        {getStatusIcon(booking.status)}
+                      <Badge variant={statusVariant[booking.status]} icon={getStatusIcon(booking.status)}>
                         {booking.status.replace('_', ' ')}
-                      </span>
+                      </Badge>
                     </td>
                     <td className="px-10 py-8 text-right">
-                      <button title="Administrative Actions" className="p-3 rounded-xl hover:bg-white text-neutral-text-secondary hover:text-primary-dark hover:shadow-sm transition-all border border-transparent hover:border-neutral-border/30">
+                      <button title="Booking actions" className="p-3 rounded-xl hover:bg-white text-neutral-text-secondary hover:text-primary-dark hover:shadow-sm transition-all border border-transparent hover:border-neutral-border/30">
                         <MoreVertical size={20} />
                       </button>
                     </td>
@@ -202,8 +200,8 @@ export default function AdminBookingsPage() {
               <Calendar size={48} />
             </div>
             <div className="text-center">
-              <p className="text-[11px] font-black uppercase tracking-[0.3em] text-neutral-text-secondary">Zero Transactions Found</p>
-              <p className="text-sm font-bold text-neutral-text-secondary/60 mt-2">Adjust your filters or verify incoming signals</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.3em] text-neutral-text-secondary">No bookings found</p>
+              <p className="text-sm font-bold text-neutral-text-secondary/60 mt-2">Try adjusting your search or filters</p>
             </div>
           </div>
         )}

@@ -7,6 +7,7 @@
   --color-primary-dark: #14532D;
   --color-primary-gold: #F59E0B;
   --color-primary-orange: #F97316;
+  --color-error-red: #DC2626;
   --color-primary: var(--primary-green);
   --color-background: #ffffff;
   --color-foreground: #111827;

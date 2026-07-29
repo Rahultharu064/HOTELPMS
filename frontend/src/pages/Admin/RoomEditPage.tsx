@@ -10,6 +10,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { roomService } from '../../services/roomService';
+import type { Room, RoomStatus } from '../../services/roomService';
 import { roomTypeService } from '../../services/roomTypeService';
 import type { RoomType } from '../../services/roomTypeService';
 import { Button } from '../../components/ui/Button';
@@ -21,6 +22,19 @@ import { getImageUrl } from '../../services/api';
 import { AdminDetailPageSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
 
 
+type RoomEditForm = {
+  name: string;
+  roomTypeId: string | number;
+  roomNumber: string;
+  floor: string | number;
+  basePrice: string | number;
+  size: string | number;
+  capacity: string | number;
+  description: string;
+  status: RoomStatus;
+  newAmenity: string;
+};
+
 export default function RoomEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -28,7 +42,7 @@ export default function RoomEditPage() {
   const [saving, setSaving] = useState(false);
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [amenities, setAmenities] = useState<string[]>([]);
-  const [form, setForm] = useState<any>({
+  const [form, setForm] = useState<RoomEditForm>({
     name: '',
     roomTypeId: '',
     roomNumber: '',
@@ -41,7 +55,7 @@ export default function RoomEditPage() {
     newAmenity: ''
   });
 
-  const [existingImages, setExistingImages] = useState<any[]>([]);
+  const [existingImages, setExistingImages] = useState<NonNullable<Room['images']>>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
   const imgInputRef = useRef<HTMLInputElement>(null);
 
@@ -61,9 +75,9 @@ export default function RoomEditPage() {
             name: room.name,
             roomTypeId: room.roomTypeId,
             roomNumber: room.roomNumber,
-            floor: room.floor,
+            floor: room.floor ?? '',
             basePrice: room.basePrice,
-            size: room.size,
+            size: room.size ?? '',
             capacity: room.capacity,
             description: room.description || '',
             status: room.status,
@@ -72,7 +86,7 @@ export default function RoomEditPage() {
           setAmenities(room.amenities?.map(a => a.name) || []);
           setExistingImages(room.images || []);
         }
-      } catch (error) {
+      } catch {
         toast.error('Failed to load room details');
         navigate('/admin/rooms');
       } finally {
@@ -84,7 +98,7 @@ export default function RoomEditPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm((prev: any) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const addAmenity = () => {
@@ -92,7 +106,7 @@ export default function RoomEditPage() {
     if (!v) return;
     if (amenities.includes(v)) return toast.error('Already added');
     setAmenities((prev: string[]) => [...prev, v]);
-    setForm((prev: any) => ({ ...prev, newAmenity: '' }));
+    setForm((prev) => ({ ...prev, newAmenity: '' }));
   };
 
   const removeAmenity = (a: string) => setAmenities((prev: string[]) => prev.filter(x => x !== a));
@@ -107,8 +121,8 @@ export default function RoomEditPage() {
     setSaving(true);
     try {
       const formData = new FormData();
-      Object.keys(form).forEach(key => {
-        if (key !== 'newAmenity') formData.append(key, form[key]);
+      (Object.entries(form) as [keyof RoomEditForm, string | number][]).forEach(([key, value]) => {
+        if (key !== 'newAmenity') formData.append(key, String(value));
       });
       formData.append('amenities', JSON.stringify(amenities));
       newImages.forEach(img => formData.append('images', img));
@@ -118,7 +132,7 @@ export default function RoomEditPage() {
         toast.success('Room updated successfully');
         navigate('/admin/rooms');
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to update room');
     } finally {
       setSaving(false);
@@ -139,11 +153,11 @@ export default function RoomEditPage() {
           <ArrowLeft size={20} />
         </Button>
         <div>
-          <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
-            <div className="w-2 h-8 bg-[#F59E0B] rounded-full" />
-            Edit Room Node
+          <h1 className="text-3xl font-black text-foreground tracking-tight uppercase flex items-center gap-4">
+            <div className="w-2 h-8 bg-primary-gold rounded-full" />
+            Edit Room
           </h1>
-          <p className="text-gray-400 text-[11px] font-black uppercase tracking-widest mt-1 ml-6">Modifying Inventory Record: {form.roomNumber}</p>
+          <p className="text-gray-400 text-[11px] font-black uppercase tracking-widest mt-1 ml-6">Room {form.roomNumber}</p>
         </div>
       </div>
 
@@ -162,7 +176,7 @@ export default function RoomEditPage() {
   value={form.roomTypeId}
   onChange={handleChange}
   options={roomTypes.map(rt => ({ label: rt.name, value: rt.id.toString() }))}
-  className="w-full h-12 bg-gray-50 border-none rounded-2xl font-bold px-4 focus:ring-2 focus:ring-[#14532D]/20 outline-none"
+  className="w-full h-12 bg-gray-50 border-none rounded-2xl font-bold px-4 focus:ring-2 focus:ring-primary-dark/20 outline-none"
 />
               </div>
               <div className="space-y-2">
@@ -177,13 +191,13 @@ export default function RoomEditPage() {
 
             <div className="space-y-2">
                <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 ml-1">Description</label>
-                <Textarea name="description" value={form.description} onChange={handleChange} rows={4} className="w-full p-6 bg-gray-50 border-none rounded-[32px] font-medium text-sm focus:ring-2 focus:ring-[#14532D]/20 outline-none resize-none" />
+                <Textarea name="description" value={form.description} onChange={handleChange} rows={4} className="w-full p-6 bg-gray-50 border-none rounded-[32px] font-medium text-sm focus:ring-2 focus:ring-primary-dark/20 outline-none resize-none" />
             </div>
           </Card>
 
           <Card className="p-10 rounded-[40px] border-none shadow-soft bg-white space-y-6">
              <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-               <ImageIcon size={18} className="text-primary-green" /> Media Inventory
+               <ImageIcon size={18} className="text-primary-green" /> Photos
              </h3>
              <div className="grid grid-cols-4 gap-4">
                 {existingImages.map(img => (
@@ -197,9 +211,9 @@ export default function RoomEditPage() {
                 <Button 
                   type="button"
                   onClick={() => imgInputRef.current?.click()}
-                  className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-[#14532D] hover:bg-gray-50 transition-all group"
+                  className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-primary-dark hover:bg-gray-50 transition-all group"
                 >
-                  <Plus size={24} className="text-gray-300 group-hover:text-[#14532D]" />
+                  <Plus size={24} className="text-gray-300 group-hover:text-primary-dark" />
                   <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Add More</span>
                 </Button>
                 <Input ref={imgInputRef} type="file" multiple className="hidden" onChange={handleImages} />
@@ -210,10 +224,11 @@ export default function RoomEditPage() {
         <div className="space-y-10">
           <Card className="p-8 rounded-[40px] border-none shadow-soft bg-white space-y-6">
              <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 ml-1">Room Status</label>
-             <Select name="status" value={form.status} onChange={handleChange} className="w-full h-12 bg-gray-50 border-none rounded-2xl font-bold px-4 appearance-none focus:ring-2 focus:ring-[#14532D]/20 outline-none">
-                <option value="available">🟢 Available</option>
-                <option value="occupied">🔴 Occupied</option>
-                <option value="maintenance">🟡 Maintenance</option>
+             <Select name="status" value={form.status} onChange={handleChange} className="w-full h-12 bg-gray-50 border-none rounded-2xl font-bold px-4 appearance-none focus:ring-2 focus:ring-primary-dark/20 outline-none">
+                <option value="available">Available</option>
+                <option value="occupied">Occupied</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="out_of_service">Out of Service</option>
              </Select>
           </Card>
 
@@ -221,11 +236,11 @@ export default function RoomEditPage() {
              <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 ml-1">Amenities</label>
              <div className="flex gap-2">
                 <Input name="newAmenity" value={form.newAmenity} onChange={handleChange} placeholder="e.g. WiFi" className="h-10 bg-gray-50 border-none rounded-xl font-bold" />
-                <Button type="button" onClick={addAmenity} className="bg-[#111827] text-white rounded-xl h-10 px-4">Add</Button>
+                <Button type="button" onClick={addAmenity} className="bg-foreground text-white rounded-xl h-10 px-4">Add</Button>
              </div>
              <div className="flex flex-wrap gap-2">
                 {amenities.map(a => (
-                  <span key={a} className="px-3 py-1 bg-[#14532D]/5 text-[#14532D] text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-2 border border-[#14532D]/10">
+                  <span key={a} className="px-3 py-1 bg-primary-dark/5 text-primary-dark text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-2 border border-primary-dark/10">
                     {a} <Button type="button" onClick={() => removeAmenity(a)}><X size={10} /></Button>
                   </span>
                 ))}
@@ -233,12 +248,12 @@ export default function RoomEditPage() {
           </Card>
 
           <div className="space-y-4">
-             <Button type="submit" disabled={saving} className="w-full h-16 bg-[#14532D] text-white rounded-[24px] font-black uppercase tracking-widest text-[12px] shadow-xl shadow-[#14532D]/20 flex items-center justify-center gap-3">
+             <Button type="submit" disabled={saving} className="w-full h-16 bg-primary-dark text-white rounded-[24px] font-black uppercase tracking-widest text-[12px] shadow-xl shadow-primary-dark/20 flex items-center justify-center gap-3">
                {saving ? <Loader2 className="animate-spin" /> : <Save size={20} />}
-               Commit Changes
+               Save Changes
              </Button>
              <Button type="button" onClick={() => navigate('/admin/rooms')} className="w-full h-16 bg-white border border-gray-100 text-gray-400 rounded-[24px] font-black uppercase tracking-widest text-[11px] hover:bg-gray-50 transition-all">
-               Discard Edits
+               Cancel
              </Button>
           </div>
         </div>

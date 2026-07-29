@@ -1,8 +1,19 @@
 import { api } from './api';
 import type { ApiResponse } from './api';
+import type { Guest } from './guestService';
+import type { Room } from './roomService';
 
 export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'checked_out' | 'cancelled';
 export type PaymentMethod = 'cash' | 'esewa' | 'khalti';
+
+export type BookingStatistics = {
+  totalBookings: number;
+  pendingBookings: number;
+  activeStays: number;
+  todayCheckIns: number;
+  todayCheckOuts: number;
+  totalRevenue: number;
+};
 
 export type Booking = {
   id: number;
@@ -18,6 +29,9 @@ export type Booking = {
   specialRequests?: string;
   createdAt: string;
   updatedAt: string;
+  /** Included by the backend on list/detail responses */
+  guest?: Guest;
+  room?: Room;
 };
 
 export type BookingCreateData = {
@@ -66,7 +80,7 @@ export const bookingService = {
     return api.patch<ApiResponse<Booking>>(`/bookings/${id}/status`, { status });
   },
 
-  async getStatistics(): Promise<ApiResponse<any>> {
-    return api.get<ApiResponse<any>>('/bookings/statistics');
+  async getStatistics(): Promise<ApiResponse<BookingStatistics>> {
+    return api.get<ApiResponse<BookingStatistics>>('/bookings/statistics');
   },
 };

@@ -1,8 +1,9 @@
 import { TrendingUp, CheckCircle2, Clock } from "lucide-react";
 import { AdminTableSkeleton } from "../../ui/skeletons/AdminSkeletons";
+import type { Booking } from "../../../services/bookingService";
 
 interface RecentBookingsTableProps {
-  bookings: any[];
+  bookings: Booking[];
   loading: boolean;
 }
 
@@ -12,7 +13,7 @@ export function RecentBookingsTable({ bookings, loading }: RecentBookingsTablePr
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-black text-primary-dark tracking-tight flex items-center gap-3">
-            <TrendingUp className="text-[#F59E0B]" size={20} /> Recent Bookings
+            <TrendingUp className="text-primary-gold" size={20} /> Recent Bookings
           </h2>
         </div>
         <AdminTableSkeleton rows={5} cols={4} />
@@ -24,9 +25,9 @@ export function RecentBookingsTable({ bookings, loading }: RecentBookingsTablePr
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-black text-primary-dark tracking-tight flex items-center gap-3">
-          <TrendingUp className="text-[#F59E0B]" size={20} /> Recent Bookings
+          <TrendingUp className="text-primary-gold" size={20} /> Recent Bookings
         </h2>
-        <button className="text-[11px] font-bold text-[#14532D] hover:text-primary-dark uppercase tracking-wider transition-colors">
+        <button className="text-[11px] font-bold text-primary-dark hover:text-primary-green uppercase tracking-wider transition-colors">
           See All
         </button>
       </div>
@@ -46,20 +47,20 @@ export function RecentBookingsTable({ bookings, loading }: RecentBookingsTablePr
                 <tr key={log.id} className="hover:bg-neutral-light/50 transition-all group cursor-pointer">
                   <td className="px-5 py-3">
                     <div className="flex flex-col">
-                      <span className="font-bold text-[11px] text-primary-dark">{(log as any).guest?.firstName} {(log as any).guest?.lastName}</span>
-                      <span className="text-[9px] font-medium text-neutral-text-secondary">{(log as any).guest?.email}</span>
+                      <span className="font-bold text-[11px] text-primary-dark">{log.guest?.firstName} {log.guest?.lastName}</span>
+                      <span className="text-[9px] font-medium text-neutral-text-secondary">{log.guest?.email}</span>
                     </div>
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex flex-col">
-                      <span className="font-bold text-[10px] text-neutral-text-secondary uppercase tracking-wider">{(log as any).room?.name}</span>
-                      <span className="text-[9px] font-bold text-[#14532D]">No. {(log as any).room?.roomNumber}</span>
+                      <span className="font-bold text-[10px] text-neutral-text-secondary uppercase tracking-wider">{log.room?.name}</span>
+                      <span className="text-[9px] font-bold text-primary-dark">No. {log.room?.roomNumber}</span>
                     </div>
                   </td>
                   <td className="px-5 py-3 text-[11px] font-bold tracking-tight text-primary-dark">Rs. {Number(log.totalAmount).toLocaleString()}</td>
                   <td className="px-5 py-3 text-right">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider ${
-                      log.status === 'confirmed' ? 'bg-[#14532D]/10 text-[#14532D]' : 'bg-[#F59E0B]/10 text-[#F59E0B]'
+                      log.status === 'confirmed' ? 'bg-primary-dark/10 text-primary-dark' : 'bg-primary-gold/10 text-primary-gold'
                     }`}>
                       {log.status === 'confirmed' ? <CheckCircle2 size={10} /> : <Clock size={10} />}
                       {log.status.replace('_', ' ')}

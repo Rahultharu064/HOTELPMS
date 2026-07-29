@@ -214,7 +214,7 @@ export const BookingsPage: React.FC = () => {
              if (paymentRes.success) {
                 const { method, paymentPayload } = paymentRes.data;
 
-                if (method === 'esewa') {
+                if (method === 'esewa' && paymentPayload) {
                    // Redirect to eSewa
                    toast.success("Redirecting to eSewa...", { id: 'payment-progress' });
                    
@@ -235,7 +235,7 @@ export const BookingsPage: React.FC = () => {
                     document.body.appendChild(form);
                     form.submit();
                     return; // Stop here as we are redirecting
-                } else if (method === 'khalti') {
+                } else if (method === 'khalti' && paymentPayload) {
                    toast.success("Redirecting to Khalti Secure Checkout...", { id: 'payment-progress' });
                    window.location.href = paymentPayload.url;
                    return;

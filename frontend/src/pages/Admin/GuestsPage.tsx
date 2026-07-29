@@ -18,14 +18,15 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { guestService } from '../../services/guestService';
+import type { Guest } from '../../services/guestService';
 import { toast } from 'react-hot-toast';
 import { AdminTableSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
 
 export default function AdminGuestsPage() {
-  const [guests, setGuests] = useState<any[]>([]);
+  const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedGuest, setSelectedGuest] = useState<any>(null);
+  const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
 
   const fetchGuests = async () => {
@@ -35,7 +36,7 @@ export default function AdminGuestsPage() {
       if (res.success) {
         setGuests(res.data.guests);
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch guests record');
     } finally {
       setLoading(false);
@@ -53,20 +54,20 @@ export default function AdminGuestsPage() {
     <div className="space-y-12 pb-24">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
-          <h1 className="text-3xl font-black text-primary-dark tracking-tight uppercase">Legacy Patron Register</h1>
-          <p className="text-[11px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] mt-2">Historical guest intelligence & relationship management</p>
+          <h1 className="text-3xl font-black text-primary-dark tracking-tight uppercase">Guests</h1>
+          <p className="text-[11px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] mt-2">Guest profiles and booking history</p>
         </div>
         <button className="h-14 px-8 bg-primary-dark text-white rounded-2xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest hover:bg-primary-green transition-all shadow-2xl shadow-primary-dark/10">
-           <Plus size={18} strokeWidth={3} /> Register New Patron
+           <Plus size={18} strokeWidth={3} /> Add Guest
         </button>
       </div>
 
-      {/* Analytics Overlays */}
+      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
          {[
-           { label: 'Total Registered', value: guests.length.toString(), icon: Users, color: 'text-amber-600', bg: 'bg-amber-50' },
-           { label: 'High-Value Patrons', value: guests.filter(g => Number(g.totalSpent) > 50000).length.toString(), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-           { label: 'Global Reach', value: new Set(guests.map(g => g.country)).size.toString() + ' Nations', icon: Globe, color: 'text-blue-600', bg: 'bg-blue-50' }
+           { label: 'Total Guests', value: guests.length.toString(), icon: Users, color: 'text-amber-600', bg: 'bg-amber-50' },
+           { label: 'Top Spenders', value: guests.filter(g => Number(g.totalSpent) > 50000).length.toString(), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+           { label: 'Countries', value: new Set(guests.map(g => g.country)).size.toString(), icon: Globe, color: 'text-blue-600', bg: 'bg-blue-50' }
          ].map((stat, i) => (
            <div key={i} className="p-8 bg-white border border-neutral-border/40 rounded-[40px] shadow-sm flex items-center justify-between group hover:border-primary-green/30 transition-all duration-500">
               <div className="flex flex-col gap-1">
@@ -84,19 +85,19 @@ export default function AdminGuestsPage() {
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1 relative group">
           <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-neutral-text-secondary group-focus-within:text-primary-green transition-colors" size={20} />
-          <input 
-            placeholder="Identify patron by name, digital mail, or contact signal..." 
+          <input
+            placeholder="Search guests by name, email, or phone..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-16 pr-6 h-16 bg-white border border-neutral-border/50 rounded-3xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green transition-all shadow-sm"
           />
         </div>
-        <button title="Apply Fine Filters" className="h-16 px-8 bg-white border border-neutral-border/50 rounded-3xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:bg-neutral-light transition-all shadow-sm">
-           <Filter size={20} /> Filter Catalog
+        <button title="More filters" className="h-16 px-8 bg-white border border-neutral-border/50 rounded-3xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:bg-neutral-light transition-all shadow-sm">
+           <Filter size={20} /> Filters
         </button>
       </div>
 
-      {/* Patron Table */}
+      {/* Guest Table */}
       <div className="bg-white rounded-[56px] border border-neutral-border/40 shadow-soft overflow-hidden">
         {loading ? (
           <AdminTableSkeleton rows={6} cols={6} bare />
@@ -105,11 +106,11 @@ export default function AdminGuestsPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-neutral-light/50">
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Identity Profile</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Verification</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Contact Channels</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Historical Frequency</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Contribution</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Guest</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">ID Verification</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Contact</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Bookings</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Total Spent</th>
                   <th className="px-10 py-8"></th>
                 </tr>
               </thead>
@@ -143,7 +144,7 @@ export default function AdminGuestsPage() {
                                  onClick={() => { setSelectedGuest(guest); setIsDocModalOpen(true); }}
                                  className="flex items-center gap-1.5 text-[9px] font-black text-primary-gold uppercase tracking-widest hover:underline"
                               >
-                                 <Eye size={10} /> View Credentials
+                                 <Eye size={10} /> View ID
                               </button>
                            </div>
                         ) : (
@@ -168,7 +169,7 @@ export default function AdminGuestsPage() {
                              <span className="text-[14px] font-black text-primary-dark flex items-center gap-1.5 leading-none">
                                 {guest.totalBookings || 0} <Hotel size={12} className="text-neutral-text-secondary" />
                              </span>
-                             <span className="text-[9px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] mt-1.5">Successful Stays</span>
+                             <span className="text-[9px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] mt-1.5">Stays</span>
                           </div>
                        </div>
                     </td>
@@ -179,7 +180,7 @@ export default function AdminGuestsPage() {
                        </div>
                     </td>
                     <td className="px-10 py-8 text-right">
-                       <button title="Patron Actions" className="p-3 rounded-xl hover:bg-white text-neutral-text-secondary hover:text-primary-dark transition-all border border-transparent hover:border-neutral-border/30">
+                       <button title="Guest actions" className="p-3 rounded-xl hover:bg-white text-neutral-text-secondary hover:text-primary-dark transition-all border border-transparent hover:border-neutral-border/30">
                           <MoreVertical size={20} />
                        </button>
                     </td>
@@ -194,8 +195,8 @@ export default function AdminGuestsPage() {
                 <Users size={48} />
              </div>
              <div className="text-center">
-                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-neutral-text-secondary">Patron Catalog Vacant</p>
-                <p className="text-sm font-bold text-neutral-text-secondary/60 mt-2">Global reconnaissance complete. No matching identities detected.</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-neutral-text-secondary">No guests found</p>
+                <p className="text-sm font-bold text-neutral-text-secondary/60 mt-2">Try adjusting your search</p>
              </div>
           </div>
         )}
@@ -227,34 +228,34 @@ export default function AdminGuestsPage() {
                            <p className="text-[10px] font-bold text-neutral-text-secondary uppercase tracking-widest">{selectedGuest.firstName} {selectedGuest.lastName} • {selectedGuest.idType?.replace('_', ' ')}: {selectedGuest.idNumber}</p>
                         </div>
                      </div>
-                     <button 
+                     <button
                         onClick={() => setIsDocModalOpen(false)}
-                        title="Close Verification View"
+                        title="Close"
                         className="h-10 w-10 rounded-xl bg-white border border-neutral-border/40 flex items-center justify-center text-neutral-text-secondary hover:text-red-500 transition-colors shadow-sm"
                      >
                         <X size={18} strokeWidth={3} />
                      </button>
                   </div>
                   <div className="p-10 flex items-center justify-center bg-white min-h-[400px]">
-                     <img 
-                        src={`/api/guests/${selectedGuest.id}/document`} 
-                        alt="Guest ID Proof" 
+                     <img
+                        src={`/api/guests/${selectedGuest.id}/document`}
+                        alt="Guest ID Proof"
                         onLoad={() => setImgLoaded(true)}
                         onError={(e) => {
-                           e.currentTarget.src = 'https://placehold.co/600x400?text=Decryption+Failed+or+Unauthorized';
+                           e.currentTarget.src = 'https://placehold.co/600x400?text=Document+Not+Available';
                         }}
-                        className={`max-h-[500px] w-auto rounded-2xl shadow-xl border border-neutral-border/20 transition-opacity duration-1000 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`} 
+                        className={`max-h-[500px] w-auto rounded-2xl shadow-xl border border-neutral-border/20 transition-opacity duration-1000 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
                      />
                   </div>
                   <div className="p-8 bg-neutral-light/20 border-t border-neutral-border/10 flex justify-between items-center">
                      <p className="text-[10px] font-bold text-neutral-text-secondary uppercase tracking-widest max-w-[300px]">
-                        This document is AES-256-GCM encrypted. Authorization is required for live delivery.
+                        This document is confidential and visible to authorized staff only.
                      </p>
-                     <button 
+                     <button
                         onClick={() => setIsDocModalOpen(false)}
-                        className="px-8 h-12 bg-primary-dark text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all shadow-lg"
+                        className="px-8 h-12 bg-primary-dark text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-green transition-all shadow-lg"
                      >
-                        Secure Close
+                        Close
                      </button>
                   </div>
                </motion.div>

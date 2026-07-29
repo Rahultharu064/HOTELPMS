@@ -58,32 +58,11 @@ import ExtraServicesPage from '../pages/Admin/ExtraServicesPage';
 import GalleryVenuesPage from '../pages/Admin/GalleryVenuesPage';
 import AdminUsersPage from '../pages/Admin/UsersPage';
 import RoomEditPage from '../pages/Admin/RoomEditPage';
+import FinancialsPage from '../pages/Admin/FinancialsPage';
+import AdminReportsPage from '../pages/Admin/ReportsPage';
 import { StaffResetPasswordPage } from '../pages/Admin/Auth/StaffResetPasswordPage';
 import { AdminAuthGuard } from '../components/auth/AdminAuthGuard';
 import { RoomDetailsPageSkeleton } from '../components/ui/skeletons/PageSkeletons';
-
-// Simple placeholder components for missing routes
-const FinancialsPage = () => (
-  <div className="py-20 text-center space-y-4">
-    <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto shadow-sm">
-      <CreditCard size={40} />
-    </div>
-    <h1 className="text-2xl font-black text-[#111827] uppercase tracking-tight">Financial Ledger</h1>
-    <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Financial records and auditing tools currently in development</p>
-  </div>
-);
-
-const AdminReportsPage = () => (
-  <div className="py-20 text-center space-y-4">
-    <div className="w-20 h-20 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center mx-auto shadow-sm">
-      <BarChart3 size={40} />
-    </div>
-    <h1 className="text-2xl font-black text-[#111827] uppercase tracking-tight">System Analytics</h1>
-    <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Reporting and performance tools currently in development</p>
-  </div>
-);
-
-import { CreditCard, BarChart3 } from 'lucide-react';
 
 const routes: RouteObject[] = [
   // Public Website

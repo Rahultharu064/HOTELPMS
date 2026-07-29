@@ -11,6 +11,12 @@ import { Card } from "../../components/ui/Card";
 import { getImageUrl } from "../../services/api";
 import { AdminCardGridSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 import { DeleteIconButton } from "../../components/ui/ActionIconButton";
+import { Badge } from "../../components/ui/Badge";
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof Error) return error.message;
+  return fallback;
+}
 
 export default function GalleryVenuesPage() {
   const [venues, setVenues] = useState<GalleryVenue[]>([]);
@@ -27,8 +33,8 @@ export default function GalleryVenuesPage() {
       if (response.success && response.data) {
         setVenues(response.data);
       }
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || error.message || "Failed to fetch gallery venues");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to fetch gallery venues"));
     } finally {
       setIsLoading(false);
     }
@@ -56,8 +62,8 @@ export default function GalleryVenuesPage() {
           handleCloseModal();
         }
       }
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || error.message || "Failed to save gallery venue");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to save gallery venue"));
     } finally {
       setIsSubmitting(false);
     }
@@ -71,8 +77,8 @@ export default function GalleryVenuesPage() {
         toast.success("Gallery venue deleted successfully");
         fetchVenues();
       }
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || error.message || "Failed to delete gallery venue");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to delete gallery venue"));
     }
   };
 
@@ -97,8 +103,8 @@ export default function GalleryVenuesPage() {
     <div className="flex flex-col gap-10 p-2 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
-          <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
-            <div className="w-2 h-8 bg-[#14532D] rounded-full" />
+          <h1 className="text-3xl font-black text-foreground tracking-tight uppercase flex items-center gap-4">
+            <div className="w-2 h-8 bg-primary-dark rounded-full" />
             Gallery &amp; Venues
           </h1>
           <p className="text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">
@@ -108,7 +114,7 @@ export default function GalleryVenuesPage() {
 
         <Button
           onClick={() => handleOpenModal()}
-          className="bg-[#14532D] hover:bg-[#111827] text-white px-8 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-[#14532D]/10 flex items-center gap-3"
+          className="bg-primary-dark hover:bg-foreground text-white px-8 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-primary-dark/10 flex items-center gap-3"
         >
           <Plus size={20} strokeWidth={3} /> Add Venue
         </Button>
@@ -124,7 +130,7 @@ export default function GalleryVenuesPage() {
             placeholder="Search venues..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 rounded-2xl border border-neutral-border/50 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#14532D]/20"
+            className="w-full h-12 pl-12 pr-4 rounded-2xl border border-neutral-border/50 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-dark/20"
           />
         </div>
       </Card>
@@ -156,26 +162,22 @@ export default function GalleryVenuesPage() {
                     </div>
                   )}
                   <div className="absolute left-4 top-4 flex gap-2">
-                    <span className="rounded-full bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#14532D]">
+                    <span className="rounded-full bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-primary-dark">
                       {venue.layout}
                     </span>
-                    <span
-                      className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
-                        venue.isActive ? "bg-primary-green text-white" : "bg-gray-500 text-white"
-                      }`}
-                    >
+                    <Badge variant={venue.isActive ? "success" : "default"}>
                       {venue.isActive ? "Active" : "Hidden"}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
 
                 <div className="p-6">
                   <div className="mb-3 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F59E0B]/15">
-                      <Icon size={18} className="text-[#F59E0B]" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-gold/15">
+                      <Icon size={18} className="text-primary-gold" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-black text-[#111827]">{venue.title}</h3>
+                      <h3 className="text-lg font-black text-foreground">{venue.title}</h3>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
                         Order: {venue.sortOrder}
                       </p>
@@ -186,7 +188,7 @@ export default function GalleryVenuesPage() {
                   <div className="flex gap-2">
                     <Button
                       onClick={() => handleOpenModal(venue)}
-                      className="flex-1 h-11 rounded-xl bg-[#14532D]/5 text-[#14532D] hover:bg-[#14532D] hover:text-white text-[10px] font-black uppercase tracking-widest"
+                      className="flex-1 h-11 rounded-xl bg-primary-dark/5 text-primary-dark hover:bg-primary-dark hover:text-white text-[10px] font-black uppercase tracking-widest"
                     >
                       <Edit2 size={14} className="mr-2" /> Edit
                     </Button>

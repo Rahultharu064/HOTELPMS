@@ -173,7 +173,7 @@ export function GalleryVenueForm({ initialData, onSubmit, onCancel, isLoading }:
         <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isLoading} className="bg-[#14532D] hover:bg-[#111827] text-white">
+        <Button type="submit" disabled={isLoading} className="bg-primary-dark hover:bg-foreground text-white">
           {isLoading ? "Saving..." : initialData ? "Update Venue" : "Create Venue"}
         </Button>
       </div>

@@ -238,6 +238,8 @@ export default function RoomEditPage() {
              <Select name="status" value={form.status} onChange={handleChange} className="w-full h-12 bg-gray-50 border-none rounded-2xl font-bold px-4 appearance-none focus:ring-2 focus:ring-primary-dark/20 outline-none">
                 <option value="available">Available</option>
                 <option value="occupied">Occupied</option>
+                <option value="cleaning">Cleaning</option>
+                <option value="reserved">Reserved</option>
                 <option value="maintenance">Maintenance</option>
                 <option value="out_of_service">Out of Service</option>
              </Select>

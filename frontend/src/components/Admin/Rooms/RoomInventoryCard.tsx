@@ -2,7 +2,7 @@ import { LayoutGrid, Users, BedDouble } from 'lucide-react';
 import { EditIconButton, DeleteIconButton } from '../../ui/ActionIconButton';
 import { Button } from '../../ui/Button';
 import { getImageUrl } from '../../../services/api';
-import type { Room } from '../../../services/roomService';
+import type { Room, RoomStatus } from '../../../services/roomService';
 
 interface RoomInventoryCardProps {
   room: Room;
@@ -10,6 +10,15 @@ interface RoomInventoryCardProps {
   onDelete: (id: number) => void;
   onViewDetails: (id: number) => void;
 }
+
+const STATUS_BADGE: Record<RoomStatus, string> = {
+  available: 'bg-primary-green text-white',
+  occupied: 'bg-primary-gold text-white',
+  cleaning: 'bg-blue-500 text-white',
+  reserved: 'bg-purple-500 text-white',
+  maintenance: 'bg-primary-orange text-white',
+  out_of_service: 'bg-red-500 text-white',
+};
 
 export function RoomInventoryCard({ room, onEdit, onDelete, onViewDetails }: RoomInventoryCardProps) {
   const primaryImage = room.images?.find(img => img.isPrimary)?.url || room.images?.[0]?.url;
@@ -30,12 +39,8 @@ export function RoomInventoryCard({ room, onEdit, onDelete, onViewDetails }: Roo
           </div>
         )}
         <div className="absolute top-4 left-4 flex gap-2">
-          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ${
-            room.status === 'available' ? 'bg-primary-green text-white' : 
-            room.status === 'occupied' ? 'bg-primary-gold text-white' : 
-            'bg-neutral-text-secondary text-white'
-          }`}>
-            {room.status}
+          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ${STATUS_BADGE[room.status]}`}>
+            {room.status.replace('_', ' ')}
           </span>
         </div>
         <div className="absolute bottom-4 right-4 flex gap-2 translate-y-12 group-hover:translate-y-0 transition-transform duration-300">

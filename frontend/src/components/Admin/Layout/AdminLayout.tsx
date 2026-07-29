@@ -22,27 +22,17 @@ export function AdminLayout() {
         onMobileClose={() => setMobileOpen(false)}
       />
 
-      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-500`}>
+      <div className="flex-1 flex flex-col min-w-0">
         <Header onMobileMenuClick={() => setMobileOpen(true)} />
 
-        <main className="flex-1 p-10 md:p-12 lg:p-14 relative overflow-x-hidden">
-          {/* Subtle background decorative blur (Premium feel) */}
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-green/5 rounded-full blur-[120px] pointer-events-none -mr-64 -mt-64" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary-gold/5 rounded-full blur-[120px] pointer-events-none -ml-64 -mb-64" />
-
-          <div className="relative z-10 max-w-7xl mx-auto h-full">
+        <main className="flex-1 p-6 md:p-8 lg:p-10">
+          <div className="max-w-7xl mx-auto h-full">
             <Outlet />
           </div>
         </main>
 
-        {/* Footer info for internal dash */}
-        <footer className="px-10 py-6 border-t border-neutral-border/40 flex items-center justify-between text-[10px] font-bold text-neutral-text-secondary uppercase tracking-widest bg-white/50 backdrop-blur-md">
-          <p>© 2026 Itahari Namuna College PMS — Administrative Core</p>
-          <div className="flex items-center gap-6">
-            <button className="hover:text-primary-green transition-colors">Core Engine: Stable</button>
-            <button className="hover:text-primary-green transition-colors">System Logs</button>
-            <button className="hover:text-primary-green transition-colors">Audit DB</button>
-          </div>
+        <footer className="px-6 lg:px-10 py-4 border-t border-neutral-border/50 text-[11px] font-medium text-neutral-text-secondary">
+          © {new Date().getFullYear()} Itahari Namuna Hotel — Property Management System
         </footer>
       </div>
     </div>

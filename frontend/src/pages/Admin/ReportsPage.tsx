@@ -12,6 +12,8 @@ import { AdminStatCardsSkeleton } from '../../components/ui/skeletons/AdminSkele
 const ROOM_STATUS_LABEL: Record<RoomStatus, string> = {
   available: 'Available',
   occupied: 'Occupied',
+  cleaning: 'Cleaning',
+  reserved: 'Reserved',
   maintenance: 'Maintenance',
   out_of_service: 'Out of Service',
 };
@@ -19,6 +21,8 @@ const ROOM_STATUS_LABEL: Record<RoomStatus, string> = {
 const ROOM_STATUS_COLOR: Record<RoomStatus, string> = {
   available: '#1F7A3A',
   occupied: '#F59E0B',
+  cleaning: '#3B82F6',
+  reserved: '#8B5CF6',
   maintenance: '#F97316',
   out_of_service: '#DC2626',
 };
@@ -29,6 +33,8 @@ export default function ReportsPage() {
   const [roomCounts, setRoomCounts] = useState<Record<RoomStatus, number>>({
     available: 0,
     occupied: 0,
+    cleaning: 0,
+    reserved: 0,
     maintenance: 0,
     out_of_service: 0,
   });
@@ -43,7 +49,7 @@ export default function ReportsPage() {
         ]);
         if (statsRes.success) setStats(statsRes.data);
         if (roomsRes.success) {
-          const counts: Record<RoomStatus, number> = { available: 0, occupied: 0, maintenance: 0, out_of_service: 0 };
+          const counts: Record<RoomStatus, number> = { available: 0, occupied: 0, cleaning: 0, reserved: 0, maintenance: 0, out_of_service: 0 };
           roomsRes.data.forEach((room) => {
             counts[room.status] = (counts[room.status] || 0) + 1;
           });

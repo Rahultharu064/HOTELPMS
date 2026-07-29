@@ -1,7 +1,7 @@
 import { api } from './api';
 import type { ApiResponse } from './api';
 
-export type RoomStatus = 'available' | 'occupied' | 'maintenance' | 'out_of_service';
+export type RoomStatus = 'available' | 'occupied' | 'maintenance' | 'cleaning' | 'reserved' | 'out_of_service';
 
 export type Room = {
   id: number;

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { useAdminAuth } from "../../context/AdminAuthContext";
 import { StatCard } from "../../components/Admin/Dashboard/StatCard";
 import { SystemControlHub } from "../../components/Admin/Dashboard/SystemControlHub";
 import { RecentBookingsTable } from "../../components/Admin/Dashboard/RecentBookingsTable";
-import { BarChart } from "../../components/ui/Chart";
+import { LineChart, DonutChart } from "../../components/ui/Chart";
 import { AdminDashboardSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 import { bookingService } from "../../services/bookingService";
 import type { Booking, BookingStatistics } from "../../services/bookingService";
@@ -12,33 +13,37 @@ import type { RoomStatus } from "../../services/roomService";
 import { toast } from "react-hot-toast";
 import {
   Users,
-  Building2,
   DollarSign,
   Calendar,
   TrendingUp,
-  Building,
-  Clock,
-  CheckCircle,
+  LogIn,
+  Building2,
 } from "lucide-react";
 
-const ROOM_STATUS_META: Record<RoomStatus, { label: string; dot: string }> = {
-  available: { label: "Available", dot: "bg-primary-green" },
-  occupied: { label: "Occupied", dot: "bg-primary-gold" },
-  maintenance: { label: "Maintenance", dot: "bg-primary-orange" },
-  out_of_service: { label: "Out of Service", dot: "bg-red-500" },
+const ROOM_STATUS_META: Record<RoomStatus, { label: string; color: string }> = {
+  available: { label: "Available", color: "#1F7A3A" },
+  occupied: { label: "Occupied", color: "#F59E0B" },
+  cleaning: { label: "Cleaning", color: "#3B82F6" },
+  reserved: { label: "Reserved", color: "#8B5CF6" },
+  maintenance: { label: "Maintenance", color: "#F97316" },
+  out_of_service: { label: "Out of Service", color: "#DC2626" },
 };
 
 export function DashboardPage() {
+  const { admin } = useAdminAuth();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<BookingStatistics | null>(null);
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
   const [roomCounts, setRoomCounts] = useState<Record<RoomStatus, number>>({
     available: 0,
     occupied: 0,
+    cleaning: 0,
+    reserved: 0,
     maintenance: 0,
     out_of_service: 0,
   });
   const [revenueByDay, setRevenueByDay] = useState<{ label: string; value: number }[]>([]);
+  const [todayRevenue, setTodayRevenue] = useState(0);
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -55,7 +60,7 @@ export function DashboardPage() {
         if (bookingsRes.success) setRecentBookings(bookingsRes.data.bookings);
 
         if (roomsRes.success) {
-          const counts: Record<RoomStatus, number> = { available: 0, occupied: 0, maintenance: 0, out_of_service: 0 };
+          const counts: Record<RoomStatus, number> = { available: 0, occupied: 0, cleaning: 0, reserved: 0, maintenance: 0, out_of_service: 0 };
           roomsRes.data.forEach((room) => {
             counts[room.status] = (counts[room.status] || 0) + 1;
           });
@@ -63,18 +68,22 @@ export function DashboardPage() {
         }
 
         if (paymentsRes.success) {
+          const today = new Date().toDateString();
           const days: { key: string; label: string; value: number }[] = Array.from({ length: 7 }).map((_, i) => {
             const d = new Date();
             d.setHours(0, 0, 0, 0);
             d.setDate(d.getDate() - (6 - i));
             return { key: d.toDateString(), label: d.toLocaleDateString("en-US", { weekday: "short" }), value: 0 };
           });
+          let todaySum = 0;
           paymentsRes.data.payments.forEach((payment) => {
             const key = new Date(payment.createdAt).toDateString();
             const day = days.find((d) => d.key === key);
             if (day) day.value += Number(payment.amount);
+            if (key === today) todaySum += Number(payment.amount);
           });
           setRevenueByDay(days.map(({ label, value }) => ({ label, value })));
+          setTodayRevenue(todaySum);
         }
       } catch {
         toast.error("Failed to load dashboard data");
@@ -91,37 +100,33 @@ export function DashboardPage() {
 
   const totalRooms = Object.values(roomCounts).reduce((a, b) => a + b, 0);
   const occupancyRate = totalRooms > 0 ? Math.round((roomCounts.occupied / totalRooms) * 100) : 0;
+  const donutData = (Object.keys(roomCounts) as RoomStatus[])
+    .filter((status) => roomCounts[status] > 0)
+    .map((status) => ({ label: ROOM_STATUS_META[status].label, value: roomCounts[status], color: ROOM_STATUS_META[status].color }));
+
+  const firstName = admin?.name?.split(' ')[0];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-black text-primary-dark tracking-tight">Dashboard</h1>
-          <p className="text-sm font-medium text-neutral-text-secondary mt-2">
-            Hotel overview and activity
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="px-4 py-2 bg-primary-green/10 border border-primary-green/20 rounded-xl">
-            <p className="text-[10px] font-bold text-primary-green uppercase tracking-wider">Status</p>
-            <p className="text-xs font-bold text-primary-dark mt-0.5">Online</p>
-          </div>
-          <div className="px-4 py-2 bg-primary-gold/10 border border-primary-gold/20 rounded-xl">
-            <p className="text-[10px] font-bold text-primary-gold uppercase tracking-wider">Date</p>
-            <p className="text-xs font-bold text-primary-dark mt-0.5">{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
-          </div>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold text-primary-dark tracking-tight">
+          {firstName ? `Welcome back, ${firstName}` : "Dashboard"}
+        </h1>
+        <p className="text-sm text-neutral-text-secondary mt-1">
+          Here's what's happening at your property on {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+        </p>
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Total Bookings"
           value={String(stats?.totalBookings ?? 0)}
           icon={Calendar}
           color="text-primary-green"
           bg="bg-primary-green/10"
+          hint={`${stats?.pendingBookings ?? 0} awaiting confirmation`}
         />
         <StatCard
           label="Active Stays"
@@ -129,6 +134,7 @@ export function DashboardPage() {
           icon={Users}
           color="text-primary-gold"
           bg="bg-primary-gold/10"
+          hint={`${occupancyRate}% of rooms occupied`}
         />
         <StatCard
           label="Total Revenue"
@@ -136,107 +142,62 @@ export function DashboardPage() {
           icon={DollarSign}
           color="text-primary-orange"
           bg="bg-primary-orange/10"
+          hint={`Rs. ${todayRevenue.toLocaleString()} collected today`}
         />
         <StatCard
-          label="Pending Bookings"
-          value={String(stats?.pendingBookings ?? 0)}
-          icon={Building2}
+          label="Check-ins Today"
+          value={String(stats?.todayCheckIns ?? 0)}
+          icon={LogIn}
           color="text-blue-600"
           bg="bg-blue-600/10"
+          hint={`${stats?.todayCheckOuts ?? 0} checking out`}
         />
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column - Charts & Analytics */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Revenue Chart */}
-          <div className="bg-white p-6 rounded-2xl border border-neutral-border/30 shadow-sm">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-primary-green/10 flex items-center justify-center text-primary-green">
-                <TrendingUp size={20} strokeWidth={2.5} />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-primary-dark">Revenue</h3>
-                <p className="text-[10px] font-medium text-neutral-text-secondary">Last 7 days, completed payments</p>
-              </div>
+      {/* Analytics Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-neutral-border/60 shadow-sm">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-9 h-9 rounded-xl bg-primary-green/10 flex items-center justify-center text-primary-green">
+              <TrendingUp size={18} strokeWidth={2.25} />
             </div>
-            <BarChart data={revenueByDay} height={220} color="#1F7A3A" />
+            <div>
+              <h3 className="text-sm font-semibold text-primary-dark">Revenue trend</h3>
+              <p className="text-[11px] text-neutral-text-secondary">Last 7 days, completed payments</p>
+            </div>
           </div>
-
-          {/* Recent Bookings Table */}
-          <RecentBookingsTable bookings={recentBookings} loading={false} />
+          <LineChart data={revenueByDay} height={220} color="#1F7A3A" />
         </div>
 
-        {/* Right Column - System Controls & Quick Actions */}
-        <div className="space-y-8">
+        <div className="bg-white p-6 rounded-2xl border border-neutral-border/60 shadow-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-9 h-9 rounded-xl bg-primary-gold/10 flex items-center justify-center text-primary-gold">
+              <Building2 size={18} strokeWidth={2.25} />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-primary-dark">Room occupancy</h3>
+              <p className="text-[11px] text-neutral-text-secondary">{totalRooms} rooms total</p>
+            </div>
+          </div>
+          {donutData.length > 0 ? (
+            <DonutChart
+              data={donutData}
+              size={140}
+              label={<span className="text-xl font-bold text-primary-dark">{occupancyRate}%</span>}
+            />
+          ) : (
+            <p className="text-xs text-neutral-text-secondary text-center py-8">No rooms found</p>
+          )}
+        </div>
+      </div>
+
+      {/* Activity Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="lg:col-span-2">
+          <RecentBookingsTable bookings={recentBookings} loading={false} />
+        </div>
+        <div>
           <SystemControlHub />
-
-          {/* Room Status */}
-          <div className="bg-white p-6 rounded-2xl border border-neutral-border/30 shadow-sm">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-primary-green/10 flex items-center justify-center text-primary-green">
-                <Building2 size={20} strokeWidth={2.5} />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-primary-dark">Rooms</h3>
-                <p className="text-[10px] font-medium text-neutral-text-secondary">Current status</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {(Object.keys(ROOM_STATUS_META) as RoomStatus[]).map((status) => (
-                <div key={status} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${ROOM_STATUS_META[status].dot}`} />
-                    <span className="text-xs font-medium text-primary-dark">{ROOM_STATUS_META[status].label}</span>
-                  </div>
-                  <span className="text-xs font-bold text-primary-dark">{roomCounts[status]}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Progress Bar */}
-            <div className="mt-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-bold text-neutral-text-secondary">Occupancy Rate</span>
-                <span className="text-[10px] font-bold text-primary-green">{occupancyRate}%</span>
-              </div>
-              <div className="h-2 bg-neutral-light rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-primary-green to-primary-gold rounded-full" style={{ width: `${occupancyRate}%` }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Today at a Glance */}
-          <div className="bg-white p-6 rounded-2xl border border-neutral-border/30 shadow-sm">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-primary-gold/10 flex items-center justify-center text-primary-gold">
-                <Building size={20} strokeWidth={2.5} />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-primary-dark">Today</h3>
-                <p className="text-[10px] font-medium text-neutral-text-secondary">Check-in / check-out activity</p>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="p-3 bg-primary-green/10 border border-primary-green/20 rounded-xl flex items-start gap-3">
-                <CheckCircle size={14} className="text-primary-green flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                <div>
-                  <p className="text-[11px] font-bold text-primary-dark">Check-ins today</p>
-                  <p className="text-[9px] text-neutral-text-secondary mt-1">{stats?.todayCheckIns ?? 0} guests</p>
-                </div>
-              </div>
-              <div className="p-3 bg-primary-gold/10 border border-primary-gold/30 rounded-xl flex items-start gap-3">
-                <Clock size={14} className="text-primary-gold flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                <div>
-                  <p className="text-[11px] font-bold text-primary-dark">Check-outs today</p>
-                  <p className="text-[9px] text-neutral-text-secondary mt-1">{stats?.todayCheckOuts ?? 0} guests</p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

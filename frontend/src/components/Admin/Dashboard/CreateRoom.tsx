@@ -437,10 +437,12 @@ export default function CreateRoom({ onCancel, onSuccess }: { onCancel: () => vo
                     onChange={handleChange}
                     className="w-full mt-1 px-4 h-10 bg-white border-none rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-green font-bold text-xs shadow-soft transition-all"
                   >
-                    <option value="available">🟢 Available</option>
-                    <option value="occupied">🔴 Occupied</option>
-                    <option value="maintenance">🟡 Maintenance</option>
-                    <option value="out_of_service">⚪ Out of Service</option>
+                    <option value="available">Available</option>
+                    <option value="occupied">Occupied</option>
+                    <option value="cleaning">Cleaning</option>
+                    <option value="reserved">Reserved</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="out_of_service">Out of Service</option>
                   </Select>
                </div>
             </div>

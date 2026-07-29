@@ -33,6 +33,7 @@ const adminLoginSchema = zod_1.z.object({
 router.post('/login', loginLimiter, (0, validateMiddleware_1.validate)(adminLoginSchema), adminAuthController.login);
 // Protected routes
 router.get('/me', adminAuthMiddleware_1.authenticateAdmin, adminAuthController.getMe);
+router.put('/profile', adminAuthMiddleware_1.authenticateAdmin, adminAuthController.updateProfile);
 router.post('/change-password', adminAuthMiddleware_1.authenticateAdmin, adminAuthController.changePassword);
 router.post('/skip-password-change', adminAuthMiddleware_1.authenticateAdmin, adminAuthController.skipPasswordChange);
 router.post('/avatar', adminAuthMiddleware_1.authenticateAdmin, uploadMiddleware_1.upload.single('avatar'), adminAuthController.updateAvatar);

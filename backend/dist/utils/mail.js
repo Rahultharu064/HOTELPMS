@@ -1,68 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendStaffWelcomeEmail = exports.sendBookingConfirmationEmail = exports.sendResetPasswordEmail = exports.sendOTPEmail = exports.sendEmail = exports.verifyEmailConfig = exports.resetEmailTransporter = exports.getActiveEmailProvider = exports.isEmailConfigured = void 0;
+exports.sendGuestWelcomeEmail = exports.sendStaffWelcomeEmail = exports.sendBookingConfirmationEmail = exports.sendResetPasswordEmail = exports.sendOTPEmail = exports.sendEmail = exports.verifyEmailConfig = exports.resetEmailTransporter = exports.isEmailConfigured = void 0;
 const config_1 = require("../config");
 const smtpTransport_1 = require("./email/smtpTransport");
-const resendProvider_1 = require("./email/resendProvider");
 let smtpSession = null;
-let activeProvider = null;
-const isEmailConfigured = () => (0, resendProvider_1.isResendConfigured)() || Boolean(config_1.config.email.user && config_1.config.email.pass);
+const isEmailConfigured = () => Boolean(config_1.config.email.user && config_1.config.email.pass);
 exports.isEmailConfigured = isEmailConfigured;
-const getActiveEmailProvider = () => activeProvider;
-exports.getActiveEmailProvider = getActiveEmailProvider;
 const resetEmailTransporter = () => {
     smtpSession = null;
-    activeProvider = null;
 };
 exports.resetEmailTransporter = resetEmailTransporter;
 const initializeSmtp = async () => {
     if (smtpSession)
         return smtpSession;
     smtpSession = await (0, smtpTransport_1.createVerifiedSmtpTransporter)();
-    activeProvider = 'smtp';
     return smtpSession;
-};
-const renderEmailSetupHelp = () => {
-    console.error([
-        '❌ Email cannot start on Render with Gmail SMTP (ports 465/587 are blocked).',
-        'Add these in Render → Environment:',
-        '  RESEND_API_KEY=re_xxxxxxxx   (from https://resend.com/api-keys)',
-        '  EMAIL_PROVIDER=resend',
-        '  SMTP_FROM=onboarding@resend.dev   (or your verified domain in Resend)',
-    ].join('\n'));
 };
 /** Verify email delivery capability on server startup. */
 const verifyEmailConfig = async () => {
     if (!(0, exports.isEmailConfigured)()) {
-        console.warn('⚠️ Email service disabled: configure RESEND_API_KEY or SMTP in environment.');
-        return false;
-    }
-    // Render / production cloud: never touch SMTP (blocked → long timeout → crash)
-    if ((0, resendProvider_1.isSmtpBlockedHost)()) {
-        if (!(0, resendProvider_1.isResendConfigured)()) {
-            renderEmailSetupHelp();
-            return false;
-        }
-        const resendOk = await (0, resendProvider_1.verifyResendConfig)();
-        if (!resendOk) {
-            console.error('❌ Resend API key invalid. Create a key at https://resend.com/api-keys');
-            console.error('   Use "Sending access" permission. Paste into Render as RESEND_API_KEY (no quotes).');
-            return false;
-        }
-        activeProvider = 'resend';
-        console.log('✅ Email service ready (Resend HTTP API — required on Render)');
-        if ((config_1.config.email.from || '').includes('@gmail.com')) {
-            console.warn('⚠️ SMTP_FROM is Gmail — Resend will send from onboarding@resend.dev until you verify a domain.');
-        }
-        return true;
-    }
-    if ((0, resendProvider_1.shouldUseResend)()) {
-        activeProvider = 'resend';
-        console.log('✅ Email service ready (Resend HTTP API)');
-        return true;
-    }
-    if (!(0, resendProvider_1.canAttemptSmtp)()) {
-        console.warn('⚠️ No email transport configured.');
+        console.warn('⚠️ Email service disabled: configure SMTP_USER and SMTP_PASS in environment.');
         return false;
     }
     try {
@@ -72,27 +29,19 @@ const verifyEmailConfig = async () => {
     }
     catch (error) {
         console.error('❌ SMTP verification failed:', error);
-        if ((0, resendProvider_1.isResendConfigured)()) {
-            activeProvider = 'resend';
-            console.warn('⚠️ SMTP unavailable — using Resend HTTP API');
-            return true;
-        }
         return false;
     }
 };
 exports.verifyEmailConfig = verifyEmailConfig;
 const sendEmail = async (to, subject, html) => {
     if (!(0, exports.isEmailConfigured)()) {
-        console.error('[EmailError] Email not configured — set RESEND_API_KEY or SMTP');
+        console.error('[EmailError] Email not configured — set SMTP_USER and SMTP_PASS');
         return false;
-    }
-    if (activeProvider === 'resend' || (0, resendProvider_1.shouldUseResend)()) {
-        return (0, resendProvider_1.sendViaResend)(to, subject, html);
     }
     try {
         const session = smtpSession ?? (await initializeSmtp());
         const info = await session.transporter.sendMail({
-            from: `"Itahari Namuna Hotel" <${config_1.config.email.from}>`,
+            from: `"Itahari Namuna Hotel" <${config_1.config.email.from || config_1.config.email.user}>`,
             to,
             subject,
             html,
@@ -102,13 +51,6 @@ const sendEmail = async (to, subject, html) => {
     }
     catch (error) {
         console.error(`[EmailError] SMTP failed for ${to}:`, error);
-        if ((0, resendProvider_1.isResendConfigured)()) {
-            console.warn('[Email] Retrying via Resend HTTP API...');
-            const sent = await (0, resendProvider_1.sendViaResend)(to, subject, html);
-            if (sent)
-                activeProvider = 'resend';
-            return sent;
-        }
         return false;
     }
 };
@@ -254,4 +196,34 @@ const sendStaffWelcomeEmail = async (to, staffName, role, temporaryPassword) => 
     return (0, exports.sendEmail)(to, subject, html);
 };
 exports.sendStaffWelcomeEmail = sendStaffWelcomeEmail;
+const sendGuestWelcomeEmail = async (to, guestName) => {
+    const loginUrl = `${config_1.config.frontendUrl}/login`;
+    const subject = 'Welcome to Itahari Namuna Hotel';
+    const html = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; padding: 0; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background-color: #ffffff;">
+      <div style="background: linear-gradient(135deg, #14532D 0%, #1F7A3A 100%); padding: 40px 20px; text-align: center; color: white;">
+        <h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.025em;">Welcome!</h1>
+        <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 16px;">We are thrilled to have you here.</p>
+      </div>
+      
+      <div style="padding: 30px;">
+        <p style="font-size: 16px; color: #475569; margin-bottom: 24px;">Hello <strong>${guestName}</strong>,</p>
+        <p style="font-size: 16px; color: #475569; line-height: 1.6;">Thank you for registering at Itahari Namuna Hotel! Your account has been successfully created. You can now book rooms, view your booking history, and manage your profile easily through our portal.</p>
+        
+        <div style="text-align: center; margin-top: 32px;">
+          <a href="${loginUrl}" style="background-color: #14532D; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block;">Login to Your Account</a>
+        </div>
+      </div>
+      
+      <div style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+        <p style="margin: 0; font-size: 14px; color: #64748b;">Need help? Contact us at info@itaharinamuna.edu.np</p>
+        <div style="margin-top: 20px; font-size: 12px; color: #94a3b8;">
+          &copy; 2026 Itahari Namuna Hotel. All rights reserved.
+        </div>
+      </div>
+    </div>
+  `;
+    return (0, exports.sendEmail)(to, subject, html);
+};
+exports.sendGuestWelcomeEmail = sendGuestWelcomeEmail;
 //# sourceMappingURL=mail.js.map

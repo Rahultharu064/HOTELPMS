@@ -52,9 +52,8 @@ class AuthController {
         console.error(`[${context}] Failed to send OTP email to ${email}`);
         if (config_1.config.dev.helpersEnabled) {
             console.warn(`[DevMode] OTP for ${email}: ${otp}`);
-            return false;
         }
-        throw new ApiError_1.ApiError(constants_1.HttpStatus.SERVICE_UNAVAILABLE, 'Unable to send verification email. Please try again in a few minutes.');
+        return false;
     }
     /**
      * Register a new guest (requires OTP verification)
@@ -62,8 +61,13 @@ class AuthController {
     register = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
         const { email, phone, password, firstName, lastName } = req.body;
         const normalizedEmail = email.toLowerCase();
+        const validPhone = phone && phone.trim() !== '' ? phone.trim() : null;
+        const orConditions = [{ email: normalizedEmail }];
+        if (validPhone) {
+            orConditions.push({ phone: validPhone });
+        }
         const existingUser = await database_1.prisma.guest.findFirst({
-            where: { OR: [{ email: normalizedEmail }, { phone }] },
+            where: { OR: orConditions },
         });
         if (existingUser) {
             throw new ApiError_1.ApiError(constants_1.HttpStatus.BAD_REQUEST, 'Email or phone already registered');
@@ -75,7 +79,7 @@ class AuthController {
         const guest = await database_1.prisma.guest.create({
             data: {
                 email: normalizedEmail,
-                phone,
+                phone: validPhone,
                 password: hashedPassword,
                 firstName,
                 lastName,
@@ -85,6 +89,9 @@ class AuthController {
             },
         });
         if (autoVerify) {
+            (0, mail_1.sendGuestWelcomeEmail)(guest.email, guest.firstName || 'Guest').catch((err) => {
+                console.error('[WelcomeEmailError]:', err);
+            });
             return res.status(constants_1.HttpStatus.CREATED).json(this.buildAuthResponse(guest, 'Registration successful. You are logged in.'));
         }
         // Send OTP email
@@ -159,6 +166,9 @@ class AuthController {
         const updatedGuest = await database_1.prisma.guest.update({
             where: { id: guest.id },
             data: { otp: null, otpExpires: null, isVerified: true },
+        });
+        (0, mail_1.sendGuestWelcomeEmail)(updatedGuest.email, updatedGuest.firstName || 'Guest').catch((err) => {
+            console.error('[WelcomeEmailError]:', err);
         });
         const token = this.generateToken(updatedGuest.id);
         return res.json({
@@ -302,6 +312,9 @@ class AuthController {
                         isVerified: true,
                         // phone is now optional in schema
                     },
+                });
+                (0, mail_1.sendGuestWelcomeEmail)(guest.email, guest.firstName || 'Guest').catch((err) => {
+                    console.error('[WelcomeEmailError]:', err);
                 });
             }
             else {

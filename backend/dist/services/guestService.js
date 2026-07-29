@@ -4,6 +4,7 @@ exports.GuestService = void 0;
 const database_1 = require("../config/database");
 const ApiError_1 = require("../utils/ApiError");
 const constants_1 = require("../constants");
+const mail_1 = require("../utils/mail");
 class GuestService {
     async getAllGuests(filters) {
         const { page = 1, limit = 10, search, email, phone, sort = 'name_asc', } = filters;
@@ -164,6 +165,9 @@ class GuestService {
                 idType: data.idType,
                 idNumber: data.idNumber,
             },
+        });
+        (0, mail_1.sendGuestWelcomeEmail)(guest.email, guest.firstName || 'Guest').catch((err) => {
+            console.error('[WelcomeEmailError]:', err);
         });
         return guest;
     }

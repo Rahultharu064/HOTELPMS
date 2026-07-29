@@ -6,8 +6,10 @@ export type SmtpTransportResult = {
     port: number;
 };
 /**
- * Try configured port, then 465 (SSL), then 587 (STARTTLS).
- * Connects via resolved IPv4 address with TLS SNI on the original hostname.
+ * Try configured port, then 587 (STARTTLS), then 465 (SSL).
+ * In production (Render/cloud), SMTP ports may be blocked — we skip verify()
+ * and return the transporter anyway, logging a warning. Actual send will tell
+ * us if it truly works.
  */
 export declare const createVerifiedSmtpTransporter: () => Promise<SmtpTransportResult>;
 //# sourceMappingURL=smtpTransport.d.ts.map

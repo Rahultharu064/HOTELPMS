@@ -182,8 +182,21 @@ class RoomController {
         }
         res.status(index_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Room updated successfully', updatedRoom));
     });
+    deleteImage = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
+        const { roomId, imageId } = req.params;
+        const image = await database_1.prisma.image.findUnique({ where: { id: Number(imageId) } });
+        if (!image || image.roomId !== Number(roomId)) {
+            throw new ApiError_1.ApiError(index_1.HttpStatus.NOT_FOUND, 'Image not found for this room');
+        }
+        await database_1.prisma.image.delete({ where: { id: Number(imageId) } });
+        res.status(index_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Image deleted successfully', null));
+    });
     deleteRoom = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
         const { id } = req.params;
+        const bookingCount = await database_1.prisma.booking.count({ where: { roomId: Number(id) } });
+        if (bookingCount > 0) {
+            throw new ApiError_1.ApiError(index_1.HttpStatus.CONFLICT, `Cannot delete this room — it has ${bookingCount} associated booking${bookingCount > 1 ? 's' : ''}. Set its status to "Out of Service" instead, or remove the bookings first.`);
+        }
         await database_1.prisma.room.delete({ where: { id: Number(id) } });
         res.status(index_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Room deleted successfully', null));
     });

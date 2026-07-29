@@ -18,9 +18,6 @@ const DEV_ONLY_ENV_KEYS = [
     'DEV_AUTO_VERIFY_GUEST',
 ];
 function isEmailConfigured() {
-    if (config_1.config.isRender || config_1.config.isProduction) {
-        return Boolean(config_1.config.email.resendApiKey);
-    }
     return Boolean(config_1.config.email.resendApiKey ||
         (config_1.config.email.user && config_1.config.email.pass));
 }
@@ -45,16 +42,7 @@ function validateEnvironment() {
             ].join('\n'));
         }
         if (!isEmailConfigured()) {
-            const hint = config_1.config.isRender || config_1.config.isProduction
-                ? [
-                    'Email is required in production on Render.',
-                    'Gmail SMTP does NOT work on Render (ports 465/587 blocked).',
-                    'Add to Render Environment:',
-                    '  RESEND_API_KEY=re_xxxx  (from https://resend.com/api-keys)',
-                    '  EMAIL_PROVIDER=resend',
-                    '  SMTP_FROM=onboarding@resend.dev  (or your verified domain)',
-                ].join('\n')
-                : 'Email is required in production: set RESEND_API_KEY or SMTP_USER/SMTP_PASS.';
+            const hint = 'Email is required in production: set RESEND_API_KEY or SMTP_USER/SMTP_PASS.';
             throw new Error(hint);
         }
         if (config_1.config.corsOrigin.some((origin) => /localhost|127\.0\.0\.1/.test(origin))) {

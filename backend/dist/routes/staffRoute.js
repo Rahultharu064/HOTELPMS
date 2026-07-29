@@ -33,5 +33,6 @@ router.get('/', controller.getAllStaff);
 router.patch('/:id/status', controller.toggleStatus);
 router.put('/:id', (0, validateMiddleware_1.validate)(updateStaffSchema), controller.updateStaff);
 router.post('/:id/reset-password', controller.resetPassword);
+router.delete('/:id', controller.deleteStaff);
 exports.default = router;
 //# sourceMappingURL=staffRoute.js.map

@@ -180,6 +180,9 @@ class BookingService {
                         idProofImage: idProofImagePath,
                     }
                 });
+                (0, mail_1.sendGuestWelcomeEmail)(newGuest.email, newGuest.firstName || 'Guest').catch((err) => {
+                    console.error('[WelcomeEmailError]:', err);
+                });
                 finalGuestId = newGuest.id;
             }
         }

@@ -130,9 +130,9 @@ export declare class RoomService {
                 createdAt: Date;
                 status: import(".prisma/client").$Enums.PaymentStatus;
                 bookingId: number | null;
-                method: import(".prisma/client").$Enums.PaymentMethod;
                 serviceOrderId: number | null;
                 amount: Prisma.Decimal;
+                method: import(".prisma/client").$Enums.PaymentMethod;
                 transactionId: string | null;
                 paymentData: Prisma.JsonValue | null;
             }[];

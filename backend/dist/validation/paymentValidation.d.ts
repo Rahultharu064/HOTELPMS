@@ -7,27 +7,27 @@ export declare const initiatePaymentSchema: z.ZodObject<{
         returnUrl: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         bookingId: number;
-        method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
         amount: number;
+        method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
         returnUrl?: string | undefined;
     }, {
         bookingId: number;
-        method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
         amount: number;
+        method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
         returnUrl?: string | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
     body: {
         bookingId: number;
-        method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
         amount: number;
+        method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
         returnUrl?: string | undefined;
     };
 }, {
     body: {
         bookingId: number;
-        method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
         amount: number;
+        method: "cash" | "esewa" | "khalti" | "cod" | "card" | "bank_transfer";
         returnUrl?: string | undefined;
     };
 }>;
@@ -149,17 +149,17 @@ export declare const getPaymentsSchema: z.ZodObject<{
         limit?: number | undefined;
         status?: "pending" | "completed" | "failed" | "refunded" | undefined;
         bookingId?: number | undefined;
-        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
         startDate?: string | undefined;
         endDate?: string | undefined;
+        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
     }, {
         page?: string | undefined;
         limit?: string | undefined;
         status?: "pending" | "completed" | "failed" | "refunded" | undefined;
         bookingId?: string | undefined;
-        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
         startDate?: string | undefined;
         endDate?: string | undefined;
+        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
     query: {
@@ -167,9 +167,9 @@ export declare const getPaymentsSchema: z.ZodObject<{
         limit?: number | undefined;
         status?: "pending" | "completed" | "failed" | "refunded" | undefined;
         bookingId?: number | undefined;
-        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
         startDate?: string | undefined;
         endDate?: string | undefined;
+        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
     };
 }, {
     query: {
@@ -177,9 +177,9 @@ export declare const getPaymentsSchema: z.ZodObject<{
         limit?: string | undefined;
         status?: "pending" | "completed" | "failed" | "refunded" | undefined;
         bookingId?: string | undefined;
-        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
         startDate?: string | undefined;
         endDate?: string | undefined;
+        method?: "cash" | "esewa" | "khalti" | "card" | "bank_transfer" | undefined;
     };
 }>;
 export declare const esewaWebhookSchema: z.ZodObject<{

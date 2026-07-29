@@ -4,6 +4,7 @@ export declare class RoomController {
     createRoom: (req: Request, res: Response, next: import("express").NextFunction) => void;
     getRoomById: (req: Request, res: Response, next: import("express").NextFunction) => void;
     updateRoom: (req: Request, res: Response, next: import("express").NextFunction) => void;
+    deleteImage: (req: Request, res: Response, next: import("express").NextFunction) => void;
     deleteRoom: (req: Request, res: Response, next: import("express").NextFunction) => void;
     getGuestFavorites: (req: Request, res: Response, next: import("express").NextFunction) => void;
 }

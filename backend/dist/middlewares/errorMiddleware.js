@@ -19,6 +19,8 @@ const errorHandler = (err, req, res, next) => {
                 return res.status(503).json(ApiResponse_1.ApiResponse.error('Database schema is out of date. Run: npx prisma migrate deploy && npx prisma generate'));
             case 'P2025':
                 return res.status(constants_1.HttpStatus.NOT_FOUND).json(ApiResponse_1.ApiResponse.error('Record not found'));
+            case 'P2003':
+                return res.status(constants_1.HttpStatus.CONFLICT).json(ApiResponse_1.ApiResponse.error('Cannot complete this action — the record is still referenced by other data'));
             default:
                 console.error('Prisma error code:', err.code, err.message);
                 return res.status(constants_1.HttpStatus.INTERNAL_SERVER_ERROR).json(ApiResponse_1.ApiResponse.error(process.env.NODE_ENV === 'production'

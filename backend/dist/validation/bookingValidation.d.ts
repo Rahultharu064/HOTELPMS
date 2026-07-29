@@ -43,12 +43,12 @@ export declare const createBookingSchema: z.ZodObject<{
             method: z.ZodEnum<["cash", "esewa", "khalti"]>;
             transactionId: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         }, {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
@@ -58,8 +58,8 @@ export declare const createBookingSchema: z.ZodObject<{
         adults: number;
         children: number;
         payment?: {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         } | undefined;
         status?: string | undefined;
@@ -81,8 +81,8 @@ export declare const createBookingSchema: z.ZodObject<{
         checkOut: string;
         checkIn: string;
         payment?: {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         } | undefined;
         status?: string | undefined;
@@ -108,8 +108,8 @@ export declare const createBookingSchema: z.ZodObject<{
         adults: number;
         children: number;
         payment?: {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         } | undefined;
         status?: string | undefined;
@@ -131,8 +131,8 @@ export declare const createBookingSchema: z.ZodObject<{
         checkOut: string;
         checkIn: string;
         payment?: {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         } | undefined;
         status?: string | undefined;
@@ -158,8 +158,8 @@ export declare const createBookingSchema: z.ZodObject<{
         adults: number;
         children: number;
         payment?: {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         } | undefined;
         status?: string | undefined;
@@ -181,8 +181,8 @@ export declare const createBookingSchema: z.ZodObject<{
         checkOut: string;
         checkIn: string;
         payment?: {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         } | undefined;
         status?: string | undefined;
@@ -208,8 +208,8 @@ export declare const createBookingSchema: z.ZodObject<{
         adults: number;
         children: number;
         payment?: {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         } | undefined;
         status?: string | undefined;
@@ -231,8 +231,8 @@ export declare const createBookingSchema: z.ZodObject<{
         checkOut: string;
         checkIn: string;
         payment?: {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         } | undefined;
         status?: string | undefined;
@@ -260,8 +260,8 @@ export declare const createBookingSchema: z.ZodObject<{
         adults: number;
         children: number;
         payment?: {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         } | undefined;
         status?: string | undefined;
@@ -285,8 +285,8 @@ export declare const createBookingSchema: z.ZodObject<{
         checkOut: string;
         checkIn: string;
         payment?: {
-            method: "cash" | "esewa" | "khalti";
             amount: number;
+            method: "cash" | "esewa" | "khalti";
             transactionId?: string | undefined;
         } | undefined;
         status?: string | undefined;

@@ -216,8 +216,7 @@ const startServer = async () => {
         await (0, ensureDevAccounts_1.ensureDevAccounts)();
         const emailReady = await (0, mail_1.verifyEmailConfig)();
         if (config_1.config.isProduction && !emailReady) {
-            console.error('❌ Email service is required in production. Shutting down.');
-            process.exit(1);
+            console.error('⚠️ Email service verification failed. Server will continue to run, but email features will not work.');
         }
         server.listen(config_1.config.port, () => {
             console.log(`🚀 Server running in ${config_1.config.nodeEnv} mode on port ${config_1.config.port}`);

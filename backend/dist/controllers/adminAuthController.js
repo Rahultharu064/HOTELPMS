@@ -111,6 +111,29 @@ class AdminAuthController {
         res.status(constants_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Security requirement bypassed for this session.'));
     });
     /**
+     * Update Admin Profile (name/email)
+     */
+    updateProfile = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
+        const userId = req.user.id;
+        const { name, email } = req.body;
+        if (email) {
+            const normalizedEmail = email.toLowerCase();
+            const existing = await database_1.prisma.admin.findUnique({ where: { email: normalizedEmail } });
+            if (existing && existing.id !== userId) {
+                throw new ApiError_1.ApiError(constants_1.HttpStatus.CONFLICT, 'Email is already in use by another account');
+            }
+        }
+        const updated = await database_1.prisma.admin.update({
+            where: { id: userId },
+            data: {
+                name: name || undefined,
+                email: email ? email.toLowerCase() : undefined,
+            },
+            select: { id: true, email: true, name: true, role: true, avatar: true },
+        });
+        res.status(constants_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Profile updated successfully', updated));
+    });
+    /**
      * Update Admin Avatar
      */
     updateAvatar = (0, asyncHandler_1.asyncHandler)(async (req, res) => {

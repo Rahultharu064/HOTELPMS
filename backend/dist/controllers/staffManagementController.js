@@ -123,6 +123,22 @@ class StaffManagementController {
         res.status(constants_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Staff details updated successfully', updatedStaff));
     });
     /**
+     * Permanently delete a staff account
+     */
+    deleteStaff = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
+        const { id } = req.params;
+        const requesterId = req.user.id;
+        if (Number(id) === requesterId) {
+            throw new ApiError_1.ApiError(constants_1.HttpStatus.BAD_REQUEST, 'You cannot delete your own account');
+        }
+        const existingStaff = await database_1.prisma.admin.findUnique({ where: { id: Number(id) } });
+        if (!existingStaff) {
+            throw new ApiError_1.ApiError(constants_1.HttpStatus.NOT_FOUND, 'Staff member not found');
+        }
+        await database_1.prisma.admin.delete({ where: { id: Number(id) } });
+        res.status(constants_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Staff account deleted successfully'));
+    });
+    /**
      * Reset staff password and force change on next login
      */
     resetPassword = (0, asyncHandler_1.asyncHandler)(async (req, res) => {

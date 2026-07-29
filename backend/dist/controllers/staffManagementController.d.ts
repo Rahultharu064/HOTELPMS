@@ -17,6 +17,10 @@ export declare class StaffManagementController {
      */
     updateStaff: (req: Request, res: Response, next: import("express").NextFunction) => void;
     /**
+     * Permanently delete a staff account
+     */
+    deleteStaff: (req: Request, res: Response, next: import("express").NextFunction) => void;
+    /**
      * Reset staff password and force change on next login
      */
     resetPassword: (req: Request, res: Response, next: import("express").NextFunction) => void;

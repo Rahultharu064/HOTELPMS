@@ -13,6 +13,10 @@ export declare class AdminAuthController {
      */
     skipPasswordChange: (req: Request, res: Response, next: import("express").NextFunction) => void;
     /**
+     * Update Admin Profile (name/email)
+     */
+    updateProfile: (req: Request, res: Response, next: import("express").NextFunction) => void;
+    /**
      * Update Admin Avatar
      */
     updateAvatar: (req: Request, res: Response, next: import("express").NextFunction) => void;

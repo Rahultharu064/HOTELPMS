@@ -44,7 +44,8 @@ export default function RoomsPage() {
       toast.success('Room deleted successfully');
       fetchRooms();
     } catch (error) {
-      toast.error('Failed to delete room');
+      const message = error instanceof Error ? error.message : 'Failed to delete room';
+      toast.error(message);
     }
   };
 

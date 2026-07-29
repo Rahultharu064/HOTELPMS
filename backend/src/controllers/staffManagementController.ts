@@ -148,6 +148,29 @@ export class StaffManagementController {
   });
 
   /**
+   * Permanently delete a staff account
+   */
+  deleteStaff = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const requesterId = (req as any).user.id;
+
+    if (Number(id) === requesterId) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'You cannot delete your own account');
+    }
+
+    const existingStaff = await prisma.admin.findUnique({ where: { id: Number(id) } });
+    if (!existingStaff) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Staff member not found');
+    }
+
+    await prisma.admin.delete({ where: { id: Number(id) } });
+
+    res.status(HttpStatus.OK).json(
+      ApiResponse.success('Staff account deleted successfully')
+    );
+  });
+
+  /**
    * Reset staff password and force change on next login
    */
   resetPassword = asyncHandler(async (req: Request, res: Response) => {

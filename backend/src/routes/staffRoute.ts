@@ -36,5 +36,6 @@ router.get('/', controller.getAllStaff);
 router.patch('/:id/status', controller.toggleStatus);
 router.put('/:id', validate(updateStaffSchema), controller.updateStaff);
 router.post('/:id/reset-password', controller.resetPassword);
+router.delete('/:id', controller.deleteStaff);
 
 export default router;

@@ -138,6 +138,35 @@ export class AdminAuthController {
   });
 
   /**
+   * Update Admin Profile (name/email)
+   */
+  updateProfile = asyncHandler(async (req: Request, res: Response) => {
+    const userId = (req as any).user.id;
+    const { name, email } = req.body;
+
+    if (email) {
+      const normalizedEmail = email.toLowerCase();
+      const existing = await prisma.admin.findUnique({ where: { email: normalizedEmail } });
+      if (existing && existing.id !== userId) {
+        throw new ApiError(HttpStatus.CONFLICT, 'Email is already in use by another account');
+      }
+    }
+
+    const updated = await prisma.admin.update({
+      where: { id: userId },
+      data: {
+        name: name || undefined,
+        email: email ? email.toLowerCase() : undefined,
+      },
+      select: { id: true, email: true, name: true, role: true, avatar: true },
+    });
+
+    res.status(HttpStatus.OK).json(
+      ApiResponse.success('Profile updated successfully', updated)
+    );
+  });
+
+  /**
    * Update Admin Avatar
    */
   updateAvatar = asyncHandler(async (req: Request, res: Response) => {

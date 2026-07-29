@@ -35,6 +35,10 @@ export const errorHandler = (
         return res.status(HttpStatus.NOT_FOUND).json(
           ApiResponse.error('Record not found')
         );
+      case 'P2003':
+        return res.status(HttpStatus.CONFLICT).json(
+          ApiResponse.error('Cannot complete this action — the record is still referenced by other data')
+        );
       default:
         console.error('Prisma error code:', err.code, err.message);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(

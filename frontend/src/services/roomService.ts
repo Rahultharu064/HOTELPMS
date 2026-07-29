@@ -59,6 +59,10 @@ export const roomService = {
   },
 
   async deleteRoom(id: number): Promise<ApiResponse<null>> {
-    return api.delete(`/rooms/${id}`) as any;
+    return api.delete<ApiResponse<null>>(`/rooms/${id}`);
+  },
+
+  async deleteRoomImage(roomId: number, imageId: number): Promise<ApiResponse<null>> {
+    return api.delete<ApiResponse<null>>(`/rooms/${roomId}/images/${imageId}`);
   },
 };

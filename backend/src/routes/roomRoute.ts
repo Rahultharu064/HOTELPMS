@@ -29,5 +29,6 @@ router.get('/guest-favorites', roomController.getGuestFavorites);
 router.get('/:id', roomController.getRoomById);
 router.put('/:id', handleMulterError, roomController.updateRoom);
 router.delete('/:id', roomController.deleteRoom);
+router.delete('/:roomId/images/:imageId', roomController.deleteImage);
 
 export default router;

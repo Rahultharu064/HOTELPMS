@@ -33,6 +33,7 @@ router.post('/login', loginLimiter, validate(adminLoginSchema), adminAuthControl
 
 // Protected routes
 router.get('/me', authenticateAdmin as any, adminAuthController.getMe);
+router.put('/profile', authenticateAdmin as any, adminAuthController.updateProfile);
 router.post('/change-password', authenticateAdmin as any, adminAuthController.changePassword);
 router.post('/skip-password-change', authenticateAdmin as any, adminAuthController.skipPasswordChange);
 router.post('/avatar', authenticateAdmin as any, upload.single('avatar'), adminAuthController.updateAvatar);

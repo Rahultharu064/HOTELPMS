@@ -116,6 +116,17 @@ export default function RoomEditPage() {
     setNewImages((prev: File[]) => [...prev, ...files]);
   };
 
+  const handleDeleteExistingImage = async (imageId: number) => {
+    if (!window.confirm('Delete this photo?')) return;
+    try {
+      await roomService.deleteRoomImage(Number(id), imageId);
+      setExistingImages((prev) => prev.filter((img) => img.id !== imageId));
+      toast.success('Photo deleted');
+    } catch {
+      toast.error('Failed to delete photo');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -204,7 +215,7 @@ export default function RoomEditPage() {
                   <div key={img.id} className="relative aspect-square rounded-2xl overflow-hidden group">
                      <img src={getImageUrl(img.url)} alt="Room" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-                      <Button type="button" className="text-white hover:text-red-500"><X size={20} /></Button>
+                      <Button type="button" onClick={() => handleDeleteExistingImage(img.id)} title="Delete photo" className="text-white hover:text-red-500"><X size={20} /></Button>
                     </div>
                   </div>
                 ))}

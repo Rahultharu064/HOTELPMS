@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { User, Lock, LogOut, Camera, Save, Upload } from "lucide-react";
 import { authService } from "../../../services/authService";
 import { toast } from "react-hot-toast";
@@ -16,6 +16,7 @@ export function SettingsLayout({ userRole, onLogout }: SettingsLayoutProps) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"profile" | "password" | "session">("profile");
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // Get user data based on role
   const currentUser = userRole === "admin" ? admin : user;
@@ -108,7 +109,8 @@ export function SettingsLayout({ userRole, onLogout }: SettingsLayoutProps) {
     try {
       setLoading(true);
       const formData = new FormData();
-      formData.append("image", file);
+      // The admin avatar endpoint expects the file under "avatar"; the guest/staff endpoint expects "image".
+      formData.append(userRole === "admin" ? "avatar" : "image", file);
 
       const updateMethod = userRole === "admin" ? authService.adminUpdateProfileImage : authService.updateProfileImage;
       const response = await updateMethod(formData);
@@ -194,11 +196,16 @@ export function SettingsLayout({ userRole, onLogout }: SettingsLayoutProps) {
                   </div>
                   <label className="absolute bottom-0 right-0 w-8 h-8 bg-primary-green rounded-full flex items-center justify-center cursor-pointer hover:bg-primary-dark transition-colors shadow-lg">
                     <Camera size={14} className="text-white" />
-                    <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                    <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                   </label>
                 </div>
                 <div>
-                  <button className="px-4 py-2 bg-primary-green/10 text-primary-green text-[11px] font-bold uppercase tracking-wider rounded-lg hover:bg-primary-green hover:text-white transition-all flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                    disabled={loading}
+                    className="px-4 py-2 bg-primary-green/10 text-primary-green text-[11px] font-bold uppercase tracking-wider rounded-lg hover:bg-primary-green hover:text-white transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
                     <Upload size={14} />
                     Change avatar
                   </button>

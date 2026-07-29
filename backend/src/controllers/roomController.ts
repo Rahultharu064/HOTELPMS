@@ -248,8 +248,32 @@ export class RoomController {
     );
   });
 
+  deleteImage = asyncHandler(async (req: Request, res: Response) => {
+    const { roomId, imageId } = req.params;
+
+    const image = await prisma.image.findUnique({ where: { id: Number(imageId) } });
+    if (!image || image.roomId !== Number(roomId)) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Image not found for this room');
+    }
+
+    await prisma.image.delete({ where: { id: Number(imageId) } });
+
+    res.status(HttpStatus.OK).json(
+      ApiResponse.success('Image deleted successfully', null)
+    );
+  });
+
   deleteRoom = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
+
+    const bookingCount = await prisma.booking.count({ where: { roomId: Number(id) } });
+    if (bookingCount > 0) {
+      throw new ApiError(
+        HttpStatus.CONFLICT,
+        `Cannot delete this room — it has ${bookingCount} associated booking${bookingCount > 1 ? 's' : ''}. Set its status to "Out of Service" instead, or remove the bookings first.`
+      );
+    }
+
     await prisma.room.delete({ where: { id: Number(id) } });
     res.status(HttpStatus.OK).json(
       ApiResponse.success('Room deleted successfully', null)

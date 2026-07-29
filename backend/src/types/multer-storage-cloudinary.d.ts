@@ -12,7 +12,8 @@ declare module 'multer-storage-cloudinary' {
   }
 
   export interface CloudinaryStorageOptions {
-    cloudinary: typeof CloudinaryV2;
+    /** The library reaches into `cloudinary.v2.uploader` internally — pass `{ v2: cloudinaryV2 }`, not the v2 object itself. */
+    cloudinary: { v2: typeof CloudinaryV2 };
     params?:
       | CloudinaryStorageParams
       | ((

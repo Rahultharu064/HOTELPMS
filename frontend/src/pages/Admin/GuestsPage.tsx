@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-import { 
-  Users, 
-  Search, 
-  Filter, 
-  MoreVertical,
+import {
+  Users,
+  Search,
   Mail,
   Phone,
   Globe,
@@ -83,7 +81,7 @@ export default function AdminGuestsPage() {
 
       {/* Control Surface */}
       <div className="flex flex-col lg:flex-row gap-6">
-        <div className="flex-1 relative group">
+        <div className="flex-1 relative group max-w-xl">
           <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-neutral-text-secondary group-focus-within:text-primary-green transition-colors" size={20} />
           <input
             placeholder="Search guests by name, email, or phone..."
@@ -92,9 +90,6 @@ export default function AdminGuestsPage() {
             className="w-full pl-16 pr-6 h-16 bg-white border border-neutral-border/50 rounded-3xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green transition-all shadow-sm"
           />
         </div>
-        <button title="More filters" className="h-16 px-8 bg-white border border-neutral-border/50 rounded-3xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:bg-neutral-light transition-all shadow-sm">
-           <Filter size={20} /> Filters
-        </button>
       </div>
 
       {/* Guest Table */}
@@ -111,7 +106,6 @@ export default function AdminGuestsPage() {
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Contact</th>
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Bookings</th>
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Total Spent</th>
-                  <th className="px-10 py-8"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-border/10">
@@ -178,11 +172,6 @@ export default function AdminGuestsPage() {
                           <CreditCard size={14} />
                           Rs. {Number(guest.totalSpent || 0).toLocaleString()}
                        </div>
-                    </td>
-                    <td className="px-10 py-8 text-right">
-                       <button title="Guest actions" className="p-3 rounded-xl hover:bg-white text-neutral-text-secondary hover:text-primary-dark transition-all border border-transparent hover:border-neutral-border/30">
-                          <MoreVertical size={20} />
-                       </button>
                     </td>
                 </motion.tr>
                 ))}

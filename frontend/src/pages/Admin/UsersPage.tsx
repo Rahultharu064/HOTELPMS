@@ -4,7 +4,6 @@ import {
   UserPlus,
   ShieldCheck,
   Search,
-  Filter,
   CheckCircle2,
   XCircle,
   Edit2,
@@ -22,6 +21,8 @@ import { staffService, type StaffMember } from "../../services/staffService";
 import { Select } from "../../components/ui/Select";
 import { AdminTableSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 import { useAdminAuth } from "../../context/AdminAuthContext";
+import { downloadCsv } from "../../utils/exportCsv";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 
 const AdminUsersPage: React.FC = () => {
   const { admin } = useAdminAuth();
@@ -57,7 +58,7 @@ const AdminUsersPage: React.FC = () => {
         setStaff(res.data);
       }
     } catch (error) {
-      toast.error("Failed to load staff records");
+      toast.error(getErrorMessage(error, "Failed to load staff records"));
     } finally {
       setLoading(false);
     }
@@ -75,7 +76,7 @@ const AdminUsersPage: React.FC = () => {
         fetchStaff();
       }
     } catch (error) {
-      toast.error("Failed to update status");
+      toast.error(getErrorMessage(error, "Failed to update status"));
     }
   };
 
@@ -87,8 +88,8 @@ const AdminUsersPage: React.FC = () => {
         toast.success("Staff account deleted");
         fetchStaff();
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to delete staff account");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to delete staff account"));
     }
   };
 
@@ -114,8 +115,8 @@ const AdminUsersPage: React.FC = () => {
         setIsEditModalOpen(false);
         fetchStaff();
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to update staff account");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to update staff account"));
     }
   };
 
@@ -134,8 +135,8 @@ const AdminUsersPage: React.FC = () => {
         setIsEditModalOpen(false);
         setIsSuccessModalOpen(true);
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to reset password");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to reset password"));
     }
   };
 
@@ -154,16 +155,42 @@ const AdminUsersPage: React.FC = () => {
         fetchStaff();
         setFormData({ name: '', email: '', role: 'front_office', phoneNumber: '' });
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to create staff account");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to create staff account"));
     }
   };
 
-  const filteredStaff = staff.filter(u => 
-    u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredStaff = staff.filter(u =>
+    u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     u.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleExport = () => {
+    if (filteredStaff.length === 0) {
+      toast.error('No staff to export');
+      return;
+    }
+    downloadCsv(
+      `staff-${new Date().toISOString().slice(0, 10)}`,
+      [
+        { key: 'name', label: 'Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'phoneNumber', label: 'Phone' },
+        { key: 'role', label: 'Role' },
+        { key: 'status', label: 'Status' },
+        { key: 'lastLogin', label: 'Last Login' },
+      ],
+      filteredStaff.map((u) => ({
+        name: u.name,
+        email: u.email,
+        phoneNumber: u.phoneNumber || '',
+        role: u.role,
+        status: u.isActive ? 'Active' : 'Deactivated',
+        lastLogin: u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : 'Never',
+      }))
+    );
+  };
 
   const stats = [
     { label: "Total Staff", value: staff.length, icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
@@ -233,10 +260,7 @@ const AdminUsersPage: React.FC = () => {
             />
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" className="h-12 px-6 rounded-2xl bg-gray-50 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-foreground flex items-center gap-2">
-              <Filter size={16} /> Filters
-            </Button>
-            <Button variant="ghost" className="h-12 px-6 rounded-2xl bg-gray-50 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-foreground flex items-center gap-2">
+            <Button onClick={handleExport} variant="ghost" className="h-12 px-6 rounded-2xl bg-gray-50 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-foreground flex items-center gap-2">
               <Download size={16} /> Export
             </Button>
           </div>

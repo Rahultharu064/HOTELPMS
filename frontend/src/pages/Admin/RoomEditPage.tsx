@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { 
-  ArrowLeft, 
-  Save, 
-  X, 
-  Plus, 
-  ImageIcon, 
-  Loader2
+import {
+  ArrowLeft,
+  Save,
+  X,
+  Plus,
+  ImageIcon,
+  Loader2,
+  RefreshCw,
+  WifiOff,
 } from 'lucide-react';
 import { roomService } from '../../services/roomService';
 import type { Room, RoomStatus } from '../../services/roomService';
@@ -39,6 +41,7 @@ export default function RoomEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [saving, setSaving] = useState(false);
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [amenities, setAmenities] = useState<string[]>([]);
@@ -59,42 +62,44 @@ export default function RoomEditPage() {
   const [newImages, setNewImages] = useState<File[]>([]);
   const imgInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [roomTypesRes, roomRes] = await Promise.all([
-          roomTypeService.getAllRoomTypes(),
-          roomService.getRoomById(Number(id))
-        ]);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setLoadError(false);
+      const [roomTypesRes, roomRes] = await Promise.all([
+        roomTypeService.getAllRoomTypes(),
+        roomService.getRoomById(Number(id))
+      ]);
 
-        if (roomTypesRes.success) setRoomTypes(roomTypesRes.data.roomTypes);
-        if (roomRes.success) {
-          const room = roomRes.data;
-          setForm({
-            name: room.name,
-            roomTypeId: room.roomTypeId,
-            roomNumber: room.roomNumber,
-            floor: room.floor ?? '',
-            basePrice: room.basePrice,
-            size: room.size ?? '',
-            capacity: room.capacity,
-            description: room.description || '',
-            status: room.status,
-            newAmenity: ''
-          });
-          setAmenities(room.amenities?.map(a => a.name) || []);
-          setExistingImages(room.images || []);
-        }
-      } catch {
-        toast.error('Failed to load room details');
-        navigate('/admin/rooms');
-      } finally {
-        setLoading(false);
+      if (roomTypesRes.success) setRoomTypes(roomTypesRes.data.roomTypes);
+      if (roomRes.success) {
+        const room = roomRes.data;
+        setForm({
+          name: room.name,
+          roomTypeId: room.roomTypeId,
+          roomNumber: room.roomNumber,
+          floor: room.floor ?? '',
+          basePrice: room.basePrice,
+          size: room.size ?? '',
+          capacity: room.capacity,
+          description: room.description || '',
+          status: room.status,
+          newAmenity: ''
+        });
+        setAmenities(room.amenities?.map(a => a.name) || []);
+        setExistingImages(room.images || []);
       }
-    };
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
-  }, [id, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -152,6 +157,28 @@ export default function RoomEditPage() {
 
   if (loading) {
     return <AdminDetailPageSkeleton />;
+  }
+
+  if (loadError) {
+    return (
+      <div className="max-w-md mx-auto py-24 text-center space-y-5">
+        <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center mx-auto">
+          <WifiOff size={26} />
+        </div>
+        <div>
+          <h2 className="text-lg font-bold text-foreground">Couldn't load this room</h2>
+          <p className="text-sm text-neutral-text-secondary mt-1">The server didn't respond in time. This can happen if it's just waking up — try again in a moment.</p>
+        </div>
+        <div className="flex items-center justify-center gap-3">
+          <Button onClick={() => navigate('/admin/rooms')} className="h-11 px-5 rounded-xl bg-neutral-light text-foreground text-[13px] font-semibold">
+            Back to rooms
+          </Button>
+          <Button onClick={fetchData} className="h-11 px-5 rounded-xl bg-primary-dark text-white text-[13px] font-semibold flex items-center gap-2">
+            <RefreshCw size={15} /> Retry
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (

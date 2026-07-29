@@ -1,13 +1,11 @@
 import {
   Search,
-  Filter,
   Download,
   Calendar,
   Users,
   CheckCircle2,
   Clock,
   XCircle,
-  MoreVertical,
   ChevronRight,
   Hash,
   Hotel
@@ -19,6 +17,7 @@ import { toast } from 'react-hot-toast';
 import { AdminTableSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
 import { Badge } from '../../components/ui/Badge';
 import type { BadgeVariant } from '../../components/ui/Badge';
+import { downloadCsv } from '../../utils/exportCsv';
 
 import { useState, useEffect } from 'react';
 export default function AdminBookingsPage() {
@@ -65,6 +64,36 @@ export default function AdminBookingsPage() {
     }
   };
 
+  const handleExport = () => {
+    if (bookings.length === 0) {
+      toast.error('No bookings to export');
+      return;
+    }
+    downloadCsv(
+      `bookings-${new Date().toISOString().slice(0, 10)}`,
+      [
+        { key: 'bookingNumber', label: 'Booking Number' },
+        { key: 'guestName', label: 'Guest' },
+        { key: 'guestEmail', label: 'Email' },
+        { key: 'roomNumber', label: 'Room' },
+        { key: 'checkIn', label: 'Check In' },
+        { key: 'checkOut', label: 'Check Out' },
+        { key: 'totalAmount', label: 'Amount' },
+        { key: 'status', label: 'Status' },
+      ],
+      bookings.map((b) => ({
+        bookingNumber: b.bookingNumber,
+        guestName: b.guest ? `${b.guest.firstName} ${b.guest.lastName}` : '',
+        guestEmail: b.guest?.email || '',
+        roomNumber: b.room?.roomNumber || '',
+        checkIn: new Date(b.checkIn).toLocaleDateString(),
+        checkOut: new Date(b.checkOut).toLocaleDateString(),
+        totalAmount: b.totalAmount,
+        status: b.status,
+      }))
+    );
+  };
+
   return (
     <div className="space-y-10 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -76,7 +105,7 @@ export default function AdminBookingsPage() {
           <p className="text-[11px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] mt-2 ml-6">Manage reservations and booking status</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="h-14 px-6 bg-white border border-neutral-border/50 rounded-2xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:bg-neutral-light transition-all shadow-sm">
+          <button onClick={handleExport} className="h-14 px-6 bg-white border border-neutral-border/50 rounded-2xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:bg-neutral-light transition-all shadow-sm">
             <Download size={16} /> Export
           </button>
         </div>
@@ -107,9 +136,6 @@ export default function AdminBookingsPage() {
             <option value="checked_out">Checked Out</option>
             <option value="cancelled">Cancelled</option>
           </select>
-          <button title="More filters" className="h-16 w-16 bg-primary-dark text-white rounded-3xl flex items-center justify-center hover:bg-primary-green transition-all shadow-xl shadow-primary-dark/10">
-            <Filter size={20} />
-          </button>
         </div>
       </div>
 
@@ -127,7 +153,6 @@ export default function AdminBookingsPage() {
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Stay Details</th>
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Amount</th>
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Status</th>
-                  <th className="px-10 py-8"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-border/10">
@@ -183,11 +208,6 @@ export default function AdminBookingsPage() {
                       <Badge variant={statusVariant[booking.status]} icon={getStatusIcon(booking.status)}>
                         {booking.status.replace('_', ' ')}
                       </Badge>
-                    </td>
-                    <td className="px-10 py-8 text-right">
-                      <button title="Booking actions" className="p-3 rounded-xl hover:bg-white text-neutral-text-secondary hover:text-primary-dark hover:shadow-sm transition-all border border-transparent hover:border-neutral-border/30">
-                        <MoreVertical size={20} />
-                      </button>
                     </td>
                   </motion.tr>
                 ))}

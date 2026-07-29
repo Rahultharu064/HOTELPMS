@@ -6,7 +6,7 @@ import { RoomTypeForm } from '../../components/Admin/RoomTypes/RoomTypeForm';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { Plus, Search, ArrowUpDown, Filter, Building2, LayoutGrid, List as ListIcon } from 'lucide-react';
+import { Plus, Search, Building2, LayoutGrid, List as ListIcon } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { RoomTypeCard } from '../../components/Admin/RoomTypes/RoomTypeCard';
 import { RoomTypeTableEntry } from '../../components/Admin/RoomTypes/RoomTypeTableEntry';
@@ -31,8 +31,8 @@ export default function RoomTypesPage() {
       if (response.success && response.data) {
         setRoomTypes(response.data.roomTypes || []);
       }
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to fetch room types');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to fetch room types');
     } finally {
       setIsLoading(false);
     }
@@ -60,8 +60,8 @@ export default function RoomTypesPage() {
           handleCloseModal();
         }
       }
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to save room type');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to save room type');
     } finally {
       setIsSubmitting(false);
     }
@@ -76,8 +76,8 @@ export default function RoomTypesPage() {
         toast.success('Room type deleted successfully');
         fetchRoomTypes();
       }
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to delete room type');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to delete room type');
     }
   };
 
@@ -157,13 +157,6 @@ export default function RoomTypesPage() {
               <span className="hidden sm:inline">List</span>
             </Button>
           </div>
-
-          <Button variant="ghost" className="h-12 w-12 rounded-2xl bg-neutral-light hover:bg-white shadow-soft transition-all">
-            <Filter size={18} className="text-neutral-text-secondary" />
-          </Button>
-          <Button variant="ghost" className="h-12 w-12 rounded-2xl bg-neutral-light hover:bg-white shadow-soft transition-all">
-            <ArrowUpDown size={18} className="text-neutral-text-secondary" />
-          </Button>
         </div>
       </Card>
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import CreateRoom from '../../components/Admin/Dashboard/CreateRoom';
 import { Button } from '../../components/ui/Button';
-import { Plus, LayoutGrid, List as ListIcon, Search, SlidersHorizontal, ArrowLeft } from 'lucide-react';
+import { Plus, Search, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { roomService } from '../../services/roomService';
 import type { Room } from '../../services/roomService';
@@ -68,10 +68,6 @@ export default function RoomsPage() {
           </div>
           
           <div className="flex items-center gap-4">
-             <div className="flex bg-white p-1 rounded-2xl shadow-soft border border-neutral-border/30">
-               <Button className="p-2.5 rounded-xl bg-primary-green text-white shadow-lg transition-all"><LayoutGrid size={20} /></Button>
-               <Button className="p-2.5 rounded-xl text-neutral-text-secondary hover:bg-neutral-light transition-all"><ListIcon size={20} /></Button>
-             </div>
              <Button
                 onClick={() => setShowCreateForm(true)}
                 className="bg-primary-green hover:bg-primary-dark text-white px-8 h-[52px] rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-primary-green/20 flex items-center gap-3 hover:scale-105 transition-all"
@@ -111,20 +107,14 @@ export default function RoomsPage() {
         ) : (
           <div className="space-y-8 animate-in fade-in duration-500">
             {/* Search & Filter Bar */}
-            <div className="flex flex-col md:flex-row gap-4">
-               <div className="flex-1 relative group">
+            <div className="flex-1 relative group max-w-lg">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-text-secondary group-focus-within:text-primary-green transition-colors" size={18} />
-                  <input 
-                    placeholder="Search by room number, name, or type..." 
+                  <input
+                    placeholder="Search by room number, name, or type..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-12 pr-4 h-[56px] bg-white border-none rounded-[20px] shadow-soft focus:ring-2 focus:ring-primary-green text-sm font-bold transition-all"
                   />
-               </div>
-               <button className="px-6 h-[56px] bg-white rounded-[20px] shadow-soft flex items-center gap-3 font-black text-[11px] uppercase tracking-widest text-neutral-text-secondary hover:bg-neutral-light transition-all border border-neutral-border/10">
-                  <SlidersHorizontal size={18} />
-                  Advanced Filters
-               </button>
             </div>
 
             {/* List Content */}

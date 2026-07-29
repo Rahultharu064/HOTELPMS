@@ -5,7 +5,7 @@ import { ExtraServiceForm } from '../../components/Admin/ExtraServices/ExtraServ
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { Plus, Edit2, Search, Filter, ImageOff, Sparkles } from 'lucide-react';
+import { Plus, Edit2, Search, ImageOff, Sparkles } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { getImageUrl } from '../../services/api';
 import { AdminCardGridSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
@@ -114,7 +114,7 @@ export default function ExtraServicesPage() {
         </Button>
       </div>
 
-      <Card className="p-4 border-none shadow-soft bg-white/60 backdrop-blur-md rounded-3xl flex flex-col md:flex-row items-center justify-between gap-4">
+      <Card className="p-4 border-none shadow-soft bg-white/60 backdrop-blur-md rounded-3xl">
         <div className="relative w-full md:w-[400px] group">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
             <Search size={18} className="text-neutral-text-secondary" />
@@ -126,11 +126,6 @@ export default function ExtraServicesPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-12 pr-4 h-12 bg-neutral-light border-none rounded-2xl focus:ring-2 focus:ring-primary-green transition-all duration-300 text-sm font-bold shadow-inner"
           />
-        </div>
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" className="h-12 w-12 rounded-2xl bg-neutral-light hover:bg-white shadow-soft transition-all">
-            <Filter size={18} className="text-neutral-text-secondary" />
-          </Button>
         </div>
       </Card>
 

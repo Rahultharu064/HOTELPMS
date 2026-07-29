@@ -184,7 +184,9 @@ export const api = {
 
     // Use longer timeout for FormData uploads (room creation with images)
     const timeout = isFormData ? 120000 : 60000;
-    const retries = isFormData ? 3 : (endpoint.includes('/auth/') ? 2 : 1);
+    // Uploads shouldn't blindly retry from scratch on timeout — that just repeats a slow
+    // transfer 3x. Give it one generous-timeout attempt instead.
+    const retries = isFormData ? 1 : (endpoint.includes('/auth/') ? 2 : 1);
 
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
@@ -202,11 +204,15 @@ export const api = {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
 
+    // FormData (image uploads): one attempt, no retry-from-scratch on a slow transfer.
+    // JSON bodies: cheap to retry, keep 3 attempts for Render cold-start resilience.
+    const retries = isFormData ? 1 : 3;
+
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    }, 3, 2000, 120000); // 120s timeout, 3 retries for room updates (Render cold starts)
+    }, retries, 2000, 120000);
     const result = await parseResponseBody(response);
     if (!response.ok) {
       throw toRequestError(response, result);
@@ -217,12 +223,13 @@ export const api = {
   async patch<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
+    const retries = isFormData ? 1 : 3;
 
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'PATCH',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    }, 3, 2000, 120000); // 120s timeout, 3 retries for room updates (Render cold starts)
+    }, retries, 2000, 120000);
     const result = await parseResponseBody(response);
     if (!response.ok) {
       throw toRequestError(response, result);

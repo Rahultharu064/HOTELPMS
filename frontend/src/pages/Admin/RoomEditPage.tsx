@@ -22,6 +22,7 @@ import { Select } from '../../components/ui/Select';
 import { Textarea } from '../../components/ui/Textarea';
 import { getImageUrl } from '../../services/api';
 import { AdminDetailPageSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
+import { compressImages } from '../../utils/compressImage';
 
 
 type RoomEditForm = {
@@ -60,7 +61,18 @@ export default function RoomEditPage() {
 
   const [existingImages, setExistingImages] = useState<NonNullable<Room['images']>>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
+  const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
+  const [processingImages, setProcessingImages] = useState(false);
   const imgInputRef = useRef<HTMLInputElement>(null);
+  const MAX_IMAGE_BYTES = 15 * 1024 * 1024; // 15MB — generous ceiling for a single original photo
+
+  useEffect(() => {
+    const urls = newImages.map((file) => URL.createObjectURL(file));
+    setNewImagePreviews(urls);
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [newImages]);
 
   const fetchData = async () => {
     try {
@@ -116,9 +128,30 @@ export default function RoomEditPage() {
 
   const removeAmenity = (a: string) => setAmenities((prev: string[]) => prev.filter(x => x !== a));
 
-  const handleImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setNewImages((prev: File[]) => [...prev, ...files]);
+    e.target.value = ''; // allow re-selecting the same file(s) later
+
+    const oversized = files.filter((f) => f.size > MAX_IMAGE_BYTES);
+    const validFiles = files.filter((f) => f.size <= MAX_IMAGE_BYTES);
+    if (oversized.length > 0) {
+      toast.error(`${oversized.length} photo${oversized.length > 1 ? 's are' : ' is'} too large (max 15MB) and won't be uploaded`);
+    }
+    if (validFiles.length === 0) return;
+
+    setProcessingImages(true);
+    try {
+      // Shrink to web-friendly dimensions client-side so the upload doesn't hang on
+      // full-resolution phone photos.
+      const compressed = await compressImages(validFiles);
+      setNewImages((prev: File[]) => [...prev, ...compressed]);
+    } finally {
+      setProcessingImages(false);
+    }
+  };
+
+  const removeNewImage = (index: number) => {
+    setNewImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleDeleteExistingImage = async (imageId: number) => {
@@ -148,8 +181,8 @@ export default function RoomEditPage() {
         toast.success('Room updated successfully');
         navigate('/admin/rooms');
       }
-    } catch {
-      toast.error('Failed to update room');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update room');
     } finally {
       setSaving(false);
     }
@@ -246,15 +279,31 @@ export default function RoomEditPage() {
                     </div>
                   </div>
                 ))}
-                <Button 
+                {newImagePreviews.map((src, index) => (
+                  <div key={src} className="relative aspect-square rounded-2xl overflow-hidden group ring-2 ring-primary-gold/60">
+                     <img src={src} alt="New upload" className="w-full h-full object-cover" />
+                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                       <Button type="button" onClick={() => removeNewImage(index)} title="Remove photo" className="text-white hover:text-red-500"><X size={20} /></Button>
+                     </div>
+                     <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-md bg-primary-gold text-[9px] font-black uppercase tracking-widest text-white">New</span>
+                  </div>
+                ))}
+                <Button
                   type="button"
                   onClick={() => imgInputRef.current?.click()}
-                  className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-primary-dark hover:bg-gray-50 transition-all group"
+                  disabled={processingImages}
+                  className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-primary-dark hover:bg-gray-50 transition-all group disabled:opacity-50"
                 >
-                  <Plus size={24} className="text-gray-300 group-hover:text-primary-dark" />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Add More</span>
+                  {processingImages ? (
+                    <Loader2 size={24} className="text-gray-300 animate-spin" />
+                  ) : (
+                    <Plus size={24} className="text-gray-300 group-hover:text-primary-dark" />
+                  )}
+                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">
+                    {processingImages ? 'Optimizing...' : 'Add More'}
+                  </span>
                 </Button>
-                <Input ref={imgInputRef} type="file" multiple className="hidden" onChange={handleImages} />
+                <Input ref={imgInputRef} type="file" multiple accept="image/*" className="hidden" onChange={handleImages} />
              </div>
           </Card>
         </div>
@@ -288,10 +337,13 @@ export default function RoomEditPage() {
           </Card>
 
           <div className="space-y-4">
-             <Button type="submit" disabled={saving} className="w-full h-16 bg-primary-dark text-white rounded-[24px] font-black uppercase tracking-widest text-[12px] shadow-xl shadow-primary-dark/20 flex items-center justify-center gap-3">
+             <Button type="submit" disabled={saving || processingImages} className="w-full h-16 bg-primary-dark text-white rounded-[24px] font-black uppercase tracking-widest text-[12px] shadow-xl shadow-primary-dark/20 flex items-center justify-center gap-3 disabled:opacity-60">
                {saving ? <Loader2 className="animate-spin" /> : <Save size={20} />}
-               Save Changes
+               {saving ? (newImages.length > 0 ? 'Uploading photos...' : 'Saving...') : 'Save Changes'}
              </Button>
+             {saving && newImages.length > 0 && (
+               <p className="text-center text-[11px] text-gray-400">Uploading {newImages.length} photo{newImages.length > 1 ? 's' : ''} — this can take a moment on a slow connection</p>
+             )}
              <Button type="button" onClick={() => navigate('/admin/rooms')} className="w-full h-16 bg-white border border-gray-100 text-gray-400 rounded-[24px] font-black uppercase tracking-widest text-[11px] hover:bg-gray-50 transition-all">
                Cancel
              </Button>

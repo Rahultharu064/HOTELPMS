@@ -74,9 +74,14 @@ class RoomController {
                 status: status || 'available',
                 description,
                 slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + roomNumber,
-                // amenities are handled via relation in Prisma if using a separate model, 
-                // but here the schema.prisma shows: amenities Amenity[] @relation("RoomAmenities")
-                // We'll skip complex amenity linking for this quick build or use connectOrCreate
+                ...(amenitiesList.length > 0 ? {
+                    amenities: {
+                        connectOrCreate: amenitiesList.map((amenityName) => ({
+                            where: { name: amenityName },
+                            create: { name: amenityName },
+                        })),
+                    },
+                } : {}),
             },
         });
         // Handle Uploaded Images
@@ -148,11 +153,15 @@ class RoomController {
         const { name, roomNumber, roomTypeId, floor, basePrice, // Accepting basePrice from frontend
         price, // Also accepting price for compatibility
         size, capacity, description, status, amenities: amenitiesJson } = req.body;
-        const currentRoom = await database_1.prisma.room.findUnique({ where: { id: Number(id) } });
+        const currentRoom = await database_1.prisma.room.findUnique({
+            where: { id: Number(id) },
+            include: { images: true },
+        });
         if (!currentRoom) {
             throw new ApiError_1.ApiError(index_1.HttpStatus.NOT_FOUND, 'Room not found');
         }
-        // Handle amenities if sent as JSON string
+        // Handle amenities if sent as JSON string — replace the room's amenity set with
+        // whatever the admin submitted, creating any brand-new amenity names on the fly.
         const amenitiesList = amenitiesJson ? JSON.parse(amenitiesJson) : [];
         const updatedRoom = await database_1.prisma.room.update({
             where: { id: Number(id) },
@@ -167,16 +176,26 @@ class RoomController {
                 status,
                 description,
                 slug: name ? name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + (roomNumber || currentRoom.roomNumber) : undefined,
+                ...(amenitiesJson ? {
+                    amenities: {
+                        set: [],
+                        connectOrCreate: amenitiesList.map((amenityName) => ({
+                            where: { name: amenityName },
+                            create: { name: amenityName },
+                        })),
+                    },
+                } : {}),
             },
         });
-        // Handle Uploaded Images
+        // Handle Uploaded Images — only make the first upload "primary" if the room had none before.
         const files = req.files;
         if (files && files['images']) {
+            const hadExistingImages = currentRoom.images.length > 0;
             await Promise.all(files['images'].map((file, index) => database_1.prisma.image.create({
                 data: {
                     url: file.path, // Cloudinary URL
                     roomId: updatedRoom.id,
-                    isPrimary: index === 0 && !currentRoom.id, // simplified logic
+                    isPrimary: !hadExistingImages && index === 0,
                 },
             })));
         }

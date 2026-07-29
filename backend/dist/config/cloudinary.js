@@ -22,7 +22,14 @@ cloudinary_1.v2.config({
 });
 console.log('☁️ Cloudinary initialized with cloud_name:', index_1.config.cloudinary.cloudName);
 exports.cloudinaryStorage = (0, multer_storage_cloudinary_1.default)({
-    cloudinary: cloudinary_1.v2,
+    // multer-storage-cloudinary@2.x calls `this.cloudinary.v2.uploader.upload_stream(...)`
+    // internally — it expects the *whole* cloudinary module (with a `.v2` namespace), not
+    // the v2 API object itself. Passing `cloudinary` (already `import { v2 as cloudinary }`)
+    // directly made `.v2` resolve to `undefined`, so every upload threw synchronously deep
+    // inside a stream callback where Express's error handler never sees it — the request
+    // just hangs until Render's proxy eventually kills it with a 502. Wrapping it in `{ v2 }`
+    // gives the library the shape it actually expects.
+    cloudinary: { v2: cloudinary_1.v2 },
     params: async (_req, file) => {
         // Sanitize filename: remove extension and special characters
         const sanitizedName = file.originalname

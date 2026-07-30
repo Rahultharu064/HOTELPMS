@@ -33,6 +33,45 @@ export const getImageUrl = (url?: string) => {
  */
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+/**
+ * Best-effort ping to wake a sleeping backend before a large upload.
+ * Render's free/idle-timeout tier spins the instance down after inactivity, and the
+ * first request after that can take 30-50s just to boot — if that wake-up time isn't
+ * accounted for separately, it silently eats into the upload's own timeout budget and
+ * a perfectly fine transfer looks like a network failure. Firing this first means the
+ * wake-up cost is paid up front, not charged against the upload's timeout.
+ */
+async function warmBackend(): Promise<void> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    await fetch(`${BACKEND_ROOT}/health`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+  } catch {
+    // Best-effort only — if the backend is genuinely unreachable, the real
+    // request right after this will fail with a clear error anyway.
+  }
+}
+
+/** Counts file parts in a FormData payload, used to size the upload timeout. */
+function countFiles(data: FormData): number {
+  let count = 0;
+  for (const value of data.values()) {
+    if (value instanceof File) count++;
+  }
+  return count;
+}
+
+/**
+ * Upload timeout scales with how many files are attached so multi-photo uploads on a
+ * slow connection get proportionally more time before giving up, instead of a single
+ * fixed budget that's generous for one photo but tight for five.
+ */
+function uploadTimeout(data: FormData): number {
+  const files = countFiles(data);
+  return Math.min(240000, 90000 + files * 30000);
+}
+
 async function parseResponseBody(response: Response): Promise<any> {
   const text = await response.text();
   if (!text) return {};
@@ -182,8 +221,10 @@ export const api = {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
 
-    // Use longer timeout for FormData uploads (room creation with images)
-    const timeout = isFormData ? 120000 : 60000;
+    // Wake the backend before a heavy upload so cold-start latency doesn't eat into
+    // the upload's own timeout, then size the timeout by file count.
+    if (isFormData) await warmBackend();
+    const timeout = isFormData ? uploadTimeout(data) : 60000;
     // Uploads shouldn't blindly retry from scratch on timeout — that just repeats a slow
     // transfer 3x. Give it one generous-timeout attempt instead.
     const retries = isFormData ? 1 : (endpoint.includes('/auth/') ? 2 : 1);
@@ -206,13 +247,15 @@ export const api = {
 
     // FormData (image uploads): one attempt, no retry-from-scratch on a slow transfer.
     // JSON bodies: cheap to retry, keep 3 attempts for Render cold-start resilience.
+    if (isFormData) await warmBackend();
     const retries = isFormData ? 1 : 3;
+    const timeout = isFormData ? uploadTimeout(data) : 120000;
 
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    }, retries, 2000, 120000);
+    }, retries, 2000, timeout);
     const result = await parseResponseBody(response);
     if (!response.ok) {
       throw toRequestError(response, result);
@@ -223,13 +266,16 @@ export const api = {
   async patch<T = any>(endpoint: string, data: any): Promise<T> {
     const isFormData = data instanceof FormData;
     const isAdminEndpoint = checkIfAdminEndpoint(endpoint);
+
+    if (isFormData) await warmBackend();
     const retries = isFormData ? 1 : 3;
+    const timeout = isFormData ? uploadTimeout(data) : 120000;
 
     const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`, {
       method: 'PATCH',
       headers: getHeaders(isFormData, isAdminEndpoint),
       body: isFormData ? data : JSON.stringify(data),
-    }, retries, 2000, 120000);
+    }, retries, 2000, timeout);
     const result = await parseResponseBody(response);
     if (!response.ok) {
       throw toRequestError(response, result);

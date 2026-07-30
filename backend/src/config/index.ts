@@ -56,7 +56,10 @@ export const config = {
     ? corsOrigins
     : (process.env.NODE_ENV === 'production' ? ['http://localhost:5173'] : defaultDevOrigins),
   uploadDir: process.env.UPLOAD_DIR || 'uploads',
-  maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760', 10),
+  // 15MB — matches the client-side cap in RoomEditPage (MAX_IMAGE_BYTES).
+  // A lower backend cap here would silently 400-reject photos the UI told the admin
+  // were acceptable to upload.
+  maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '15728640', 10),
   jwt: {
     secret: process.env.JWT_SECRET || 'default-secret-key',
     expire: process.env.JWT_EXPIRE || '7d',

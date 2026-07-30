@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, type HTMLMotionProps } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { cn } from '../../lib/utils';
 
 interface ButtonProps extends HTMLMotionProps<"button"> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'gold' | 'hero' | 'hero-outline' | 'destructive';
@@ -62,21 +63,20 @@ export const Button: React.FC<ButtonProps> = ({
     </>
   );
   
+  const mergedClassName = cn(baseStyles, variants[variant], sizes[size], fullWidth && 'w-full', className);
+
   if (asChild && to) {
     return (
-      <Link
-        to={to}
-        className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
-      >
+      <Link to={to} className={mergedClassName}>
         {buttonContent}
       </Link>
     );
   }
-  
+
   return (
     <motion.button
       whileTap={{ scale: 0.98 }}
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
+      className={mergedClassName}
       disabled={disabled || activeLoading}
       {...props}
     >

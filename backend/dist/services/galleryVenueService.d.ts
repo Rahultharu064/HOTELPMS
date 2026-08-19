@@ -8,9 +8,9 @@ export declare class GalleryVenueService {
         description: string;
         slug: string;
         sortOrder: number;
+        isActive: boolean;
         icon: string;
         title: string;
-        isActive: boolean;
         layout: import(".prisma/client").$Enums.VenueLayout;
     }[]>;
     getAllVenues(): Promise<{
@@ -21,9 +21,9 @@ export declare class GalleryVenueService {
         description: string;
         slug: string;
         sortOrder: number;
+        isActive: boolean;
         icon: string;
         title: string;
-        isActive: boolean;
         layout: import(".prisma/client").$Enums.VenueLayout;
     }[]>;
     getVenueById(id: number): Promise<{
@@ -34,9 +34,9 @@ export declare class GalleryVenueService {
         description: string;
         slug: string;
         sortOrder: number;
+        isActive: boolean;
         icon: string;
         title: string;
-        isActive: boolean;
         layout: import(".prisma/client").$Enums.VenueLayout;
     }>;
     getVenueBySlug(slug: string): Promise<{
@@ -47,9 +47,9 @@ export declare class GalleryVenueService {
         description: string;
         slug: string;
         sortOrder: number;
+        isActive: boolean;
         icon: string;
         title: string;
-        isActive: boolean;
         layout: import(".prisma/client").$Enums.VenueLayout;
     }>;
     createVenue(data: {
@@ -69,9 +69,9 @@ export declare class GalleryVenueService {
         description: string;
         slug: string;
         sortOrder: number;
+        isActive: boolean;
         icon: string;
         title: string;
-        isActive: boolean;
         layout: import(".prisma/client").$Enums.VenueLayout;
     }>;
     updateVenue(id: number, data: {
@@ -91,9 +91,9 @@ export declare class GalleryVenueService {
         description: string;
         slug: string;
         sortOrder: number;
+        isActive: boolean;
         icon: string;
         title: string;
-        isActive: boolean;
         layout: import(".prisma/client").$Enums.VenueLayout;
     }>;
     deleteVenue(id: number): Promise<{

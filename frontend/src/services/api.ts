@@ -179,11 +179,17 @@ const getHeaders = (isFormData: boolean = false, isAdminEndpoint: boolean = fals
 };
 
 const checkIfAdminEndpoint = (endpoint: string) => {
-  return endpoint.startsWith('/admin') || 
-         endpoint.startsWith('/frontoffice') || 
-         endpoint.startsWith('/housekeeping') || 
+  return endpoint.startsWith('/admin') ||
+         endpoint.startsWith('/frontoffice') ||
+         endpoint.startsWith('/housekeeping') ||
          endpoint.startsWith('/guests') ||
          endpoint.startsWith('/bookings') ||
+         // Room/room-type writes (create/update/delete) are staff-only, even though the
+         // matching GET routes are public for guest browsing — the admin token must win
+         // here or a staff member who also has a stale guest_token in the same browser
+         // gets that sent instead and every save is rejected as unauthorized.
+         endpoint.startsWith('/rooms') ||
+         endpoint.startsWith('/room-types') ||
          endpoint.includes('admin');
 };
 

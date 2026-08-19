@@ -6,9 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const roomController_1 = require("../controllers/roomController");
 const uploadMiddleware_1 = require("../middlewares/uploadMiddleware");
+const adminAuthMiddleware_1 = require("../middlewares/adminAuthMiddleware");
 const multer_1 = __importDefault(require("multer"));
 const router = (0, express_1.Router)();
 const roomController = new roomController_1.RoomController();
+const adminGuard = [
+    adminAuthMiddleware_1.authenticateAdmin,
+    (0, adminAuthMiddleware_1.authorizeRoles)('superadmin', 'admin', 'manager'),
+];
 const roomUpload = uploadMiddleware_1.upload.fields([
     { name: 'images', maxCount: 10 },
     { name: 'videos', maxCount: 3 },
@@ -25,12 +30,14 @@ const handleMulterError = (req, res, next) => {
         next();
     });
 };
+// Public — browsing
 router.get('/', roomController.getAllRooms);
-router.post('/', handleMulterError, roomController.createRoom);
 router.get('/guest-favorites', roomController.getGuestFavorites);
 router.get('/:id', roomController.getRoomById);
-router.put('/:id', handleMulterError, roomController.updateRoom);
-router.delete('/:id', roomController.deleteRoom);
-router.delete('/:roomId/images/:imageId', roomController.deleteImage);
+// Admin — CRUD
+router.post('/', ...adminGuard, handleMulterError, roomController.createRoom);
+router.put('/:id', ...adminGuard, handleMulterError, roomController.updateRoom);
+router.delete('/:id', ...adminGuard, roomController.deleteRoom);
+router.delete('/:roomId/images/:imageId', ...adminGuard, roomController.deleteImage);
 exports.default = router;
 //# sourceMappingURL=roomRoute.js.map

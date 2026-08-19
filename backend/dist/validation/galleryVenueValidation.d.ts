@@ -15,8 +15,8 @@ export declare const createGalleryVenueSchema: z.ZodObject<{
         image?: string | undefined;
         slug?: string | undefined;
         sortOrder?: number | undefined;
-        icon?: string | undefined;
         isActive?: boolean | undefined;
+        icon?: string | undefined;
         layout?: "featured" | "compact" | "wide" | undefined;
     }, {
         description: string;
@@ -24,8 +24,8 @@ export declare const createGalleryVenueSchema: z.ZodObject<{
         image?: string | undefined;
         slug?: string | undefined;
         sortOrder?: number | undefined;
-        icon?: string | undefined;
         isActive?: boolean | "true" | "false" | undefined;
+        icon?: string | undefined;
         layout?: "featured" | "compact" | "wide" | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
@@ -35,8 +35,8 @@ export declare const createGalleryVenueSchema: z.ZodObject<{
         image?: string | undefined;
         slug?: string | undefined;
         sortOrder?: number | undefined;
-        icon?: string | undefined;
         isActive?: boolean | undefined;
+        icon?: string | undefined;
         layout?: "featured" | "compact" | "wide" | undefined;
     };
 }, {
@@ -46,8 +46,8 @@ export declare const createGalleryVenueSchema: z.ZodObject<{
         image?: string | undefined;
         slug?: string | undefined;
         sortOrder?: number | undefined;
-        icon?: string | undefined;
         isActive?: boolean | "true" | "false" | undefined;
+        icon?: string | undefined;
         layout?: "featured" | "compact" | "wide" | undefined;
     };
 }>;
@@ -73,18 +73,18 @@ export declare const updateGalleryVenueSchema: z.ZodObject<{
         description?: string | undefined;
         slug?: string | undefined;
         sortOrder?: number | undefined;
+        isActive?: boolean | undefined;
         icon?: string | undefined;
         title?: string | undefined;
-        isActive?: boolean | undefined;
         layout?: "featured" | "compact" | "wide" | undefined;
     }, {
         image?: string | undefined;
         description?: string | undefined;
         slug?: string | undefined;
         sortOrder?: number | undefined;
+        isActive?: boolean | "true" | "false" | undefined;
         icon?: string | undefined;
         title?: string | undefined;
-        isActive?: boolean | "true" | "false" | undefined;
         layout?: "featured" | "compact" | "wide" | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
@@ -96,9 +96,9 @@ export declare const updateGalleryVenueSchema: z.ZodObject<{
         description?: string | undefined;
         slug?: string | undefined;
         sortOrder?: number | undefined;
+        isActive?: boolean | undefined;
         icon?: string | undefined;
         title?: string | undefined;
-        isActive?: boolean | undefined;
         layout?: "featured" | "compact" | "wide" | undefined;
     };
 }, {
@@ -110,9 +110,9 @@ export declare const updateGalleryVenueSchema: z.ZodObject<{
         description?: string | undefined;
         slug?: string | undefined;
         sortOrder?: number | undefined;
+        isActive?: boolean | "true" | "false" | undefined;
         icon?: string | undefined;
         title?: string | undefined;
-        isActive?: boolean | "true" | "false" | undefined;
         layout?: "featured" | "compact" | "wide" | undefined;
     };
 }>;

@@ -65,6 +65,12 @@ export default function RoomEditPage() {
   const [processingImages, setProcessingImages] = useState(false);
   const imgInputRef = useRef<HTMLInputElement>(null);
   const MAX_IMAGE_BYTES = 15 * 1024 * 1024; // 15MB — generous ceiling for a single original photo
+  // Must match the backend's multer fileFilter (uploadMiddleware.ts) — anything outside
+  // this list is silently accepted by the file picker (accept="image/*") but gets
+  // rejected by the server after a full upload attempt. Catching it here, before the
+  // compress-and-upload round trip, is what actually saves the "many minutes, nothing
+  // happens" experience for the most common offender: iPhones defaulting to HEIC.
+  const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
   useEffect(() => {
     const urls = newImages.map((file) => URL.createObjectURL(file));
@@ -132,8 +138,18 @@ export default function RoomEditPage() {
     const files = Array.from(e.target.files || []);
     e.target.value = ''; // allow re-selecting the same file(s) later
 
-    const oversized = files.filter((f) => f.size > MAX_IMAGE_BYTES);
-    const validFiles = files.filter((f) => f.size <= MAX_IMAGE_BYTES);
+    const unsupported = files.filter((f) => !ALLOWED_IMAGE_TYPES.includes(f.type));
+    const oversized = files.filter((f) => ALLOWED_IMAGE_TYPES.includes(f.type) && f.size > MAX_IMAGE_BYTES);
+    const validFiles = files.filter((f) => ALLOWED_IMAGE_TYPES.includes(f.type) && f.size <= MAX_IMAGE_BYTES);
+
+    if (unsupported.length > 0) {
+      const looksLikeHeic = unsupported.some((f) => /heic|heif/i.test(f.type) || /\.hei[cf]$/i.test(f.name));
+      toast.error(
+        looksLikeHeic
+          ? "iPhone photos in HEIC format aren't supported — turn off \"Most Compatible\" in Camera settings, or convert to JPEG before uploading"
+          : `${unsupported.length} file${unsupported.length > 1 ? 's are' : ' is'} not a supported photo format (use JPEG, PNG, or WebP)`
+      );
+    }
     if (oversized.length > 0) {
       toast.error(`${oversized.length} photo${oversized.length > 1 ? 's are' : ' is'} too large (max 15MB) and won't be uploaded`);
     }
@@ -303,7 +319,7 @@ export default function RoomEditPage() {
                     {processingImages ? 'Optimizing...' : 'Add More'}
                   </span>
                 </Button>
-                <Input ref={imgInputRef} type="file" multiple accept="image/*" className="hidden" onChange={handleImages} />
+                <Input ref={imgInputRef} type="file" multiple accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleImages} />
              </div>
           </Card>
         </div>

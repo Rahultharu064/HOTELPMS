@@ -100,8 +100,8 @@ export declare class HousekeepingService {
         updatedAt: Date;
         name: string;
         status: string;
-        staffId: string;
         role: string | null;
+        staffId: string;
     }[]>;
     addStaff(data: {
         staffId: string;
@@ -115,8 +115,8 @@ export declare class HousekeepingService {
         updatedAt: Date;
         name: string;
         status: string;
-        staffId: string;
         role: string | null;
+        staffId: string;
     }>;
     updateStaffStatus(id: number, status: string): Promise<{
         id: number;
@@ -125,8 +125,8 @@ export declare class HousekeepingService {
         updatedAt: Date;
         name: string;
         status: string;
-        staffId: string;
         role: string | null;
+        staffId: string;
     }>;
 }
 //# sourceMappingURL=housekeepingService.d.ts.map

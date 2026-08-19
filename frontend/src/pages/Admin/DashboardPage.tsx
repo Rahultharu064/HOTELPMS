@@ -109,7 +109,7 @@ export function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Hero Welcome Banner */}
-      <div className="admin-hero-banner relative overflow-hidden rounded-2xl px-6 py-7 md:px-8 md:py-9 shadow-[0_20px_40px_-16px_rgba(20,83,45,0.35)]">
+      <div className="pms-hero-banner relative overflow-hidden rounded-2xl px-6 py-7 md:px-8 md:py-9 shadow-[0_20px_40px_-16px_rgba(20,83,45,0.35)]">
         <div className="relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary-gold mb-3">

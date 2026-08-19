@@ -484,14 +484,14 @@
   }
 }
 
-/* ── ADMIN DASHBOARD STYLES ── */
-.admin-hero-banner {
+/* ── SHARED PMS DASHBOARD STYLES (admin / front office / housekeeping) ── */
+.pms-hero-banner {
   background:
     radial-gradient(circle at 85% -10%, rgba(245, 158, 11, 0.22) 0%, transparent 55%),
     linear-gradient(120deg, #14532D 0%, #1B6B36 55%, #1F7A3A 100%);
 }
 
-.admin-hero-banner::before {
+.pms-hero-banner::before {
   content: "";
   position: absolute;
   inset: 0;

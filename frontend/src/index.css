@@ -484,6 +484,47 @@
   }
 }
 
+/* ── ADMIN DASHBOARD STYLES ── */
+.admin-hero-banner {
+  background:
+    radial-gradient(circle at 85% -10%, rgba(245, 158, 11, 0.22) 0%, transparent 55%),
+    linear-gradient(120deg, #14532D 0%, #1B6B36 55%, #1F7A3A 100%);
+}
+
+.admin-hero-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 18px 18px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.admin-sidebar-gradient {
+  background: linear-gradient(195deg, #163A22 0%, #0F2A18 100%);
+}
+
+.admin-stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-stat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--stat-accent, linear-gradient(90deg, #1F7A3A, #F59E0B));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+
+.admin-stat-card:hover::before {
+  transform: scaleX(1);
+}
+
 /* ── CHART COMPONENT STYLES ── */
 
 /* Shared height container — reads --chart-height set by ref callback */

@@ -82,14 +82,16 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
     location.pathname === url || (url === "/admin" && location.pathname === "/admin/dashboard");
 
   const sidebarContent = (
-    <div className={`flex flex-col h-full bg-primary-dark text-white transition-all duration-300 ${collapsed ? "w-[72px]" : "w-[264px]"}`}>
+    <div className={`flex flex-col h-full admin-sidebar-gradient text-white transition-all duration-300 ${collapsed ? "w-[72px]" : "w-[264px]"}`}>
       {/* Brand */}
       <div className={`flex items-center gap-3 h-20 border-b border-white/10 ${collapsed ? "justify-center px-0" : "px-6"}`}>
-        <img src="/Logos1.png" alt="Logo" className="w-9 h-9 object-contain rounded-lg shrink-0" />
+        <div className="relative shrink-0">
+          <img src="/Logos1.png" alt="Logo" className="w-9 h-9 object-contain rounded-lg ring-2 ring-primary-gold/30" />
+        </div>
         {!collapsed && (
           <div className="overflow-hidden min-w-0">
-            <h1 className="font-bold text-[13px] leading-tight truncate">Itahari Namuna</h1>
-            <p className="text-[10px] text-white/50 truncate">Management Panel</p>
+            <h1 className="font-georgia font-bold text-[15px] leading-tight truncate text-white">Itahari Namuna</h1>
+            <p className="text-[10px] text-primary-gold/80 tracking-wide truncate">Management Panel</p>
           </div>
         )}
       </div>
@@ -109,19 +111,19 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
                     key={item.title}
                     to={item.url}
                     onClick={onMobileClose}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-colors relative group
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all relative group
                       ${collapsed ? "justify-center" : ""}
-                      ${active ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}
+                      ${active ? "bg-gradient-to-r from-primary-gold/20 to-transparent text-white shadow-sm" : "text-white/60 hover:text-white hover:bg-white/5"}
                     `}
                   >
                     {active && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4/5 rounded-r-full bg-primary-gold" />
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4/5 rounded-r-full bg-primary-gold shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
                     )}
                     <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${active ? "text-primary-gold" : ""}`} strokeWidth={2} />
                     {!collapsed && <span className="truncate">{item.title}</span>}
 
                     {collapsed && (
-                      <div className="absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-foreground text-white text-[11px] font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-[60] shadow-xl whitespace-nowrap">
+                      <div className="absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-primary-dark text-white text-[11px] font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-[60] shadow-xl whitespace-nowrap border border-white/10">
                         {item.title}
                       </div>
                     )}
@@ -137,7 +139,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
       <div className="p-3 border-t border-white/10">
         {!collapsed && (
           <div className="flex items-center gap-2.5 px-1 py-2 mb-1">
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
+            <div className="w-8 h-8 rounded-full bg-primary-gold/15 flex items-center justify-center overflow-hidden border-2 border-primary-gold/40 shrink-0">
               {admin?.avatar ? (
                 <img src={getImageUrl(admin.avatar)} alt={admin.name} className="w-full h-full object-cover" />
               ) : (

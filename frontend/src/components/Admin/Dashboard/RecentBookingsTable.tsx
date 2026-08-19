@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { CalendarCheck } from "lucide-react";
 import { AdminTableSkeleton } from "../../ui/skeletons/AdminSkeletons";
 import { Badge } from "../../ui/Badge";
 import type { BadgeVariant } from "../../ui/Badge";
@@ -30,9 +31,14 @@ export function RecentBookingsTable({ bookings, loading }: RecentBookingsTablePr
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-primary-dark">Recent bookings</h2>
-        <Link to="/admin/bookings" className="text-[12px] font-medium text-primary-green hover:text-primary-dark transition-colors">
-          View all
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-primary-green/10 flex items-center justify-center text-primary-green">
+            <CalendarCheck size={15} strokeWidth={2.25} />
+          </div>
+          <h2 className="text-sm font-semibold text-primary-dark">Recent bookings</h2>
+        </div>
+        <Link to="/admin/bookings" className="text-[12px] font-semibold text-primary-green hover:text-primary-dark transition-colors">
+          View all →
         </Link>
       </div>
       <div className="bg-white rounded-2xl border border-neutral-border/60 shadow-sm overflow-hidden">
@@ -40,15 +46,15 @@ export function RecentBookingsTable({ bookings, loading }: RecentBookingsTablePr
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-neutral-light/60">
-                <th className="px-5 py-3 text-[11px] font-medium text-neutral-text-secondary">Guest</th>
-                <th className="px-5 py-3 text-[11px] font-medium text-neutral-text-secondary">Room</th>
-                <th className="px-5 py-3 text-[11px] font-medium text-neutral-text-secondary">Amount</th>
-                <th className="px-5 py-3 text-[11px] font-medium text-neutral-text-secondary text-right">Status</th>
+                <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wide text-neutral-text-secondary">Guest</th>
+                <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wide text-neutral-text-secondary">Room</th>
+                <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wide text-neutral-text-secondary">Amount</th>
+                <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wide text-neutral-text-secondary text-right">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-border/40">
               {bookings.map((log) => (
-                <tr key={log.id} className="hover:bg-neutral-light/40 transition-colors">
+                <tr key={log.id} className="hover:bg-primary-green/[0.03] transition-colors">
                   <td className="px-5 py-3">
                     <div className="flex flex-col">
                       <span className="font-medium text-[13px] text-primary-dark">{log.guest?.firstName} {log.guest?.lastName}</span>

@@ -74,7 +74,7 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
   };
 
   return (
-    <header className="h-16 bg-white border-b border-neutral-border/60 sticky top-0 z-40 flex items-center justify-between px-6 lg:px-8 gap-4">
+    <header className="h-16 bg-white/90 backdrop-blur-sm border-b border-neutral-border/60 sticky top-0 z-40 flex items-center justify-between px-6 lg:px-8 gap-4 shadow-[0_1px_0_rgba(20,83,45,0.04)]">
       <div className="flex items-center gap-4 flex-1 min-w-0">
         <button
           onClick={onMobileMenuClick}
@@ -84,14 +84,14 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
         </button>
 
         <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-text-secondary" strokeWidth={2} />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-text-secondary" strokeWidth={2} />
           <input
             ref={searchRef}
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search guests, rooms, bookings..."
-            className="w-full pl-9 pr-3 h-9 bg-neutral-light border border-transparent rounded-lg text-[13px] font-medium text-primary-dark placeholder:text-neutral-text-secondary/70 focus:outline-none focus:bg-white focus:border-primary-green/40 transition-colors"
+            className="w-full pl-10 pr-3 h-10 bg-neutral-light border border-transparent rounded-full text-[13px] font-medium text-primary-dark placeholder:text-neutral-text-secondary/70 focus:outline-none focus:bg-white focus:border-primary-green/40 focus:ring-2 focus:ring-primary-green/10 transition-all"
           />
         </form>
       </div>
@@ -105,7 +105,7 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
           >
             <Bell size={17} strokeWidth={2} />
             {pendingBookings.length > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary-gold rounded-full ring-2 ring-white" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-primary-gold rounded-full ring-2 ring-white animate-pulse" />
             )}
           </button>
 

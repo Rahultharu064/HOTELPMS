@@ -14,7 +14,7 @@ export function AdminLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen w-full bg-neutral-light font-sans selection:bg-primary-green/10 selection:text-primary-dark">
+    <div className="flex min-h-screen w-full bg-[#F7F8F5] font-sans selection:bg-primary-green/10 selection:text-primary-dark">
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
@@ -31,8 +31,9 @@ export function AdminLayout() {
           </div>
         </main>
 
-        <footer className="px-6 lg:px-10 py-4 border-t border-neutral-border/50 text-[11px] font-medium text-neutral-text-secondary">
-          © {new Date().getFullYear()} Itahari Namuna Hotel — Property Management System
+        <footer className="px-6 lg:px-10 py-4 border-t border-neutral-border/50 text-[11px] font-medium text-neutral-text-secondary flex items-center justify-between">
+          <span>© {new Date().getFullYear()} Itahari Namuna Hotel — Property Management System</span>
+          <span className="hidden sm:inline text-neutral-text-secondary/60">Crafted for effortless hospitality</span>
         </footer>
       </div>
     </div>

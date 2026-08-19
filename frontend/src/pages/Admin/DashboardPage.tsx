@@ -108,14 +108,32 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-primary-dark tracking-tight">
-          {firstName ? `Welcome back, ${firstName}` : "Dashboard"}
-        </h1>
-        <p className="text-sm text-neutral-text-secondary mt-1">
-          Here's what's happening at your property on {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-        </p>
+      {/* Hero Welcome Banner */}
+      <div className="admin-hero-banner relative overflow-hidden rounded-2xl px-6 py-7 md:px-8 md:py-9 shadow-[0_20px_40px_-16px_rgba(20,83,45,0.35)]">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary-gold mb-3">
+              <span className="h-px w-6 bg-primary-gold" />
+              Property Overview
+            </span>
+            <h1 className="font-georgia text-2xl md:text-3xl font-bold text-white tracking-tight">
+              {firstName ? `Welcome back, ${firstName}` : "Dashboard"}
+            </h1>
+            <p className="text-sm text-white/70 mt-2">
+              Here's what's happening at your property on {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            </p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 px-4 py-3 text-center">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/60">Occupancy</p>
+              <p className="text-xl font-bold text-primary-gold mt-0.5">{occupancyRate}%</p>
+            </div>
+            <div className="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 px-4 py-3 text-center">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/60">Today's Revenue</p>
+              <p className="text-xl font-bold text-white mt-0.5">Rs. {todayRevenue.toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Statistics Cards */}
@@ -126,6 +144,7 @@ export function DashboardPage() {
           icon={Calendar}
           color="text-primary-green"
           bg="bg-primary-green/10"
+          accent="linear-gradient(90deg, #1F7A3A, #14532D)"
           hint={`${stats?.pendingBookings ?? 0} awaiting confirmation`}
         />
         <StatCard
@@ -134,6 +153,7 @@ export function DashboardPage() {
           icon={Users}
           color="text-primary-gold"
           bg="bg-primary-gold/10"
+          accent="linear-gradient(90deg, #F59E0B, #D97706)"
           hint={`${occupancyRate}% of rooms occupied`}
         />
         <StatCard
@@ -142,6 +162,7 @@ export function DashboardPage() {
           icon={DollarSign}
           color="text-primary-orange"
           bg="bg-primary-orange/10"
+          accent="linear-gradient(90deg, #F97316, #F59E0B)"
           hint={`Rs. ${todayRevenue.toLocaleString()} collected today`}
         />
         <StatCard
@@ -150,6 +171,7 @@ export function DashboardPage() {
           icon={LogIn}
           color="text-blue-600"
           bg="bg-blue-600/10"
+          accent="linear-gradient(90deg, #3B82F6, #1D4ED8)"
           hint={`${stats?.todayCheckOuts ?? 0} checking out`}
         />
       </div>

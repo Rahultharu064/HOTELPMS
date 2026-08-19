@@ -1,4 +1,7 @@
 import React, { Suspense, lazy } from "react";
+import { useNavigate } from "react-router-dom";
+import { FileBarChart } from "lucide-react";
+import { useAdminAuth } from "../../context/AdminAuthContext";
 import StatsCards from "../../components/frontoffice/Dashboard/StatsCards";
 import { SectionLoader } from "../../components/ui/PageLoader";
 
@@ -8,16 +11,29 @@ const CheckInOutForm = lazy(() => import("../../components/frontoffice/Dashboard
 const GuestManagement = lazy(() => import("../../components/frontoffice/Dashboard/GuestManagement"));
 
 const DashboardHome: React.FC = () => {
+  const { admin } = useAdminAuth();
+  const navigate = useNavigate();
+  const firstName = admin?.name?.split(' ')[0];
+
   return (
     <div className="space-y-12 animate-fade-in pb-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-white/60 backdrop-blur-sm p-8 rounded-[40px] border border-neutral-border/40 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-green/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+      <div className="pms-hero-banner relative overflow-hidden rounded-[40px] px-8 py-10 md:px-12 md:py-12 shadow-[0_20px_40px_-16px_rgba(20,83,45,0.35)] flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div className="relative z-10">
-          <h1 className="text-3xl font-black text-primary-dark tracking-tight">Management Dashboard</h1>
-          <p className="text-neutral-text-secondary text-[11px] font-bold uppercase tracking-[0.2em] mt-2">Real-time property intelligence overview</p>
+          <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.28em] text-primary-gold mb-4">
+            <span className="h-px w-8 bg-primary-gold" />
+            Front Desk
+          </span>
+          <h1 className="font-georgia text-3xl md:text-4xl font-bold text-white tracking-tight">
+            {firstName ? `Welcome back, ${firstName}` : "Management Dashboard"}
+          </h1>
+          <p className="text-white/70 text-[11px] font-bold uppercase tracking-[0.2em] mt-3">Real-time property intelligence overview</p>
         </div>
-        <div className="flex items-center gap-4 relative z-10">
-          <button className="px-6 py-4 bg-white border border-neutral-border/50 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-neutral-text-secondary hover:text-primary-green hover:bg-neutral-light transition-all shadow-sm">
+        <div className="flex items-center gap-4 relative z-10 shrink-0">
+          <button
+            onClick={() => navigate('/frontoffice/reports')}
+            className="flex items-center gap-2.5 px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-white hover:bg-white hover:text-primary-dark transition-all shadow-sm"
+          >
+            <FileBarChart size={16} strokeWidth={2.5} />
             Generate Report
           </button>
         </div>

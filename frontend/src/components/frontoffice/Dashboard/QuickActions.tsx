@@ -1,14 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { PlusCircle, UserPlus, UserMinus, Command } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const actions = [
-  { label: 'New Booking', Icon: PlusCircle, bg: 'bg-primary-green', hoverBg: 'hover:bg-primary-dark' },
-  { label: 'Check-in Guest', Icon: UserPlus, bg: 'bg-primary-orange', hoverBg: 'hover:bg-primary-dark' },
-  { label: 'Check-out Guest', Icon: UserMinus, bg: 'bg-primary-gold', hoverBg: 'hover:bg-primary-dark' },
+  { label: 'New Booking', Icon: PlusCircle, bg: 'bg-primary-green', hoverBg: 'hover:bg-primary-dark', to: '/frontoffice/bookings' },
+  { label: 'Check-in Guest', Icon: UserPlus, bg: 'bg-primary-orange', hoverBg: 'hover:bg-primary-dark', to: '/frontoffice/checkin' },
+  { label: 'Check-out Guest', Icon: UserMinus, bg: 'bg-primary-gold', hoverBg: 'hover:bg-primary-dark', to: '/frontoffice/checkin' },
 ];
 
 const QuickActions: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-white rounded-[40px] border border-gray-100 p-10 shadow-sm overflow-hidden relative group">
       <div className="flex items-center justify-between mb-8">
@@ -24,6 +27,8 @@ const QuickActions: React.FC = () => {
         {actions.map((action, idx) => (
           <motion.button
             key={idx}
+            type="button"
+            onClick={() => navigate(action.to)}
             whileHover={{ y: -5, scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className={`flex items-center justify-center gap-4 px-8 py-5 rounded-[24px] text-white font-black uppercase tracking-widest text-[11px] transition-all shadow-xl shadow-black/10 ${action.bg} ${action.hoverBg}`}

@@ -1,58 +1,9 @@
 import { useLocation, Link } from "react-router-dom";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
 import { getImageUrl } from "../../../services/api";
-import {
-  LayoutDashboard,
-  Users,
-  Settings,
-  BarChart3,
-  ChevronLeft,
-  Menu,
-  Building2,
-  LogOut,
-  CreditCard,
-  Warehouse,
-  Zap,
-  ShieldCheck,
-  Images,
-  CalendarCheck,
-} from "lucide-react";
+import { ChevronLeft, Menu, LogOut } from "lucide-react";
 import { Button } from "../../ui/Button";
-
-/** `roles` restricts an item to specific admin roles; omit to show it to everyone with panel access. */
-const navGroups = [
-  {
-    label: "Overview",
-    items: [
-      { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
-    ],
-  },
-  {
-    label: "Front Desk",
-    items: [
-      { title: "Bookings", url: "/admin/bookings", icon: CalendarCheck },
-      { title: "Guests", url: "/admin/guests", icon: Users },
-      { title: "Room Inventory", url: "/admin/rooms", icon: Warehouse },
-      { title: "Room Types", url: "/admin/room-types", icon: Building2 },
-    ],
-  },
-  {
-    label: "Experience",
-    items: [
-      { title: "Extra Services", url: "/admin/extra-services", icon: Zap },
-      { title: "Gallery & Venues", url: "/admin/gallery", icon: Images },
-    ],
-  },
-  {
-    label: "Management",
-    items: [
-      { title: "Financials", url: "/admin/financials", icon: CreditCard, roles: ["superadmin", "admin"] },
-      { title: "System Analytics", url: "/admin/reports", icon: BarChart3 },
-      { title: "Staff Management", url: "/admin/users", icon: ShieldCheck, roles: ["superadmin", "admin"] },
-      { title: "Settings", url: "/admin/settings", icon: Settings, roles: ["superadmin", "admin"] },
-    ],
-  },
-];
+import { navGroups } from "./navConfig";
 
 interface AppSidebarProps {
   collapsed: boolean;

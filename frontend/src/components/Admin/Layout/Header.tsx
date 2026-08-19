@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
 import { getImageUrl } from "../../../services/api";
 import { bookingService } from "../../../services/bookingService";
 import type { Booking } from "../../../services/bookingService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { navGroups } from "./navConfig";
 import {
   Search,
   Bell,
@@ -30,6 +31,30 @@ function timeAgo(dateString: string): string {
   return `${days}d ago`;
 }
 
+const pageTitleMap: Record<string, string> = Object.fromEntries(
+  navGroups.flatMap((group) => group.items.map((item) => [item.url, item.title]))
+);
+
+function usePageTitle(pathname: string): string {
+  return useMemo(() => {
+    if (pageTitleMap[pathname]) return pageTitleMap[pathname];
+    // Fall back to the longest matching nav url prefix (e.g. /admin/rooms/12/edit -> Room Inventory)
+    const match = Object.keys(pageTitleMap)
+      .filter((url) => url !== "/admin" && pathname.startsWith(url))
+      .sort((a, b) => b.length - a.length)[0];
+    return match ? pageTitleMap[match] : "Dashboard";
+  }, [pathname]);
+}
+
+function useLiveClock() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 30000);
+    return () => clearInterval(id);
+  }, []);
+  return now;
+}
+
 export function Header({ onMobileMenuClick }: HeaderProps) {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -37,8 +62,11 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
   const [notifLoading, setNotifLoading] = useState(false);
   const { admin, adminLogout } = useAdminAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const searchRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const pageTitle = usePageTitle(location.pathname);
+  const now = useLiveClock();
 
   const handleLogout = () => {
     adminLogout();
@@ -66,6 +94,17 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const handleShortcut = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, []);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const q = searchQuery.trim();
@@ -74,8 +113,8 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
   };
 
   return (
-    <header className="h-16 bg-white/90 backdrop-blur-sm border-b border-neutral-border/60 sticky top-0 z-40 flex items-center justify-between px-6 lg:px-8 gap-4 shadow-[0_1px_0_rgba(20,83,45,0.04)]">
-      <div className="flex items-center gap-4 flex-1 min-w-0">
+    <header className="h-[72px] bg-white/90 backdrop-blur-sm border-b border-neutral-border/60 sticky top-0 z-40 flex items-center justify-between px-6 lg:px-8 gap-5 shadow-[0_1px_0_rgba(20,83,45,0.04)]">
+      <div className="flex items-center gap-4 min-w-0">
         <button
           onClick={onMobileMenuClick}
           className="lg:hidden w-9 h-9 rounded-lg bg-neutral-light flex items-center justify-center text-primary-dark hover:bg-primary-green hover:text-white transition-colors shrink-0"
@@ -83,18 +122,35 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
           <Menu size={18} strokeWidth={2.5} />
         </button>
 
-        <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-text-secondary" strokeWidth={2} />
-          <input
-            ref={searchRef}
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search guests, rooms, bookings..."
-            className="w-full pl-10 pr-3 h-10 bg-neutral-light border border-transparent rounded-full text-[13px] font-medium text-primary-dark placeholder:text-neutral-text-secondary/70 focus:outline-none focus:bg-white focus:border-primary-green/40 focus:ring-2 focus:ring-primary-green/10 transition-all"
-          />
-        </form>
+        {/* Page context */}
+        <div className="hidden md:flex flex-col justify-center min-w-0">
+          <div className="flex items-center gap-2">
+            <h1 className="font-georgia text-[17px] font-bold text-primary-dark tracking-tight truncate">{pageTitle}</h1>
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-green/10 text-primary-green text-[9px] font-bold uppercase tracking-widest border border-primary-green/15">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary-green animate-pulse" />
+              Live
+            </span>
+          </div>
+          <p className="text-[11px] font-medium text-neutral-text-secondary/80 mt-0.5">
+            {now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })} · {now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+          </p>
+        </div>
       </div>
+
+      <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-sm hidden sm:block">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-text-secondary" strokeWidth={2} />
+        <input
+          ref={searchRef}
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search guests, rooms, bookings..."
+          className="w-full pl-10 pr-14 h-10 bg-neutral-light border border-transparent rounded-full text-[13px] font-medium text-primary-dark placeholder:text-neutral-text-secondary/70 focus:outline-none focus:bg-white focus:border-primary-green/40 focus:ring-2 focus:ring-primary-green/10 transition-all"
+        />
+        <kbd className="hidden lg:inline-flex absolute right-2.5 top-1/2 -translate-y-1/2 items-center px-1.5 py-0.5 rounded-md border border-neutral-border/70 bg-white text-[9px] font-bold tracking-widest text-neutral-text-secondary/70 uppercase">
+          ⌘K
+        </kbd>
+      </form>
 
       <div className="flex items-center gap-2 shrink-0">
         {/* Notifications */}
@@ -105,14 +161,16 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
           >
             <Bell size={17} strokeWidth={2} />
             {pendingBookings.length > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary-gold rounded-full ring-2 ring-white animate-pulse" />
+              <span className="absolute top-1 right-1 min-w-[15px] h-[15px] px-[3px] rounded-full bg-primary-gold text-white text-[8px] font-bold flex items-center justify-center ring-2 ring-white">
+                {pendingBookings.length > 9 ? "9+" : pendingBookings.length}
+              </span>
             )}
           </button>
 
           {notificationOpen && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setNotificationOpen(false)} />
-              <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-neutral-border/60 overflow-hidden animate-fadeIn z-50">
+              <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-xl border border-neutral-border/60 overflow-hidden animate-fadeIn z-50">
                 <div className="px-4 py-3 border-b border-neutral-border/50 flex items-center justify-between">
                   <h3 className="text-[13px] font-semibold text-primary-dark">Pending bookings</h3>
                   {pendingBookings.length > 0 && (
@@ -162,13 +220,15 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
           )}
         </div>
 
+        <div className="w-px h-6 bg-neutral-border/60 mx-0.5 hidden sm:block" />
+
         {/* Profile */}
         <div className="relative">
           <button
             onClick={() => setProfileOpen((v) => !v)}
             className="flex items-center gap-2 pl-1.5 pr-2.5 h-9 rounded-lg hover:bg-neutral-light transition-colors group"
           >
-            <div className="w-7 h-7 rounded-full bg-primary-green/10 flex items-center justify-center overflow-hidden border border-primary-green/20 shrink-0">
+            <div className="w-8 h-8 rounded-full bg-primary-green/10 flex items-center justify-center overflow-hidden border-2 border-primary-gold/30 shrink-0">
               {admin?.avatar ? (
                 <img src={getImageUrl(admin.avatar)} alt={admin.name} className="w-full h-full object-cover" />
               ) : (
@@ -179,29 +239,28 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
             </div>
             <div className="hidden md:block text-left">
               <p className="text-[12px] font-semibold text-primary-dark leading-tight">{admin?.name || 'Super Admin'}</p>
+              <p className="text-[10px] text-neutral-text-secondary capitalize leading-tight">{admin?.role?.replace('_', ' ') || 'Administrator'}</p>
             </div>
-            <ChevronDown size={14} className="text-neutral-text-secondary group-hover:text-primary-dark transition-colors" />
+            <ChevronDown size={14} className={`text-neutral-text-secondary group-hover:text-primary-dark transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} />
           </button>
 
           {profileOpen && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setProfileOpen(false)} />
-              <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-neutral-border/60 overflow-hidden animate-fadeIn z-50">
-                <div className="p-4 border-b border-neutral-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-primary-green/10 flex items-center justify-center overflow-hidden border border-primary-green/20">
-                      {admin?.avatar ? (
-                        <img src={getImageUrl(admin.avatar)} alt={admin.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-[10px] font-bold text-primary-green">
-                          {admin?.name ? admin.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'SA'}
-                        </span>
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[12px] font-semibold text-primary-dark truncate">{admin?.name || 'Super Admin'}</p>
-                      <p className="text-[10px] text-neutral-text-secondary capitalize truncate">{admin?.role?.replace('_', ' ') || 'Administrator'}</p>
-                    </div>
+              <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-neutral-border/60 overflow-hidden animate-fadeIn z-50">
+                <div className="p-4 border-b border-neutral-border/50 bg-neutral-light/50 flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-full bg-primary-green/10 flex items-center justify-center overflow-hidden border-2 border-primary-gold/30 shrink-0">
+                    {admin?.avatar ? (
+                      <img src={getImageUrl(admin.avatar)} alt={admin.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[11px] font-bold text-primary-green">
+                        {admin?.name ? admin.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'SA'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold text-primary-dark truncate">{admin?.name || 'Super Admin'}</p>
+                    <p className="text-[10px] text-neutral-text-secondary capitalize truncate">{admin?.role?.replace('_', ' ') || 'Administrator'}</p>
                   </div>
                 </div>
                 <div className="p-1.5">

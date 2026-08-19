@@ -1,10 +1,16 @@
 import { Router } from 'express';
 import { RoomController } from '../controllers/roomController';
 import { upload } from '../middlewares/uploadMiddleware';
+import { authenticateAdmin, authorizeRoles } from '../middlewares/adminAuthMiddleware';
 import multer from 'multer';
 
 const router = Router();
 const roomController = new RoomController();
+
+const adminGuard = [
+  authenticateAdmin as any,
+  authorizeRoles('superadmin', 'admin', 'manager') as any,
+];
 
 const roomUpload = upload.fields([
   { name: 'images', maxCount: 10 },
@@ -23,12 +29,15 @@ const handleMulterError = (req: any, res: any, next: any) => {
   });
 };
 
+// Public — browsing
 router.get('/', roomController.getAllRooms);
-router.post('/', handleMulterError, roomController.createRoom);
 router.get('/guest-favorites', roomController.getGuestFavorites);
 router.get('/:id', roomController.getRoomById);
-router.put('/:id', handleMulterError, roomController.updateRoom);
-router.delete('/:id', roomController.deleteRoom);
-router.delete('/:roomId/images/:imageId', roomController.deleteImage);
+
+// Admin — CRUD
+router.post('/', ...adminGuard, handleMulterError, roomController.createRoom);
+router.put('/:id', ...adminGuard, handleMulterError, roomController.updateRoom);
+router.delete('/:id', ...adminGuard, roomController.deleteRoom);
+router.delete('/:roomId/images/:imageId', ...adminGuard, roomController.deleteImage);
 
 export default router;

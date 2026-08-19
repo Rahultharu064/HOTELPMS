@@ -125,10 +125,20 @@ model Booking {
   extraServices BookingExtraService[]
   review        Review?
 
-  @@index([guestId])
-  @@index([roomId])
-  @@index([status])
+  // Composite indexes below subsume the single-column lookups they replace (MySQL can use
+  // a composite index's leftmost prefix for a query on just that first column), so a
+  // guestId-only or roomId-only or status-only filter is still served — these just also
+  // cover the far more common combined filters actually used across the app (a guest's
+  // active bookings, a room's conflicting bookings, the admin's "pending bookings" list
+  // sorted by recency, etc.) without needing a second, redundant single-column index.
+  @@index([guestId, status])
+  @@index([roomId, status])
+  @@index([status, createdAt])
   @@index([checkIn, checkOut])
+  // checkIn/checkOut above only serves checkIn-led range scans (leftmost-prefix rule) —
+  // "today's departures" filters on checkOut alone and needs its own index to avoid a
+  // full table scan.
+  @@index([checkOut])
   @@map("bookings")
 }
 
@@ -149,6 +159,8 @@ model ExtraService {
   category ServiceCategory       @relation(fields: [categoryId], references: [id])
   bookings BookingExtraService[]
 
+  // Backs the public "extra services" listing: active items, newest first.
+  @@index([active, createdAt])
   @@map("extra_services")
 }
 
@@ -218,8 +230,13 @@ model Guest {
   reviews       Review[]
   serviceOrders ServiceOrder[]
 
-  @@index([email])
-  @@index([phone])
+  // No separate [email]/[phone] indexes — @unique above already creates one for each;
+  // a second plain index on the same column is pure redundancy (extra write cost, zero
+  // read benefit, since the unique index already serves lookups and range scans).
+  // createdAt and totalSpent back real admin queries: "new guests this month" (count by
+  // createdAt range) and the "top guests by spend" widget (order by totalSpent, limit 10).
+  @@index([createdAt])
+  @@index([totalSpent])
   @@map("guests")
 }
 
@@ -271,7 +288,11 @@ model Payment {
 
   @@index([bookingId])
   @@index([serviceOrderId])
-  @@index([status])
+  // Replaces a plain [status] index — every status-filtered payment query (completed
+  // payments for revenue reports, the admin dashboard's "today's revenue" sum) also
+  // sorts by createdAt, and the leftmost-prefix rule means this still serves a
+  // status-only filter just as well.
+  @@index([status, createdAt])
   @@map("payments")
 }
 
@@ -292,24 +313,23 @@ model BookingWorkflowLog {
 
 // Facilities
 model Facility {
-  id           Int              @id @default(autoincrement())
-  name         String           @unique @db.VarChar(100)
-  slug         String           @unique @db.VarChar(100)
-  description  String?          @db.Text
-  status       FacilityStatus   @default(active)
-  openingHours String?          @db.VarChar(255)
-  category     FacilityCategory @default(other)
-  location     String?          @db.VarChar(255)
-  plannedUpgrade String?         @db.Text
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(100)
+  slug           String           @unique @db.VarChar(100)
+  description    String?          @db.Text
+  status         FacilityStatus   @default(active)
+  openingHours   String?          @db.VarChar(255)
+  category       FacilityCategory @default(other)
+  location       String?          @db.VarChar(255)
+  plannedUpgrade String?          @db.Text
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   images FacilityImage[]
   videos FacilityVideo[]
 
   @@map("facilities")
 }
-
 
 // Facility Images
 model FacilityImage {
@@ -405,7 +425,9 @@ model ServiceOrder {
   @@index([bookingId])
   @@index([guestId])
   @@index([roomId])
-  @@index([status])
+  // Replaces a plain [status] index — the operations queue always lists orders by
+  // status (pending/in_progress/etc.) sorted most-recent-first.
+  @@index([status, createdAt])
   @@map("service_orders")
 }
 
@@ -542,7 +564,11 @@ model HousekeepingLog {
 
   room Room @relation(fields: [roomId], references: [id])
 
-  @@index([roomId])
+  // Replaces a plain [roomId] index — the housekeeping board loads every room's single
+  // most recent log (`orderBy: createdAt desc, take: 1`) on every refresh; a composite
+  // index lets that be an index range scan per room instead of scanning all of a room's
+  // history and sorting in memory.
+  @@index([roomId, createdAt])
   @@map("housekeeping_logs")
 }
 
@@ -576,10 +602,15 @@ model Review {
   roomType RoomType? @relation(fields: [roomTypeId], references: [id], onDelete: SetNull)
 
   @@index([guestId])
-  @@index([roomTypeId])
+  // [roomTypeId, status] replaces a plain [roomTypeId] index (redundant once this exists,
+  // per the leftmost-prefix rule) and is the exact shape of the app's single busiest
+  // review query: every public room-detail and guest-favorites page load aggregates
+  // approved reviews for a room type via `where: { roomTypeId, status: 'approved' }`.
+  @@index([roomTypeId, status])
+  // Backs the admin moderation queue: filter by status, most recent first.
+  @@index([status, createdAt])
   @@map("reviews")
 }
-
 
 enum ReviewStatus {
   pending

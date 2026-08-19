@@ -12,6 +12,7 @@ const ApiError_1 = require("../utils/ApiError");
 const constants_1 = require("../constants");
 const asyncHandler_1 = require("../utils/asyncHandler");
 const ApiResponse_1 = require("../utils/ApiResponse");
+const uploadedFile_1 = require("../utils/uploadedFile");
 class AdminAuthController {
     /**
      * Admin Login with brute-force protection
@@ -141,7 +142,10 @@ class AdminAuthController {
         if (!req.file) {
             throw new ApiError_1.ApiError(constants_1.HttpStatus.BAD_REQUEST, 'No file uploaded');
         }
-        const avatarUrl = req.file.path; // Cloudinary URL
+        const avatarUrl = (0, uploadedFile_1.getUploadedFileUrl)(req.file); // Cloudinary URL
+        if (!avatarUrl) {
+            throw new ApiError_1.ApiError(constants_1.HttpStatus.INTERNAL_SERVER_ERROR, 'Upload succeeded but no file URL was returned');
+        }
         await database_1.prisma.admin.update({
             where: { id: userId },
             data: { avatar: avatarUrl }

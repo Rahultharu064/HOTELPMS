@@ -3,6 +3,7 @@ import { GalleryVenueService } from '../services/galleryVenueService';
 import { ApiResponse } from '../utils/ApiResponse';
 import { asyncHandler } from '../utils/asyncHandler';
 import { HttpStatus } from '../constants/index';
+import { getUploadedFileUrl } from '../utils/uploadedFile';
 
 const galleryVenueService = new GalleryVenueService();
 
@@ -40,7 +41,7 @@ export class GalleryVenueController {
   createVenue = asyncHandler(async (req: Request, res: Response) => {
     const data = {
       ...req.body,
-      image: req.file ? (req.file as Express.Multer.File).path : req.body.image,
+      image: getUploadedFileUrl(req.file) || req.body.image,
     };
 
     const venue = await galleryVenueService.createVenue(data);
@@ -53,7 +54,7 @@ export class GalleryVenueController {
     const { id } = req.params;
     const data = {
       ...req.body,
-      ...(req.file ? { image: (req.file as Express.Multer.File).path } : {}),
+      ...(req.file ? { image: getUploadedFileUrl(req.file) } : {}),
     };
 
     const venue = await galleryVenueService.updateVenue(Number(id), data);

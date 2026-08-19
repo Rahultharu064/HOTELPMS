@@ -6,6 +6,7 @@ const ApiError_1 = require("../utils/ApiError");
 const ApiResponse_1 = require("../utils/ApiResponse");
 const asyncHandler_1 = require("../utils/asyncHandler");
 const index_1 = require("../constants/index");
+const uploadedFile_1 = require("../utils/uploadedFile");
 class RoomController {
     getAllRooms = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
         const { status, roomTypeId, search, isFeatured, limit } = req.query;
@@ -89,7 +90,7 @@ class RoomController {
         if (files && files['images']) {
             await Promise.all(files['images'].map((file, index) => database_1.prisma.image.create({
                 data: {
-                    url: file.path, // Cloudinary URL
+                    url: (0, uploadedFile_1.getUploadedFileUrl)(file), // Cloudinary URL
                     roomId: room.id,
                     isPrimary: index === 0,
                 },
@@ -99,7 +100,7 @@ class RoomController {
         if (files && files['videos']) {
             await Promise.all(files['videos'].map(file => database_1.prisma.video.create({
                 data: {
-                    url: file.path, // Cloudinary URL
+                    url: (0, uploadedFile_1.getUploadedFileUrl)(file), // Cloudinary URL
                     roomId: room.id,
                 },
             })));
@@ -193,7 +194,7 @@ class RoomController {
             const hadExistingImages = currentRoom.images.length > 0;
             await Promise.all(files['images'].map((file, index) => database_1.prisma.image.create({
                 data: {
-                    url: file.path, // Cloudinary URL
+                    url: (0, uploadedFile_1.getUploadedFileUrl)(file), // Cloudinary URL
                     roomId: updatedRoom.id,
                     isPrimary: !hadExistingImages && index === 0,
                 },

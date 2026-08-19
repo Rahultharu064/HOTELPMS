@@ -30,19 +30,30 @@ exports.cloudinaryStorage = (0, multer_storage_cloudinary_1.default)({
     // just hangs until Render's proxy eventually kills it with a 502. Wrapping it in `{ v2 }`
     // gives the library the shape it actually expects.
     cloudinary: { v2: cloudinary_1.v2 },
-    params: async (_req, file) => {
+    // multer-storage-cloudinary@2.x does NOT support a Promise-returning `params` function
+    // despite how naturally that reads — internally it hands this straight to `run-parallel`,
+    // which calls it as `params(req, file, cb)` and waits for `cb(err, result)` to be invoked.
+    // An `async (req, file) => {...}` function never calls that `cb` (it doesn't even declare
+    // it), so run-parallel's task never completes, `_handleFile`'s callback never fires,
+    // `upload_stream(...)` never gets created, and the busboy file stream never gets piped
+    // anywhere — the request just hangs until something upstream (Render's proxy, or the
+    // frontend's own AbortController) eventually kills it. Every image upload through this
+    // storage — room photos included — was silently hanging for exactly this reason. Needs
+    // the old-school Node callback signature, called synchronously since none of this work
+    // is actually async.
+    params: (req, file, callback) => {
         // Sanitize filename: remove extension and special characters
         const sanitizedName = file.originalname
             .split('.')[0]
             .replace(/[^a-z0-9]/gi, '_')
             .toLowerCase();
-        const folder = _req.body?.folder || 'hotel-pms-profiles';
-        return {
+        const folder = req.body?.folder || 'hotel-pms-profiles';
+        callback(null, {
             folder: folder,
             allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'mp4', 'mov', 'flv', 'avi', 'webm', 'ogg', 'gif', '3gp'],
             public_id: `${Date.now()}-${sanitizedName}`,
             transformation: [{ width: 1200, quality: 80, crop: 'limit' }] // Optimize for web
-        };
+        });
     },
 });
 exports.default = cloudinary_1.v2;

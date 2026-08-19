@@ -4,6 +4,7 @@ import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 import { asyncHandler } from '../utils/asyncHandler';
 import { HttpStatus } from '../constants/index';
+import { getUploadedFileUrl } from '../utils/uploadedFile';
 
 export class RoomController {
   getAllRooms = asyncHandler(async (req: Request, res: Response) => {
@@ -114,7 +115,7 @@ export class RoomController {
         files['images'].map((file, index) =>
           prisma.image.create({
             data: {
-              url: file.path, // Cloudinary URL
+              url: getUploadedFileUrl(file)!, // Cloudinary URL
               roomId: room.id,
               isPrimary: index === 0,
             },
@@ -129,7 +130,7 @@ export class RoomController {
         files['videos'].map(file =>
           prisma.video.create({
             data: {
-              url: file.path, // Cloudinary URL
+              url: getUploadedFileUrl(file)!, // Cloudinary URL
               roomId: room.id,
             },
           })
@@ -253,7 +254,7 @@ export class RoomController {
         files['images'].map((file, index) =>
           prisma.image.create({
             data: {
-              url: file.path, // Cloudinary URL
+              url: getUploadedFileUrl(file)!, // Cloudinary URL
               roomId: updatedRoom.id,
               isPrimary: !hadExistingImages && index === 0,
             },

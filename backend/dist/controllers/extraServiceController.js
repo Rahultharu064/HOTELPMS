@@ -5,11 +5,12 @@ const extraServiceService_1 = require("../services/extraServiceService");
 const ApiResponse_1 = require("../utils/ApiResponse");
 const asyncHandler_1 = require("../utils/asyncHandler");
 const constants_1 = require("../constants");
+const uploadedFile_1 = require("../utils/uploadedFile");
 const extraServiceService = new extraServiceService_1.ExtraServiceService();
 class ExtraServiceController {
     createExtraService = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
         const { name, description, price, categoryId, discountPercentage, discountAllowed } = req.body;
-        const image = req.file ? req.file.path : null;
+        const image = (0, uploadedFile_1.getUploadedFileUrl)(req.file) || null;
         const service = await extraServiceService.createExtraService({
             name,
             description,
@@ -27,7 +28,7 @@ class ExtraServiceController {
     });
     updateExtraService = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
         const { id } = req.params;
-        const image = req.file ? req.file.path : undefined;
+        const image = (0, uploadedFile_1.getUploadedFileUrl)(req.file);
         const service = await extraServiceService.updateExtraService(Number(id), {
             ...req.body,
             ...(image && { image })

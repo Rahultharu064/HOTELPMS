@@ -5,6 +5,7 @@ const reviewService_1 = require("../services/reviewService");
 const ApiResponse_1 = require("../utils/ApiResponse");
 const asyncHandler_1 = require("../utils/asyncHandler");
 const constants_1 = require("../constants");
+const uploadedFile_1 = require("../utils/uploadedFile");
 const reviewService = new reviewService_1.ReviewService();
 class ReviewController {
     getAllReviews = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
@@ -25,7 +26,7 @@ class ReviewController {
     createReview = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
         const reviewData = {
             ...req.body,
-            proofImage: req.file ? req.file.path || req.file.url : undefined
+            proofImage: (0, uploadedFile_1.getUploadedFileUrl)(req.file)
         };
         const review = await reviewService.createReview(reviewData);
         const io = req.app.get('io');

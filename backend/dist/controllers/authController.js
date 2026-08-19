@@ -14,6 +14,7 @@ const constants_1 = require("../constants");
 const asyncHandler_1 = require("../utils/asyncHandler");
 const mail_1 = require("../utils/mail");
 const generateOtp_1 = require("../utils/generateOtp");
+const uploadedFile_1 = require("../utils/uploadedFile");
 const crypto_1 = require("crypto");
 const googleClient = new google_auth_library_1.OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 class AuthController {
@@ -382,7 +383,7 @@ class AuthController {
             throw new ApiError_1.ApiError(constants_1.HttpStatus.BAD_REQUEST, 'No image file provided or upload failed');
         }
         try {
-            const profileImage = file.path; // Cloudinary URL
+            const profileImage = (0, uploadedFile_1.getUploadedFileUrl)(file); // Cloudinary URL
             await database_1.prisma.guest.update({
                 where: { id: userId },
                 data: { profileImage },

@@ -3,13 +3,14 @@ import { ExtraServiceService } from '../services/extraServiceService';
 import { ApiResponse } from '../utils/ApiResponse';
 import { asyncHandler } from '../utils/asyncHandler';
 import { HttpStatus } from '../constants';
+import { getUploadedFileUrl } from '../utils/uploadedFile';
 
 const extraServiceService = new ExtraServiceService();
 
 export class ExtraServiceController {
   createExtraService = asyncHandler(async (req: Request, res: Response) => {
     const { name, description, price, categoryId, discountPercentage, discountAllowed } = req.body;
-    const image = req.file ? (req.file as any).path : null;
+    const image = getUploadedFileUrl(req.file) || null;
 
     const service = await extraServiceService.createExtraService({
       name,
@@ -31,7 +32,7 @@ export class ExtraServiceController {
 
   updateExtraService = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const image = req.file ? (req.file as any).path : undefined;
+    const image = getUploadedFileUrl(req.file);
 
     const service = await extraServiceService.updateExtraService(Number(id), {
       ...req.body,

@@ -5,6 +5,7 @@ const roomTypeService_1 = require("../services/roomTypeService");
 const ApiResponse_1 = require("../utils/ApiResponse");
 const asyncHandler_1 = require("../utils/asyncHandler");
 const index_1 = require("../constants/index");
+const uploadedFile_1 = require("../utils/uploadedFile");
 const roomTypeService = new roomTypeService_1.RoomTypeService();
 class RoomTypeController {
     getAllRoomTypes = (0, asyncHandler_1.asyncHandler)(async (req, res, next) => {
@@ -27,7 +28,7 @@ class RoomTypeController {
         // req.file will contain the uploaded image
         const data = {
             ...req.body,
-            image: req.file ? req.file.path : undefined,
+            image: (0, uploadedFile_1.getUploadedFileUrl)(req.file),
         };
         const roomType = await roomTypeService.createRoomType(data);
         // Emit socket event
@@ -40,7 +41,7 @@ class RoomTypeController {
         const { id } = req.params;
         const data = {
             ...req.body,
-            image: req.file ? req.file.path : undefined,
+            image: (0, uploadedFile_1.getUploadedFileUrl)(req.file),
         };
         const roomType = await roomTypeService.updateRoomType(Number(id), data);
         // Emit socket event

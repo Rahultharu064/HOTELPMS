@@ -4,6 +4,7 @@ import { ApiResponse } from '../utils/ApiResponse';
 import { asyncHandler } from '../utils/asyncHandler';
 import { HttpStatus } from '../constants';
 import { ReviewStatus } from '@prisma/client';
+import { getUploadedFileUrl } from '../utils/uploadedFile';
 
 const reviewService = new ReviewService();
 
@@ -29,7 +30,7 @@ export class ReviewController {
   createReview = asyncHandler(async (req: Request, res: Response) => {
     const reviewData = {
       ...req.body,
-      proofImage: req.file ? (req.file as any).path || (req.file as any).url : undefined
+      proofImage: getUploadedFileUrl(req.file)
     };
     
     const review = await reviewService.createReview(reviewData);

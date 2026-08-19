@@ -9,6 +9,7 @@ import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiResponse } from '../utils/ApiResponse';
+import { getUploadedFileUrl } from '../utils/uploadedFile';
 
 export class AdminAuthController {
   /**
@@ -176,7 +177,10 @@ export class AdminAuthController {
       throw new ApiError(HttpStatus.BAD_REQUEST, 'No file uploaded');
     }
 
-    const avatarUrl = (req.file as any).path; // Cloudinary URL
+    const avatarUrl = getUploadedFileUrl(req.file); // Cloudinary URL
+    if (!avatarUrl) {
+      throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, 'Upload succeeded but no file URL was returned');
+    }
 
     await prisma.admin.update({
       where: { id: userId },

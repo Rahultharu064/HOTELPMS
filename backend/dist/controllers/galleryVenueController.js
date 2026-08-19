@@ -5,6 +5,7 @@ const galleryVenueService_1 = require("../services/galleryVenueService");
 const ApiResponse_1 = require("../utils/ApiResponse");
 const asyncHandler_1 = require("../utils/asyncHandler");
 const index_1 = require("../constants/index");
+const uploadedFile_1 = require("../utils/uploadedFile");
 const galleryVenueService = new galleryVenueService_1.GalleryVenueService();
 class GalleryVenueController {
     getActiveVenues = (0, asyncHandler_1.asyncHandler)(async (_req, res) => {
@@ -28,7 +29,7 @@ class GalleryVenueController {
     createVenue = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
         const data = {
             ...req.body,
-            image: req.file ? req.file.path : req.body.image,
+            image: (0, uploadedFile_1.getUploadedFileUrl)(req.file) || req.body.image,
         };
         const venue = await galleryVenueService.createVenue(data);
         res.status(index_1.HttpStatus.CREATED).json(ApiResponse_1.ApiResponse.success('Gallery venue created successfully', venue));
@@ -37,7 +38,7 @@ class GalleryVenueController {
         const { id } = req.params;
         const data = {
             ...req.body,
-            ...(req.file ? { image: req.file.path } : {}),
+            ...(req.file ? { image: (0, uploadedFile_1.getUploadedFileUrl)(req.file) } : {}),
         };
         const venue = await galleryVenueService.updateVenue(Number(id), data);
         res.status(index_1.HttpStatus.OK).json(ApiResponse_1.ApiResponse.success('Gallery venue updated successfully', venue));

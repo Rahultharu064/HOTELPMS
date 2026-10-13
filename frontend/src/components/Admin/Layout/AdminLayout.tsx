@@ -1,20 +1,22 @@
-import { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
-import { Header } from "./Header";
+import { Outlet, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
 
 export function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
-  // Auto-close mobile sidebar on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen w-full bg-[#F7F8F5] font-sans selection:bg-primary-green/10 selection:text-primary-dark">
+    <div
+      className="flex min-h-screen w-full font-sans"
+      style={{ background: 'var(--color-surface)' }}
+    >
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
@@ -22,18 +24,34 @@ export function AdminLayout() {
         onMobileClose={() => setMobileOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 transition-all duration-200">
         <Header onMobileMenuClick={() => setMobileOpen(true)} />
 
-        <main className="flex-1 p-6 md:p-8 lg:p-10">
-          <div className="max-w-7xl mx-auto h-full">
+        <main className="flex-1 relative overflow-x-hidden" style={{ padding: '32px' }}>
+          <div className="relative z-10 max-w-7xl mx-auto">
             <Outlet />
           </div>
         </main>
 
-        <footer className="px-6 lg:px-10 py-4 border-t border-neutral-border/50 text-[11px] font-medium text-neutral-text-secondary flex items-center justify-between">
-          <span>© {new Date().getFullYear()} Itahari Namuna Hotel — Property Management System</span>
-          <span className="hidden sm:inline text-neutral-text-secondary/60">Crafted for effortless hospitality</span>
+        <footer
+          className="flex items-center justify-between"
+          style={{
+            padding: '16px 32px',
+            borderTop: '1px solid var(--color-border)',
+            background: 'var(--color-card)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: '12px',
+            fontWeight: 500,
+            color: 'var(--color-muted)',
+          }}
+        >
+          <p>© 2026 Itahari Namuna College — Property Management System</p>
+          <div className="flex items-center gap-6">
+            <span className="flex items-center gap-1.5">
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-success)', display: 'inline-block' }} />
+              System online
+            </span>
+          </div>
         </footer>
       </div>
     </div>

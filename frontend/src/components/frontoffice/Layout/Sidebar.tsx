@@ -11,18 +11,26 @@ import {
   BarChart3,
   ChevronLeft,
   Menu,
-  LogOut
+  LogOut,
+  ShoppingBag,
+  FileText,
+  Settings,
+  Bell,
 } from "lucide-react";
 import { Button } from "../../ui/Button";
 
 const menuItems = [
-  { title: "Dashboard", url: "/frontoffice", icon: LayoutDashboard },
-  { title: "Bookings", url: "/frontoffice/bookings", icon: CalendarCheck },
-  { title: "Check-in / Out", url: "/frontoffice/checkin", icon: LogIn },
-  { title: "Guests", url: "/frontoffice/guests", icon: Users },
-  { title: "Rooms Availability", url: "/frontoffice/rooms", icon: BedDouble },
-  { title: "Payments", url: "/frontoffice/payments", icon: CreditCard },
-  { title: "Reports", url: "/frontoffice/reports", icon: BarChart3 },
+  { title: "Dashboard",         url: "/frontoffice",               icon: LayoutDashboard },
+  { title: "Bookings",          url: "/frontoffice/bookings",       icon: CalendarCheck },
+  { title: "Check-in / Out",    url: "/frontoffice/checkin",        icon: LogIn },
+  { title: "Guests",            url: "/frontoffice/guests",         icon: Users },
+  { title: "Rooms",             url: "/frontoffice/rooms",          icon: BedDouble },
+  { title: "Services & POS",    url: "/frontoffice/services-pos",   icon: ShoppingBag },
+  { title: "Payments",          url: "/frontoffice/payments",       icon: CreditCard },
+  { title: "Guest Folio",       url: "/frontoffice/folio",          icon: FileText },
+  { title: "Reports",           url: "/frontoffice/reports",        icon: BarChart3 },
+  { title: "Notifications",     url: "/frontoffice/notifications",  icon: Bell },
+  { title: "Settings",          url: "/frontoffice/settings",       icon: Settings },
 ];
 
 interface AppSidebarProps {
@@ -42,61 +50,112 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
     navigate('/admin/login');
   };
 
-  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase();
+  const getInitials = (name: string) =>
+    name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   const sidebarContent = (
-    <div className={`flex flex-col h-full bg-[#14532D] text-white transition-all duration-300 ${collapsed ? "w-[80px]" : "w-[280px]"}`}>
-      {/* Brand Section */}
-      <div className="flex items-center gap-4 px-8 py-10 border-b border-white/5 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-[#F59E0B]/10 rounded-full blur-[40px] -mr-12 -mt-12 transition-all duration-500 group-hover:scale-150 group-hover:bg-[#F59E0B]/20" />
-        
-        <img 
-          src="/Logos1.png" 
-          alt="Logo" 
-          className="w-12 h-12 object-contain rounded-xl relative z-10" 
+    <div
+      className="flex flex-col h-full transition-all duration-200"
+      style={{
+        background: 'var(--color-ink)',
+        width: collapsed ? '64px' : '240px',
+      }}
+    >
+      {/* Brand */}
+      <div
+        className="flex items-center gap-3 border-b"
+        style={{
+          padding: collapsed ? '24px 0' : '24px 20px',
+          borderColor: 'rgba(255,255,255,0.06)',
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          minHeight: '72px',
+        }}
+      >
+        <img
+          src="/Logos1.png"
+          alt="Logo"
+          style={{ width: '32px', height: '32px', objectFit: 'contain', borderRadius: '6px', flexShrink: 0 }}
         />
-        
         {!collapsed && (
-          <div className="overflow-hidden relative z-10 transition-all duration-500 delay-100">
-            <h1 className="font-black text-[13px] leading-none tracking-tight uppercase">Itahari Namuna</h1>
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-[#F59E0B] mt-1.5 opacity-90">College PMS</p>
+          <div>
+            <h1 style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+              Itahari Namuna
+            </h1>
+            <p style={{ fontFamily: 'var(--font-ui)', fontSize: '10px', fontWeight: 500, color: 'var(--color-accent)', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '3px' }}>
+              College PMS
+            </p>
           </div>
         )}
       </div>
 
-      {/* Main Navigation */}
-      <div className="flex-1 overflow-y-auto px-6 py-10 space-y-2 custom-scrollbar">
+      {/* Navigation */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar-dark" style={{ padding: collapsed ? '16px 8px' : '16px 12px' }}>
         {!collapsed && (
-          <p className="px-4 text-[9px] font-black uppercase tracking-[0.4em] text-white/20 mb-8">Main Management</p>
+          <p className="sidebar-section-label" style={{ marginBottom: '4px' }}>Main Navigation</p>
         )}
-        
-        <nav className="space-y-1.5">
+
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
           {menuItems.map((item) => {
-            const active = location.pathname === item.url || (item.url === "/frontoffice" && location.pathname === "/frontoffice/dashboard");
+            const active =
+              location.pathname === item.url ||
+              (item.url === '/frontoffice' && location.pathname === '/frontoffice/dashboard');
+
             return (
               <Link
                 key={item.title}
                 to={item.url}
                 onClick={onMobileClose}
-                className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl text-[13px] font-bold transition-all duration-300 relative group
-                  ${active
-                    ? "bg-[#1F7A3A] text-white shadow-xl shadow-black/10 translate-x-1"
-                    : "text-white/60 hover:text-white hover:bg-white/5"
-                  }`}
+                title={collapsed ? item.title : undefined}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  height: '44px',
+                  padding: collapsed ? '0' : '0 12px',
+                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '14px',
+                  fontWeight: active ? 600 : 500,
+                  color: active ? '#FFFFFF' : 'rgba(255,255,255,0.6)',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  background: active ? 'rgba(45,106,79,0.9)' : 'transparent',
+                  borderLeft: active ? '3px solid var(--color-accent)' : '3px solid transparent',
+                  transition: 'background 100ms ease, color 100ms ease',
+                  position: 'relative',
+                }}
+                className="sidebar-nav-item"
               >
-                {/* Active Indicator Bar */}
-                {active && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#F59E0B] rounded-full shadow-[0_0_12px_#F59E0B]" />
-                )}
+                <item.icon
+                  size={18}
+                  strokeWidth={2}
+                  style={{ color: active ? '#FFFFFF' : 'rgba(255,255,255,0.55)', flexShrink: 0 }}
+                />
+                {!collapsed && <span className="truncate">{item.title}</span>}
 
-                <item.icon className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:scale-110 ${active ? "text-[#F59E0B]" : ""}`} strokeWidth={2.2} />
-                {!collapsed && (
-                  <span className="truncate">{item.title}</span>
-                )}
-                
-                {/* Tooltip for collapsed mode */}
+                {/* Tooltip in collapsed mode */}
                 {collapsed && (
-                  <div className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 px-3 py-2 bg-[#111827] text-white text-[10px] font-bold uppercase tracking-widest rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] shadow-2xl whitespace-nowrap">
+                  <div
+                    className="pointer-events-none"
+                    style={{
+                      position: 'absolute',
+                      left: 'calc(100% + 10px)',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      padding: '6px 12px',
+                      background: '#111827',
+                      color: '#FFFFFF',
+                      fontSize: '12px',
+                      fontFamily: 'var(--font-ui)',
+                      fontWeight: 500,
+                      borderRadius: '6px',
+                      whiteSpace: 'nowrap',
+                      opacity: 0,
+                      zIndex: 60,
+                      boxShadow: 'var(--shadow-lg)',
+                    }}
+                    className="sidebar-tooltip"
+                  >
                     {item.title}
                   </div>
                 )}
@@ -106,50 +165,114 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
         </nav>
       </div>
 
-      {/* Logout / Bottom Action */}
-      <div className="p-6 border-t border-white/5 bg-[#111827]/20">
+      {/* Bottom — user + collapse toggle + logout */}
+      <div
+        style={{
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          padding: collapsed ? '12px 8px' : '16px 12px',
+        }}
+      >
+        {/* Collapse toggle */}
+        <button
+          onClick={onToggle}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          style={{
+            width: '100%',
+            height: '36px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: collapsed ? 'center' : 'flex-end',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            color: 'rgba(255,255,255,0.35)',
+            borderRadius: '6px',
+            marginBottom: '8px',
+            transition: 'color 100ms ease, background 100ms ease',
+            paddingRight: collapsed ? '0' : '4px',
+          }}
+          className="sidebar-toggle-btn"
+        >
+          <ChevronLeft
+            size={16}
+            strokeWidth={2}
+            style={{ transition: 'transform 200ms ease', transform: collapsed ? 'rotate(180deg)' : 'none' }}
+          />
+        </button>
+
         {!collapsed && (
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 text-[10px] font-black text-[#F59E0B] overflow-hidden">
-                {admin?.avatar ? (
-                  <img src={getImageUrl(admin.avatar)} alt={admin.name} className="w-full h-full object-cover" />
-                ) : (
-                  admin ? getInitials(admin.name) : '??'
-                )}
-              </div>
-              <div className="overflow-hidden">
-                <h4 className="text-[12px] font-bold text-white leading-none truncate w-[120px]">{admin?.name || 'Guest Admin'}</h4>
-                <p className="text-[10px] font-bold text-[#F59E0B]/80 uppercase mt-1 tracking-wider opacity-80">{admin?.role.replace('_', ' ')}</p>
-              </div>
-            </div>
-            <button 
-              onClick={onToggle}
-              className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/40 hover:text-[#F59E0B] hover:bg-white/10 transition-all"
-              title="Collapse sidebar"
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '10px',
+              borderRadius: '8px',
+              marginBottom: '8px',
+              background: 'rgba(255,255,255,0.04)',
+            }}
+          >
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.10)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'var(--font-ui)',
+                fontSize: '11px',
+                fontWeight: 700,
+                color: 'var(--color-accent)',
+                flexShrink: 0,
+                overflow: 'hidden',
+              }}
             >
-              <ChevronLeft className={`w-4 h-4 transition-transform duration-500 ${collapsed ? "rotate-180" : ""}`} />
-            </button>
+              {admin?.avatar ? (
+                <img src={getImageUrl(admin.avatar)} alt={admin.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                getInitials(admin?.name || 'GA')
+              )}
+            </div>
+            <div style={{ overflow: 'hidden', flex: 1 }}>
+              <p style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 600, color: '#FFFFFF', lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {admin?.name || 'Staff Member'}
+              </p>
+              <p style={{ fontFamily: 'var(--font-ui)', fontSize: '11px', fontWeight: 500, color: 'var(--color-accent)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '3px' }}>
+                {admin?.role?.replace('_', ' ')}
+              </p>
+            </div>
           </div>
         )}
-        
-        {collapsed && (
-          <button 
-            onClick={onToggle}
-            className="w-full h-10 mb-4 rounded-xl bg-white/5 flex items-center justify-center text-white/40 hover:text-[#F59E0B] hover:bg-white/10 transition-all"
-            title="Expand sidebar"
-          >
-            <ChevronLeft className={`w-5 h-5 transition-transform duration-500 rotate-180`} />
-          </button>
-        )}
-        
-        <button 
+
+        {/* Logout */}
+        <button
           onClick={handleLogout}
-          className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl bg-[#DC2626]/10 text-red-400 hover:bg-[#DC2626] hover:text-white transition-all duration-300 group ${collapsed ? "justify-center" : ""}`}
-          title="Logout session"
+          aria-label="Log out"
+          style={{
+            width: '100%',
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            padding: collapsed ? '0' : '0 10px',
+            background: 'rgba(192,57,43,0.08)',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontFamily: 'var(--font-ui)',
+            fontSize: '13px',
+            fontWeight: 600,
+            color: '#E57373',
+            transition: 'background 150ms ease, color 150ms ease',
+          }}
+          className="logout-btn"
         >
-          <LogOut size={20} className="shrink-0 transition-transform group-hover:-translate-x-1" />
-          {!collapsed && <span className="text-[11px] font-black uppercase tracking-[0.2em]">Logout</span>}
+          <LogOut size={16} strokeWidth={2} style={{ flexShrink: 0 }} />
+          {!collapsed && <span>Log out</span>}
         </button>
       </div>
     </div>
@@ -157,18 +280,42 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
 
   return (
     <>
+      {/* Desktop sidebar */}
       <aside className="hidden lg:flex flex-shrink-0 h-screen sticky top-0 z-50">
         {sidebarContent}
       </aside>
 
+      {/* Mobile drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-[100] lg:hidden">
-          <div className="absolute inset-0 bg-[#0C2012]/80 backdrop-blur-sm transition-all duration-500" onClick={onMobileClose} />
-          <aside className="relative z-10 h-full animate-slide-in-left shadow-2xl">
+          <div
+            className="absolute inset-0"
+            style={{ background: 'var(--color-overlay)', backdropFilter: 'blur(4px)' }}
+            onClick={onMobileClose}
+          />
+          <aside className="relative z-10 h-full shadow-2xl">
             {sidebarContent}
           </aside>
         </div>
       )}
+
+      <style>{`
+        .sidebar-nav-item:hover {
+          background: rgba(255,255,255,0.06) !important;
+          color: #FFFFFF !important;
+        }
+        .sidebar-nav-item:hover .sidebar-tooltip {
+          opacity: 1 !important;
+        }
+        .sidebar-toggle-btn:hover {
+          background: rgba(255,255,255,0.06) !important;
+          color: rgba(255,255,255,0.7) !important;
+        }
+        .logout-btn:hover {
+          background: rgba(192,57,43,0.18) !important;
+          color: #FFFFFF !important;
+        }
+      `}</style>
     </>
   );
 }
@@ -178,9 +325,10 @@ export function MobileMenuButton({ onClick }: { onClick: () => void }) {
     <Button
       onClick={onClick}
       type="button"
-      className="lg:hidden h-12 w-12 rounded-2xl bg-white border border-gray-100 text-[#111827] shadow-xl hover:shadow-2xl transition-all active:scale-95"
+      className="lg:hidden h-10 w-10 rounded-lg bg-white border border-gray-100 text-gray-600 shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center justify-center"
+      aria-label="Open navigation menu"
     >
-      <Menu className="w-6 h-6" strokeWidth={2.5} />
+      <Menu className="w-5 h-5" strokeWidth={2} />
     </Button>
   );
 }

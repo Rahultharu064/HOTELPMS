@@ -3,7 +3,6 @@ import { RoomTypeService } from '../services/roomTypeService';
 import { ApiResponse } from '../utils/ApiResponse';
 import { asyncHandler } from '../utils/asyncHandler';
 import { HttpStatus } from '../constants/index';
-import { getUploadedFileUrl } from '../utils/uploadedFile';
 
 const roomTypeService = new RoomTypeService();
 
@@ -37,7 +36,7 @@ export class RoomTypeController {
     // req.file will contain the uploaded image
     const data = {
       ...req.body,
-      image: getUploadedFileUrl(req.file),
+      image: req.file ? (req.file as any).path : undefined,
     };
 
     const roomType = await roomTypeService.createRoomType(data);
@@ -55,7 +54,7 @@ export class RoomTypeController {
     const { id } = req.params;
     const data = {
       ...req.body,
-      image: getUploadedFileUrl(req.file),
+      image: req.file ? (req.file as any).path : undefined,
     };
 
     const roomType = await roomTypeService.updateRoomType(Number(id), data);

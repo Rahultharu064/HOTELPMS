@@ -9,7 +9,6 @@ import { ApiError } from '../utils/ApiError';
 import { HttpStatus } from '../constants';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiResponse } from '../utils/ApiResponse';
-import { getUploadedFileUrl } from '../utils/uploadedFile';
 
 export class AdminAuthController {
   /**
@@ -139,35 +138,6 @@ export class AdminAuthController {
   });
 
   /**
-   * Update Admin Profile (name/email)
-   */
-  updateProfile = asyncHandler(async (req: Request, res: Response) => {
-    const userId = (req as any).user.id;
-    const { name, email } = req.body;
-
-    if (email) {
-      const normalizedEmail = email.toLowerCase();
-      const existing = await prisma.admin.findUnique({ where: { email: normalizedEmail } });
-      if (existing && existing.id !== userId) {
-        throw new ApiError(HttpStatus.CONFLICT, 'Email is already in use by another account');
-      }
-    }
-
-    const updated = await prisma.admin.update({
-      where: { id: userId },
-      data: {
-        name: name || undefined,
-        email: email ? email.toLowerCase() : undefined,
-      },
-      select: { id: true, email: true, name: true, role: true, avatar: true },
-    });
-
-    res.status(HttpStatus.OK).json(
-      ApiResponse.success('Profile updated successfully', updated)
-    );
-  });
-
-  /**
    * Update Admin Avatar
    */
   updateAvatar = asyncHandler(async (req: Request, res: Response) => {
@@ -177,10 +147,7 @@ export class AdminAuthController {
       throw new ApiError(HttpStatus.BAD_REQUEST, 'No file uploaded');
     }
 
-    const avatarUrl = getUploadedFileUrl(req.file); // Cloudinary URL
-    if (!avatarUrl) {
-      throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, 'Upload succeeded but no file URL was returned');
-    }
+    const avatarUrl = (req.file as any).path; // Cloudinary URL
 
     await prisma.admin.update({
       where: { id: userId },

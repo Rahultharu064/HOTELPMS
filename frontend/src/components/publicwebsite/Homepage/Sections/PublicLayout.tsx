@@ -6,7 +6,10 @@ import Footer from "../layout/Footer";
 import BackToTopButton from "../layout/BackToTopButton";
 
 const PublicLayout: React.FC = () => (
-  <div className="flex flex-col min-h-screen bg-white">
+  <div
+    className="flex flex-col min-h-screen"
+    style={{ background: 'var(--color-surface)', color: 'var(--color-ink)' }}
+  >
     <Topbar />
     <Navbar />
     <main className="flex-1">

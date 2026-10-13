@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
 import {
   Search,
-  CheckCircle2,
-  Clock,
-  Hammer,
-  RefreshCcw
+  RefreshCcw,
+  Sparkles,
+  Bed,
+  CheckCircle,
+  Wrench,
+  AlertCircle
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { housekeepingService } from "../../services/housekeepingService";
 import { toast } from "react-hot-toast";
-import { Button } from "../../components/ui/Button";
-import { Input } from "../../components/ui/Input";
-import { PortalPageSkeleton } from "../../components/ui/skeletons/AdminSkeletons";
 
 const RoomStatusPage: React.FC = () => {
   const [rooms, setRooms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("All");
+  const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchRooms();
@@ -29,161 +28,304 @@ const RoomStatusPage: React.FC = () => {
       setLoading(true);
       const res = await housekeepingService.getRoomStatuses();
       if (res.success) setRooms(res.data);
-    } catch (error) {
+    } catch {
       toast.error("Failed to load room status");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAction = async (roomId: number, currentStatus: string) => {
-    const nextStatus = currentStatus === 'cleaning' ? 'available' : 'cleaning';
+  // Direct 1-tap next action based on current status
+  const handleNextStatus = async (room: any) => {
+    let nextStatus = 'available';
+    let actionLabel = 'Mark as Clean';
+
+    if (room.status === 'cleaning') {
+      nextStatus = 'available';
+      actionLabel = 'Mark as Clean';
+    } else if (room.status === 'available') {
+      nextStatus = 'cleaning';
+      actionLabel = 'Start Cleaning';
+    } else if (room.status === 'occupied') {
+      nextStatus = 'cleaning';
+      actionLabel = 'Request Cleaning';
+    }
+
     try {
-      toast.loading('Processing...', { id: 'room-action' });
-      const res = await housekeepingService.updateRoomStatus(roomId, {
+      setUpdatingId(room.id);
+      const res = await housekeepingService.updateRoomStatus(room.id, {
         status: nextStatus,
         type: 'general',
-        notes: `Updated from Room Status Board`
+        notes: `Updated from Housekeeping Board`
       });
       if (res.success) {
-        toast.success(`Room status updated to ${nextStatus}`, { id: 'room-action' });
-        fetchRooms();
+        toast.success(`Room ${room.roomNumber} is ready`);
+        // Update local state directly for instant feedback (spec: 150ms transition)
+        setRooms(prev => prev.map(r => r.id === room.id ? { ...r, status: nextStatus } : r));
       }
-    } catch (error) {
-      toast.error('Action failed');
+    } catch {
+      toast.error('Failed to update status — try again');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'available':
+        return <span className="badge badge-available">Available</span>;
+      case 'occupied':
+        return <span className="badge badge-occupied">Occupied</span>;
+      case 'cleaning':
+        return <span className="badge badge-cleaning">Needs Cleaning</span>;
+      case 'inspected':
+        return <span className="badge badge-inspected">Inspected</span>;
+      case 'maintenance':
+        return <span className="badge badge-oor">Out of Order</span>;
+      default:
+        return <span className="badge badge-available">{status}</span>;
+    }
+  };
+
+  const getStatusBorderClass = (status: string) => {
+    switch (status) {
+      case 'available':   return 'card-status-available';
+      case 'occupied':    return 'card-status-occupied';
+      case 'cleaning':    return 'card-status-cleaning';
+      case 'inspected':   return 'card-status-inspected';
+      case 'maintenance': return 'card-status-oor';
+      default:            return 'card-status-available';
     }
   };
 
   const filteredRooms = rooms.filter(r => {
-    const matchesFilter = filter === "All" ||
-      (filter === "Clean" && r.status === "available") ||
-      (filter === "Dirty" && r.status === "cleaning") ||
-      (filter === "Maintenance" && r.status === "maintenance") ||
-      (filter === "Occupied" && r.status === "occupied");
+    const matchesFilter =
+      filter === "all" ||
+      (filter === "available"   && r.status === "available") ||
+      (filter === "cleaning"    && r.status === "cleaning") ||
+      (filter === "occupied"    && r.status === "occupied") ||
+      (filter === "maintenance" && r.status === "maintenance");
     const matchesSearch = r.roomNumber.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
-  if (loading) {
-    return <PortalPageSkeleton variant="grid" />;
-  }
+  // Count summaries
+  const countAvailable   = rooms.filter(r => r.status === 'available').length;
+  const countCleaning    = rooms.filter(r => r.status === 'cleaning').length;
+  const countOccupied    = rooms.filter(r => r.status === 'occupied').length;
+  const countMaintenance = rooms.filter(r => r.status === 'maintenance').length;
 
   return (
-    <div className="space-y-10 animate-fade-in pb-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
-            <div className="w-2 h-8 bg-[#14532D] rounded-full" />
-            Room Status Inventory
+          <h1 style={{ fontFamily: 'var(--font-ui)', fontSize: '24px', fontWeight: 700, color: 'var(--color-ink)' }}>
+            Room Status
           </h1>
-          <p className="text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Track real-time room occupancy and cleaning cycles</p>
+          <p style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', color: 'var(--color-muted)', marginTop: '2px' }}>
+            Real-time housekeeping and room occupancy overview
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
+        <div className="flex items-center gap-2">
+          <button
             onClick={fetchRooms}
-            className="p-4 bg-white border border-gray-100 rounded-2xl text-gray-400 hover:text-[#14532D] transition-all shadow-sm"
+            className="btn-ghost"
+            style={{ height: '40px', padding: '0 12px' }}
+            title="Refresh room list"
           >
-            <RefreshCcw size={18} />
-          </Button>
-          <Button className="px-6 py-4 bg-[#111827] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all shadow-xl shadow-black/10">
-            Status Report
-          </Button>
+            <RefreshCcw size={16} />
+            <span>Refresh</span>
+          </button>
         </div>
       </div>
 
-      {/* Filter & Search */}
-      <div className="bg-white p-5 rounded-[32px] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-6">
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 md:pb-0 w-full md:w-auto no-scrollbar">
-          {["All", "Clean", "Dirty", "Occupied", "Maintenance"].map((f) => (
-            <Button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-6 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 ${filter === f
-                  ? "bg-[#14532D] text-white shadow-lg shadow-black/10"
-                  : "text-gray-400 hover:text-[#111827] hover:bg-gray-50"
-                }`}
+      {/* Summary KPI row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="card" style={{ padding: '16px' }}>
+          <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-muted)' }}>Available</span>
+          <p style={{ fontFamily: 'var(--font-ui)', fontSize: '28px', fontWeight: 700, color: 'var(--color-success)', marginTop: '4px' }}>
+            {countAvailable}
+          </p>
+        </div>
+        <div className="card" style={{ padding: '16px' }}>
+          <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-muted)' }}>Needs Cleaning</span>
+          <p style={{ fontFamily: 'var(--font-ui)', fontSize: '28px', fontWeight: 700, color: 'var(--color-warning)', marginTop: '4px' }}>
+            {countCleaning}
+          </p>
+        </div>
+        <div className="card" style={{ padding: '16px' }}>
+          <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-muted)' }}>Occupied</span>
+          <p style={{ fontFamily: 'var(--font-ui)', fontSize: '28px', fontWeight: 700, color: 'var(--color-blue)', marginTop: '4px' }}>
+            {countOccupied}
+          </p>
+        </div>
+        <div className="card" style={{ padding: '16px' }}>
+          <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-muted)' }}>Out of Order</span>
+          <p style={{ fontFamily: 'var(--font-ui)', fontSize: '28px', fontWeight: 700, color: 'var(--color-danger)', marginTop: '4px' }}>
+            {countMaintenance}
+          </p>
+        </div>
+      </div>
+
+      {/* Filter Chips & Search Bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          {[
+            { id: 'all',         label: 'All Rooms' },
+            { id: 'cleaning',    label: `Needs Cleaning (${countCleaning})` },
+            { id: 'available',   label: `Available (${countAvailable})` },
+            { id: 'occupied',    label: `Occupied (${countOccupied})` },
+            { id: 'maintenance', label: `Out of Order (${countMaintenance})` },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setFilter(tab.id)}
+              className={`chip ${filter === tab.id ? 'chip-active' : ''}`}
             >
-              {f}
-            </Button>
+              {tab.label}
+            </button>
           ))}
         </div>
-        <div className="relative flex-1 w-full">
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" strokeWidth={2.5} />
-          <Input
+
+        <div style={{ position: 'relative', width: '100%', maxWidth: '280px' }}>
+          <Search
+            size={16}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--color-muted)',
+              pointerEvents: 'none'
+            }}
+          />
+          <input
+            type="text"
+            placeholder="Search room number..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search room number..."
-            className="w-full pl-14 pr-4 py-4 bg-gray-50/50 border border-transparent rounded-[24px] text-sm font-medium focus:outline-none focus:border-[#14532D]/20 focus:bg-white transition-all shadow-inner"
+            className="input-field"
+            style={{ paddingLeft: '36px' }}
           />
         </div>
       </div>
 
-      {/* Grid Display */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {filteredRooms.map((room) => {
-          const isDirty = room.status === 'cleaning';
-          const isClean = room.status === 'available';
-          const isOccupied = room.status === 'occupied';
-          const isMaintenance = room.status === 'maintenance';
+      {/* Room Grid */}
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="skeleton" style={{ height: '140px', borderRadius: '12px' }} />
+          ))}
+        </div>
+      ) : filteredRooms.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {filteredRooms.map((room) => {
+            const isCleaning = room.status === 'cleaning';
+            const isAvailable = room.status === 'available';
+            const isOccupied = room.status === 'occupied';
 
-          return (
-            <motion.div
-              whileHover={{ y: -8 }}
-              key={room.id}
-              className="group bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 relative flex flex-col items-center text-center"
-            >
-              <div className={`absolute top-8 right-10 w-2.5 h-2.5 rounded-full ${isClean ? 'bg-emerald-500' : isDirty ? 'bg-amber-500' : isOccupied ? 'bg-blue-500' : 'bg-red-500'
-                }`} />
-
-              <div className={`w-20 h-20 rounded-[32px] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 ${isClean ? 'bg-emerald-50 text-emerald-600' : isDirty ? 'bg-amber-50 text-amber-600' : isOccupied ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-red-600'
-                }`}>
-                {isClean ? <CheckCircle2 size={32} /> : isDirty ? <Clock size={32} /> : isMaintenance ? <Hammer size={32} /> : <CheckCircle2 size={32} />}
-              </div>
-
-              <h3 className="text-3xl font-black text-[#111827] tracking-tighter shrink-0 mb-1">Room {room.roomNumber}</h3>
-              <p className="text-[10px] font-black uppercase tracking-widest text-[#F59E0B] mb-8">Floor {room.floor || 'G'}</p>
-
-              <div className="space-y-4 w-full pt-8 border-t border-gray-50">
-                <div className="flex items-center justify-between px-2">
-                  <div className="text-left">
-                    <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Last Activity</p>
-                    <p className="text-[11px] font-bold text-[#111827]">
-                      {room.housekeepingLogs?.[0] ? new Date(room.housekeepingLogs[0].createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'None'}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Status</p>
-                    <p className="text-[11px] font-bold text-[#111827] uppercase">{room.status}</p>
+            return (
+              <div
+                key={room.id}
+                className={`card-status ${getStatusBorderClass(room.status)} flex flex-col justify-between`}
+                style={{ padding: '16px', minHeight: '130px' }}
+              >
+                <div>
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <h3 className="text-room-number" style={{ fontSize: '20px', color: 'var(--color-ink)' }}>
+                        Room {room.roomNumber}
+                      </h3>
+                      <p style={{ fontFamily: 'var(--font-ui)', fontSize: '12px', color: 'var(--color-muted)', marginTop: '2px' }}>
+                        Floor {room.floor || '1'} • {room.roomType?.name || 'Standard'}
+                      </p>
+                    </div>
+                    {getStatusBadge(room.status)}
                   </div>
                 </div>
 
-                {isDirty ? (
-                  <Button
-                    onClick={() => handleAction(room.id, room.status)}
-                    className="w-full py-4 rounded-[20px] bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 transition-all"
-                  >
-                    Mark Ready
-                  </Button>
-                ) : isClean ? (
-                  <Button
-                    onClick={() => handleAction(room.id, room.status)}
-                    className="w-full py-4 rounded-[20px] bg-[#111827] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#14532D] transition-all"
-                  >
-                    Set To Cleaning
-                  </Button>
-                ) : (
-                  <Link
-                    to={`/housekeeping/rooms/${room.id}`}
-                    className="w-full block py-4 rounded-[20px] bg-gray-100 text-[#111827] text-[10px] font-black uppercase tracking-widest hover:bg-white hover:shadow-md transition-all text-center"
-                  >
-                    View Details
-                  </Link>
-                )}
+                {/* Contextual Action Button (Rule 2.1: Speed before beauty, single-tap) */}
+                <div className="pt-2 border-t" style={{ borderColor: 'var(--color-border)', marginTop: '12px' }}>
+                  {isCleaning ? (
+                    <button
+                      onClick={() => handleNextStatus(room)}
+                      disabled={updatingId === room.id}
+                      className="btn-primary"
+                      style={{ width: '100%', height: '36px', fontSize: '13px' }}
+                    >
+                      <CheckCircle size={14} />
+                      <span>{updatingId === room.id ? "Updating..." : "Mark as Clean"}</span>
+                    </button>
+                  ) : isAvailable ? (
+                    <button
+                      onClick={() => handleNextStatus(room)}
+                      disabled={updatingId === room.id}
+                      className="btn-secondary"
+                      style={{ width: '100%', height: '36px', fontSize: '13px' }}
+                    >
+                      <Sparkles size={14} />
+                      <span>{updatingId === room.id ? "Updating..." : "Start Cleaning"}</span>
+                    </button>
+                  ) : isOccupied ? (
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span style={{ fontFamily: 'var(--font-ui)', fontSize: '12px', color: 'var(--color-blue)' }}>Guest in room</span>
+                      <Link
+                        to={`/housekeeping/rooms/${room.id}`}
+                        style={{ fontFamily: 'var(--font-ui)', fontSize: '12px', color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}
+                      >
+                        Details →
+                      </Link>
+                    </div>
+                  ) : (
+                    <Link
+                      to={`/housekeeping/rooms/${room.id}`}
+                      className="btn-ghost"
+                      style={{ width: '100%', height: '36px', fontSize: '13px', textDecoration: 'none' }}
+                    >
+                      View Details
+                    </Link>
+                  )}
+                </div>
               </div>
-            </motion.div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* Empty State */
+        <div
+          className="flex flex-col items-center justify-center text-center card"
+          style={{ padding: '64px 24px', borderStyle: 'dashed' }}
+        >
+          <div
+            style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: 'var(--color-surface)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '16px',
+              color: 'var(--color-muted)',
+            }}
+          >
+            <Bed size={28} />
+          </div>
+          <h3 style={{ fontFamily: 'var(--font-ui)', fontSize: '16px', fontWeight: 600, color: 'var(--color-ink)', marginBottom: '6px' }}>
+            No rooms match this filter
+          </h3>
+          <p style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', color: 'var(--color-muted)', maxWidth: '360px', marginBottom: '20px' }}>
+            Try removing the current filter to view all rooms in the property.
+          </p>
+          <button
+            onClick={() => { setFilter('all'); setSearchQuery(''); }}
+            className="btn-secondary"
+          >
+            Clear Filters
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { api } from './api';
 import type { ApiResponse } from './api';
 
-export type RoomStatus = 'available' | 'occupied' | 'maintenance' | 'cleaning' | 'reserved' | 'out_of_service';
+export type RoomStatus = 'available' | 'occupied' | 'maintenance' | 'out_of_service';
 
 export type Room = {
   id: number;
@@ -59,10 +59,6 @@ export const roomService = {
   },
 
   async deleteRoom(id: number): Promise<ApiResponse<null>> {
-    return api.delete<ApiResponse<null>>(`/rooms/${id}`);
-  },
-
-  async deleteRoomImage(roomId: number, imageId: number): Promise<ApiResponse<null>> {
-    return api.delete<ApiResponse<null>>(`/rooms/${roomId}/images/${imageId}`);
+    return api.delete(`/rooms/${id}`) as any;
   },
 };

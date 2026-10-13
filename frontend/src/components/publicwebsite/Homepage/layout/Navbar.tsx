@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Button } from "../../../ui/Button";
-import { 
-  Menu, 
-  X, 
-  User, 
-  LogOut, 
-  Phone, 
-  Mail, 
-  ChevronDown, 
-  CalendarCheck 
+import {
+  Menu, X, User, LogOut, Phone, Mail, ChevronDown, CalendarCheck
 } from "lucide-react";
 import { useAuth } from "../../../../context/AuthContext";
 
@@ -21,10 +13,10 @@ const navItems = [
     to: "/rooms",
     hasDropdown: true,
     dropdownItems: [
-      { label: "All Rooms", to: "/rooms" },
-      { label: "Standard Rooms", to: "/rooms?type=Standard" },
-      { label: "Deluxe Rooms", to: "/rooms?type=Deluxe" },
-      { label: "Suite Rooms", to: "/rooms?type=Suite" },
+      { label: "All rooms", to: "/rooms" },
+      { label: "Standard rooms", to: "/rooms?type=Standard" },
+      { label: "Deluxe rooms", to: "/rooms?type=Deluxe" },
+      { label: "Suite rooms", to: "/rooms?type=Suite" },
     ],
   },
   {
@@ -32,9 +24,9 @@ const navItems = [
     to: "/facilities",
     hasDropdown: true,
     dropdownItems: [
-      { label: "Fine Dining Restaurant", to: "/facilities" },
-      { label: "Bar & Lounge", to: "/facilities" },
-      { label: "Coffee Shop", to: "/facilities" },
+      { label: "Fine dining restaurant", to: "/facilities" },
+      { label: "Bar & lounge", to: "/facilities" },
+      { label: "Coffee shop", to: "/facilities" },
     ],
   },
   {
@@ -42,9 +34,8 @@ const navItems = [
     to: "/gallery",
     hasDropdown: true,
     dropdownItems: [
-      { label: "Hotel Gallery", to: "/gallery" },
-      { label: "Our Venues", to: "/gallery#venues" },
-      { label: "Virtual Tour", to: "/gallery" },
+      { label: "Hotel gallery", to: "/gallery" },
+      { label: "Our venues", to: "/gallery#venues" },
     ],
   },
   { label: "Contact", to: "/contact" },
@@ -63,64 +54,156 @@ const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
 
   const toggleMobileDropdown = (label: string) => {
-    if (activeMobileDropdown === label) {
-      setActiveMobileDropdown(null);
-    } else {
-      setActiveMobileDropdown(label);
-    }
+    setActiveMobileDropdown(prev => (prev === label ? null : label));
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-neutral-border/50">
-      {/* Main Navbar */}
-      <div className="container-custom flex items-center justify-between h-20">
+    <nav
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        background: '#FFFFFF',
+        borderBottom: '1px solid var(--color-border)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+      }}
+    >
+      {/* Desktop / tablet nav bar */}
+      <div
+        className="container-custom flex items-center justify-between"
+        style={{ height: '72px' }}
+      >
         {/* Brand / Logo */}
-        <Link to="/" className="flex items-center gap-3.5 group select-none">
-          <img 
-            src="/Logos1.png" 
-            alt="Branding Logo" 
-            className="h-12 w-auto object-contain transition-transform duration-500 group-hover:scale-105" 
+        <Link
+          to="/"
+          className="flex items-center gap-3 select-none group"
+          style={{ textDecoration: 'none' }}
+        >
+          <img
+            src="/Logos1.png"
+            alt="Itahari Namuna College"
+            style={{
+              height: '44px',
+              width: 'auto',
+              objectFit: 'contain',
+              transition: 'transform 300ms ease',
+            }}
+            className="group-hover:scale-[1.03]"
           />
-          <div className="flex flex-col">
-            <span className="font-extrabold text-base tracking-tight text-[#14532D] leading-none uppercase">
+          <div>
+            <span
+              style={{
+                display: 'block',
+                fontFamily: 'var(--font-ui)',
+                fontSize: '15px',
+                fontWeight: 700,
+                color: 'var(--color-primary)',
+                lineHeight: 1.1,
+                letterSpacing: '-0.01em',
+              }}
+            >
               Itahari Namuna
             </span>
-            <span className="text-[9px] font-black uppercase text-[#1F7A3A] tracking-[0.2em] mt-1.5">
-              Luxury PMS
+            <span
+              style={{
+                display: 'block',
+                fontFamily: 'var(--font-ui)',
+                fontSize: '10px',
+                fontWeight: 500,
+                color: 'var(--color-accent)',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                marginTop: '2px',
+              }}
+            >
+              Luxury Stay
             </span>
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <ul className="hidden lg:flex items-center gap-8 h-full">
+        {/* Desktop nav items */}
+        <ul className="hidden lg:flex items-center h-full" style={{ gap: '4px', listStyle: 'none' }}>
           {navItems.map((item) => {
-            const isActive = isItemActive(pathname, item.to);
+            const active = isItemActive(pathname, item.to);
             if (item.hasDropdown) {
               return (
-                <li key={item.label} className="relative group flex items-center h-full">
+                <li key={item.label} className="relative group h-full flex items-center">
                   <Link
                     to={item.to}
-                    className={`flex items-center gap-1 text-sm font-semibold transition-colors cursor-pointer py-7 ${
-                      isActive
-                        ? "text-[#14532D]"
-                        : "text-muted-foreground hover:text-[#14532D]"
-                    }`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      padding: '0 14px',
+                      height: '100%',
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      color: active ? 'var(--color-primary)' : 'var(--color-muted)',
+                      textDecoration: 'none',
+                      transition: 'color 150ms ease',
+                      position: 'relative',
+                    }}
+                    className="navbar-item"
                   >
-                    <span className="relative">
-                      {item.label}
-                      {/* Underline Indicator */}
-                      <div className={`absolute -bottom-1 left-0 right-0 h-[3px] bg-[#F59E0B] rounded-full transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-center opacity-0 group-hover:opacity-100 ${isActive ? "scale-x-100 opacity-100" : ""}`} />
-                    </span>
-                    <ChevronDown size={14} className="text-muted-foreground group-hover:rotate-180 transition-transform duration-300" />
+                    {item.label}
+                    <ChevronDown
+                      size={13}
+                      style={{ transition: 'transform 200ms ease' }}
+                      className="group-hover:rotate-180"
+                    />
+                    {/* Active indicator */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: '14px',
+                        right: '14px',
+                        height: '2px',
+                        background: 'var(--color-accent)',
+                        borderRadius: '2px 2px 0 0',
+                        opacity: active ? 1 : 0,
+                        transition: 'opacity 150ms ease',
+                      }}
+                      className="group-hover:opacity-100"
+                    />
                   </Link>
-                  
-                  {/* Dropdown Menu */}
-                  <div className="absolute top-[80%] left-0 w-52 bg-white rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.06)] border border-gray-100 py-2.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-[90%] transition-all duration-300 z-50">
+
+                  {/* Dropdown */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      minWidth: '200px',
+                      background: '#FFFFFF',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: '8px',
+                      boxShadow: 'var(--shadow-md)',
+                      padding: '6px',
+                      opacity: 0,
+                      visibility: 'hidden',
+                      transform: 'translateY(-6px)',
+                      transition: 'opacity 150ms ease, transform 150ms ease, visibility 150ms',
+                    }}
+                    className="group-hover:opacity-100 group-hover:visible group-hover:translate-y-0"
+                  >
                     {item.dropdownItems?.map((dItem) => (
                       <Link
                         key={dItem.label}
                         to={dItem.to}
-                        className="block px-5 py-2.5 text-xs font-semibold text-gray-700 hover:text-[#14532D] hover:bg-[#14532D]/5 transition-all duration-200"
+                        style={{
+                          display: 'block',
+                          padding: '8px 12px',
+                          fontFamily: 'var(--font-ui)',
+                          fontSize: '13px',
+                          fontWeight: 500,
+                          color: 'var(--color-ink)',
+                          textDecoration: 'none',
+                          borderRadius: '6px',
+                          transition: 'background 100ms ease, color 100ms ease',
+                        }}
+                        className="hover:bg-green-50 hover:text-green-800"
                       >
                         {dItem.label}
                       </Link>
@@ -131,82 +214,227 @@ const Navbar = () => {
             }
 
             return (
-              <li key={item.to} className="relative flex items-center h-full group">
+              <li key={item.to} className="relative group h-full flex items-center">
                 <Link
                   to={item.to}
-                  className={`text-sm font-semibold transition-colors py-7 ${
-                    isActive ? "text-[#14532D]" : "text-muted-foreground hover:text-[#14532D]"
-                  }`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '0 14px',
+                    height: '100%',
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: active ? 'var(--color-primary)' : 'var(--color-muted)',
+                    textDecoration: 'none',
+                    transition: 'color 150ms ease',
+                    position: 'relative',
+                  }}
+                  className="navbar-item"
                 >
-                  <span className="relative">
-                    {item.label}
-                    {/* Underline Indicator */}
-                    <div className={`absolute -bottom-1 left-0 right-0 h-[3px] bg-[#F59E0B] rounded-full transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-center opacity-0 group-hover:opacity-100 ${isActive ? "scale-x-100 opacity-100" : ""}`} />
-                  </span>
+                  {item.label}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: '14px',
+                      right: '14px',
+                      height: '2px',
+                      background: 'var(--color-accent)',
+                      borderRadius: '2px 2px 0 0',
+                      opacity: active ? 1 : 0,
+                      transition: 'opacity 150ms ease',
+                    }}
+                    className="group-hover:opacity-100"
+                  />
                 </Link>
               </li>
             );
           })}
         </ul>
 
-        {/* Book Now Button (Desktop) */}
-        <div className="hidden lg:flex items-center">
+        {/* Right side: auth + Book Now */}
+        <div className="hidden lg:flex items-center gap-3">
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2">
+              <Link
+                to="/profile"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 12px',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: 'var(--color-ink)',
+                  textDecoration: 'none',
+                  borderRadius: '8px',
+                  border: '1px solid var(--color-border)',
+                  transition: 'background 150ms ease',
+                  background: 'transparent',
+                }}
+                className="hover:bg-gray-50"
+              >
+                <div
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    background: 'var(--color-primary)',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: '10px',
+                    fontWeight: 700,
+                  }}
+                >
+                  {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+                </div>
+                <span>{user?.firstName}</span>
+              </Link>
+              <button
+                onClick={logout}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '4px',
+                  padding: '6px 10px', background: 'transparent',
+                  border: 'none', borderRadius: '8px',
+                  fontFamily: 'var(--font-ui)', fontSize: '13px',
+                  fontWeight: 500, color: 'var(--color-muted)',
+                  cursor: 'pointer', transition: 'color 150ms ease',
+                }}
+                className="hover:text-red-600"
+              >
+                <LogOut size={14} />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link
+                to="/login"
+                style={{
+                  padding: '6px 14px',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: 'var(--color-ink)',
+                  textDecoration: 'none',
+                  borderRadius: '8px',
+                  transition: 'color 150ms ease',
+                }}
+                className="hover:text-green-800"
+              >
+                Sign in
+              </Link>
+            </div>
+          )}
+
+          {/* Primary CTA — Book Now */}
           <Link
             to="/booking"
-            className="flex items-center gap-2 px-6 py-3.5 bg-[#14532D] hover:bg-[#F59E0B] hover:text-[#14532D] text-[#F59E0B] font-bold text-xs uppercase tracking-[0.15em] rounded-full transition-all duration-300 shadow-md hover:shadow-[0_8px_25px_rgba(20,83,45,0.25)] transform active:scale-95 group/btn"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              height: '40px',
+              padding: '0 20px',
+              background: 'var(--color-primary)',
+              color: '#FFFFFF',
+              fontFamily: 'var(--font-ui)',
+              fontSize: '14px',
+              fontWeight: 600,
+              borderRadius: '8px',
+              textDecoration: 'none',
+              transition: 'background 150ms ease',
+              boxShadow: '0 1px 3px rgba(45,106,79,0.20)',
+            }}
+            className="hover:bg-green-800"
           >
-            <CalendarCheck size={16} className="text-[#F59E0B] group-hover/btn:text-[#14532D] transition-colors duration-300" />
-            <span>Book Now</span>
+            <CalendarCheck size={15} />
+            <span>Book now</span>
           </Link>
         </div>
 
-        {/* Mobile Toggle Button */}
+        {/* Mobile toggle */}
         <button
-          className="lg:hidden p-2 rounded-xl border border-gray-100 text-[#14532D] hover:bg-gray-50 transition-colors active:scale-95 cursor-pointer"
+          className="lg:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
+          style={{
+            width: '40px', height: '40px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'transparent', border: '1px solid var(--color-border)',
+            borderRadius: '8px', color: 'var(--color-primary)',
+            cursor: 'pointer',
+          }}
         >
-          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
         </button>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="lg:hidden border-t bg-white animate-fade-slide-up shadow-inner">
-          <div className="container-custom py-6 flex flex-col gap-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+        <div
+          style={{
+            borderTop: '1px solid var(--color-border)',
+            background: '#FFFFFF',
+          }}
+          className="lg:hidden animate-fade-slide-up"
+        >
+          <div
+            className="container-custom custom-scrollbar"
+            style={{ padding: '16px 0', display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '80vh', overflowY: 'auto' }}
+          >
             {navItems.map((item) => {
               if (item.hasDropdown) {
                 const isOpen = activeMobileDropdown === item.label;
                 return (
-                  <div key={item.label} className="border-b border-gray-50 pb-2">
-                    <div className="flex items-center justify-between gap-2">
+                  <div key={item.label}>
+                    <div
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        borderBottom: '1px solid var(--color-border)', paddingBottom: '8px',
+                      }}
+                    >
                       <Link
                         to={item.to}
                         onClick={() => setMobileOpen(false)}
-                        className="flex-1 text-sm font-bold text-gray-800 py-2 hover:text-[#14532D]"
+                        style={{
+                          flex: 1, padding: '8px 0',
+                          fontFamily: 'var(--font-ui)', fontSize: '15px',
+                          fontWeight: 500, color: 'var(--color-ink)',
+                          textDecoration: 'none',
+                        }}
                       >
                         {item.label}
                       </Link>
                       <button
                         type="button"
                         onClick={() => toggleMobileDropdown(item.label)}
-                        className="p-2 cursor-pointer"
-                        aria-label={`Toggle ${item.label} menu`}
+                        style={{ padding: '8px', background: 'none', border: 'none', cursor: 'pointer' }}
+                        aria-label={`Expand ${item.label}`}
                       >
                         <ChevronDown
                           size={16}
-                          className={`text-gray-400 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                          style={{ color: 'var(--color-muted)', transition: 'transform 200ms ease', transform: isOpen ? 'rotate(180deg)' : 'none' }}
                         />
                       </button>
                     </div>
                     {isOpen && (
-                      <div className="pl-4 py-2 flex flex-col gap-2 bg-gray-50/50 rounded-xl mt-1">
+                      <div style={{ paddingLeft: '16px', paddingBottom: '4px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
                         {item.dropdownItems?.map((dItem) => (
                           <Link
                             key={dItem.label}
                             to={dItem.to}
                             onClick={() => setMobileOpen(false)}
-                            className="text-xs font-semibold text-gray-600 py-1.5 hover:text-[#14532D]"
+                            style={{
+                              padding: '8px 0',
+                              fontFamily: 'var(--font-ui)', fontSize: '14px',
+                              fontWeight: 400, color: 'var(--color-muted)',
+                              textDecoration: 'none',
+                            }}
                           >
                             {dItem.label}
                           </Link>
@@ -222,77 +450,165 @@ const Navbar = () => {
                   key={item.to}
                   to={item.to}
                   onClick={() => setMobileOpen(false)}
-                  className={`text-sm font-bold border-b border-gray-50 pb-2 ${
-                    isItemActive(pathname, item.to) ? "text-[#14532D]" : "text-gray-800"
-                  }`}
+                  style={{
+                    padding: '10px 0',
+                    fontFamily: 'var(--font-ui)', fontSize: '15px',
+                    fontWeight: isItemActive(pathname, item.to) ? 600 : 500,
+                    color: isItemActive(pathname, item.to) ? 'var(--color-primary)' : 'var(--color-ink)',
+                    textDecoration: 'none',
+                    borderBottom: '1px solid var(--color-border)',
+                  }}
                 >
                   {item.label}
                 </Link>
               );
             })}
 
-            {/* Mobile Book Now Button */}
+            {/* Mobile Book Now */}
             <Link
               to="/booking"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#14532D] text-[#F59E0B] font-bold text-xs uppercase tracking-widest rounded-xl mt-2 shadow-md"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                width: '100%', height: '44px',
+                background: 'var(--color-primary)', color: '#FFFFFF',
+                fontFamily: 'var(--font-ui)', fontSize: '14px', fontWeight: 600,
+                borderRadius: '8px', textDecoration: 'none',
+                marginTop: '12px',
+              }}
             >
               <CalendarCheck size={16} />
-              <span>Book Now</span>
+              <span>Book now</span>
             </Link>
 
-            {/* Mobile Authentication Area */}
-            <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
+            {/* Mobile Auth */}
+            <div style={{ paddingTop: '12px', borderTop: '1px solid var(--color-border)', marginTop: '8px' }}>
               {!isAuthenticated ? (
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  <Button variant="outline" size="sm" asChild to="/login" onClick={() => setMobileOpen(false)}>
-                    <span>Login</span>
-                  </Button>
-                  <Button size="sm" asChild to="/signup" onClick={() => setMobileOpen(false)}>
-                    <span>Sign Up</span>
-                  </Button>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileOpen(false)}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      height: '40px', borderRadius: '8px',
+                      border: '1.5px solid var(--color-primary)', color: 'var(--color-primary)',
+                      fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 600,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={() => setMobileOpen(false)}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      height: '40px', borderRadius: '8px',
+                      background: 'var(--color-ink)', color: '#FFFFFF',
+                      fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 600,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    Sign up
+                  </Link>
                 </div>
               ) : (
-                <div className="space-y-3 mt-2">
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                    <div className="w-8 h-8 rounded-full bg-[#14532D] flex items-center justify-center text-white text-xs font-bold">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '10px',
+                      padding: '10px 12px',
+                      background: 'var(--color-surface)',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '32px', height: '32px', borderRadius: '50%',
+                        background: 'var(--color-primary)', color: '#FFFFFF',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: 'var(--font-ui)', fontSize: '12px', fontWeight: 700,
+                      }}
+                    >
                       {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold text-gray-900">{user?.firstName} {user?.lastName}</span>
-                      <span className="text-[10px] text-gray-500">{user?.email}</span>
+                    <div>
+                      <p style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', fontWeight: 600, color: 'var(--color-ink)' }}>
+                        {user?.firstName} {user?.lastName}
+                      </p>
+                      <p style={{ fontFamily: 'var(--font-ui)', fontSize: '12px', color: 'var(--color-muted)' }}>
+                        {user?.email}
+                      </p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full justify-start gap-2" asChild to="/profile" onClick={() => setMobileOpen(false)}>
-                    <>
-                      <User size={16} />
-                      <span>My Profile</span>
-                    </>
-                  </Button>
-                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => { logout(); setMobileOpen(false); }}>
-                    <>
-                      <LogOut size={16} />
-                      <span>Logout</span>
-                    </>
-                  </Button>
+                  <Link
+                    to="/profile"
+                    onClick={() => setMobileOpen(false)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '8px',
+                      padding: '10px 12px', borderRadius: '8px',
+                      fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 500,
+                      color: 'var(--color-ink)', textDecoration: 'none',
+                      border: '1px solid var(--color-border)',
+                    }}
+                  >
+                    <User size={15} />
+                    <span>My profile</span>
+                  </Link>
+                  <button
+                    onClick={() => { logout(); setMobileOpen(false); }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '8px',
+                      padding: '10px 12px', borderRadius: '8px',
+                      background: 'none', border: '1px solid var(--color-border)',
+                      fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 500,
+                      color: 'var(--color-danger)', cursor: 'pointer', width: '100%',
+                    }}
+                  >
+                    <LogOut size={15} />
+                    <span>Sign out</span>
+                  </button>
                 </div>
               )}
             </div>
 
-            {/* Mobile Contact Info */}
-            <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-2.5 text-xs text-gray-500">
-              <a href="tel:985-2066332" className="flex items-center gap-2 hover:text-[#14532D]">
-                <Phone size={14} className="text-[#F59E0B]" />
+            {/* Mobile Contact */}
+            <div
+              style={{
+                display: 'flex', flexDirection: 'column', gap: '8px',
+                paddingTop: '12px', borderTop: '1px solid var(--color-border)', marginTop: '4px',
+              }}
+            >
+              <a
+                href="tel:985-2066332"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  fontFamily: 'var(--font-ui)', fontSize: '13px',
+                  color: 'var(--color-muted)', textDecoration: 'none',
+                }}
+              >
+                <Phone size={14} style={{ color: 'var(--color-accent)' }} />
                 <span>985-2066332</span>
               </a>
-              <a href="mailto:royalresort2002@gmail.com" className="flex items-center gap-2 hover:text-[#14532D]">
-                <Mail size={14} className="text-[#F59E0B]" />
+              <a
+                href="mailto:royalresort2002@gmail.com"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  fontFamily: 'var(--font-ui)', fontSize: '13px',
+                  color: 'var(--color-muted)', textDecoration: 'none',
+                }}
+              >
+                <Mail size={14} style={{ color: 'var(--color-accent)' }} />
                 <span>royalresort2002@gmail.com</span>
               </a>
             </div>
           </div>
         </div>
       )}
+
+      <style>{`
+        .navbar-item:hover { color: var(--color-primary) !important; }
+      `}</style>
     </nav>
   );
 };

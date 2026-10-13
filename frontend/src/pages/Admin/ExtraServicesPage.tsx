@@ -5,12 +5,11 @@ import { ExtraServiceForm } from '../../components/Admin/ExtraServices/ExtraServ
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { Plus, Edit2, Search, ImageOff, Sparkles } from 'lucide-react';
+import { Plus, Edit2, Search, Filter, ImageOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { getImageUrl } from '../../services/api';
 import { AdminCardGridSkeleton } from '../../components/ui/skeletons/AdminSkeletons';
 import { DeleteIconButton } from '../../components/ui/ActionIconButton';
-import { Badge } from '../../components/ui/Badge';
 
 
 export default function ExtraServicesPage() {
@@ -29,8 +28,8 @@ export default function ExtraServicesPage() {
       if (response.success && response.data) {
         setServices(response.data);
       }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to fetch extra services');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to fetch extra services');
     } finally {
       setIsLoading(false);
     }
@@ -58,8 +57,8 @@ export default function ExtraServicesPage() {
           handleCloseModal();
         }
       }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to save service');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to save service');
     } finally {
       setIsSubmitting(false);
     }
@@ -74,8 +73,8 @@ export default function ExtraServicesPage() {
         toast.success('Service deactivated successfully');
         fetchServices();
       }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to deactivate service');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to deactivate service');
     }
   };
 
@@ -99,22 +98,22 @@ export default function ExtraServicesPage() {
     <div className="flex flex-col gap-10 p-2 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
-          <h1 className="text-3xl font-black text-foreground tracking-tight uppercase flex items-center gap-4">
-            <div className="w-2 h-8 bg-primary-dark rounded-full" />
+          <h1 className="text-3xl font-black text-[#111827] tracking-tight uppercase flex items-center gap-4">
+            <div className="w-2 h-8 bg-[#14532D] rounded-full" />
             Extra Services
           </h1>
-          <p className="text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Manage additional guest offerings and pricing</p>
+          <p className="text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] mt-2 ml-6">Manage additional guest offerings & pricing</p>
         </div>
 
         <Button
           onClick={() => handleOpenModal()}
-          className="bg-primary-dark hover:bg-foreground text-white px-8 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-primary-dark/10 flex items-center gap-3"
+          className="bg-[#14532D] hover:bg-[#111827] text-white px-8 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-[#14532D]/10 flex items-center gap-3"
         >
-          <Plus size={20} strokeWidth={3} /> Add Service
+          <Plus size={20} strokeWidth={3} /> Create Service Node
         </Button>
       </div>
 
-      <Card className="p-4 border-none shadow-soft bg-white/60 backdrop-blur-md rounded-3xl">
+      <Card className="p-4 border-none shadow-soft bg-white/60 backdrop-blur-md rounded-3xl flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative w-full md:w-[400px] group">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
             <Search size={18} className="text-neutral-text-secondary" />
@@ -127,15 +126,15 @@ export default function ExtraServicesPage() {
             className="w-full pl-12 pr-4 h-12 bg-neutral-light border-none rounded-2xl focus:ring-2 focus:ring-primary-green transition-all duration-300 text-sm font-bold shadow-inner"
           />
         </div>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" className="h-12 w-12 rounded-2xl bg-neutral-light hover:bg-white shadow-soft transition-all">
+            <Filter size={18} className="text-neutral-text-secondary" />
+          </Button>
+        </div>
       </Card>
 
       {isLoading ? (
         <AdminCardGridSkeleton count={8} />
-      ) : filteredServices.length === 0 ? (
-        <div className="py-24 flex flex-col items-center justify-center gap-4 text-neutral-text-secondary">
-          <Sparkles size={40} className="opacity-30" />
-          <p className="text-[12px] font-bold uppercase tracking-widest">No services found</p>
-        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredServices.map((service) => (
@@ -180,9 +179,9 @@ export default function ExtraServicesPage() {
                   {service.description}
                 </p>
                 <div className="mt-auto pt-4 border-t border-neutral-light flex items-center justify-between">
-                  <Badge variant={service.active ? 'success' : 'default'} dot>
-                    {service.active ? 'Active' : 'Inactive'}
-                  </Badge>
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${service.active ? 'text-primary-green' : 'text-error-red'}`}>
+                    {service.active ? '● Active' : '● Inactive'}
+                  </span>
                   <span className="text-[10px] font-black uppercase tracking-widest text-neutral-text-secondary/40">
                     ID: {service.id}
                   </span>

@@ -9,7 +9,6 @@ import { HttpStatus } from '../constants';
 import { asyncHandler } from '../utils/asyncHandler';
 import { sendOTPEmail, sendResetPasswordEmail, sendGuestWelcomeEmail } from '../utils/mail';
 import { generateOtp } from '../utils/generateOtp';
-import { getUploadedFileUrl } from '../utils/uploadedFile';
 import { randomUUID } from 'crypto';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -478,7 +477,7 @@ export class AuthController {
     }
 
     try {
-      const profileImage = getUploadedFileUrl(file); // Cloudinary URL
+      const profileImage = file.path; // Cloudinary URL
 
       await prisma.guest.update({
         where: { id: userId },

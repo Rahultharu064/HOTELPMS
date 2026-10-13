@@ -1,37 +1,29 @@
-import { Link } from "react-router-dom";
-import { Users, Warehouse, Settings, BarChart3, ArrowUpRight } from "lucide-react";
-
-const actions = [
-  { label: "Guests", to: "/admin/guests", icon: Users },
-  { label: "Room Inventory", to: "/admin/rooms", icon: Warehouse },
-  { label: "System Analytics", to: "/admin/reports", icon: BarChart3 },
-  { label: "Settings", to: "/admin/settings", icon: Settings },
-];
+import { Search, Zap, Settings, FileText } from "lucide-react";
 
 export function SystemControlHub() {
   return (
-    <div className="bg-white p-6 rounded-2xl border border-neutral-border/60 shadow-sm h-full">
-      <h3 className="text-sm font-semibold text-primary-dark mb-4">Quick actions</h3>
-      <div className="grid grid-cols-2 gap-2.5">
-        {actions.map((action) => (
-          <Link
-            key={action.label}
-            to={action.to}
-            className="group relative flex flex-col gap-2.5 p-3.5 rounded-xl border border-neutral-border/60 hover:border-primary-green/30 bg-neutral-light/50 hover:bg-primary-dark transition-all duration-200"
-          >
-            <ArrowUpRight
-              size={13}
-              strokeWidth={2.5}
-              className="absolute top-3 right-3 text-neutral-text-secondary/40 group-hover:text-primary-gold opacity-0 group-hover:opacity-100 transition-all"
-            />
-            <div className="w-9 h-9 rounded-lg bg-primary-dark group-hover:bg-primary-gold/15 flex items-center justify-center transition-colors">
-              <action.icon size={16} className="text-primary-gold" strokeWidth={2} />
-            </div>
-            <span className="text-[12px] font-semibold text-primary-dark group-hover:text-white leading-tight transition-colors">
-              {action.label}
-            </span>
-          </Link>
-        ))}
+    <div className="space-y-5">
+      <div className="p-4 bg-white rounded-2xl border border-neutral-border/30 shadow-sm relative overflow-hidden group">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-7 h-7 rounded-xl bg-neutral-light flex items-center justify-center text-primary-dark">
+            <Zap size={14} strokeWidth={2.5} />
+          </div>
+          <h4 className="text-xs font-bold uppercase tracking-tighter text-primary-dark">Quick Actions</h4>
+        </div>
+        <div className="space-y-2">
+          <button className="w-full px-3 py-2.5 bg-neutral-light/50 hover:bg-[#14532D]/10 text-left rounded-xl text-[10px] font-bold text-primary-dark hover:text-[#14532D] transition-all flex items-center gap-3">
+            <Search size={12} />
+            <span>Search Records</span>
+          </button>
+          <button className="w-full px-3 py-2.5 bg-neutral-light/50 hover:bg-[#14532D]/10 text-left rounded-xl text-[10px] font-bold text-primary-dark hover:text-[#14532D] transition-all flex items-center gap-3">
+            <Settings size={12} />
+            <span>System Settings</span>
+          </button>
+          <button className="w-full px-3 py-2.5 bg-neutral-light/50 hover:bg-[#14532D]/10 text-left rounded-xl text-[10px] font-bold text-primary-dark hover:text-[#14532D] transition-all flex items-center gap-3">
+            <FileText size={12} />
+            <span>Quick Reports</span>
+          </button>
+        </div>
       </div>
     </div>
   );

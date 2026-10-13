@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Search, LogIn, LogOut,
-  Clock, ChevronRight,
-  BedDouble, CreditCard,
-  Printer, ShieldCheck,
-  Zap, Bell, Plus, Loader2
+  Clock, Plus, Loader2,
+  Calendar, CheckCircle, UserCheck
 } from "lucide-react";
 import { frontOfficeService } from "../../services/frontofficeService";
 import { toast } from "react-hot-toast";
@@ -18,7 +16,6 @@ const CheckInOutPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
-  const [processingId] = useState<number | null>(null);
   const [isOfflineModalOpen, setIsOfflineModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [isCheckInModalOpen, setIsCheckInModalOpen] = useState(false);
@@ -56,7 +53,7 @@ const CheckInOutPage: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchData();
-    }, 500);
+    }, 400);
     return () => clearTimeout(timer);
   }, [activeTab, searchQuery]);
 
@@ -75,171 +72,286 @@ const CheckInOutPage: React.FC = () => {
     setIsCheckOutModalOpen(true);
   };
 
+  // Helper for status badge styling
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return <span className="badge badge-confirmed">Confirmed</span>;
+      case 'checked_in':
+        return <span className="badge badge-checked-in">Checked In</span>;
+      case 'checked_out':
+        return <span className="badge badge-checked-out">Checked Out</span>;
+      case 'pending':
+        return <span className="badge badge-pending">Pending Payment</span>;
+      case 'cancelled':
+        return <span className="badge badge-cancelled">Cancelled</span>;
+      default:
+        return <span className="badge badge-confirmed">{status}</span>;
+    }
+  };
+
+  // Left border color for cards
+  const getCardStatusClass = (booking: any) => {
+    if (activeTab === 'checkin') {
+      const isOverdue = new Date(booking.checkIn) < new Date(new Date().setHours(0,0,0,0));
+      if (isOverdue) return 'card-status-oor';
+      if (booking.status === 'checked_in') return 'card-status-checked-in';
+      return 'card-status-confirmed';
+    } else {
+      if (booking.balance && Number(booking.balance) > 0) return 'card-status-pending';
+      return 'card-status-checked-in';
+    }
+  };
+
   return (
-    <div className="space-y-8 animate-fade-in pb-10 pt-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-3 mb-1">
-             <div className="w-1.5 h-6 bg-[#14532D] rounded-full" />
-             <h1 className="text-2xl font-black text-[#111827] tracking-tight">Movement Control</h1>
-          </div>
-          <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] ml-4">Terminal Operations • Guest Logistics</p>
+          <h1 style={{ fontFamily: 'var(--font-ui)', fontSize: '24px', fontWeight: 700, color: 'var(--color-ink)' }}>
+            Check-in / Check-out
+          </h1>
+          <p style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', color: 'var(--color-muted)', marginTop: '2px' }}>
+            Manage today's guest arrivals and departures
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsOfflineModalOpen(true)}
-            className="h-10 px-5 bg-[#14532D] text-white rounded-xl flex items-center gap-2 text-[9px] font-black uppercase tracking-widest hover:bg-[#111827] transition-all shadow-md shadow-[#14532D]/10"
+            className="btn-secondary"
+            style={{ height: '40px' }}
           >
-            <Plus size={14} strokeWidth={3} /> Walk-in Registry
+            <Plus size={16} />
+            <span>New Walk-in</span>
           </button>
-          <div className="bg-gray-100/50 p-1 rounded-xl flex items-center border border-gray-100">
-            <button
-              onClick={() => setActiveTab("checkin")}
-              className={`flex items-center gap-2 px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${activeTab === "checkin" ? "bg-white text-[#14532D] shadow-sm" : "text-gray-400 hover:text-gray-600"
-                }`}
-            >
-              <LogIn size={12} strokeWidth={3} /> Arrival
-            </button>
-            <button
-              onClick={() => setActiveTab("checkout")}
-              className={`flex items-center gap-2 px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${activeTab === "checkout" ? "bg-white text-rose-500 shadow-sm" : "text-gray-400 hover:text-gray-600"
-                }`}
-            >
-              <LogOut size={12} strokeWidth={3} /> Departure
-            </button>
-          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 space-y-8">
-          <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm relative group">
-            <Search className="absolute left-8 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-[#14532D] transition-colors" strokeWidth={2.5} />
-            <input
-              placeholder={`Search guest, room or reservation node...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 pl-12 pr-6 bg-gray-50/50 border-none rounded-xl text-[12px] font-bold placeholder-gray-300 focus:ring-2 focus:ring-[#14532D]/5 transition-all outline-none"
-            />
+      {/* Tabs & Search Row */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        {/* Tab switchers */}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            onClick={() => setActiveTab("checkin")}
+            className={`chip ${activeTab === 'checkin' ? 'chip-active' : ''}`}
+            style={{ height: '36px', padding: '0 16px' }}
+          >
+            <LogIn size={14} style={{ marginRight: '6px' }} />
+            Today's Arrivals
+          </button>
+          <button
+            onClick={() => setActiveTab("checkout")}
+            className={`chip ${activeTab === 'checkout' ? 'chip-active' : ''}`}
+            style={{ height: '36px', padding: '0 16px' }}
+          >
+            <LogOut size={14} style={{ marginRight: '6px' }} />
+            Today's Departures
+          </button>
+        </div>
+
+        {/* Search */}
+        <div style={{ position: 'relative', width: '100%', maxWidth: '360px' }}>
+          <Search
+            size={16}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--color-muted)',
+              pointerEvents: 'none'
+            }}
+          />
+          <input
+            type="text"
+            placeholder="Search by guest name, booking ID, room..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="input-field"
+            style={{ paddingLeft: '36px' }}
+          />
+        </div>
+      </div>
+
+      {/* Main Content Feed */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: '16px', fontWeight: 600, color: 'var(--color-ink)' }}>
+            {activeTab === 'checkin' ? "Today's Expected Arrivals" : "Today's Scheduled Departures"}
+          </h2>
+          <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-muted)' }}>
+            {loading ? <Loader2 size={14} className="animate-spin inline mr-1" /> : `${data.length} guest${data.length !== 1 ? 's' : ''}`}
+          </span>
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="skeleton"
+                style={{ height: '180px', borderRadius: '12px' }}
+              />
+            ))}
           </div>
-
-          <div className="space-y-6">
-            <div className="flex items-center justify-between px-2">
-              <div className="flex items-center gap-3">
-                 <div className={`w-1.5 h-4 rounded-full ${activeTab === "checkin" ? "bg-[#14532D]" : "bg-rose-500"}`} />
-                 <h2 className="text-[13px] font-black text-[#111827] uppercase tracking-widest">
-                   {activeTab === "checkin" ? "Live Arrivals Feed" : "Live Departures Feed"}
-                 </h2>
-              </div>
-              <span className="text-[8px] font-black tracking-[0.2em] text-gray-300 uppercase">
-                {loading ? <Loader2 size={12} className="animate-spin" /> : `${data.length} Nodes Registered`}
-              </span>
-            </div>
-
-            {data.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {data.map((booking, i) => (
-                  <div key={i} className="group bg-white p-6 rounded-2xl border border-gray-100 hover:border-[#14532D]/20 hover:shadow-xl transition-all duration-300 relative flex flex-col justify-between overflow-hidden">
-                    <div className={`absolute top-0 left-0 w-1 h-full ${activeTab === 'checkin' ? 'bg-[#14532D]' : 'bg-rose-500'} opacity-0 group-hover:opacity-100 transition-opacity`} />
-                    
-                    <div className="flex items-center justify-between mb-6">
-                       <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-[#111827] text-white flex items-center justify-center text-[10px] font-black uppercase tracking-widest shadow-md">
-                            {booking.guest?.firstName?.[0] || '?'}{booking.guest?.lastName?.[0] || ''}
-                          </div>
-                          <div>
-                            <h3 className="text-[14px] font-black text-[#111827] leading-tight group-hover:text-[#14532D] transition-colors">
-                              {booking.guest?.firstName} {booking.guest?.lastName}
-                            </h3>
-                            <p className="text-[8px] font-bold text-gray-300 uppercase tracking-widest mt-0.5">NET ID #{booking.bookingNumber}</p>
-                          </div>
-                       </div>
-                       <div className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase tracking-widest ${activeTab === 'checkin' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
-                          {booking.status?.replace('_', ' ') || 'Awaiting'}
-                       </div>
+        ) : data.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {data.map((booking) => (
+              <div
+                key={booking.id}
+                className={`card-status ${getCardStatusClass(booking)} flex flex-col justify-between`}
+                style={{ minHeight: '190px' }}
+              >
+                <div>
+                  {/* Card top: Name + Status badge */}
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div>
+                      <h3 style={{ fontFamily: 'var(--font-ui)', fontSize: '15px', fontWeight: 600, color: 'var(--color-ink)' }}>
+                        {booking.guest?.firstName} {booking.guest?.lastName}
+                      </h3>
+                      <p className="text-booking-id" style={{ marginTop: '2px' }}>
+                        #{booking.bookingNumber || booking.id}
+                      </p>
                     </div>
-
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100/50">
-                        <div className="flex items-center gap-2.5">
-                          <BedDouble size={16} className="text-[#F59E0B]" strokeWidth={2.5} />
-                          <p className="text-[12px] font-black text-[#111827]">Unit {booking.room?.roomNumber}</p>
-                        </div>
-                        <p className="text-[8px] font-black uppercase tracking-widest text-gray-400">{booking.room?.roomType?.name}</p>
-                      </div>
-
-                      <div className="flex items-center gap-2 px-1 text-gray-300">
-                        <Clock size={12} strokeWidth={2.5} />
-                        <p className="text-[8px] font-bold uppercase tracking-widest">
-                          {activeTab === 'checkin' ? 'Arrival Cycle: ' : 'Departure Cycle: '}
-                          {new Date(activeTab === 'checkin' ? booking.checkIn : booking.checkOut).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2">
-                      {activeTab === 'checkout' && (
-                        <button
-                          disabled={processingId === booking.id}
-                          onClick={(e) => { e.stopPropagation(); handleOpenOrderService(booking); }}
-                          className="flex-1 h-10 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white border-none shadow-sm"
-                        >
-                          <Plus size={14} strokeWidth={3} /> Concierge
-                        </button>
-                      )}
-                      <button
-                        disabled={processingId === booking.id || (activeTab === 'checkin' && booking.status === 'checked_in') || (activeTab === 'checkout' && booking.status === 'checked_out')}
-                        onClick={() => activeTab === 'checkin' ? handleOpenCheckIn(booking) : handleOpenCheckOut(booking)}
-                        className={`flex-1 h-10 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 bg-[#111827] text-white hover:bg-[#14532D] shadow-md disabled:opacity-50 disabled:cursor-not-allowed`}
-                      >
-                        {processingId === booking.id ? (
-                          <Loader2 className="animate-spin" size={14} />
-                        ) : activeTab === 'checkin' ? (
-                          <><ShieldCheck size={14} strokeWidth={3} /> {booking.status === 'checked_in' ? 'Verified' : 'Check-in'}</>
-                        ) : (
-                          <><CreditCard size={14} strokeWidth={3} /> {booking.status === 'checked_out' ? 'Settled' : 'Settle'}</>
-                        )}
-                      </button>
-                    </div>
+                    {getStatusBadge(booking.status)}
                   </div>
-                ))}
+
+                  {/* Room & Dates */}
+                  <div
+                    style={{
+                      background: 'var(--color-surface)',
+                      borderRadius: '8px',
+                      padding: '10px 12px',
+                      marginBottom: '12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '6px',
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-muted)' }}>Room</span>
+                      <span className="text-room-number" style={{ fontSize: '14px', color: 'var(--color-ink)' }}>
+                        {booking.room?.roomNumber ? `Room ${booking.room.roomNumber}` : 'Unassigned'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-muted)' }}>
+                        {activeTab === 'checkin' ? 'Check-in' : 'Check-out'}
+                      </span>
+                      <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-ink)' }}>
+                        {new Date(activeTab === 'checkin' ? booking.checkIn : booking.checkOut).toLocaleDateString('en-US', {
+                          month: 'short', day: 'numeric', year: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                    {booking.totalAmount && (
+                      <div className="flex items-center justify-between">
+                        <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-muted)' }}>Total</span>
+                        <span className="text-amount" style={{ color: 'var(--color-ink)' }}>
+                          NPR {Number(booking.totalAmount).toLocaleString()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Card Action Button — one primary per card */}
+                <div className="flex gap-2 pt-2 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                  {activeTab === 'checkout' && (
+                    <button
+                      onClick={() => handleOpenOrderService(booking)}
+                      className="btn-ghost"
+                      style={{ flex: 1, height: '36px', fontSize: '13px' }}
+                    >
+                      Add Service
+                    </button>
+                  )}
+
+                  {activeTab === 'checkin' ? (
+                    booking.status === 'checked_in' ? (
+                      <div
+                        className="flex items-center justify-center gap-1 w-full"
+                        style={{ height: '36px', fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-success)', fontWeight: 600 }}
+                      >
+                        <CheckCircle size={14} />
+                        <span>Checked In</span>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleOpenCheckIn(booking)}
+                        className="btn-primary"
+                        style={{ width: '100%', height: '36px', fontSize: '13px' }}
+                      >
+                        <UserCheck size={14} />
+                        <span>Check In Guest</span>
+                      </button>
+                    )
+                  ) : (
+                    booking.status === 'checked_out' ? (
+                      <div
+                        className="flex items-center justify-center gap-1 w-full"
+                        style={{ height: '36px', fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-muted)', fontWeight: 600 }}
+                      >
+                        <CheckCircle size={14} />
+                        <span>Checked Out</span>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleOpenCheckOut(booking)}
+                        className="btn-primary"
+                        style={{ flex: 1, height: '36px', fontSize: '13px' }}
+                      >
+                        <span>Check Out Guest</span>
+                      </button>
+                    )
+                  )}
+                </div>
               </div>
-            ) : (
-              <div className="py-20 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-                <p className="text-[9px] font-black uppercase tracking-widest text-gray-300">No active nodes detected for this cycle</p>
-              </div>
+            ))}
+          </div>
+        ) : (
+          /* Empty state: Icon + message + primary CTA */
+          <div
+            className="flex flex-col items-center justify-center text-center card"
+            style={{ padding: '64px 24px', borderStyle: 'dashed' }}
+          >
+            <div
+              style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                background: 'var(--color-surface)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '16px',
+                color: 'var(--color-muted)',
+              }}
+            >
+              <Calendar size={28} />
+            </div>
+            <h3 style={{ fontFamily: 'var(--font-ui)', fontSize: '16px', fontWeight: 600, color: 'var(--color-ink)', marginBottom: '6px' }}>
+              {activeTab === 'checkin' ? "No arrivals scheduled for today" : "No departures scheduled for today"}
+            </h3>
+            <p style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', color: 'var(--color-muted)', maxWidth: '360px', marginBottom: '20px' }}>
+              {activeTab === 'checkin'
+                ? "There are no incoming guests due today. You can create a walk-in booking directly."
+                : "All guests due to depart have already checked out."}
+            </p>
+            {activeTab === 'checkin' && (
+              <button
+                onClick={() => setIsOfflineModalOpen(true)}
+                className="btn-primary"
+              >
+                <Plus size={16} />
+                <span>Create Walk-in Booking</span>
+              </button>
             )}
           </div>
-        </div>
-
-        <div className="lg:col-span-4 space-y-8">
-          <div className="bg-[#111827] rounded-3xl p-8 text-white relative overflow-hidden group min-h-[350px] flex flex-col justify-between shadow-2xl">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#F59E0B]/10 rounded-full blur-[60px] pointer-events-none group-hover:scale-150 transition-transform duration-1000" />
-            <div>
-              <Zap className="text-[#F59E0B] mb-6" size={32} />
-              <h2 className="text-xl font-black mb-2 leading-tight uppercase tracking-tight">Front Desk<br /><span className="text-white/30">Protocol Tools</span></h2>
-              <p className="text-white/20 text-[9px] font-bold uppercase tracking-widest leading-relaxed">High-priority terminal shortcuts.</p>
-            </div>
-            <div className="space-y-3">
-              {[
-                { label: "Search Registry", icon: Search },
-                { label: "Alert Feed", icon: Bell },
-                { label: "Access Control", icon: Printer },
-                { label: "Manual Billing", icon: Plus },
-              ].map((tool, i) => (
-                <button key={i} className="w-full flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[#14532D]/30 transition-all group/btn text-left">
-                  <div className="flex items-center gap-3">
-                    <tool.icon size={16} className="text-[#F59E0B]" strokeWidth={2.5} />
-                    <span className="text-[10px] font-black uppercase tracking-widest">{tool.label}</span>
-                  </div>
-                  <ChevronRight size={12} className="text-white/10 group-hover/btn:translate-x-1 group-hover/btn:text-white transition-all" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+        )}
       </div>
 
+      {/* Modals */}
       <CreateOfflineReservationModal
         isOpen={isOfflineModalOpen}
         onClose={() => setIsOfflineModalOpen(false)}
@@ -255,7 +367,7 @@ const CheckInOutPage: React.FC = () => {
         booking={selectedBooking}
         onSuccess={() => {
           setIsCheckInModalOpen(false);
-          setActiveTab("checkout");
+          fetchData();
         }}
       />
 

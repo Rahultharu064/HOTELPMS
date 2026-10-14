@@ -1,17 +1,15 @@
-import { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
-import { Header } from "./Header";
-import { GlobalAssignmentModal } from "../GlobalAssignmentModal";
+import { Outlet, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
+import { GlobalAssignmentModal } from '../GlobalAssignmentModal';
 
 const pageTitles: Record<string, string> = {
-  "/housekeeping": "Operations Dashboard",
-  "/housekeeping/dashboard": "Operations Dashboard",
-  "/housekeeping/room-status": "Room Inventory Status",
-  "/housekeeping/cleaning-tasks": "Cleaning Operations",
-  "/housekeeping/staff-assignment": "Staff & Duty Assignment",
-  "/housekeeping/profile": "Supervisor Profile",
-  "/housekeeping/settings": "System Preferences",
+  '/housekeeping':                  'Dashboard',
+  '/housekeeping/dashboard':        'Dashboard',
+  '/housekeeping/room-status':      'Room Status',
+  '/housekeeping/cleaning-tasks':   'Cleaning Tasks',
+  '/housekeeping/staff-assignment': 'Staff Assignment',
 };
 
 export function HousekeepingLayout() {
@@ -19,48 +17,56 @@ export function HousekeepingLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
-  // Auto-close mobile sidebar on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
-  const title = pageTitles[location.pathname] || "Housekeeping Central Control";
+  const title = pageTitles[location.pathname] ?? 'Housekeeping';
 
   return (
-    <div className="flex min-h-screen w-full bg-[#FAFAF8] font-sans selection:bg-primary-green/10 selection:text-primary-dark">
+    <div
+      className="flex min-h-screen w-full font-sans"
+      style={{ background: 'var(--color-surface)' }}
+    >
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
       />
-      
-      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-500`}>
+
+      <div className="flex-1 flex flex-col min-w-0 transition-all duration-200">
         <Header title={title} onMobileMenuClick={() => setMobileOpen(true)} />
-        
-        <main className="flex-1 p-10 md:p-12 lg:p-14 relative overflow-x-hidden">
-          {/* Subtle background decorative blur (Premium feel) */}
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#1F7A3A]/5 rounded-full blur-[120px] pointer-events-none -mr-64 -mt-64" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#F59E0B]/5 rounded-full blur-[120px] pointer-events-none -ml-64 -mb-64" />
-          
-          <div className="relative z-10 max-w-7xl mx-auto h-full">
+
+        <main className="flex-1 relative overflow-x-hidden" style={{ padding: '32px' }}>
+          <div className="relative z-10 max-w-7xl mx-auto">
             <Outlet />
           </div>
         </main>
-        
-        {/* Footer info for internal dash */}
-        <footer className="px-10 py-6 border-t border-neutral-border/40 flex items-center justify-between text-[10px] font-bold text-neutral-text-secondary uppercase tracking-widest bg-white/50 backdrop-blur-md">
-          <p>© 2026 Itahari Namuna College PMS — Housekeeping Module</p>
+
+        <footer
+          className="flex items-center justify-between"
+          style={{
+            padding: '16px 32px',
+            borderTop: '1px solid var(--color-border)',
+            background: 'var(--color-card)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: '12px',
+            fontWeight: 500,
+            color: 'var(--color-muted)',
+          }}
+        >
+          <p>© 2026 Itahari Namuna College — Housekeeping Module</p>
           <div className="flex items-center gap-6">
-            <button className="hover:text-primary-green transition-colors">Server Status: Online</button>
-            <button className="hover:text-primary-green transition-colors">Documentation</button>
+            <span className="flex items-center gap-1.5">
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-success)', display: 'inline-block' }} />
+              System online
+            </span>
           </div>
         </footer>
       </div>
 
-      {/* Global Modals */}
       <GlobalAssignmentModal />
     </div>
   );
 }
-

@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Search, ShoppingCart, Plus, Minus, X, 
-  User, Utensils, Waves, 
-  Wind, Ghost, Zap, Loader2,
-  CreditCard, Receipt
+import {
+  Search, ShoppingCart, Plus, Minus, X,
+  User, Utensils, Receipt, Loader2, CreditCard
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { extraService } from '../../services/extraService';
 import { frontOfficeService } from '../../services/frontofficeService';
 import { toast } from 'react-hot-toast';
-import { Button } from '../../components/ui/Button';
-import { DeleteIconButton } from '../../components/ui/ActionIconButton';
 
 interface CartItem {
   id: number;
@@ -48,8 +43,8 @@ const ServicePOSPage: React.FC = () => {
         setCategories(res.data);
         if (res.data.length > 0) setActiveCategory(res.data[0].id);
       }
-    } catch (error) {
-      toast.error("Failed to load service infrastructure");
+    } catch {
+      toast.error("Failed to load service categories");
     } finally {
       setLoading(false);
     }
@@ -73,7 +68,6 @@ const ServicePOSPage: React.FC = () => {
     try {
       const res = await frontOfficeService.searchUnified(query);
       if (res.success) {
-        // Filter only checked_in bookings for in-house services
         const inHouse = res.data.bookings.filter((b: any) => b.status === 'checked_in');
         setSearchResults(inHouse);
       }
@@ -90,7 +84,7 @@ const ServicePOSPage: React.FC = () => {
       }
       return [...prev, { id: service.id, name: service.name, price: Number(service.price), quantity: 1 }];
     });
-    toast.success(`${service.name} added to dossier`, { icon: '🛒', style: { borderRadius: '10px', background: '#111827', color: '#fff', fontSize: '11px', fontWeight: 'bold' } });
+    toast.success(`${service.name} added to cart`);
   };
 
   const removeFromCart = (id: number) => {
@@ -100,26 +94,26 @@ const ServicePOSPage: React.FC = () => {
   const updateQuantity = (id: number, delta: number) => {
     setCart(prev => prev.map(item => {
       if (item.id === id) {
-        const newQty = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQty };
+        const newQty = item.quantity + delta;
+        return newQty > 0 ? { ...item, quantity: newQty } : null;
       }
       return item;
-    }));
+    }).filter(Boolean) as CartItem[]);
   };
 
   const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   const handlePlaceOrder = async () => {
     if (cart.length === 0) {
-      toast.error("Manifest is empty");
+      toast.error("Cart is empty — add items first");
       return;
     }
     if (!isWalkIn && !selectedRecipient) {
-      toast.error("Target recipient required for folio posting");
+      toast.error("Select an in-house guest to link this order to");
       return;
     }
-    if (isWalkIn && !walkInName) {
-      toast.error("Identifier required for walk-in session");
+    if (isWalkIn && !walkInName.trim()) {
+      toast.error("Enter guest name for walk-in order");
       return;
     }
 
@@ -136,265 +130,364 @@ const ServicePOSPage: React.FC = () => {
 
       const res = await extraService.createOrder(orderData);
       if (res.success) {
-        toast.success("Service order transmitted successfully");
+        toast.success(isWalkIn ? "Walk-in order created" : `Order posted to Room ${selectedRecipient.room?.roomNumber}`);
         setCart([]);
         setSelectedRecipient(null);
         setGuestSearch("");
         setWalkInName("");
       }
     } catch (error: any) {
-      toast.error(error.message || "Transmission failure");
+      toast.error(error.message || "Failed to submit order");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] gap-6 animate-fade-in px-4 lg:px-0">
-      {/* Header / Recipient Selector */}
-      <div className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-6">
-        <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-2xl ${isWalkIn ? 'bg-amber-50 text-amber-600' : 'bg-blue-50 text-blue-600'} transition-colors`}>
-                {isWalkIn ? <Zap size={24} strokeWidth={2.5} /> : <User size={24} strokeWidth={2.5} />}
-            </div>
-            <div>
-                <h2 className="text-sm font-black text-[#111827] uppercase tracking-tight">Service Recipient</h2>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
-                    {isWalkIn ? "Direct External Walk-in" : "In-house Guest Folio"}
-                </p>
-            </div>
-        </div>
-
-        <div className="flex-1 flex flex-col md:flex-row gap-4 w-full">
-            <div className="relative flex-1">
-                {isWalkIn ? (
-                    <input 
-                        placeholder="Enter Walk-in Customer Name..." 
-                        value={walkInName}
-                        onChange={(e) => setWalkInName(e.target.value)}
-                        className="w-full h-14 pl-6 pr-6 bg-gray-50 border-none rounded-2xl text-[13px] font-bold focus:ring-2 focus:ring-amber-500 transition-all"
-                    />
-                ) : (
-                    <div className="relative">
-                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                        <input 
-                            placeholder="Search Room Number or Guest Name..." 
-                            value={guestSearch}
-                            onChange={(e) => handleGuestSearch(e.target.value)}
-                            onFocus={() => selectedRecipient && setSelectedRecipient(null)}
-                            className="w-full h-14 pl-14 pr-6 bg-gray-50 border-none rounded-2xl text-[13px] font-bold focus:ring-2 focus:ring-blue-500 transition-all"
-                        />
-                        <AnimatePresence>
-                            {searchResults.length > 0 && !selectedRecipient && (
-                                <motion.div 
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    className="absolute top-full left-0 right-0 mt-3 bg-white border border-gray-100 rounded-3xl shadow-2xl z-50 overflow-hidden"
-                                >
-                                    {searchResults.map((res: any) => (
-                                        <Button 
-                                            key={res.id} 
-                                            onClick={() => {
-                                                setSelectedRecipient(res);
-                                                setGuestSearch(`Room ${res.room.roomNumber} - ${res.guest.firstName} ${res.guest.lastName}`);
-                                                setSearchResults([]);
-                                            }}
-                                            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-all text-left group"
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-xs">
-                                                    {res.room.roomNumber}
-                                                </div>
-                                                <div>
-                                                    <p className="text-[11px] font-black text-[#111827] uppercase">{res.guest.firstName} {res.guest.lastName}</p>
-                                                    <p className="text-[10px] font-bold text-gray-400 capitalize">{res.room.roomType.name}</p>
-                                                </div>
-                                            </div>
-                                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Button size="sm" className="bg-blue-600">Select</Button>
-                                            </div>
-                                        </Button>
-                                    ))}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-                )}
-            </div>
-
-            <Button 
-                onClick={() => {
-                    setIsWalkIn(!isWalkIn);
-                    setSelectedRecipient(null);
-                    setSearchResults([]);
-                    setGuestSearch("");
-                }}
-                className={`px-8 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg
-                    ${isWalkIn ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20' : 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/20'}`}
-            >
-                {isWalkIn ? "Switch to In-house" : "Switch to Walk-in"}
-            </Button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-ui)', fontSize: '24px', fontWeight: 700, color: 'var(--color-ink)' }}>
+            Services & POS
+          </h1>
+          <p style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', color: 'var(--color-muted)', marginTop: '2px' }}>
+            Quick service ordering and folio posting
+          </p>
         </div>
       </div>
 
-      <div className="flex-1 flex gap-8 min-h-0">
-        {/* Left: Categories & Services */}
-        <div className="flex-1 flex flex-col gap-6">
-            {/* Categories */}
-            <div className="flex items-center gap-3 overflow-x-auto pb-2 custom-scrollbar">
-                {categories.map((cat) => (
-                    <Button
-                        key={cat.id}
-                        onClick={() => setActiveCategory(cat.id)}
-                        className={`px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-3
-                            ${activeCategory === cat.id 
-                                ? "bg-[#111827] text-white shadow-xl translate-y-[-2px]" 
-                                : "bg-white text-gray-400 hover:text-[#111827] border border-gray-100"}`}
-                    >
-                        {cat.name === 'Restaurant' && <Utensils size={14} />}
-                        {cat.name === 'Laundry' && <Wind size={14} />}
-                        {cat.name === 'Spa' && <Waves size={14} />}
-                        {cat.name}
-                    </Button>
-                ))}
+      {/* Guest / Walk-in selector card */}
+      <div className="card" style={{ padding: '20px' }}>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '8px',
+                background: 'var(--color-primary-lt)',
+                color: 'var(--color-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              <User size={20} />
             </div>
+            <div>
+              <p style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 600, color: 'var(--color-ink)' }}>
+                {isWalkIn ? "Walk-in Guest" : "In-house Guest"}
+              </p>
+              <p style={{ fontFamily: 'var(--font-ui)', fontSize: '12px', color: 'var(--color-muted)' }}>
+                {isWalkIn ? "Direct payment, not linked to a room" : "Charges will be added to guest folio"}
+              </p>
+            </div>
+          </div>
 
-            {/* Services Grid */}
-            <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-6">
-                    {loading ? (
-                        Array(8).fill(0).map((_, i) => (
-                            <div key={i} className="h-48 bg-gray-100 rounded-[32px] animate-pulse" />
-                        ))
-                    ) : services.length > 0 ? (
-                        services.map((service) => (
-                            <motion.div 
-                                layout
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                key={service.id} 
-                                className="group bg-white p-6 rounded-[32px] border border-gray-100 hover:shadow-2xl transition-all relative flex flex-col cursor-pointer"
-                                onClick={() => addToCart(service)}
-                            >
-                                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <div className="w-8 h-8 rounded-xl bg-[#14532D] text-white flex items-center justify-center">
-                                        <Plus size={16} strokeWidth={3} />
-                                    </div>
-                                </div>
-                                
-                                <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mb-4 group-hover:bg-[#14532D]/5 transition-colors">
-                                    <Ghost className="text-gray-400 group-hover:text-[#14532D]" size={20} />
-                                </div>
-                                <h4 className="text-[13px] font-black text-[#111827] uppercase leading-tight">{service.name}</h4>
-                                <p className="text-[10px] font-bold text-gray-400 line-clamp-2 mt-2 leading-relaxed">{service.description || "Premium hospitality service"}</p>
-                                
-                                <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
-                                    <span className="text-sm font-black text-[#1F7A3A] font-mono">Rs. {Number(service.price).toLocaleString()}</span>
-                                    <span className="text-[8px] font-black uppercase text-gray-300 tracking-tighter group-hover:text-green-600 transition-colors">Select Item</span>
-                                </div>
-                            </motion.div>
-                        ))
-                    ) : (
-                        <div className="col-span-full py-40 flex flex-col items-center justify-center text-gray-300 gap-4">
-                            <Utensils size={48} />
-                            <p className="text-[11px] font-black uppercase tracking-widest text-center">Operational units currently unavailable in this category</p>
+          <div className="flex items-center gap-3 w-full md:w-auto flex-1 max-w-lg">
+            {isWalkIn ? (
+              <input
+                type="text"
+                placeholder="Guest name for receipt..."
+                value={walkInName}
+                onChange={(e) => setWalkInName(e.target.value)}
+                className="input-field"
+                style={{ flex: 1 }}
+              />
+            ) : (
+              <div style={{ position: 'relative', flex: 1 }}>
+                <Search
+                  size={16}
+                  style={{
+                    position: 'absolute',
+                    left: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: 'var(--color-muted)',
+                    pointerEvents: 'none'
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Search by room number or guest name..."
+                  value={guestSearch}
+                  onChange={(e) => handleGuestSearch(e.target.value)}
+                  className="input-field"
+                  style={{ paddingLeft: '36px' }}
+                />
+
+                {/* Dropdown search results */}
+                {searchResults.length > 0 && !selectedRecipient && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 4px)',
+                      left: 0,
+                      right: 0,
+                      background: '#FFFFFF',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: '8px',
+                      boxShadow: 'var(--shadow-lg)',
+                      zIndex: 50,
+                      maxHeight: '240px',
+                      overflowY: 'auto'
+                    }}
+                  >
+                    {searchResults.map((res: any) => (
+                      <button
+                        key={res.id}
+                        onClick={() => {
+                          setSelectedRecipient(res);
+                          setGuestSearch(`Room ${res.room?.roomNumber} — ${res.guest?.firstName} ${res.guest?.lastName}`);
+                          setSearchResults([]);
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '10px 14px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          background: 'none',
+                          border: 'none',
+                          borderBottom: '1px solid var(--color-border)',
+                          cursor: 'pointer',
+                          textAlign: 'left'
+                        }}
+                        className="hover:bg-gray-50"
+                      >
+                        <div>
+                          <span className="text-room-number" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>
+                            Room {res.room?.roomNumber}
+                          </span>
+                          <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', color: 'var(--color-ink)', marginLeft: '8px' }}>
+                            {res.guest?.firstName} {res.guest?.lastName}
+                          </span>
                         </div>
-                    )}
-                </div>
+                        <span className="badge badge-checked-in">Checked In</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <button
+              onClick={() => {
+                setIsWalkIn(!isWalkIn);
+                setSelectedRecipient(null);
+                setSearchResults([]);
+                setGuestSearch("");
+                setWalkInName("");
+              }}
+              className="btn-secondary"
+              style={{ whiteSpace: 'nowrap' }}
+            >
+              {isWalkIn ? "Switch to In-house" : "Switch to Walk-in"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main split: Menu (left) & Cart (right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left: Category tabs & item cards */}
+        <div className="lg:col-span-8 flex flex-col gap-4">
+          {/* Categories */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`chip ${activeCategory === cat.id ? 'chip-active' : ''}`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Service items grid */}
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="skeleton" style={{ height: '120px', borderRadius: '12px' }} />
+              ))}
             </div>
+          ) : services.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {services.map((service) => (
+                <div
+                  key={service.id}
+                  onClick={() => addToCart(service)}
+                  className="card flex flex-col justify-between cursor-pointer"
+                  style={{ padding: '16px', minHeight: '130px' }}
+                >
+                  <div>
+                    <h4 style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', fontWeight: 600, color: 'var(--color-ink)', lineHeight: 1.3 }}>
+                      {service.name}
+                    </h4>
+                    {service.description && (
+                      <p style={{ fontFamily: 'var(--font-ui)', fontSize: '12px', color: 'var(--color-muted)', marginTop: '4px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {service.description}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between pt-3 mt-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                    <span className="text-amount" style={{ fontSize: '15px', color: 'var(--color-primary)' }}>
+                      NPR {Number(service.price).toLocaleString()}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); addToCart(service); }}
+                      className="btn-primary"
+                      style={{ height: '32px', padding: '0 12px', fontSize: '12px' }}
+                    >
+                      <Plus size={14} />
+                      <span>Add</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div
+              className="flex flex-col items-center justify-center text-center card"
+              style={{ padding: '48px 24px', borderStyle: 'dashed' }}
+            >
+              <Utensils size={32} style={{ color: 'var(--color-muted)', marginBottom: '12px' }} />
+              <p style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', color: 'var(--color-muted)' }}>
+                No items available in this category
+              </p>
+            </div>
+          )}
         </div>
 
-        {/* Right: Cart Manifesto */}
-        <div className="w-[400px] bg-[#111827] rounded-[48px] shadow-2xl flex flex-col overflow-hidden">
-            <div className="p-8 border-b border-white/5 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-white/5 rounded-2xl text-amber-500">
-                        <ShoppingCart size={22} strokeWidth={2.5} />
-                    </div>
-                    <div>
-                        <h3 className="text-sm font-black text-white uppercase tracking-tight">Service Cart</h3>
-                        <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{cart.length} unique assets</p>
-                    </div>
+        {/* Right: Cart (Rule 2.1: Cart is always visible) */}
+        <div className="lg:col-span-4">
+          <div
+            className="card flex flex-col justify-between sticky top-28"
+            style={{ minHeight: '440px', padding: '20px' }}
+          >
+            <div>
+              <div className="flex items-center justify-between pb-3 border-b" style={{ borderColor: 'var(--color-border)', marginBottom: '16px' }}>
+                <div className="flex items-center gap-2">
+                  <ShoppingCart size={18} style={{ color: 'var(--color-primary)' }} />
+                  <h3 style={{ fontFamily: 'var(--font-ui)', fontSize: '15px', fontWeight: 600, color: 'var(--color-ink)' }}>
+                    Order Cart
+                  </h3>
                 </div>
                 {cart.length > 0 && (
-                    <DeleteIconButton onClick={() => setCart([])} title="Clear cart" className="bg-red-600/20 border-red-400/40 text-white hover:bg-red-600" />
+                  <button
+                    onClick={() => setCart([])}
+                    style={{ background: 'none', border: 'none', color: 'var(--color-danger)', fontSize: '12px', fontFamily: 'var(--font-ui)', fontWeight: 500, cursor: 'pointer' }}
+                  >
+                    Clear All
+                  </button>
                 )}
-            </div>
+              </div>
 
-            <div className="flex-1 overflow-y-auto p-8 space-y-4 custom-scrollbar-dark">
-                <AnimatePresence>
-                    {cart.map((item) => (
-                        <motion.div 
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            key={item.id} 
-                            className="bg-white/5 p-5 rounded-3xl border border-white/5 group"
+              {/* Items List */}
+              {cart.length > 0 ? (
+                <div className="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                  {cart.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between pb-2 border-b"
+                      style={{ borderColor: 'var(--color-border)' }}
+                    >
+                      <div style={{ flex: 1, paddingRight: '8px' }}>
+                        <p style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 600, color: 'var(--color-ink)' }}>
+                          {item.name}
+                        </p>
+                        <p className="text-amount" style={{ fontSize: '12px', color: 'var(--color-muted)', marginTop: '2px' }}>
+                          NPR {item.price.toLocaleString()} each
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {/* Quantity controls */}
+                        <div className="flex items-center gap-1 bg-gray-100 rounded-md p-0.5">
+                          <button
+                            onClick={() => updateQuantity(item.id, -1)}
+                            style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-ink)' }}
+                          >
+                            <Minus size={12} />
+                          </button>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', fontWeight: 600, width: '20px', textAlign: 'center' }}>
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(item.id, 1)}
+                            style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-ink)' }}
+                          >
+                            <Plus size={12} />
+                          </button>
+                        </div>
+
+                        {/* Line total */}
+                        <span className="text-amount" style={{ width: '80px', textAlign: 'right', fontSize: '13px', color: 'var(--color-ink)' }}>
+                          NPR {(item.price * item.quantity).toLocaleString()}
+                        </span>
+
+                        <button
+                          onClick={() => removeFromCart(item.id)}
+                          style={{ background: 'none', border: 'none', color: 'var(--color-muted)', cursor: 'pointer', padding: '2px' }}
+                          title="Remove item"
                         >
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <h5 className="text-[12px] font-black text-white uppercase leading-none">{item.name}</h5>
-                                    <p className="text-[10px] font-bold text-white/30 uppercase mt-2 tracking-widest">Rate: Rs. {item.price.toLocaleString()}</p>
-                                </div>
-                                <Button onClick={() => removeFromCart(item.id)} className="text-white/10 hover:text-red-400 group-hover:opacity-100 lg:opacity-0 transition-opacity">
-                                    <X size={14} />
-                                </Button>
-                            </div>
-                            <div className="flex items-center justify-between mt-4">
-                                <div className="flex items-center gap-3 bg-white/5 rounded-xl p-1 px-2 border border-white/5">
-                                    <Button onClick={() => updateQuantity(item.id, -1)} className="text-white/40 hover:text-white transition-colors">
-                                        <Minus size={12} />
-                                    </Button>
-                                    <span className="text-[11px] font-black text-white w-6 text-center">{item.quantity}</span>
-                                    <Button onClick={() => updateQuantity(item.id, 1)} className="text-white/40 hover:text-white transition-colors">
-                                        <Plus size={12} />
-                                    </Button>
-                                </div>
-                                <span className="text-[13px] font-black text-white font-mono">Rs. {(item.price * item.quantity).toLocaleString()}</span>
-                            </div>
-                        </motion.div>
-                    ))}
-                </AnimatePresence>
-                
-                {cart.length === 0 && (
-                    <div className="flex flex-col items-center justify-center h-full text-white/20 py-20 gap-4">
-                        <Receipt size={48} />
-                        <div className="text-center">
-                            <p className="text-[11px] font-black uppercase tracking-widest">Awaiting Selection</p>
-                            <p className="text-[10px] font-bold mt-1 opacity-50">Transcribe services from the grid</p>
-                        </div>
+                          <X size={14} />
+                        </button>
+                      </div>
                     </div>
-                )}
+                  ))}
+                </div>
+              ) : (
+                /* Empty cart */
+                <div className="flex flex-col items-center justify-center text-center py-12">
+                  <Receipt size={36} style={{ color: 'var(--color-border)', marginBottom: '8px' }} />
+                  <p style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', fontWeight: 500, color: 'var(--color-muted)' }}>
+                    Your cart is empty
+                  </p>
+                  <p style={{ fontFamily: 'var(--font-ui)', fontSize: '12px', color: 'var(--color-muted)', marginTop: '2px' }}>
+                    Click any item from the menu to add it
+                  </p>
+                </div>
+              )}
             </div>
 
-            <div className="p-8 bg-black/40 border-t border-white/5 space-y-6">
-                <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40">Grand Valuation</span>
-                    <span className="text-3xl font-black text-white tracking-tighter">Rs. {totalAmount.toLocaleString()}</span>
-                </div>
-                
-                <Button 
-                    disabled={submitting || cart.length === 0}
-                    onClick={handlePlaceOrder}
-                    className={`w-full h-16 rounded-2xl text-[12px] font-black uppercase tracking-[0.2em] shadow-2xl transition-all
-                        ${isWalkIn ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/20' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20'}`}
-                >
-                    {submitting ? (
-                        <div className="flex items-center gap-3">
-                            <Loader2 size={18} className="animate-spin" />
-                            <span>Synchronizing...</span>
-                        </div>
-                    ) : (
-                        <div className="flex items-center gap-3">
-                            <CreditCard size={18} />
-                            <span>{isWalkIn ? "Direct Settlement" : "Post to Folio"}</span>
-                        </div>
-                    )}
-                </Button>
-                
-                <p className="text-[9px] font-bold text-white/20 text-center uppercase tracking-widest">Financial ledger will be updated immediately upon confirmation</p>
+            {/* Total and Checkout */}
+            <div className="pt-4 border-t" style={{ borderColor: 'var(--color-border)', marginTop: '16px' }}>
+              <div className="flex items-center justify-between mb-4">
+                <span style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', fontWeight: 500, color: 'var(--color-muted)' }}>
+                  Total Amount
+                </span>
+                <span className="text-amount" style={{ fontSize: '20px', color: 'var(--color-ink)' }}>
+                  NPR {totalAmount.toLocaleString()}
+                </span>
+              </div>
+
+              {/* One primary action button per screen */}
+              <button
+                disabled={submitting || cart.length === 0}
+                onClick={handlePlaceOrder}
+                className="btn-primary"
+                style={{ width: '100%', height: '44px' }}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>Processing Order...</span>
+                  </>
+                ) : (
+                  <>
+                    <CreditCard size={16} />
+                    <span>{isWalkIn ? "Collect Payment" : "Post to Guest Folio"}</span>
+                  </>
+                )}
+              </button>
             </div>
+          </div>
         </div>
       </div>
     </div>

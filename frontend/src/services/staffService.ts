@@ -67,12 +67,4 @@ export const staffService = {
     const response = await api.post<ApiResponse<{ temporaryPassword: string }>>(`/admin/staff/${id}/reset-password`, {});
     return response;
   },
-
-  /**
-   * Permanently delete a staff member
-   */
-  deleteStaff: async (id: number): Promise<ApiResponse<null>> => {
-    const response = await api.delete<ApiResponse<null>>(`/admin/staff/${id}`);
-    return response;
-  },
 };

@@ -136,7 +136,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
                 {/* Tooltip in collapsed mode */}
                 {collapsed && (
                   <div
-                    className="pointer-events-none"
+                    className="pointer-events-none sidebar-tooltip"
                     style={{
                       position: 'absolute',
                       left: 'calc(100% + 10px)',
@@ -154,7 +154,6 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
                       zIndex: 60,
                       boxShadow: 'var(--shadow-lg)',
                     }}
-                    className="sidebar-tooltip"
                   >
                     {item.title}
                   </div>

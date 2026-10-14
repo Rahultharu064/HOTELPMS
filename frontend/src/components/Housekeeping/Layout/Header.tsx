@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Bell, LogOut, User, ChevronDown, Menu } from "lucide-react";
+import { Search, Bell, LogOut, ChevronDown } from "lucide-react";
 import { MobileMenuButton } from "./Sidebar";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
 import { getImageUrl } from "../../../services/api";

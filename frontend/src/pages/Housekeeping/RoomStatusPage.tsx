@@ -4,9 +4,7 @@ import {
   RefreshCcw,
   Sparkles,
   Bed,
-  CheckCircle,
-  Wrench,
-  AlertCircle
+  CheckCircle
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { housekeepingService } from "../../services/housekeepingService";
@@ -38,17 +36,13 @@ const RoomStatusPage: React.FC = () => {
   // Direct 1-tap next action based on current status
   const handleNextStatus = async (room: any) => {
     let nextStatus = 'available';
-    let actionLabel = 'Mark as Clean';
 
     if (room.status === 'cleaning') {
       nextStatus = 'available';
-      actionLabel = 'Mark as Clean';
     } else if (room.status === 'available') {
       nextStatus = 'cleaning';
-      actionLabel = 'Start Cleaning';
     } else if (room.status === 'occupied') {
       nextStatus = 'cleaning';
-      actionLabel = 'Request Cleaning';
     }
 
     try {

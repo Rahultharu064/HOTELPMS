@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
 import { getImageUrl } from "../../../services/api";
-import { Search, Bell, User, ChevronDown, Settings, LogOut, Menu } from "lucide-react";
+import { Search, Bell, ChevronDown, Settings, LogOut, Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface HeaderProps {

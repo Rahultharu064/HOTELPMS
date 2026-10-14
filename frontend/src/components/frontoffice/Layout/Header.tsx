@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ChevronDown, LogOut, User, Bell, Camera, Loader2, Menu } from "lucide-react";
+import { Search, ChevronDown, LogOut, User, Bell, Menu } from "lucide-react";
 import { useAdminAuth } from "../../../context/AdminAuthContext";
 import { getImageUrl } from "../../../services/api";
 
@@ -13,9 +13,7 @@ export function Header({ title, onMobileMenuClick }: HeaderProps) {
   const [profileOpen, setProfileOpen] = useState(false);
   const { admin, adminLogout } = useAdminAuth();
   const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const uploading = false;
   const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   const handleLogout = () => {

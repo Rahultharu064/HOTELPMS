@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   Search, LogIn, LogOut,
-  Clock, Plus, Loader2,
+  Plus, Loader2,
   Calendar, CheckCircle, UserCheck
 } from "lucide-react";
 import { frontOfficeService } from "../../services/frontofficeService";

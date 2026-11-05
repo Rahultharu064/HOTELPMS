@@ -204,11 +204,11 @@ export const FeaturedRoomsSection: React.FC = () => {
             </div>
 
             <h2 className="font-georgia text-3xl font-bold leading-tight tracking-tight text-primary-dark md:text-4xl lg:text-[2.75rem]">
-              Rooms <span className="italic text-primary-green">&</span> Suites
+              Rooms <span className="italic text-primary-green">&amp;</span> Suites
             </h2>
 
             <p className="mx-auto mt-4 max-w-lg text-sm font-medium leading-relaxed text-neutral-text-secondary md:text-base">
-              Comfortable rooms for business and leisure stays in Itahari.
+              Featured stays on the property this week — standard rooms through to suites.
             </p>
           </ScrollReveal>
         </div>

@@ -50,6 +50,8 @@ export const GalleryPage = () => {
     <main className="min-h-screen bg-[#FAFAF8]">
       <PageHero
         title="Photo Gallery"
+        subtitle="Rooms, dining rooms, and the venues we actually use — not a stock collage."
+        image="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1920&q=80"
         breadcrumbs={[
           { label: "Home", to: "/" },
           { label: "Photo Gallery" },

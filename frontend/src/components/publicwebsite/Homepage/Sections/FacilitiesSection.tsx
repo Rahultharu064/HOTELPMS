@@ -39,7 +39,7 @@ const FacilitiesSection: React.FC = () => {
           {ITEMS.map((item, i) => (
             <div
               key={i}
-              className="group relative overflow-hidden rounded-[32px] border border-gray-100/80 bg-white p-8 transition-all duration-700 hover:border-[#1F7A3A]/10 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] facility-card opacity-100"
+              className="group relative overflow-hidden rounded-xl border border-neutral-border/80 bg-white p-8 transition-shadow duration-300 hover:shadow-md facility-card opacity-100"
               ref={(el) => {
                 if (el) el.style.setProperty('--delay', `${i * 100}ms`);
               }}

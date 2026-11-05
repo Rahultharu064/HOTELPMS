@@ -1,80 +1,69 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { FaWifi, FaSwimmingPool, FaParking, FaCoffee, FaDumbbell, FaSpa } from 'react-icons/fa';
 import PageHero from '../../components/publicwebsite/Homepage/layout/PageHero';
 
 export const FacilitiesPage: React.FC = () => {
   const facilities = [
     {
-      title: 'High-Speed Wi-Fi',
-      description: 'Stay connected with our complimentary high-speed internet access available throughout the property.',
+      title: 'High-speed Wi-Fi',
+      description: 'Fibre throughout the building. Works in the rooms, the restaurant, and the lobby — not just next to reception.',
       icon: FaWifi,
-      color: 'text-blue-500'
     },
     {
-      title: 'Swimming Pool',
-      description: 'Relax and unwind in our temperature-controlled outdoor swimming pool.',
+      title: 'Swimming pool',
+      description: 'Outdoor pool, open through the season. Towels at the attendant desk, not hidden in a locker.',
       icon: FaSwimmingPool,
-      color: 'text-cyan-500'
     },
     {
-      title: 'Secure Parking',
-      description: 'Ample and secure parking space available 24/7 for all our guests.',
+      title: 'Secure parking',
+      description: 'On-site parking with overnight security. Tell the desk your plate number at check-in.',
       icon: FaParking,
-      color: 'text-gray-500'
     },
     {
-      title: 'Restaurant & Cafe',
-      description: 'Enjoy delicious meals and freshly brewed coffee at our in-house restaurant.',
+      title: 'Restaurant & cafe',
+      description: 'Breakfast, lunch, and a short dinner menu. Nepali plates first, then a few continental standards.',
       icon: FaCoffee,
-      color: 'text-amber-600'
     },
     {
-      title: 'Fitness Center',
-      description: 'Keep up with your fitness routine in our fully equipped modern gym.',
+      title: 'Fitness room',
+      description: 'Treadmills, free weights, and enough space that you are not waiting on a queue.',
       icon: FaDumbbell,
-      color: 'text-gray-700'
     },
     {
-      title: 'Spa & Wellness',
-      description: 'Rejuvenate your mind and body with our premium spa and massage services.',
+      title: 'Spa treatments',
+      description: 'Massage by appointment. Book at reception the evening before if you can.',
       icon: FaSpa,
-      color: 'text-pink-500'
-    }
+    },
   ];
 
   return (
     <main className="min-h-screen bg-neutral-light">
       <PageHero
-        title="Our Facilities"
-        subtitle="Experience premium amenities designed for your absolute comfort and convenience."
+        title="Dining & Facilities"
+        subtitle="The restaurant, lounge, gym, and the everyday extras that make a stay simpler."
+        image="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80"
         breadcrumbs={[
           { label: "Home", to: "/" },
           { label: "Facilities" },
         ]}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {facilities.map((facility, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-shadow border border-neutral-border group"
-            >
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center bg-gray-50 mb-6 group-hover:scale-110 transition-transform`}>
-                <facility.icon className={`text-2xl ${facility.color}`} />
-              </div>
-              <h3 className="text-xl font-bold font-poppins text-neutral-text-primary mb-3">
-                {facility.title}
-              </h3>
-              <p className="text-neutral-text-secondary leading-relaxed font-inter">
-                {facility.description}
-              </p>
-            </motion.div>
+      <div className="container-custom py-16 md:py-20">
+        <div className="mb-12 max-w-2xl">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-gold">On the property</p>
+          <h2 className="font-georgia mt-3 text-3xl text-primary-dark">What you can actually use</h2>
+          <p className="mt-4 text-neutral-text-secondary leading-relaxed">
+            Dining is on the ground floor. The gym and spa are one level down. Parking is behind the east wing.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-neutral-border bg-neutral-border md:grid-cols-2 lg:grid-cols-3">
+          {facilities.map((facility) => (
+            <article key={facility.title} className="bg-white p-8">
+              <facility.icon className="text-2xl text-primary-gold" />
+              <h3 className="font-georgia mt-5 text-xl text-primary-dark">{facility.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-neutral-text-secondary">{facility.description}</p>
+            </article>
           ))}
         </div>
       </div>

@@ -38,7 +38,8 @@ export const ContactUsPage: React.FC = () => {
     <main>
       <PageHero
         title="Contact Us"
-        subtitle="We'd love to hear from you. Get in touch with us today!"
+        subtitle="Reservations, events, and the front desk — a real person answers."
+        image="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1920&q=80"
         breadcrumbs={[
           { label: "Home", to: "/" },
           { label: "Contact" },
@@ -52,9 +53,9 @@ export const ContactUsPage: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-white rounded-2xl shadow-lg p-8"
+              className="border border-neutral-border bg-white p-8 shadow-sm"
             >
-              <h2 className="text-2xl font-bold mb-6">Send us a Message</h2>
+              <h2 className="font-georgia text-2xl text-primary-dark mb-6">Write to the desk</h2>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <Input
@@ -110,9 +111,9 @@ export const ContactUsPage: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-white rounded-2xl shadow-lg p-8 sticky top-24"
+              className="sticky top-24 border border-neutral-border bg-[#0f2318] p-8 text-white"
             >
-              <h2 className="text-2xl font-bold mb-6">Get in Touch</h2>
+              <h2 className="font-georgia text-2xl mb-6">Get in touch</h2>
               <div className="space-y-6 mb-8">
                 {contactInfo.map((info, idx) => (
                   <div key={idx} className="flex items-start gap-4">
@@ -122,26 +123,26 @@ export const ContactUsPage: React.FC = () => {
                     <div>
                       <h3 className="font-semibold mb-1">{info.title}</h3>
                       {info.link ? (
-                        <a href={info.link} className="text-neutral-text-secondary hover:text-primary-green transition">
+                        <a href={info.link} className="text-white/70 hover:text-primary-gold transition">
                           {info.details}
                         </a>
                       ) : (
-                        <p className="text-neutral-text-secondary">{info.details}</p>
+                        <p className="text-white/70">{info.details}</p>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
 
-              <h3 className="font-semibold mb-3">Follow Us</h3>
+              <h3 className="font-semibold mb-3 text-white/90">Follow us</h3>
               <div className="flex gap-4">
-                <a href="#" aria-label="Follow us on Facebook" className="w-10 h-10 rounded-full bg-neutral-light flex items-center justify-center text-primary-green hover:bg-primary-green hover:text-white transition-all">
+                <a href="#" aria-label="Follow us on Facebook" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary-gold hover:text-primary-dark transition-all">
                   <FaFacebook aria-hidden="true" focusable="false" />
                 </a>
-                <a href="#" aria-label="Follow us on Instagram" className="w-10 h-10 rounded-full bg-neutral-light flex items-center justify-center text-primary-green hover:bg-primary-green hover:text-white transition-all">
+                <a href="#" aria-label="Follow us on Instagram" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary-gold hover:text-primary-dark transition-all">
                   <FaInstagram aria-hidden="true" focusable="false" />
                 </a>
-                <a href="#" aria-label="Follow us on Twitter" className="w-10 h-10 rounded-full bg-neutral-light flex items-center justify-center text-primary-green hover:bg-primary-green hover:text-white transition-all">
+                <a href="#" aria-label="Follow us on Twitter" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary-gold hover:text-primary-dark transition-all">
                   <FaTwitter aria-hidden="true" focusable="false" />
                 </a>
               </div>

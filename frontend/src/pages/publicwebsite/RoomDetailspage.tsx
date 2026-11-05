@@ -202,6 +202,8 @@ export const RoomDetailspage = () => {
     <div className="min-h-screen bg-white">
       <PageHero
         title={room.name}
+        subtitle={room.roomType?.name ? `${room.roomType.name} · up to ${room.capacity} guests` : undefined}
+        image={images[0]}
         breadcrumbs={[
           { label: "Home", to: "/" },
           { label: "Rooms", to: "/rooms" },

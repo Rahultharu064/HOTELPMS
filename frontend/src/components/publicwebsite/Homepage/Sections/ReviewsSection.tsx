@@ -22,9 +22,9 @@ const ReviewsSection: React.FC = () => {
       if (res.success) {
         setReviews(res.data.reviews);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to fetch reviews:", err);
-      setError(err?.message || 'Failed to load reviews');
+      setError(err instanceof Error ? err.message : 'Failed to load reviews');
     } finally {
       setLoading(false);
     }
@@ -39,8 +39,8 @@ const ReviewsSection: React.FC = () => {
       <SubmitReviewModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       
       {/* Dynamic Background decor */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-gold/5 rounded-full blur-[130px] -mr-80 -mt-80 opacity-60" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-primary-green/5 rounded-full blur-[130px] -ml-80 -mb-80 opacity-60" />
+      <div className="absolute top-0 right-0 w-150 h-150 bg-primary-gold/5 rounded-full blur-[130px] -mr-80 -mt-80 opacity-60" />
+      <div className="absolute bottom-0 left-0 w-150 h-150 bg-primary-green/5 rounded-full blur-[130px] -ml-80 -mb-80 opacity-60" />
 
       <div className="container-custom relative z-10">
         <SectionHeading
@@ -72,7 +72,7 @@ const ReviewsSection: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="group bg-white rounded-[40px] p-8 border border-neutral-border/50 shadow-soft hover:shadow-2xl hover:border-primary-green/10 transition-all duration-700 flex flex-col h-full"
+                className="group flex h-full flex-col rounded-[28px] border border-[#E8E6DF] bg-white p-7 shadow-[0_10px_35px_rgba(30,77,56,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-primary-green/20 hover:shadow-[0_18px_42px_rgba(30,77,56,0.12)] sm:p-8"
               >
                 <div className="mb-6 flex items-center justify-between">
                   <Quote size={28} className="text-primary-green/20" fill="currentColor" />

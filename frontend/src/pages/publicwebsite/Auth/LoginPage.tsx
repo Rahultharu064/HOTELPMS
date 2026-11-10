@@ -39,17 +39,17 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-['Outfit']">
+    <div className="public-auth-page flex min-h-[65vh] items-center justify-center bg-neutral-light px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="max-w-md w-full bg-white p-8 sm:p-10 rounded shadow-sm border border-gray-100"
+        className="w-full max-w-md rounded-2xl border border-neutral-border bg-white p-5 shadow-sm sm:p-8"
       >
         {/* Brand Logo */}
         <div className="text-center flex flex-col items-center mb-8">
           <AuthBrandLogo variant="guest" />
-          <h2 className="text-3xl text-[#5c3d14] mt-6 mb-1" style={{ fontFamily: 'Georgia, serif' }}>
+          <h2 className="mt-6 mb-1 font-georgia text-2xl font-semibold text-primary-dark sm:text-3xl">
             Welcome Back
           </h2>
           <p className="text-sm text-gray-500">Sign in to your account</p>
@@ -59,9 +59,9 @@ export const LoginPage: React.FC = () => {
           {/* Email Address */}
           <div className="space-y-1.5">
             <label className="block text-sm font-bold text-gray-700">Email Address</label>
-            <div className="flex rounded border border-[#c9a84c]/40 overflow-hidden focus-within:border-[#c9a84c] focus-within:ring-1 focus-within:ring-[#c9a84c] transition-all bg-white">
-              <div className="bg-[#c9a84c]/10 flex items-center justify-center px-4 border-r border-[#c9a84c]/30">
-                <Mail className="text-[#c9a84c]" size={18} />
+            <div className="flex min-h-12 overflow-hidden rounded-lg border border-neutral-border bg-white transition-all focus-within:border-primary-green focus-within:ring-2 focus-within:ring-primary-green/15">
+              <div className="flex items-center justify-center border-r border-neutral-border bg-primary-green/5 px-3">
+                <Mail className="text-primary-green" size={18} />
               </div>
               <input
                 type="email"
@@ -77,9 +77,9 @@ export const LoginPage: React.FC = () => {
           {/* Password */}
           <div className="space-y-1.5">
             <label className="block text-sm font-bold text-gray-700">Password</label>
-            <div className="flex rounded border border-[#c9a84c]/40 overflow-hidden focus-within:border-[#c9a84c] focus-within:ring-1 focus-within:ring-[#c9a84c] transition-all bg-white">
-              <div className="bg-[#c9a84c]/10 flex items-center justify-center px-4 border-r border-[#c9a84c]/30">
-                <Lock className="text-[#c9a84c]" size={18} />
+            <div className="flex min-h-12 overflow-hidden rounded-lg border border-neutral-border bg-white transition-all focus-within:border-primary-green focus-within:ring-2 focus-within:ring-primary-green/15">
+              <div className="flex items-center justify-center border-r border-neutral-border bg-primary-green/5 px-3">
+                <Lock className="text-primary-green" size={18} />
               </div>
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -92,7 +92,7 @@ export const LoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="px-4 text-gray-400 hover:text-gray-600 transition-colors text-[11px] font-bold uppercase"
+                className="min-w-12 px-3 text-xs font-semibold uppercase text-neutral-text-secondary transition-colors hover:text-primary-dark"
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
@@ -103,7 +103,7 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-[#c9a84c] text-white rounded font-bold hover:bg-[#b8952f] transition-colors disabled:opacity-70 mt-2 shadow-sm"
+            className="mt-2 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary-green px-4 py-3.5 font-semibold text-white shadow-sm transition-colors hover:bg-primary-dark disabled:opacity-70"
           >
             <AnimatePresence mode="wait">
               {loading ? (
@@ -125,7 +125,7 @@ export const LoginPage: React.FC = () => {
         <div className="text-center mt-4">
           <Link
             to="/forgot-password"
-            className="text-sm font-semibold text-[#c9a84c] hover:text-[#b8952f] transition-colors"
+            className="text-sm font-semibold text-primary-green transition-colors hover:text-primary-dark"
           >
             Forgot your password?
           </Link>

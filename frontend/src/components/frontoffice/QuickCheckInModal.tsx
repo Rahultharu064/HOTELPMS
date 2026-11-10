@@ -362,16 +362,16 @@ export const QuickCheckInModal: React.FC<QuickCheckInModalProps> = ({ isOpen, on
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex-[2] h-11 bg-[#111827] hover:bg-[#14532D] text-white rounded-xl font-black uppercase tracking-[0.35em] text-[10px] shadow-lg shadow-black/10 flex items-center justify-center gap-2.5 transition-all disabled:opacity-60"
+                    className="`flex-[2] h-11 bg-[#111827] hover:bg-[#14532D] text-white rounded-xl font-black uppercase tracking-[0.35em] text-[10px] shadow-lg shadow-black/10 flex items-center justify-center gap-2.5 transition-all disabled:opacity-60"
                   >
                     {submitting ? <Loader2 className="animate-spin" size={16} /> : <><Check size={16} strokeWidth={3} /> Finalize Check-in</>}
                   </button>
                 </div>
 
                 <div className="flex items-center justify-center gap-2">
-                  <div className="h-[1px] w-6 bg-gray-100" />
+                  <div className="`h-[1px]` w-6 bg-gray-100" />
                   <p className="text-[8px] font-black text-gray-300 uppercase tracking-[0.4em]">Protocol L3 · Arrival Node</p>
-                  <div className="h-[1px] w-6 bg-gray-100" />
+                  <div className="`h-[1px]` w-6 bg-gray-100" />
                 </div>
               </div>
             </div>

@@ -102,7 +102,7 @@ export const GalleryPage = () => {
                       <img src={imageSrc} alt={venue.title} className="h-full w-full object-cover" loading="lazy" />
                       <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/40 to-transparent lg:hidden" />
                     </div>
-                    <div className="flex flex-1 flex-col justify-center p-8 md:p-10">
+                    <div className="flex flex-1 flex-col justify-center p-5 sm:p-8 md:p-10">
                       <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-primary-gold/15">
                         <Icon size={20} className="text-primary-gold" />
                       </div>

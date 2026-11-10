@@ -47,13 +47,13 @@ export const ContactUsPage: React.FC = () => {
       />
 
       <div className="container-custom section-padding">
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-12">
           {/* Contact Form */}
-          <div className="lg:col-span-2">
+          <div className="min-w-0 lg:col-span-1">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              className="border border-neutral-border bg-white p-8 shadow-sm"
+              className="rounded-2xl border border-neutral-border bg-white p-5 shadow-sm sm:p-8"
             >
               <h2 className="font-georgia text-2xl text-primary-dark mb-6">Write to the desk</h2>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -107,11 +107,11 @@ export const ContactUsPage: React.FC = () => {
           </div>
 
           {/* Contact Information */}
-          <div>
+          <div className="min-w-0">
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
-              className="sticky top-24 border border-neutral-border bg-[#0f2318] p-8 text-white"
+              className="rounded-2xl border border-neutral-border bg-primary-dark p-5 text-white sm:p-8 lg:sticky lg:top-24"
             >
               <h2 className="font-georgia text-2xl mb-6">Get in touch</h2>
               <div className="space-y-6 mb-8">
@@ -123,7 +123,7 @@ export const ContactUsPage: React.FC = () => {
                     <div>
                       <h3 className="font-semibold mb-1">{info.title}</h3>
                       {info.link ? (
-                        <a href={info.link} className="text-white/70 hover:text-primary-gold transition">
+                        <a href={info.link} className="break-all text-white/70 transition hover:text-primary-gold">
                           {info.details}
                         </a>
                       ) : (

@@ -401,7 +401,7 @@ export const RoomDetailspage = () => {
 
           {/* Booking sidebar */}
           <div>
-            <div id="book-room" className="sticky top-28 scroll-mt-28">
+            <div id="book-room" className="scroll-mt-28 lg:sticky lg:top-28">
               <div className="overflow-hidden rounded-2xl border border-neutral-border/60 bg-white shadow-[0_12px_48px_rgba(20,83,45,0.10)]">
                 {/* Price header */}
                 <div className="bg-gradient-to-r from-primary-dark to-primary-green px-6 py-5">
@@ -418,14 +418,14 @@ export const RoomDetailspage = () => {
                     <label className="text-[11px] font-bold uppercase tracking-widest text-neutral-text-secondary">
                       Check-in &amp; Check-out
                     </label>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <input
                         type="date"
                         title="Check-in date"
                         value={bookingDates.checkIn}
                         min={new Date().toISOString().split("T")[0]}
                         onChange={(e) => setBookingDates((p) => ({ ...p, checkIn: e.target.value }))}
-                        className="input-field h-11 text-xs font-semibold text-primary-dark"
+                        className="input-field h-12 w-full text-sm font-medium text-primary-dark"
                       />
                       <input
                         type="date"
@@ -433,7 +433,7 @@ export const RoomDetailspage = () => {
                         value={bookingDates.checkOut}
                         min={bookingDates.checkIn || new Date().toISOString().split("T")[0]}
                         onChange={(e) => setBookingDates((p) => ({ ...p, checkOut: e.target.value }))}
-                        className="input-field h-11 text-xs font-semibold text-primary-dark"
+                        className="input-field h-12 w-full text-sm font-medium text-primary-dark"
                       />
                     </div>
                   </div>
@@ -534,11 +534,11 @@ export const RoomDetailspage = () => {
             <CalendarDays size={20} className="text-primary-green" />
             <h2 className="font-georgia text-xl font-bold text-primary-dark md:text-2xl">Availability (next 14 days)</h2>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-7 lg:grid-cols-14">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 xl:grid-cols-7">
             {availabilityDays.map(({ date, label, available }) => (
               <div
                 key={date.toISOString()}
-                className={`rounded-xl border px-3 py-3 text-center transition-colors ${
+                className={`rounded-lg border px-2 py-3 text-center transition-colors sm:rounded-xl sm:px-3 ${
                   available
                     ? "border-primary-green/20 bg-white"
                     : "border-neutral-border/40 bg-neutral-light opacity-60"

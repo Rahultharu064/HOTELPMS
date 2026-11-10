@@ -133,6 +133,86 @@
    BASE RESET & TYPOGRAPHY
    ───────────────────────────────────────────────────────── */
 @layer base {
+  .public-site {
+    --color-ink: #1b2b23;
+    --color-surface: #f8f7f2;
+    --color-card: #ffffff;
+    --color-primary: #285741;
+    --color-primary-green: #285741;
+    --color-primary-dark: #193d2e;
+    --color-primary-lt: #e5eee7;
+    --color-accent: #b58a3a;
+    --color-primary-gold: #b58a3a;
+    --color-accent-lt: #f5efdf;
+    --color-muted: #647169;
+    --color-muted-foreground: #647169;
+    --color-neutral-text-primary: #1b2b23;
+    --color-neutral-text-secondary: #647169;
+    --color-border: #e3e5de;
+    --color-neutral-border: #e3e5de;
+    --color-background: #f8f7f2;
+    --primary-green: #285741;
+    --dark-green: #193d2e;
+    --topbar-gold: #b58a3a;
+    --light-bg: #f8f7f2;
+    --text-primary: #1b2b23;
+    --text-secondary: #647169;
+    font-family: var(--font-ui);
+    color: var(--color-ink);
+    background: var(--color-surface);
+  }
+
+  @media (max-width: 639px) {
+    .public-site .container-custom {
+      padding-inline: 1rem;
+    }
+
+    .public-site .section-padding {
+      padding-block: 3.5rem;
+    }
+  }
+
+  @media (max-width: 359px) {
+    .public-site .container-custom {
+      padding-inline: 0.875rem;
+    }
+  }
+
+  .public-site img,
+  .public-site iframe,
+  .public-site video {
+    max-width: 100%;
+  }
+
+  .public-site input,
+  .public-site select,
+  .public-site textarea {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  @media (max-width: 767px) {
+    .public-site input:not([type="checkbox"]):not([type="radio"]),
+    .public-site select,
+    .public-site textarea {
+      font-size: 16px;
+    }
+  }
+
+  .public-site h1,
+  .public-site h2,
+  .public-site h3,
+  .public-site h4 {
+    letter-spacing: -0.015em;
+  }
+
+  .public-site a,
+  .public-site button,
+  .public-site input,
+  .public-site select {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   * {
     margin: 0;
     padding: 0;
@@ -180,6 +260,10 @@
 
   .section-padding {
     @apply py-20 md:py-24;
+  }
+
+  .public-site .section-padding {
+    @apply py-16 md:py-20 lg:py-24;
   }
 
   /* ── BUTTONS ── */

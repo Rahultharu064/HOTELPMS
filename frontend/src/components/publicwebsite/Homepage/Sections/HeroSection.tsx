@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useReducedMotion } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
@@ -14,28 +15,20 @@ import { roomTypeService, type RoomType } from "../../../../services/roomTypeSer
 /* ─────────────────── Slide data ─────────────────── */
 const slides = [
   {
-    image: "/hero11.png",
-    imagePosition: "object-[center_28%]",
-    badge: "WELCOME TO ITAHARI NAMUNA",
-    title: "Best Hotel in Itahari",
-    subtitle:
-      "Warm hospitality, modern comfort, and memorable stays in the heart of Sunsari.",
-  },
-  {
     image: "/hero122.png",
-    imagePosition: "object-[center_35%]",
-    badge: "ROOMS FOR EVERY KIND OF STAY",
-    title: "Rest easy, feel at home",
+    imagePosition: "object-[center_28%]",
+    badge: "ITAHARI NAMUNA · ITAHARI, SUNSARI",
+    title: "A comfortable stay in Itahari",
     subtitle:
-      "Thoughtful rooms, warm local hospitality, and a comfortable place to return to.",
+      "Find a room for your visit, compare nightly rates, and plan your stay with us.",
   },
   {
-    image: "/Hero.png",
-    imagePosition: "object-center",
-    badge: "A CONVENIENT BASE IN ITAHARI",
-    title: "Make your visit a little easier",
+    image: "/hero11.png",
+    imagePosition: "object-[center_35%]",
+    badge: "ROOMS FOR YOUR VISIT",
+    title: "Make Itahari your next stop",
     subtitle:
-      "Stay close to the places you are visiting, with a welcoming team ready to help.",
+      "Browse room types and choose the option that works for your plans and budget.",
   },
 ];
 
@@ -108,6 +101,7 @@ const CustomSelect = ({ value, onChange, options, placeholder }: CustomSelectPro
 /* ─────────────────── Component ─────────────────── */
 const HeroSection = () => {
   const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
   const [current, setCurrent] = useState(0);
   const [phase, setPhase] = useState<Phase>("idle");
 
@@ -154,11 +148,12 @@ const HeroSection = () => {
   );
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
     const timer = window.setInterval(() => {
       if (!isBusy) goNext();
     }, AUTO_PLAY_MS);
     return () => window.clearInterval(timer);
-  }, [goNext, isBusy]);
+  }, [goNext, isBusy, prefersReducedMotion]);
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -168,15 +163,6 @@ const HeroSection = () => {
     if (selectedPrice !== "15000") params.set("maxPrice", selectedPrice);
     const query = params.toString();
     navigate(`/rooms${query ? `?${query}` : ""}`);
-  };
-
-  const scrollToContent = () => {
-    const target = document.getElementById("homepage-content");
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
-    } else {
-      window.scrollBy({ top: window.innerHeight * 0.75, behavior: "smooth" });
-    }
   };
 
   const contentClass =
@@ -200,7 +186,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="relative w-full overflow-visible bg-black lg:h-[75vh] lg:min-h-[560px] lg:max-h-[760px]">
+    <section className="relative w-full overflow-visible bg-primary-dark lg:h-[75vh] lg:min-h-[560px] lg:max-h-[760px]">
 
       {/* ── Slide backgrounds ── */}
       <div className="relative max-lg:h-[min(70vh,540px)] max-lg:min-h-[480px] lg:absolute lg:inset-0 overflow-hidden">
@@ -216,33 +202,34 @@ const HeroSection = () => {
               loading={i === 0 ? "eager" : "lazy"}
               className={`hero-slide-image ${slide.imagePosition}${i === current ? " is-active" : ""}`}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black/50" />
+            <div className="absolute inset-0 bg-linear-to-r from-[#10281f]/85 via-[#10281f]/55 to-[#10281f]/15" />
+            <div className="absolute inset-0 bg-linear-to-t from-[#10281f]/55 via-transparent to-[#10281f]/10" />
           </div>
         ))}
       </div>
 
       {/* ── Centered content ── */}
-      <div className="absolute inset-0 z-10 flex flex-col max-lg:justify-start max-lg:pt-20 max-lg:pb-4 lg:h-full lg:justify-center items-center text-center px-6">
+      <div className="absolute inset-0 z-10 flex flex-col items-center px-6 text-center max-lg:justify-start max-lg:pt-20 max-lg:pb-4 sm:px-10 lg:h-full lg:justify-center lg:px-16 xl:px-24">
         <div
-          className={`max-w-3xl w-full transition-all duration-500 ease-out ${contentClass}`}
+          className={`w-full max-w-3xl transition-all duration-500 ease-out ${contentClass}`}
         >
-          <div className="inline-flex items-center gap-2 border border-white/35 text-white px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.18em] bg-black/20 backdrop-blur-sm mb-4 max-lg:mb-3 lg:mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary-gold shrink-0" />
+          <div className="mb-4 inline-flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/90 max-lg:mb-3 lg:mb-5">
+            <span className="h-px w-8 bg-primary-gold" />
             {slides[current].badge}
           </div>
 
-          <h1 className="text-white font-georgia text-[38px] leading-[1.08] sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-3 max-lg:mb-3 lg:mb-4 drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)]">
+          <h1 className="mb-4 max-w-2xl font-georgia text-[clamp(2.5rem,5vw,4.75rem)] font-medium leading-[1.02] tracking-[-0.035em] text-white drop-shadow-[0_3px_20px_rgba(0,0,0,0.28)] max-lg:mb-3 lg:mb-5">
             {slides[current].title}
           </h1>
 
-          <p className="text-white/85 text-sm md:text-base max-w-xl mx-auto leading-relaxed mb-6 max-lg:mb-7 lg:mb-8 font-medium px-1 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
+          <p className="mx-auto mb-6 max-w-xl text-sm font-normal leading-7 text-white/85 drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] max-lg:mb-7 lg:mb-8 lg:text-base">
             {slides[current].subtitle}
           </p>
 
-          <div className="flex max-lg:flex-row max-lg:w-full max-lg:max-w-md max-lg:mx-auto flex-wrap gap-2.5 max-lg:gap-2 justify-center items-center mb-5 max-lg:mb-4 lg:mb-10">
+          <div className="mb-5 flex flex-wrap items-center justify-center gap-3 max-lg:mb-4 lg:mb-10">
             <Link
               to="/rooms"
-              className="flex max-lg:flex-1 items-center justify-center gap-2 px-5 max-lg:px-4 py-3.5 max-lg:py-3 lg:px-7 lg:py-3 bg-primary-gold hover:bg-[#D8B85A] text-[#14532D] font-semibold text-sm rounded-lg transition-colors shadow-sm"
+              className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary-gold px-6 py-3 text-sm font-semibold text-primary-dark shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#c49b4b] hover:shadow-lg active:translate-y-0"
             >
               <BedDouble size={15} />
               <span>Explore Rooms</span>
@@ -250,14 +237,14 @@ const HeroSection = () => {
 
             <Link
               to="/booking"
-              className="flex max-lg:flex-1 items-center justify-center gap-2 px-5 max-lg:px-4 py-3.5 max-lg:py-3 lg:px-7 lg:py-3 border border-white/70 max-lg:bg-white/10 text-white hover:bg-white hover:text-[#14532D] hover:border-white font-semibold text-sm rounded-lg transition-colors"
+              className="flex min-h-12 items-center justify-center gap-2 rounded-lg border border-white/55 bg-white/5 px-6 py-3 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-primary-dark"
             >
               <CalendarCheck size={15} />
               <span>Book Now</span>
             </Link>
           </div>
 
-          <div className="flex gap-2 justify-center">
+          <div className="flex justify-center gap-2">
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -283,7 +270,7 @@ const HeroSection = () => {
       <button
         onClick={goPrev}
         disabled={isBusy}
-        className="absolute left-4 md:left-8 top-[38%] max-lg:top-[40%] lg:top-1/2 -translate-y-1/2 z-20 h-10 w-10 max-lg:h-9 max-lg:w-9 lg:h-11 lg:w-11 rounded-full border border-white/30 bg-black/30 hover:bg-black/55 backdrop-blur-md flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/55 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
+        className="absolute left-8 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/35 bg-black/35 text-white shadow-lg backdrop-blur-md transition-all duration-200 hover:border-white/60 hover:bg-black/55 active:scale-95 disabled:opacity-40 lg:flex"
         aria-label="Previous slide"
       >
         <ChevronLeft className="h-5 w-5" />
@@ -292,24 +279,10 @@ const HeroSection = () => {
       <button
         onClick={goNext}
         disabled={isBusy}
-        className="absolute right-4 md:right-8 top-[38%] max-lg:top-[40%] lg:top-1/2 -translate-y-1/2 z-20 h-10 w-10 max-lg:h-9 max-lg:w-9 lg:h-11 lg:w-11 rounded-full border border-white/30 bg-black/30 hover:bg-black/55 backdrop-blur-md flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/55 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
+        className="absolute right-8 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/35 bg-black/35 text-white shadow-lg backdrop-blur-md transition-all duration-200 hover:border-white/60 hover:bg-black/55 active:scale-95 disabled:opacity-40 lg:flex"
         aria-label="Next slide"
       >
         <ChevronRight className="h-5 w-5" />
-      </button>
-
-      {/* ── Scroll-down indicator (desktop only) ── */}
-      <button
-        onClick={scrollToContent}
-        aria-label="Scroll down to content"
-        className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 hidden lg:flex flex-col items-center gap-1 group cursor-pointer"
-      >
-        <span className="text-white/50 text-[9px] uppercase tracking-[0.22em] font-semibold group-hover:text-white/80 transition-colors duration-300">
-          Discover
-        </span>
-        <div className="w-[30px] h-[48px] rounded-full border-2 border-white/30 group-hover:border-white/60 flex items-start justify-center pt-[8px] transition-colors duration-300">
-          <div className="w-[5px] h-[5px] rounded-full bg-white/60 group-hover:bg-white animate-scrollDot" />
-        </div>
       </button>
 
       {/* ── Availability Search Bar ── */}

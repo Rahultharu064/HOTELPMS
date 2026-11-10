@@ -44,7 +44,7 @@ export const AboutusPage: React.FC = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-neutral-border bg-neutral-border">
+          <div className="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-neutral-border bg-neutral-border sm:grid-cols-2">
             {[
               { icon: FaHotel, value: '50+', label: 'Rooms & suites' },
               { icon: FaUsers, value: '1,000+', label: 'Returning guests' },

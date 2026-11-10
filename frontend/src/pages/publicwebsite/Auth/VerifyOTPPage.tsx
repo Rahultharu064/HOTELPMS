@@ -89,13 +89,13 @@ export const VerifyOTPPage: React.FC = () => {
 
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
+    <div className="flex min-h-[60vh] items-center justify-center bg-neutral-light px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <div className="w-full max-w-md space-y-6 rounded-2xl border border-neutral-border bg-white p-5 shadow-sm sm:space-y-8 sm:p-8">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-primary-green text-white shadow-sm sm:h-16 sm:w-16">
             <ShieldCheck size={32} />
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 tracking-tight">
+          <h2 className="mt-5 text-2xl font-semibold tracking-tight text-primary-dark sm:text-3xl">
             Verify Email
           </h2>
           <p className="mt-2 text-sm text-gray-600">
@@ -115,7 +115,7 @@ export const VerifyOTPPage: React.FC = () => {
               maxLength={6}
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-              className="appearance-none rounded-xl relative block w-full px-4 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-2xl font-bold tracking-[0.5em] text-center bg-gray-50 transition-all"
+              className="relative block min-h-14 w-full appearance-none rounded-lg border border-neutral-border bg-neutral-light px-4 py-4 text-center text-2xl font-semibold tracking-[0.4em] text-primary-dark placeholder-gray-500 transition-all focus:border-primary-green focus:outline-none focus:ring-2 focus:ring-primary-green/20 sm:tracking-[0.5em]"
               placeholder="000000"
             />
           </div>
@@ -123,7 +123,7 @@ export const VerifyOTPPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading || otp.length !== 6}
-            className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-black uppercase tracking-widest rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50 shadow-lg shadow-blue-200"
+            className="group relative flex min-h-12 w-full justify-center rounded-lg border border-transparent bg-primary-green px-4 py-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:ring-offset-2 disabled:opacity-50"
           >
             {loading ? 'Verifying...' : 'Verify & Continue'}
             <ArrowRight className="ml-2" size={18} />
@@ -134,7 +134,7 @@ export const VerifyOTPPage: React.FC = () => {
           <button
             onClick={handleResend}
             disabled={resending}
-            className="text-xs font-black text-blue-600 uppercase tracking-widest hover:text-blue-700 flex items-center justify-center mx-auto gap-2"
+            className="mx-auto flex min-h-11 items-center justify-center gap-2 text-sm font-semibold text-primary-green hover:text-primary-dark"
           >
             <RefreshCw size={14} className={resending ? 'animate-spin' : ''} />
             {resending ? 'Resending...' : "Didn't receive code? Resend"}
@@ -142,7 +142,7 @@ export const VerifyOTPPage: React.FC = () => {
           
           <button
             onClick={() => navigate('/login')}
-            className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-gray-600 block w-full"
+            className="block min-h-11 w-full text-sm font-medium text-neutral-text-secondary hover:text-primary-dark"
           >
             Back to Login
           </button>

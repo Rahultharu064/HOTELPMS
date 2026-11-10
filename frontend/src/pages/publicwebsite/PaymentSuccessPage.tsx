@@ -67,7 +67,7 @@ export const PaymentSuccessPage: React.FC = () => {
 
   if (verifying) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-neutral-light">
+      <div className="flex min-h-[55vh] flex-col items-center justify-center gap-6 bg-neutral-light px-4 py-10">
         <Loader2 className="h-12 w-12 text-primary-green animate-spin" />
         <div className="text-center">
           <h2 className="text-2xl font-black text-primary-dark">Verifying Your Payment</h2>
@@ -78,26 +78,26 @@ export const PaymentSuccessPage: React.FC = () => {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-light flex items-center justify-center p-6">
+    <main className="flex min-h-[60vh] items-center justify-center bg-neutral-light p-4 py-8 sm:p-6">
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md w-full bg-white rounded-[40px] shadow-2xl p-10 text-center border border-neutral-border"
+        className="w-full max-w-md rounded-2xl border border-neutral-border bg-white p-5 text-center shadow-lg sm:rounded-3xl sm:p-8"
       >
         {success ? (
           <>
             <div className="h-24 w-24 rounded-[32px] bg-primary-green text-white flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-primary-green/30">
               <Check className="h-12 w-12" strokeWidth={4} />
             </div>
-            <h1 className="text-4xl font-black text-primary-dark tracking-tighter mb-4">Payment Success!</h1>
-            <p className="text-neutral-text-secondary font-medium mb-10 leading-relaxed">
+            <h1 className="mb-4 text-3xl font-semibold tracking-tight text-primary-dark sm:text-4xl">Payment successful</h1>
+            <p className="mb-8 leading-relaxed text-neutral-text-secondary sm:mb-10">
               Your reservation is now fully confirmed. We've sent a detailed confirmation email and receipt to your inbox.
             </p>
             <div className="space-y-4">
-              <Button asChild className="w-full h-14 rounded-2xl font-black uppercase tracking-widest">
+              <Button asChild className="h-12 w-full rounded-lg font-semibold">
                 <Link to="/"><Home className="mr-2 h-4 w-4" /> Return Home</Link>
               </Button>
-              <Button asChild variant="outline" className="w-full h-14 rounded-2xl font-black uppercase tracking-widest border-neutral-border">
+              <Button asChild variant="outline" className="h-12 w-full rounded-lg font-semibold border-neutral-border">
                 <Link to="/rooms"><Calendar className="mr-2 h-4 w-4" /> Book Another Room</Link>
               </Button>
             </div>
@@ -107,11 +107,11 @@ export const PaymentSuccessPage: React.FC = () => {
             <div className="h-24 w-24 rounded-[32px] bg-red-500 text-white flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-red-500/30">
               <span className="text-4xl font-bold">!</span>
             </div>
-            <h1 className="text-3xl font-black text-primary-dark tracking-tighter mb-4">Verification Error</h1>
-            <p className="text-neutral-text-secondary font-medium mb-10 leading-relaxed">
+            <h1 className="mb-4 text-2xl font-semibold tracking-tight text-primary-dark sm:text-3xl">Payment verification issue</h1>
+            <p className="mb-8 leading-relaxed text-neutral-text-secondary sm:mb-10">
               We encountered an issue confirming your payment securely. Please contact our support if money was unexpectedly deducted from your account.
             </p>
-            <Button asChild className="w-full h-14 rounded-2xl font-black uppercase tracking-widest">
+            <Button asChild className="h-12 w-full rounded-lg font-semibold">
               <Link to="/contact">Contact Support</Link>
             </Button>
           </>

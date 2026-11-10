@@ -59,7 +59,7 @@ export const FacilitiesPage: React.FC = () => {
 
         <div className="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-neutral-border bg-neutral-border md:grid-cols-2 lg:grid-cols-3">
           {facilities.map((facility) => (
-            <article key={facility.title} className="bg-white p-8">
+            <article key={facility.title} className="bg-white p-5 sm:p-8">
               <facility.icon className="text-2xl text-primary-gold" />
               <h3 className="font-georgia mt-5 text-xl text-primary-dark">{facility.title}</h3>
               <p className="mt-3 text-sm leading-relaxed text-neutral-text-secondary">{facility.description}</p>

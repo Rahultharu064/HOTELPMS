@@ -36,12 +36,12 @@ export const ResetPasswordPage: React.FC = () => {
 
   if (!token) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100 text-center">
+      <div className="flex min-h-[60vh] items-center justify-center bg-neutral-light px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div className="w-full max-w-md space-y-6 rounded-2xl border border-neutral-border bg-white p-5 text-center shadow-sm sm:space-y-8 sm:p-8">
           <h2 className="text-2xl font-bold text-red-600">Invalid Link</h2>
           <p className="text-gray-600 mt-2">The password reset link is invalid or has expired.</p>
           <div className="mt-8">
-            <Link to="/forgot-password" title="Forgot Password" className="text-sm font-black text-blue-600 uppercase tracking-widest hover:text-blue-700">
+            <Link to="/forgot-password" title="Forgot Password" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-green hover:text-primary-dark">
               Request a new link
             </Link>
           </div>
@@ -51,10 +51,10 @@ export const ResetPasswordPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
+    <div className="flex min-h-[60vh] items-center justify-center bg-neutral-light px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <div className="w-full max-w-md space-y-6 rounded-2xl border border-neutral-border bg-white p-5 shadow-sm sm:space-y-8 sm:p-8">
         <div>
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight text-center">Set New Password</h2>
+          <h2 className="text-center text-2xl font-semibold tracking-tight text-primary-dark sm:text-3xl">Set new password</h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Please enter your new password below.
           </p>
@@ -71,7 +71,7 @@ export const ResetPasswordPage: React.FC = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none rounded-xl relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm bg-gray-50 transition-all"
+                  className="relative block min-h-12 w-full appearance-none rounded-lg border border-neutral-border bg-neutral-light px-10 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-primary-green focus:outline-none focus:ring-2 focus:ring-primary-green/20 sm:text-sm"
                   placeholder="••••••••"
                 />
               </div>
@@ -85,7 +85,7 @@ export const ResetPasswordPage: React.FC = () => {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="appearance-none rounded-xl relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm bg-gray-50 transition-all"
+                  className="relative block min-h-12 w-full appearance-none rounded-lg border border-neutral-border bg-neutral-light px-10 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-primary-green focus:outline-none focus:ring-2 focus:ring-primary-green/20 sm:text-sm"
                   placeholder="••••••••"
                 />
               </div>
@@ -95,7 +95,7 @@ export const ResetPasswordPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-black uppercase tracking-widest rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
+            className="relative flex min-h-12 w-full justify-center rounded-lg border border-transparent bg-primary-green px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:ring-offset-2 disabled:opacity-50"
           >
             {loading ? 'Updating...' : 'Update Password'}
             <CheckCircle className="ml-2" size={18} />

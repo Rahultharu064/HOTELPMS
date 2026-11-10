@@ -1,64 +1,63 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Crown, MapPin, ConciergeBell } from "lucide-react";
+import { BedDouble, MapPin, Phone } from "lucide-react";
 
-const MAIN_IMAGE =
-  "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=900&h=600&fit=crop&q=80";
-const SECONDARY_IMAGE =
-  "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&h=400&fit=crop&q=80";
+const MAIN_IMAGE = "/hero122.png";
+const SECONDARY_IMAGE = "/hero1.png";
 
 const FEATURES = [
   {
-    icon: Crown,
-    title: "World-Class Amenities",
-    description:
-      "From spa services to fine dining, every amenity is designed to exceed expectations.",
+    icon: BedDouble,
+    title: "Room options",
+    description: "Compare room types and nightly rates before you book.",
   },
   {
     icon: MapPin,
-    title: "Prime Location",
-    description:
-      "Strategically located in the heart of Itahari with easy access to major attractions.",
+    title: "In Itahari, Sunsari",
+    description: "A convenient place to stay while you are visiting the area.",
   },
   {
-    icon: ConciergeBell,
-    title: "Personalised Service",
-    description:
-      "Our dedicated team ensures every stay is tailored to your individual needs.",
+    icon: Phone,
+    title: "Talk to our team",
+    description: "Contact us with questions about a room or your reservation.",
   },
 ];
 
 const AboutUsSection = () => {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <section id="about-us" className="section-padding bg-white">
+    <section id="about-us" className="section-padding overflow-hidden bg-white">
       <div className="container-custom">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
           {/* Image collage */}
           <motion.div
-            initial={{ opacity: 0, x: -32 }}
+            initial={reduceMotion ? false : { opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: reduceMotion ? 0 : 0.5 }}
             className="relative mx-auto w-full max-w-xl lg:max-w-none"
           >
             <div className="relative">
               <div className="overflow-hidden rounded-2xl shadow-[0_24px_48px_-12px_rgba(20,83,45,0.18)]">
                 <img
                   src={MAIN_IMAGE}
-                  alt="Luxury hotel room at Itahari Namuna"
-                  className="aspect-[4/3] w-full object-cover"
+                  alt="Itahari Namuna building in Itahari"
+                  className="aspect-[4/3] w-full object-cover object-center transition-transform duration-700 hover:scale-[1.02]"
+                  loading="lazy"
                 />
               </div>
 
               <span className="absolute right-4 top-4 rounded-md bg-primary-gold px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-primary-dark shadow-sm">
-                Luxury Hotel
+                Itahari Namuna
               </span>
 
               <div className="absolute -bottom-6 right-0 w-[58%] overflow-hidden rounded-xl border-4 border-white shadow-[0_16px_40px_-8px_rgba(0,0,0,0.2)] sm:-bottom-8 sm:right-4">
                 <img
                   src={SECONDARY_IMAGE}
-                  alt="Elegant hotel suite interior"
+                  alt="Hospitality students practicing service at Itahari Namuna"
                   className="aspect-[4/3] w-full object-cover"
+                  loading="lazy"
                 />
               </div>
             </div>
@@ -66,10 +65,10 @@ const AboutUsSection = () => {
 
           {/* Content */}
           <motion.div
-            initial={{ opacity: 0, x: 32 }}
+            initial={reduceMotion ? false : { opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: reduceMotion ? 0 : 0.5, delay: reduceMotion ? 0 : 0.08 }}
           >
             <div className="mb-5 flex items-center gap-3">
               <span className="h-px w-8 bg-primary-gold" />
@@ -79,31 +78,31 @@ const AboutUsSection = () => {
               <span className="h-px w-8 bg-primary-gold" />
             </div>
 
-            <h2 className="font-georgia text-3xl font-bold leading-tight text-primary-dark md:text-4xl lg:text-[2.65rem]">
-              Nepal&apos;s Premier Luxury Hotel in Itahari
+            <h2 className="font-georgia text-3xl font-semibold leading-[1.12] tracking-tight text-primary-dark md:text-4xl lg:text-[2.65rem]">
+              A welcoming place to stay in Itahari
             </h2>
 
             <p className="mt-5 max-w-xl text-sm font-medium leading-relaxed text-neutral-text-secondary md:text-base">
-              Itahari Namuna offers an unparalleled blend of modern luxury and warm
-              Nepali hospitality — a sanctuary where every detail is crafted for your
-              comfort.
+              Itahari Namuna is based in Itahari, Sunsari. Browse our room options,
+              check nightly rates, and contact our team if you need help planning
+              your visit.
             </p>
 
             <ul className="mt-8 space-y-6">
               {FEATURES.map(({ icon: Icon, title, description }, index) => (
                 <motion.li
                   key={title}
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.15 + index * 0.08 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.35, delay: reduceMotion ? 0 : 0.1 + index * 0.06 }}
                   className="flex gap-4"
                 >
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary-dark">
                     <Icon className="h-5 w-5 text-primary-gold" strokeWidth={1.75} />
                   </div>
                   <div>
-                    <h3 className="font-georgia text-base font-bold text-primary-dark md:text-lg">
+                    <h3 className="text-base font-semibold text-primary-dark md:text-lg">
                       {title}
                     </h3>
                     <p className="mt-1 text-sm leading-relaxed text-neutral-text-secondary">
@@ -117,13 +116,13 @@ const AboutUsSection = () => {
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 to="/about"
-                className="inline-flex items-center justify-center rounded-full bg-primary-dark px-7 py-3 text-sm font-semibold text-primary-gold transition-all duration-300 hover:bg-primary-green hover:shadow-md"
+                className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary-dark px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-primary-green"
               >
                 Discover More
               </Link>
               <Link
                 to="/contact"
-                className="inline-flex items-center justify-center rounded-full border-2 border-primary-dark px-7 py-3 text-sm font-semibold text-primary-dark transition-all duration-300 hover:bg-primary-dark hover:text-white"
+                className="inline-flex min-h-11 items-center justify-center rounded-lg border border-primary-dark/25 px-6 py-3 text-sm font-semibold text-primary-dark transition-colors duration-200 hover:border-primary-dark hover:bg-primary-dark hover:text-white"
               >
                 Get in Touch
               </Link>

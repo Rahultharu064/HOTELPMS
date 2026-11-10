@@ -103,7 +103,7 @@ export const GuestProfilePage: React.FC = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,175,55,0.15)_0%,_transparent_60%)]" />
       </div>
       
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20">
+      <div className="mx-auto -mt-20 max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
           {/* Sidebar */}
@@ -127,7 +127,7 @@ export const GuestProfilePage: React.FC = () => {
                   </div>
                   <Button 
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all"
+                    className="absolute bottom-0 right-0 flex h-11 w-11 items-center justify-center rounded-full bg-primary-green p-2 text-white shadow-md transition-colors hover:bg-primary-dark"
                   >
                     <Camera size={16} />
                   </Button>
@@ -140,23 +140,23 @@ export const GuestProfilePage: React.FC = () => {
                   />
                 </div>
                 <h2 className="mt-4 text-xl font-bold text-gray-900">{guest?.firstName} {guest?.lastName}</h2>
-                <p className="text-sm text-gray-500">{guest?.email}</p>
+                <p className="break-all px-2 text-sm text-gray-500">{guest?.email}</p>
               </div>
               
               <div className="border-t">
                 <nav className="p-2 space-y-1">
                   <button
                     onClick={() => setActiveTab('profile')}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
-                      activeTab === 'profile' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'
+                    className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
+                      activeTab === 'profile' ? 'bg-primary-green/10 text-primary-green' : 'text-gray-600 hover:bg-gray-50'
                     }`}
                   >
                     <User size={18} /> Profile Details
                   </button>
                   <button
                     onClick={() => setActiveTab('bookings')}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
-                      activeTab === 'bookings' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'
+                    className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
+                      activeTab === 'bookings' ? 'bg-primary-green/10 text-primary-green' : 'text-gray-600 hover:bg-gray-50'
                     }`}
                   >
                     <Calendar size={18} /> My Bookings
@@ -179,10 +179,10 @@ export const GuestProfilePage: React.FC = () => {
           <div className="lg:col-span-3 space-y-6">
             
             {activeTab === 'profile' ? (
-              <div className="bg-white rounded-2xl shadow-xl p-8">
-                <div className="flex justify-between items-center mb-8 pb-4 border-b">
+              <div className="rounded-2xl border border-neutral-border bg-white p-5 shadow-sm sm:p-8">
+                <div className="mb-6 flex flex-col gap-2 border-b pb-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">Profile Information</h3>
+                    <h3 className="text-xl font-semibold text-primary-dark sm:text-2xl">Profile information</h3>
                     <p className="text-sm text-gray-500">Update your personal details and how we can reach you</p>
                   </div>
                 </div>
@@ -254,11 +254,11 @@ export const GuestProfilePage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex justify-end pt-6">
+                  <div className="flex justify-stretch pt-6 sm:justify-end">
                     <Button
                       type="submit"
                        disabled={updating}
-                      className="px-8 py-3 bg-blue-600 text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-blue-700 transition-all disabled:opacity-50"
+                      className="min-h-12 w-full rounded-lg bg-primary-green px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-50 sm:w-auto"
                     >
                       {updating ? 'Saving...' : 'Save Changes'}
                     </Button>

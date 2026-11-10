@@ -4,6 +4,7 @@ import { Homepage } from '../pages/publicwebsite/Homepage';
 import { AboutusPage } from '../pages/publicwebsite/AboutusPage';
 import { ContactUsPage } from '../pages/publicwebsite/ContactUsPage';
 import { Roompage } from '../pages/publicwebsite/Roompage';
+import { PrivacyPolicyPage, TermsOfServicePage } from '../pages/publicwebsite/LegalPages';
 import {
   RoomDetailspage,
   LoginPage,
@@ -102,6 +103,14 @@ const routes: RouteObject[] = [
       {
         path: 'contact',
         element: <ContactUsPage />,
+      },
+      {
+        path: 'privacy-policy',
+        element: <PrivacyPolicyPage />,
+      },
+      {
+        path: 'terms-of-service',
+        element: <TermsOfServicePage />,
       },
       {
         path: 'rooms',

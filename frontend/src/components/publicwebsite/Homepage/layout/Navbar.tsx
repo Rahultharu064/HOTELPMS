@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Menu, X, User, LogOut, Phone, Mail, ChevronDown, CalendarCheck
@@ -19,16 +19,7 @@ const navItems = [
       { label: "Suite rooms", to: "/rooms?type=Suite" },
     ],
   },
-  {
-    label: "Dining",
-    to: "/facilities",
-    hasDropdown: true,
-    dropdownItems: [
-      { label: "Fine dining restaurant", to: "/facilities" },
-      { label: "Bar & lounge", to: "/facilities" },
-      { label: "Coffee shop", to: "/facilities" },
-    ],
-  },
+  { label: "Facilities", to: "/facilities" },
   {
     label: "Gallery",
     to: "/gallery",
@@ -50,12 +41,25 @@ const isItemActive = (pathname: string, to: string) => {
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeMobileDropdown, setActiveMobileDropdown] = useState<string | null>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const { pathname } = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
 
   const toggleMobileDropdown = (label: string) => {
     setActiveMobileDropdown(prev => (prev === label ? null : label));
   };
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [mobileOpen]);
 
   return (
     <nav
@@ -71,7 +75,7 @@ const Navbar = () => {
       {/* Desktop / tablet nav bar */}
       <div
         className="container-custom flex items-center justify-between"
-        style={{ height: '72px' }}
+        style={{ height: '76px' }}
       >
         {/* Brand / Logo */}
         <Link
@@ -150,7 +154,7 @@ const Navbar = () => {
                     <ChevronDown
                       size={13}
                       style={{ transition: 'transform 200ms ease' }}
-                      className="group-hover:rotate-180"
+                      className="group-hover:rotate-180 group-focus-within:rotate-180"
                     />
                     {/* Active indicator */}
                     <div
@@ -186,7 +190,7 @@ const Navbar = () => {
                       transform: 'translateY(-6px)',
                       transition: 'opacity 150ms ease, transform 150ms ease, visibility 150ms',
                     }}
-                    className="group-hover:opacity-100 group-hover:visible group-hover:translate-y-0"
+                    className="group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0"
                   >
                     {item.dropdownItems?.map((dItem) => (
                       <Link
@@ -359,24 +363,24 @@ const Navbar = () => {
 
         {/* Mobile toggle */}
         <button
-          className="lg:hidden"
+          ref={menuButtonRef}
+          className="inline-flex h-12 w-12 items-center justify-center rounded-xl border border-primary-green/15 bg-primary-green/5 text-primary-dark transition-all duration-200 hover:border-primary-green/30 hover:bg-primary-green/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-green/40 focus-visible:ring-offset-2 lg:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-          style={{
-            width: '40px', height: '40px',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'transparent', border: '1px solid var(--color-border)',
-            borderRadius: '8px', color: 'var(--color-primary)',
-            cursor: 'pointer',
-          }}
+          aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-navigation"
         >
-          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+          <span className="transition-transform duration-200" style={{ transform: mobileOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}>
+            {mobileOpen ? <X size={23} strokeWidth={1.8} /> : <Menu size={23} strokeWidth={1.8} />}
+          </span>
         </button>
       </div>
 
       {/* Mobile Drawer */}
       {mobileOpen && (
         <div
+          id="mobile-navigation"
+          aria-label="Mobile navigation"
           style={{
             borderTop: '1px solid var(--color-border)',
             background: '#FFFFFF',
@@ -385,7 +389,7 @@ const Navbar = () => {
         >
           <div
             className="container-custom custom-scrollbar"
-            style={{ padding: '16px 0', display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '80vh', overflowY: 'auto' }}
+            style={{ padding: '16px 0 max(16px, env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: 'calc(100dvh - 76px)', overflowY: 'auto' }}
           >
             {navItems.map((item) => {
               if (item.hasDropdown) {
@@ -413,8 +417,10 @@ const Navbar = () => {
                       <button
                         type="button"
                         onClick={() => toggleMobileDropdown(item.label)}
-                        style={{ padding: '8px', background: 'none', border: 'none', cursor: 'pointer' }}
-                        aria-label={`Expand ${item.label}`}
+                        style={{ minWidth: '44px', minHeight: '44px', padding: '8px', background: 'none', border: 'none', cursor: 'pointer' }}
+                        aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${item.label}`}
+                        aria-expanded={isOpen}
+                        aria-controls={`${item.label.toLowerCase()}-mobile-subnav`}
                       >
                         <ChevronDown
                           size={16}
@@ -423,14 +429,14 @@ const Navbar = () => {
                       </button>
                     </div>
                     {isOpen && (
-                      <div style={{ paddingLeft: '16px', paddingBottom: '4px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <div id={`${item.label.toLowerCase()}-mobile-subnav`} style={{ paddingLeft: '16px', paddingBottom: '4px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
                         {item.dropdownItems?.map((dItem) => (
                           <Link
                             key={dItem.label}
                             to={dItem.to}
                             onClick={() => setMobileOpen(false)}
                             style={{
-                              padding: '8px 0',
+                              minHeight: '44px', display: 'flex', alignItems: 'center', padding: '8px 0',
                               fontFamily: 'var(--font-ui)', fontSize: '14px',
                               fontWeight: 400, color: 'var(--color-muted)',
                               textDecoration: 'none',
@@ -451,7 +457,7 @@ const Navbar = () => {
                   to={item.to}
                   onClick={() => setMobileOpen(false)}
                   style={{
-                    padding: '10px 0',
+                    minHeight: '48px', display: 'flex', alignItems: 'center', padding: '10px 0',
                     fontFamily: 'var(--font-ui)', fontSize: '15px',
                     fontWeight: isItemActive(pathname, item.to) ? 600 : 500,
                     color: isItemActive(pathname, item.to) ? 'var(--color-primary)' : 'var(--color-ink)',
@@ -470,7 +476,7 @@ const Navbar = () => {
               onClick={() => setMobileOpen(false)}
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                width: '100%', height: '44px',
+                width: '100%', minHeight: '48px',
                 background: 'var(--color-primary)', color: '#FFFFFF',
                 fontFamily: 'var(--font-ui)', fontSize: '14px', fontWeight: 600,
                 borderRadius: '8px', textDecoration: 'none',
@@ -490,7 +496,7 @@ const Navbar = () => {
                     onClick={() => setMobileOpen(false)}
                     style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      height: '40px', borderRadius: '8px',
+                      height: '48px', borderRadius: '8px',
                       border: '1.5px solid var(--color-primary)', color: 'var(--color-primary)',
                       fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 600,
                       textDecoration: 'none',
@@ -503,7 +509,7 @@ const Navbar = () => {
                     onClick={() => setMobileOpen(false)}
                     style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      height: '40px', borderRadius: '8px',
+                      height: '48px', borderRadius: '8px',
                       background: 'var(--color-ink)', color: '#FFFFFF',
                       fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 600,
                       textDecoration: 'none',
@@ -591,7 +597,7 @@ const Navbar = () => {
                 <span>985-2066332</span>
               </a>
               <a
-                href="mailto:royalresort2002@gmail.com"
+                href="mailto:namunacollege.edu.np"
                 style={{
                   display: 'flex', alignItems: 'center', gap: '8px',
                   fontFamily: 'var(--font-ui)', fontSize: '13px',
@@ -599,7 +605,7 @@ const Navbar = () => {
                 }}
               >
                 <Mail size={14} style={{ color: 'var(--color-accent)' }} />
-                <span>royalresort2002@gmail.com</span>
+                <span>namunacollege.edu.np</span>
               </a>
             </div>
           </div>

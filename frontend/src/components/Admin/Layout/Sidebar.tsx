@@ -258,12 +258,12 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: AppS
 
   return (
     <>
-      <aside className="hidden lg:flex flex-shrink-0 h-screen sticky top-0 z-50">
+      <aside className="hidden lg:flex `flex-shrink-0 h-screen sticky top-0 z-50">
         {sidebarContent}
       </aside>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-[100] lg:hidden">
+        <div className="fixed inset-0 `z-[100]` lg:hidden">
           <div
             className="absolute inset-0"
             style={{ background: 'var(--color-overlay)', backdropFilter: 'blur(4px)' }}

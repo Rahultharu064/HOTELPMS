@@ -25,17 +25,17 @@ export const ForgotPasswordPage: React.FC = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100 text-center">
+      <div className="flex min-h-[60vh] items-center justify-center bg-neutral-light px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div className="w-full max-w-md space-y-6 rounded-2xl border border-neutral-border bg-white p-5 text-center shadow-sm sm:space-y-8 sm:p-8">
           <div className="mx-auto h-16 w-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
             <CheckCircle size={32} />
           </div>
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Check Your Email</h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-primary-dark sm:text-3xl">Check your email</h2>
           <p className="text-gray-600 mt-2">
             We've sent a password reset link to <span className="font-bold">{email}</span>.
           </p>
           <div className="mt-8">
-            <Link to="/login" className="text-sm font-black text-blue-600 uppercase tracking-widest hover:text-blue-700 flex items-center justify-center">
+            <Link to="/login" className="flex min-h-11 items-center justify-center text-sm font-semibold text-primary-green hover:text-primary-dark">
               <ArrowLeft size={16} className="mr-2" /> Back to Login
             </Link>
           </div>
@@ -45,10 +45,10 @@ export const ForgotPasswordPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
+    <div className="flex min-h-[60vh] items-center justify-center bg-neutral-light px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <div className="w-full max-w-md space-y-6 rounded-2xl border border-neutral-border bg-white p-5 shadow-sm sm:space-y-8 sm:p-8">
         <div>
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight text-center">Reset Password</h2>
+          <h2 className="text-center text-2xl font-semibold tracking-tight text-primary-dark sm:text-3xl">Reset password</h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Enter your email and we'll send you a link to reset your password.
           </p>
@@ -64,7 +64,7 @@ export const ForgotPasswordPage: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-xl relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm bg-gray-50 transition-all"
+                className="relative block min-h-12 w-full appearance-none rounded-lg border border-neutral-border bg-neutral-light px-10 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-primary-green focus:outline-none focus:ring-2 focus:ring-primary-green/20 sm:text-sm"
                 placeholder="name@example.com"
               />
             </div>
@@ -73,7 +73,7 @@ export const ForgotPasswordPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-black uppercase tracking-widest rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
+            className="relative flex min-h-12 w-full justify-center rounded-lg border border-transparent bg-primary-green px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:ring-offset-2 disabled:opacity-50"
           >
             {loading ? 'Sending...' : 'Send Reset Link'}
             <Send className="ml-2" size={18} />
@@ -81,7 +81,7 @@ export const ForgotPasswordPage: React.FC = () => {
         </form>
 
         <div className="text-center">
-          <Link to="/login" className="text-sm font-black text-gray-500 uppercase tracking-widest hover:text-gray-700 flex items-center justify-center">
+          <Link to="/login" className="flex min-h-11 items-center justify-center text-sm font-semibold text-neutral-text-secondary hover:text-primary-dark">
             <ArrowLeft size={16} className="mr-2" /> Back to Login
           </Link>
         </div>

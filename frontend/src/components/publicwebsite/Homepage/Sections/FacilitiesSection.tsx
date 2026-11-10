@@ -1,64 +1,53 @@
-import React, { useRef } from "react";
-import { Wifi, Waves, Dumbbell, Utensils, BadgeCheck } from "lucide-react";
+import React from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, BedDouble, Banknote, Phone, Compass } from "lucide-react";
+import { Link } from "react-router-dom";
 import { SectionHeading } from "../layout/SectionHeading";
 
 const ITEMS = [
-  { icon: Wifi,       label: "Wi-Fi",          sub: "Stay connected during your visit.", color: "#1F7A3A" },
-  { icon: Waves,      label: "Swimming pool",  sub: "Take a break and unwind during your stay.", color: "#F59E0B" },
-  { icon: Dumbbell,   label: "Fitness room",   sub: "A space to keep up with your routine.", color: "#1F7A3A" },
-  { icon: Utensils,   label: "Dining",         sub: "Food and refreshments for hotel guests.", color: "#F97316" },
+  { icon: BedDouble, label: "Browse rooms", sub: "Compare room types and choose the right fit for your visit.", to: "/rooms" },
+  { icon: Banknote, label: "Check nightly rates", sub: "See room prices before moving on to a booking.", to: "/rooms" },
+  { icon: Compass, label: "Find us in Itahari", sub: "Get in touch with the hotel team about your visit.", to: "/contact" },
+  { icon: Phone, label: "Ask a question", sub: "Contact us if you need help with a room or reservation.", to: "/contact" },
 ];
 
 
 const FacilitiesSection: React.FC = () => {
-  const ref = useRef<HTMLElement>(null);
-
   return (
-    <section id="facilities" ref={ref} className="section-padding bg-gray-50/50 border-y border-neutral-border/50 relative">
-      {/* Background Decor */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-green-50/50 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-
-      <div className="container-custom relative z-10">
+    <section id="plan-your-visit" className="section-padding border-y border-neutral-border bg-[#f2f3ed]">
+      <div className="container-custom">
         <SectionHeading
-          badge="Hotel amenities"
-          badgeIcon={BadgeCheck}
+          badge="Plan your visit"
+          badgeIcon={Compass}
           title={
             <>
-              Facilities for a <span className="gradient-text">comfortable stay</span>
+              The details, <span className="italic text-primary-green">made simple</span>
             </>
           }
-          subtitle="A straightforward look at the amenities available during your stay."
+          subtitle="Find a room, check the nightly rate, or talk with our team before you book."
           accent="green"
         />
 
-        <div className="mb-20 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {ITEMS.map((item, i) => (
-            <div
-              key={i}
-              className="group relative overflow-hidden rounded-xl border border-neutral-border/80 bg-white p-8 transition-shadow duration-300 hover:shadow-md facility-card opacity-100"
-              ref={(el) => {
-                if (el) el.style.setProperty('--delay', `${i * 100}ms`);
-              }}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {ITEMS.map(({ icon: Icon, label, sub, to }, index) => (
+            <motion.div
+              key={label}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.45, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-7 transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_10px_25px_-5px_rgba(31,122,58,0.2)] facility-icon"
-                ref={(el) => {
-                  if (el) {
-                    el.style.setProperty('--icon-bg', `${item.color}08`);
-                    el.style.setProperty('--icon-color', item.color);
-                  }
-                }}
-              >
-
-                <item.icon size={26} strokeWidth={1.8} />
-              </div>
-              <h3 className="text-lg font-bold text-[#111827] mb-3 group-hover:text-[#1F7A3A] transition-colors">
-                {item.label}
-              </h3>
-              <p className="text-gray-400 text-sm leading-relaxed font-medium">
-                {item.sub}
-              </p>
-            </div>
+              <Link to={to} className="group flex h-full min-h-52 flex-col rounded-xl border border-neutral-border bg-white p-6 transition-all duration-200 hover:-translate-y-1 hover:border-primary-green/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-green/50">
+                <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg bg-primary-green/8 text-primary-green transition-colors group-hover:bg-primary-green group-hover:text-white">
+                  <Icon size={20} strokeWidth={1.8} />
+                </span>
+                <h3 className="text-base font-semibold text-primary-dark">{label}</h3>
+                <p className="mt-2 flex-1 text-sm leading-6 text-neutral-text-secondary">{sub}</p>
+                <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary-green">
+                  Learn more <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+                </span>
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>

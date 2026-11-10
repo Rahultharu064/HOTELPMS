@@ -86,19 +86,19 @@ export const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-['Outfit']">
+    <div className="public-auth-page flex min-h-[65vh] items-center justify-center bg-neutral-light px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="max-w-md w-full bg-white p-8 sm:p-10 rounded shadow-sm border border-gray-100"
+        className="w-full max-w-md rounded-2xl border border-neutral-border bg-white p-5 shadow-sm sm:p-8"
       >
         <div className="text-center flex flex-col items-center">
           <AuthBrandLogo variant="guest" />
-          <h2 className="text-3xl text-[#14532D] mt-6 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+          <h2 className="mt-6 mb-2 font-georgia text-2xl font-semibold text-primary-dark sm:text-3xl">
             Create Account
           </h2>
-          <p className="text-sm text-[#14532D]/70 mb-8 font-medium">
+          <p className="mb-8 text-sm font-medium text-neutral-text-secondary">
             Join Itahari Namuna Hotel family
           </p>
         </div>
@@ -107,9 +107,9 @@ export const SignupPage: React.FC = () => {
           {/* Full Name */}
           <div className="space-y-1.5">
             <label className="block text-sm font-bold text-[#14532D]">Full Name</label>
-            <div className="flex rounded border border-[#14532D]/20 overflow-hidden focus-within:border-[#14532D] focus-within:ring-1 focus-within:ring-[#14532D] transition-all bg-white">
-              <div className="bg-[#14532D]/5 flex items-center justify-center px-4 border-r border-[#14532D]/20">
-                <User className="text-[#14532D]" size={18} />
+            <div className="flex min-h-12 overflow-hidden rounded-lg border border-neutral-border bg-white transition-all focus-within:border-primary-green focus-within:ring-2 focus-within:ring-primary-green/15">
+              <div className="flex items-center justify-center border-r border-neutral-border bg-primary-green/5 px-3">
+                <User className="text-primary-green" size={18} />
               </div>
               <input
                 type="text"
@@ -126,9 +126,9 @@ export const SignupPage: React.FC = () => {
           {/* Email Address */}
           <div className="space-y-1.5">
             <label className="block text-sm font-bold text-[#14532D]">Email Address</label>
-            <div className="flex rounded border border-[#14532D]/20 overflow-hidden focus-within:border-[#14532D] focus-within:ring-1 focus-within:ring-[#14532D] transition-all bg-white">
-              <div className="bg-[#14532D]/5 flex items-center justify-center px-4 border-r border-[#14532D]/20">
-                <Mail className="text-[#14532D]" size={18} />
+            <div className="flex min-h-12 overflow-hidden rounded-lg border border-neutral-border bg-white transition-all focus-within:border-primary-green focus-within:ring-2 focus-within:ring-primary-green/15">
+              <div className="flex items-center justify-center border-r border-neutral-border bg-primary-green/5 px-3">
+                <Mail className="text-primary-green" size={18} />
               </div>
               <input
                 type="email"
@@ -145,9 +145,9 @@ export const SignupPage: React.FC = () => {
           {/* Phone Number */}
           <div className="space-y-1.5">
             <label className="block text-sm font-bold text-[#14532D]">Phone Number</label>
-            <div className="flex rounded border border-[#14532D]/20 overflow-hidden focus-within:border-[#14532D] focus-within:ring-1 focus-within:ring-[#14532D] transition-all bg-white">
-              <div className="bg-[#14532D]/5 flex items-center justify-center px-4 border-r border-[#14532D]/20">
-                <Phone className="text-[#14532D]" size={18} />
+            <div className="flex min-h-12 overflow-hidden rounded-lg border border-neutral-border bg-white transition-all focus-within:border-primary-green focus-within:ring-2 focus-within:ring-primary-green/15">
+              <div className="flex items-center justify-center border-r border-neutral-border bg-primary-green/5 px-3">
+                <Phone className="text-primary-green" size={18} />
               </div>
               <input
                 type="tel"

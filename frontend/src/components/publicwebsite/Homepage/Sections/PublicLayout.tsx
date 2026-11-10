@@ -1,4 +1,5 @@
 import React from "react";
+import { MotionConfig } from "framer-motion";
 import { Outlet } from "react-router-dom";
 import Topbar from "../layout/Topbar";
 import Navbar from "../layout/Navbar";
@@ -7,16 +8,18 @@ import BackToTopButton from "../layout/BackToTopButton";
 
 const PublicLayout: React.FC = () => (
   <div
-    className="flex flex-col min-h-screen"
+    className="public-site flex min-h-screen flex-col"
     style={{ background: 'var(--color-surface)', color: 'var(--color-ink)' }}
   >
-    <Topbar />
-    <Navbar />
-    <main className="flex-1">
-      <Outlet />
-    </main>
-    <Footer />
-    <BackToTopButton />
+    <MotionConfig reducedMotion="user">
+      <Topbar />
+      <Navbar />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      <Footer />
+      <BackToTopButton />
+    </MotionConfig>
   </div>
 );
 

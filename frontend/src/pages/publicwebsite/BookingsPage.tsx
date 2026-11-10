@@ -281,7 +281,7 @@ export const BookingsPage: React.FC = () => {
   }
 
   return (
-    <main className="bg-neutral-light min-h-screen pb-24">
+    <main className="bg-neutral-light min-h-screen pb-[calc(10rem+env(safe-area-inset-bottom))] lg:pb-24">
       {/* Premium Header */}
       <div className="pt-16 pb-16 lg:pt-24 lg:pb-24 relative overflow-hidden bg-white border-b border-neutral-border">
         <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary-green/5 to-transparent pointer-events-none" />
@@ -342,7 +342,7 @@ export const BookingsPage: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.4 }}
-                className="rounded-[40px] border border-neutral-border bg-white p-8 md:p-12 shadow-soft relative overflow-hidden"
+                className="relative overflow-hidden rounded-2xl border border-neutral-border bg-white p-4 shadow-soft sm:rounded-3xl sm:p-6 md:p-10"
               >
                 <div className="absolute top-0 left-0 right-0 h-2 bg-neutral-light" />
                 <div
@@ -354,15 +354,15 @@ export const BookingsPage: React.FC = () => {
 
                 {step === 0 && (
                   <div className="space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
+                    <div className="mb-2 flex items-center gap-3 sm:gap-4">
                        <div className="h-12 w-12 rounded-2xl bg-primary-green/10 flex items-center justify-center text-primary-green"><Users size={24} /></div>
                        <div>
-                          <h2 className="text-3xl font-black text-primary-dark tracking-tight">Guest Information</h2>
-                          <p className="text-xs font-bold text-neutral-text-secondary uppercase tracking-widest mt-1">Lead Traveller Details</p>
+                          <h2 className="text-xl font-semibold tracking-tight text-primary-dark sm:text-2xl">Guest information</h2>
+                          <p className="mt-1 text-xs font-medium text-neutral-text-secondary">Lead traveller details</p>
                        </div>
                     </div>
                     
-                    <div className="grid sm:grid-cols-2 gap-8">
+                    <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
                       <div className="space-y-2">
                         <label className="text-[11px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] ml-1">First Name</label>
                         <input name="firstName" value={formData.firstName} onChange={handleInputChange} className="w-full h-14 px-6 rounded-2xl border-none text-sm font-bold bg-neutral-light focus:bg-white focus:ring-2 focus:ring-primary-green transition-all outline-none" placeholder="John" title="First Name" />
@@ -580,7 +580,7 @@ export const BookingsPage: React.FC = () => {
                 )}
 
                 {step < 3 && (
-                  <div className="flex items-center justify-between mt-16 pt-10 border-t border-neutral-border/50">
+                  <div className="hidden items-center justify-between border-t border-neutral-border/50 pt-8 lg:mt-12 lg:flex lg:pt-10">
                     <Button 
                       variant="ghost" 
                       onClick={handlePrev} 
@@ -613,17 +613,17 @@ export const BookingsPage: React.FC = () => {
 
           {/* Luxury Sidebar Summary */}
           <div className="lg:col-span-1">
-            <div className="sticky top-32">
+            <div className="lg:sticky lg:top-28">
               <ScrollReveal delay={0.2}>
-                <div className="rounded-[40px] border border-neutral-border bg-white p-8 shadow-2xl relative overflow-hidden flex flex-col">
+                <div className="relative flex flex-col overflow-hidden rounded-2xl border border-neutral-border bg-white p-5 shadow-lg sm:rounded-3xl sm:p-7">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary-gold/5 rounded-bl-full pointer-events-none" />
                   
-                  <h3 className="text-xl font-black text-primary-dark mb-8 tracking-tight flex items-center gap-3">
+                  <h3 className="mb-5 flex items-center gap-3 text-lg font-semibold tracking-tight text-primary-dark sm:mb-8 sm:text-xl">
                     <div className="h-8 w-8 rounded-xl bg-primary-green text-white flex items-center justify-center"><Check size={16} strokeWidth={4} /></div>
                     Concierge Summary
                   </h3>
                   
-                  <div className="relative aspect-video rounded-3xl overflow-hidden mb-8 shadow-soft border border-neutral-border/50 group">
+                  <div className="group relative mb-5 aspect-video overflow-hidden rounded-xl border border-neutral-border/50 shadow-soft sm:mb-8 sm:rounded-2xl">
                     {(() => {
                       const primaryImage = selectedRoom?.images?.find(img => img.isPrimary)?.url || selectedRoom?.images?.[0]?.url;
                       return (
@@ -668,7 +668,7 @@ export const BookingsPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="pt-6 mt-6 border-t border-neutral-border -mx-8 px-8 bg-neutral-light/50 pb-2">
+                    <div className="-mx-5 mt-5 border-t border-neutral-border bg-neutral-light/50 px-5 pb-2 pt-5 sm:-mx-7 sm:mt-6 sm:px-7">
                        <div className="flex justify-between items-center mb-1">
                           <span className="text-xs font-black text-neutral-text-secondary uppercase tracking-[0.2em]">Grand Investment</span>
                           <span className="text-2xl font-black text-primary-green tracking-tight">Rs. {calculation.grandTotal.toLocaleString()}</span>
@@ -685,8 +685,8 @@ export const BookingsPage: React.FC = () => {
 
       {/* Mobile context floating bar */}
       {step < 3 && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-20px_50px_rgba(0,0,0,0.1)] border-t border-neutral-border/50 p-6 z-40 animate-in slide-in-from-bottom duration-500">
-           <div className="flex items-center justify-between mb-4">
+          <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-border bg-white px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-12px_35px_rgba(0,0,0,0.08)] lg:hidden">
+            <div className="mb-3 flex items-center justify-between">
               <div>
                  <p className="text-[10px] font-black text-neutral-text-secondary uppercase tracking-widest">Total Amount</p>
                  <p className="text-xl font-black text-primary-green">Rs. {calculation.grandTotal.toLocaleString()}</p>
@@ -696,9 +696,16 @@ export const BookingsPage: React.FC = () => {
                  <p className="text-sm font-black text-primary-dark">{step + 1} of 3</p>
               </div>
            </div>
-           <Button variant="primary" className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl shadow-primary-green/30" onClick={step === 2 ? handleConfirmBooking : handleNext} disabled={isSubmitting}>
-              {isSubmitting ? "Processing..." : step === 2 ? "Confirm Booking" : "Continue to Next Step"}
-           </Button>
+           <div className="flex gap-3">
+             {step > 0 && (
+               <Button variant="outline" className="h-12 min-w-24 rounded-lg px-4 text-sm font-semibold" onClick={handlePrev} disabled={isSubmitting}>
+                 Back
+               </Button>
+             )}
+             <Button variant="primary" className="h-12 flex-1 rounded-lg text-sm font-semibold shadow-md" onClick={step === 2 ? handleConfirmBooking : handleNext} disabled={isSubmitting}>
+                {isSubmitting ? "Processing..." : step === 2 ? "Confirm booking" : "Continue"}
+             </Button>
+           </div>
         </div>
       )}
     </main>

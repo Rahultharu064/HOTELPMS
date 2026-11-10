@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Users, BedDouble, Maximize, ArrowRight, CheckCircle } from "lucide-react";
 import { roomService } from "../../../../services/roomService";
 import type { Room } from "../../../../services/roomService";
@@ -17,20 +17,23 @@ const ScrollReveal = ({
   children: React.ReactNode;
   delay?: number;
   className?: string;
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
-    viewport={{ once: true }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
+}) => {
+  const reduceMotion = useReducedMotion();
+  return (
+    <motion.div
+      initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: reduceMotion ? 0 : 0.45, delay: reduceMotion ? 0 : delay, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, amount: 0.15 }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 const formatBedLabel = (bedType?: string) => {
-  if (!bedType) return "Queen Bed";
+  if (!bedType) return "Bed type not listed";
   const normalized = bedType.trim();
   if (/bed/i.test(normalized)) return normalized;
   return `${normalized} Bed`;
@@ -59,7 +62,7 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
 
   return (
     <ScrollReveal delay={index * 0.12} className="h-full">
-      <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-border/70 bg-white shadow-[0_2px_20px_rgba(20,83,45,0.07)] transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-green/15 hover:shadow-[0_16px_48px_rgba(20,83,45,0.12)]">
+      <div className="group flex h-full flex-col overflow-hidden rounded-xl border border-neutral-border bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-green/25 hover:shadow-lg">
         <Link
           to={`/rooms/${room.slug}`}
           className="flex flex-1 flex-col"
@@ -98,7 +101,7 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
 
             {/* Price badge — top right */}
             <div className="absolute right-3.5 top-3.5 z-10">
-              <span className="inline-flex items-center gap-0.5 rounded-full bg-primary-gold px-3.5 py-1.5 text-[11px] font-extrabold text-primary-dark shadow-[0_4px_14px_rgba(245,158,11,0.35)]">
+              <span className="inline-flex items-center gap-0.5 rounded-md bg-white/95 px-3 py-1.5 text-[11px] font-semibold text-primary-dark shadow-sm">
                 NPR {formattedPrice}
                 <span className="text-[10px] font-semibold text-primary-dark/75">/night</span>
               </span>
@@ -107,7 +110,7 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
 
           {/* Content */}
           <div className="flex flex-1 flex-col px-6 pb-4 pt-5">
-            <h3 className="font-georgia text-[1.15rem] font-bold leading-snug text-primary-dark transition-colors duration-300 group-hover:text-primary-green md:text-xl">
+            <h3 className="font-georgia text-xl font-medium leading-snug text-primary-dark transition-colors duration-200 group-hover:text-primary-green">
               {room.name}
             </h3>
 
@@ -126,9 +129,9 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
               </span>
             </div>
 
-            <p className="mt-4 line-clamp-3 flex-1 text-[13px] leading-[1.65] text-neutral-text-secondary">
+            <p className="mt-4 line-clamp-3 flex-1 text-sm leading-6 text-neutral-text-secondary">
               {room.description ||
-                "Comfortable room with clean bedding and standard amenities."}
+                "Room details will be available soon. Contact us if you need more information."}
             </p>
           </div>
         </Link>
@@ -137,7 +140,7 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
         <div className="flex items-center justify-between gap-4 border-t border-neutral-border/60 px-6 py-4">
           <div className="font-georgia leading-none">
             <span className="text-[11px] text-neutral-text-secondary">NPR </span>
-            <span className="text-[1.35rem] font-bold text-primary-dark">{formattedPrice}</span>
+            <span className="text-xl font-semibold text-primary-dark">{formattedPrice}</span>
             <span className="text-[11px] text-neutral-text-secondary"> /night</span>
           </div>
 
@@ -146,7 +149,7 @@ const RoomCard = ({ room, index }: { room: Room; index: number }) => {
             onMouseEnter={prefetchRoomDetails}
             className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 rounded-full px-5 text-[11px] font-bold tracking-wide shadow-sm transition-all duration-300 ${
               isAvailable
-                ? "bg-primary-dark text-primary-gold hover:bg-primary-green hover:text-white"
+                ? "bg-primary-green text-white hover:bg-primary-dark"
                 : "cursor-pointer bg-neutral-border/80 text-neutral-text-secondary hover:bg-neutral-border"
             }`}
           >
@@ -172,9 +175,9 @@ export const FeaturedRoomsSection: React.FC = () => {
       if (res.success) {
         setRooms(res.data);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to fetch featured rooms:", err);
-      setError(err?.message || "Failed to load featured rooms");
+      setError(err instanceof Error ? err.message : "Failed to load featured rooms");
     } finally {
       setLoading(false);
     }
@@ -188,9 +191,6 @@ export const FeaturedRoomsSection: React.FC = () => {
 
   return (
     <section className="section-padding relative overflow-hidden bg-white">
-      <div className="pointer-events-none absolute right-0 top-0 -mr-48 -mt-48 h-[400px] w-[400px] rounded-full bg-primary-gold/5 blur-[100px]" />
-      <div className="pointer-events-none absolute bottom-0 left-0 -mb-48 -ml-48 h-[400px] w-[400px] rounded-full bg-primary-green/5 blur-[100px]" />
-
       <div className="container-custom relative z-10">
         {/* Section header */}
         <div className="mb-14 text-center">
@@ -208,7 +208,7 @@ export const FeaturedRoomsSection: React.FC = () => {
             </h2>
 
             <p className="mx-auto mt-4 max-w-lg text-sm font-medium leading-relaxed text-neutral-text-secondary md:text-base">
-              Featured stays on the property this week — standard rooms through to suites.
+              A selection of rooms to help you compare your options.
             </p>
           </ScrollReveal>
         </div>

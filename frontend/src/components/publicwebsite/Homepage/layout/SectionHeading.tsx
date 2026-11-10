@@ -23,16 +23,12 @@ export const SectionHeading = ({
   const styles = isGold
     ? {
         line: 'bg-primary-gold/60',
-        badge: 'bg-primary-gold/8 text-primary-gold border-primary-gold/20',
-        bar: 'bg-primary-gold',
-        dot: 'bg-primary-green',
+        badge: 'bg-primary-gold/10 text-primary-dark border-primary-gold/25',
         iconRing: 'ring-primary-gold/25',
       }
     : {
         line: 'bg-primary-green/50',
-        badge: 'bg-primary-green/8 text-primary-green border-primary-green/20',
-        bar: 'bg-primary-green',
-        dot: 'bg-primary-gold',
+        badge: 'bg-primary-green/8 text-primary-dark border-primary-green/20',
         iconRing: 'ring-primary-green/25',
       };
 
@@ -43,38 +39,32 @@ export const SectionHeading = ({
     <motion.div
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-      className={`mb-16 max-w-4xl md:mb-20 ${alignClass}`}
+      viewport={{ once: true, amount: 0.15, margin: '-32px' }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className={`mb-12 max-w-4xl md:mb-14 ${alignClass}`}
     >
       {/* Eyebrow badge with flanking lines */}
       <div className={`mb-6 flex items-center gap-3 md:gap-4 ${decorAlign}`}>
-        <span className={`hidden h-px w-8 sm:block md:w-14 ${styles.line}`} />
+        <span aria-hidden="true" className={`hidden h-px w-8 sm:block md:w-14 ${styles.line}`} />
         <div
-          className={`inline-flex items-center gap-2.5 rounded-full border px-4 py-2 shadow-sm backdrop-blur-sm ${styles.badge}`}
+          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 ${styles.badge}`}
         >
           <span className={`flex h-7 w-7 items-center justify-center rounded-full bg-white/80 ring-1 ${styles.iconRing}`}>
             <BadgeIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
           </span>
-          <span className="text-[10px] font-extrabold uppercase tracking-[0.3em]">{badge}</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em]">{badge}</span>
         </div>
-        <span className={`hidden h-px w-8 sm:block md:w-14 ${styles.line}`} />
+        <span aria-hidden="true" className={`hidden h-px w-8 sm:block md:w-14 ${styles.line}`} />
       </div>
 
       {/* Main headline */}
-      <h2 className="font-georgia text-[2.125rem] font-bold leading-[1.12] tracking-tight text-primary-dark md:text-4xl lg:text-[3.35rem]">
+      <h2 className="font-georgia text-[2rem] font-medium leading-[1.12] tracking-[-0.025em] text-primary-dark md:text-4xl lg:text-[3rem]">
         {title}
       </h2>
 
       {/* Decorative divider */}
-      <div className={`my-6 flex items-center gap-2.5 ${decorAlign}`}>
-        <span className={`h-[2px] w-12 rounded-full ${styles.bar}`} />
-        <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
-        <span className={`h-[2px] w-8 rounded-full ${styles.bar} opacity-45`} />
-      </div>
-
       {/* Subtitle */}
-      <p className="max-w-2xl text-base font-medium leading-relaxed text-neutral-text-secondary md:text-lg md:leading-relaxed">
+      <p className="mt-4 max-w-2xl text-sm font-normal leading-7 text-neutral-text-secondary md:text-base md:leading-7">
         {subtitle}
       </p>
     </motion.div>

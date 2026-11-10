@@ -379,7 +379,7 @@ const GuestFolioPage: React.FC = () => {
                     <th className="px-10 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Service Date</th>
                     <th className="px-10 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Description</th>
                     <th className="px-10 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Category</th>
-                    <th className="px-10 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Valuation</th>
+                    <th className="px-10 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Amount</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">

@@ -1,16 +1,12 @@
 import React, { useRef } from "react";
-import { Wifi, Waves, Dumbbell, Utensils, Zap, Smartphone, Leaf, Monitor, Sparkles } from "lucide-react";
+import { Wifi, Waves, Dumbbell, Utensils, BadgeCheck } from "lucide-react";
 import { SectionHeading } from "../layout/SectionHeading";
 
 const ITEMS = [
-  { icon: Wifi,       label: "1Gbps Fiber Wi-Fi",  sub: "Seamless connectivity throughout the entire estate.",        color: "#1F7A3A" },
-  { icon: Waves,      label: "Infinity Pool",        sub: "Heated rooftop pool with panoramic views.",                 color: "#F59E0B" },
-  { icon: Dumbbell,   label: "Smart Fitness",       sub: "AI-integrated equipment and Peloton studios.",              color: "#1F7A3A" },
-  { icon: Utensils,   label: "Gourmet Dining",      sub: "Farm-to-table culinary excellence by master chefs.",         color: "#F97316" },
-  { icon: Smartphone, label: "Smart Controls",      sub: "Manage room lighting & climate from your phone.",           color: "#1F7A3A", status: "New" },
-  { icon: Zap,        label: "EV Charging",         sub: "Universal electric vehicle charging stations.",             color: "#DC2626", status: "Coming Soon" },
-  { icon: Leaf,       label: "Eco-Friendly",        sub: "100% solar powered with zero-waste initiatives.",           color: "#1F7A3A", status: "Planned" },
-  { icon: Monitor,    label: "Business Hub",        sub: "Private soundproof pods for remote work.",                  color: "#F59E0B", status: "New" },
+  { icon: Wifi,       label: "Wi-Fi",          sub: "Stay connected during your visit.", color: "#1F7A3A" },
+  { icon: Waves,      label: "Swimming pool",  sub: "Take a break and unwind during your stay.", color: "#F59E0B" },
+  { icon: Dumbbell,   label: "Fitness room",   sub: "A space to keep up with your routine.", color: "#1F7A3A" },
+  { icon: Utensils,   label: "Dining",         sub: "Food and refreshments for hotel guests.", color: "#F97316" },
 ];
 
 
@@ -24,14 +20,14 @@ const FacilitiesSection: React.FC = () => {
 
       <div className="container-custom relative z-10">
         <SectionHeading
-          badge="Future-Ready Hospitality"
-          badgeIcon={Sparkles}
+          badge="Hotel amenities"
+          badgeIcon={BadgeCheck}
           title={
             <>
-              Elevated <span className="gradient-text">Facilities</span>
+              Facilities for a <span className="gradient-text">comfortable stay</span>
             </>
           }
-          subtitle="Thoughtfully designed amenities for today — with smart technology and sustainable touches that anticipate tomorrow's traveler."
+          subtitle="A straightforward look at the amenities available during your stay."
           accent="green"
         />
 
@@ -44,11 +40,6 @@ const FacilitiesSection: React.FC = () => {
                 if (el) el.style.setProperty('--delay', `${i * 100}ms`);
               }}
             >
-              {item.status && (
-                <div className="absolute top-4 right-4 bg-[#1F7A3A]/10 text-[#1F7A3A] text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-full">
-                  {item.status}
-                </div>
-              )}
               <div
                 className="w-14 h-14 rounded-2xl flex items-center justify-center mb-7 transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_10px_25px_-5px_rgba(31,122,58,0.2)] facility-icon"
                 ref={(el) => {

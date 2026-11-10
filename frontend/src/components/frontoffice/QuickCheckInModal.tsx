@@ -267,7 +267,7 @@ export const QuickCheckInModal: React.FC<QuickCheckInModalProps> = ({ isOpen, on
               <div className="space-y-4 pt-2">
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-4 bg-[#14532D] rounded-full" />
-                  <h4 className="text-[10px] font-black text-[#111827] uppercase tracking-widest">Personal Intelligence</h4>
+                  <h4 className="text-[10px] font-black text-[#111827] uppercase tracking-widest">Guest details</h4>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <Input label="Email" name="email" value={formData.email} onChange={handleInputChange} icon={<Mail size={14}/>} className="h-10 rounded-xl bg-gray-50 border-gray-100 text-[11px]" />

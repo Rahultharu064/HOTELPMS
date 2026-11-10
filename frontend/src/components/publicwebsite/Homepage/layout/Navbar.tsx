@@ -81,7 +81,7 @@ const Navbar = () => {
         >
           <img
             src="/Logos1.png"
-            alt="Itahari Namuna College"
+            alt="Itahari Namuna"
             style={{
               height: '44px',
               width: 'auto',

@@ -24,18 +24,18 @@ const slides = [
   {
     image: "/hero122.png",
     imagePosition: "object-[center_35%]",
-    badge: "PREMIUM ACCOMMODATION",
-    title: "Comfort You Can Trust",
+    badge: "ROOMS FOR EVERY KIND OF STAY",
+    title: "Rest easy, feel at home",
     subtitle:
-      "Elegant rooms, attentive service, and everything you need for a perfect stay.",
+      "Thoughtful rooms, warm local hospitality, and a comfortable place to return to.",
   },
   {
     image: "/Hero.png",
     imagePosition: "object-center",
-    badge: "YOUR PERFECT ESCAPE",
-    title: "World-Class Luxury",
+    badge: "A CONVENIENT BASE IN ITAHARI",
+    title: "Make your visit a little easier",
     subtitle:
-      "Redefining hospitality with refined spaces and exceptional guest experiences.",
+      "Stay close to the places you are visiting, with a welcoming team ready to help.",
   },
 ];
 
@@ -113,10 +113,9 @@ const HeroSection = () => {
 
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [selectedRoomType, setSelectedRoomType] = useState("all");
-  const [selectedPrice, setSelectedPrice] = useState("any");
-  const [checkInDate, setCheckInDate] = useState("");
+  const [selectedPrice, setSelectedPrice] = useState("15000");
 
-  const isBusy = useRef(false);
+  const [isBusy, setIsBusy] = useState(false);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -131,8 +130,8 @@ const HeroSection = () => {
   }, []);
 
   const goTo = useCallback((idx: number) => {
-    if (isBusy.current || idx === current) return;
-    isBusy.current = true;
+    if (isBusy || idx === current) return;
+    setIsBusy(true);
     setPhase("out");
 
     setTimeout(() => {
@@ -140,10 +139,10 @@ const HeroSection = () => {
       setPhase("in");
       setTimeout(() => {
         setPhase("idle");
-        isBusy.current = false;
+        setIsBusy(false);
       }, 500);
     }, 220);
-  }, [current]);
+  }, [current, isBusy]);
 
   const goPrev = useCallback(
     () => goTo((current - 1 + slides.length) % slides.length),
@@ -156,17 +155,19 @@ const HeroSection = () => {
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      if (!isBusy.current) goNext();
+      if (!isBusy) goNext();
     }, AUTO_PLAY_MS);
     return () => window.clearInterval(timer);
-  }, [goNext]);
+  }, [goNext, isBusy]);
 
   const handleSearch = () => {
-    let query = "";
+    const params = new URLSearchParams();
     if (selectedRoomType && selectedRoomType !== "all") {
-      query += `?type=${encodeURIComponent(selectedRoomType)}`;
+      params.set("type", selectedRoomType);
     }
-    navigate(`/rooms${query}`);
+    if (selectedPrice !== "15000") params.set("maxPrice", selectedPrice);
+    const query = params.toString();
+    navigate(`/rooms${query ? `?${query}` : ""}`);
   };
 
   const scrollToContent = () => {
@@ -186,7 +187,7 @@ const HeroSection = () => {
       : "opacity-100 translate-y-0";
 
   const priceOptions: DropdownOption[] = [
-    { value: "any", label: "Any Price" },
+    { value: "15000", label: "Any price" },
     { value: "3000", label: "Under Rs. 3,000" },
     { value: "5000", label: "Under Rs. 5,000" },
     { value: "10000", label: "Under Rs. 10,000" },
@@ -225,8 +226,8 @@ const HeroSection = () => {
         <div
           className={`max-w-3xl w-full transition-all duration-500 ease-out ${contentClass}`}
         >
-          <div className="inline-flex items-center gap-2 border border-primary-gold/50 text-primary-gold px-5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.28em] bg-black/20 backdrop-blur-md mb-4 max-lg:mb-3 lg:mb-5 shadow-[0_4px_24px_rgba(0,0,0,0.18)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary-gold animate-pulse shrink-0" />
+          <div className="inline-flex items-center gap-2 border border-white/35 text-white px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.18em] bg-black/20 backdrop-blur-sm mb-4 max-lg:mb-3 lg:mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary-gold shrink-0" />
             {slides[current].badge}
           </div>
 
@@ -241,7 +242,7 @@ const HeroSection = () => {
           <div className="flex max-lg:flex-row max-lg:w-full max-lg:max-w-md max-lg:mx-auto flex-wrap gap-2.5 max-lg:gap-2 justify-center items-center mb-5 max-lg:mb-4 lg:mb-10">
             <Link
               to="/rooms"
-              className="flex max-lg:flex-1 items-center justify-center gap-2 px-5 max-lg:px-4 py-3.5 max-lg:py-3 lg:px-7 lg:py-3 bg-primary-gold hover:bg-[#D97706] text-[#14532D] font-bold text-[10px] max-lg:text-[10px] lg:text-[11px] uppercase tracking-widest rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
+              className="flex max-lg:flex-1 items-center justify-center gap-2 px-5 max-lg:px-4 py-3.5 max-lg:py-3 lg:px-7 lg:py-3 bg-primary-gold hover:bg-[#D8B85A] text-[#14532D] font-semibold text-sm rounded-lg transition-colors shadow-sm"
             >
               <BedDouble size={15} />
               <span>Explore Rooms</span>
@@ -249,7 +250,7 @@ const HeroSection = () => {
 
             <Link
               to="/booking"
-              className="flex max-lg:flex-1 items-center justify-center gap-2 px-5 max-lg:px-4 py-3.5 max-lg:py-3 lg:px-7 lg:py-3 border-2 border-white/70 max-lg:bg-white/10 text-white hover:bg-white hover:text-[#14532D] hover:border-white font-bold text-[10px] max-lg:text-[10px] lg:text-[11px] uppercase tracking-widest rounded-full transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+              className="flex max-lg:flex-1 items-center justify-center gap-2 px-5 max-lg:px-4 py-3.5 max-lg:py-3 lg:px-7 lg:py-3 border border-white/70 max-lg:bg-white/10 text-white hover:bg-white hover:text-[#14532D] hover:border-white font-semibold text-sm rounded-lg transition-colors"
             >
               <CalendarCheck size={15} />
               <span>Book Now</span>
@@ -281,7 +282,7 @@ const HeroSection = () => {
       {/* ── Arrow navigation ── */}
       <button
         onClick={goPrev}
-        disabled={isBusy.current}
+        disabled={isBusy}
         className="absolute left-4 md:left-8 top-[38%] max-lg:top-[40%] lg:top-1/2 -translate-y-1/2 z-20 h-10 w-10 max-lg:h-9 max-lg:w-9 lg:h-11 lg:w-11 rounded-full border border-white/30 bg-black/30 hover:bg-black/55 backdrop-blur-md flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/55 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
         aria-label="Previous slide"
       >
@@ -290,7 +291,7 @@ const HeroSection = () => {
 
       <button
         onClick={goNext}
-        disabled={isBusy.current}
+        disabled={isBusy}
         className="absolute right-4 md:right-8 top-[38%] max-lg:top-[40%] lg:top-1/2 -translate-y-1/2 z-20 h-10 w-10 max-lg:h-9 max-lg:w-9 lg:h-11 lg:w-11 rounded-full border border-white/30 bg-black/30 hover:bg-black/55 backdrop-blur-md flex items-center justify-center transition-all duration-250 hover:scale-110 hover:border-white/55 active:scale-90 text-white shadow-lg cursor-pointer disabled:opacity-40"
         aria-label="Next slide"
       >
@@ -313,15 +314,15 @@ const HeroSection = () => {
 
       {/* ── Availability Search Bar ── */}
       <div className="relative z-30 w-[94%] max-w-[1080px] mx-auto max-lg:mt-3 max-lg:mb-4 lg:absolute lg:mt-0 lg:bottom-[-44px] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
-        <div className="bg-white max-lg:rounded-[28px] lg:rounded-2xl max-lg:shadow-[0_12px_40px_rgba(0,0,0,0.14)] lg:shadow-[0_16px_48px_rgba(20,83,45,0.10)] border border-white/80 max-lg:border-neutral-border/30 max-lg:px-6 max-lg:py-5 lg:px-6 lg:py-4 ring-1 ring-black/5">
+        <div className="bg-white rounded-xl shadow-lg border border-neutral-border/70 px-5 py-4 lg:px-6">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center">
 
-            <div className="flex items-center gap-3 max-lg:gap-4 flex-1 min-w-0 py-3 max-lg:py-4 lg:py-0 lg:pr-5 border-b lg:border-b-0 lg:border-r border-primary-green/10">
-              <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center text-primary-gold shrink-0">
+            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:pr-5 border-b lg:border-b-0 lg:border-r border-neutral-border">
+              <div className="w-9 h-9 bg-primary-green/5 rounded-lg flex items-center justify-center text-primary-green shrink-0">
                 <BedDouble size={17} />
               </div>
               <div className="flex-1 min-w-0">
-                <span className="block text-[9px] font-black text-primary-gold uppercase tracking-[0.18em] mb-1">
+                <span className="block text-xs font-medium text-neutral-text-secondary mb-1">
                   Room Type
                 </span>
                 <CustomSelect
@@ -332,13 +333,13 @@ const HeroSection = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 max-lg:gap-4 flex-1 min-w-0 py-3 max-lg:py-4 lg:py-0 lg:px-5 border-b lg:border-b-0 lg:border-r border-primary-green/10">
-              <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center text-primary-gold shrink-0">
+            <div className="flex items-center gap-3 flex-1 min-w-0 py-3 lg:py-0 lg:px-5">
+              <div className="w-9 h-9 bg-primary-green/5 rounded-lg flex items-center justify-center text-primary-green shrink-0">
                 <Tag size={17} />
               </div>
               <div className="flex-1 min-w-0">
-                <span className="block text-[9px] font-black text-primary-gold uppercase tracking-[0.18em] mb-1">
-                  Price Range
+                <span className="block text-xs font-medium text-neutral-text-secondary mb-1">
+                  Maximum nightly rate
                 </span>
                 <CustomSelect
                   value={selectedPrice}
@@ -348,32 +349,10 @@ const HeroSection = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 max-lg:gap-4 flex-1 min-w-0 py-3 max-lg:py-4 lg:py-0 lg:px-5 border-b lg:border-b-0 border-primary-green/10">
-              <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center text-primary-gold shrink-0">
-                <CalendarCheck size={17} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <span className="block text-[9px] font-black text-primary-gold uppercase tracking-[0.18em] mb-1">
-                  Check-in Date
-                </span>
-                <input
-                  type="text"
-                  placeholder="Select date"
-                  value={checkInDate}
-                  onChange={(e) => setCheckInDate(e.target.value)}
-                  onFocus={(e) => (e.target.type = "date")}
-                  onBlur={(e) => {
-                    if (!e.target.value) e.target.type = "text";
-                  }}
-                  className="hero-date-input block w-full bg-transparent border-none text-[#14532D] font-semibold text-[13px] placeholder:text-gray-400 focus:outline-none focus:ring-0 p-0 cursor-pointer leading-snug"
-                />
-              </div>
-            </div>
-
-            <div className="pt-3 max-lg:pt-4 lg:pt-0 lg:pl-5 shrink-0">
+            <div className="pt-3 lg:pt-0 lg:pl-5 shrink-0">
               <button
                 onClick={handleSearch}
-                className="w-full lg:w-auto flex items-center justify-center gap-2 h-11 max-lg:h-12 px-7 max-lg:px-10 bg-[#14532D] hover:bg-primary-gold text-primary-gold hover:text-[#14532D] font-extrabold text-[10px] uppercase tracking-[0.22em] max-lg:tracking-[0.28em] rounded-xl max-lg:rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 cursor-pointer whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary-gold/45 focus-visible:ring-offset-2"
+                className="w-full lg:w-auto flex items-center justify-center gap-2 h-11 px-6 bg-primary-green hover:bg-primary-dark text-white font-semibold text-sm rounded-lg transition-colors shadow-sm cursor-pointer whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary-green/45 focus-visible:ring-offset-2"
               >
                 <Search size={14} strokeWidth={2.5} />
                 <span>Search</span>

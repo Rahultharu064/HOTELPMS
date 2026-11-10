@@ -34,7 +34,7 @@ export function AdminLayout() {
         </main>
 
         <footer
-          className="flex items-center justify-between"
+          className="flex items-center"
           style={{
             padding: '16px 32px',
             borderTop: '1px solid var(--color-border)',
@@ -45,13 +45,7 @@ export function AdminLayout() {
             color: 'var(--color-muted)',
           }}
         >
-          <p>© 2026 Itahari Namuna College — Property Management System</p>
-          <div className="flex items-center gap-6">
-            <span className="flex items-center gap-1.5">
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-success)', display: 'inline-block' }} />
-              System online
-            </span>
-          </div>
+          <p>© 2026 Itahari Namuna · Property management</p>
         </footer>
       </div>
     </div>

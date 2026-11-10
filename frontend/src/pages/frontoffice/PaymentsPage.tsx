@@ -247,7 +247,7 @@ const PaymentsPage: React.FC = () => {
                 <tr className="bg-gray-50/50">
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Reference</th>
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Recipient & Unit</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Total Valuation</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Total amount</th>
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Collected</th>
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Balance Due</th>
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Status</th>

@@ -124,9 +124,9 @@ export default function AdminBookingsPage() {
               <thead>
                 <tr className="bg-neutral-light/50">
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Identifier</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Patron</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Guest</th>
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Occupancy Details</th>
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Valuation</th>
+                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Amount</th>
                   <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-text-secondary">Operational Status</th>
                   <th className="px-10 py-8"></th>
                 </tr>

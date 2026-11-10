@@ -53,11 +53,11 @@ export default function AdminGuestsPage() {
     <div className="space-y-12 pb-24">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
-          <h1 className="text-3xl font-black text-primary-dark tracking-tight uppercase">Legacy Patron Register</h1>
-          <p className="text-[11px] font-black text-neutral-text-secondary uppercase tracking-[0.2em] mt-2">Historical guest intelligence & relationship management</p>
+          <h1 className="text-3xl font-black text-primary-dark tracking-tight">Guests</h1>
+          <p className="mt-2 text-sm text-neutral-text-secondary">Guest profiles and stay history.</p>
         </div>
         <button className="h-14 px-8 bg-primary-dark text-white rounded-2xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest hover:bg-primary-green transition-all shadow-2xl shadow-primary-dark/10">
-           <Plus size={18} strokeWidth={3} /> Register New Patron
+           <Plus size={18} /> Add guest
         </button>
       </div>
 
@@ -65,8 +65,8 @@ export default function AdminGuestsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
          {[
            { label: 'Total Registered', value: guests.length.toString(), icon: Users, color: 'text-amber-600', bg: 'bg-amber-50' },
-           { label: 'High-Value Patrons', value: guests.filter(g => Number(g.totalSpent) > 50000).length.toString(), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-           { label: 'Global Reach', value: new Set(guests.map(g => g.country)).size.toString() + ' Nations', icon: Globe, color: 'text-blue-600', bg: 'bg-blue-50' }
+           { label: 'Guests with spend over Rs. 50,000', value: guests.filter(g => Number(g.totalSpent) > 50000).length.toString(), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+           { label: 'Guest countries', value: new Set(guests.map(g => g.country)).size.toString(), icon: Globe, color: 'text-blue-600', bg: 'bg-blue-50' }
          ].map((stat, i) => (
            <div key={i} className="p-8 bg-white border border-neutral-border/40 rounded-[40px] shadow-sm flex items-center justify-between group hover:border-primary-green/30 transition-all duration-500">
               <div className="flex flex-col gap-1">
@@ -85,18 +85,18 @@ export default function AdminGuestsPage() {
         <div className="flex-1 relative group">
           <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-neutral-text-secondary group-focus-within:text-primary-green transition-colors" size={20} />
           <input 
-            placeholder="Identify patron by name, digital mail, or contact signal..." 
+            placeholder="Search guests by name, email or phone" 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-16 pr-6 h-16 bg-white border border-neutral-border/50 rounded-3xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-primary-green/5 focus:border-primary-green transition-all shadow-sm"
           />
         </div>
         <button title="Apply Fine Filters" className="h-16 px-8 bg-white border border-neutral-border/50 rounded-3xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-neutral-text-secondary hover:bg-neutral-light transition-all shadow-sm">
-           <Filter size={20} /> Filter Catalog
+           <Filter size={20} /> Filters
         </button>
       </div>
 
-      {/* Patron Table */}
+      {/* Guest table */}
       <div className="bg-white rounded-[56px] border border-neutral-border/40 shadow-soft overflow-hidden">
         {loading ? (
           <AdminTableSkeleton rows={6} cols={6} bare />
@@ -194,7 +194,7 @@ export default function AdminGuestsPage() {
                 <Users size={48} />
              </div>
              <div className="text-center">
-                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-neutral-text-secondary">Patron Catalog Vacant</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-neutral-text-secondary">No guests found</p>
                 <p className="text-sm font-bold text-neutral-text-secondary/60 mt-2">Global reconnaissance complete. No matching identities detected.</p>
              </div>
           </div>

@@ -30,7 +30,7 @@ const RoomsPageFO: React.FC = () => {
       const res = await frontOfficeService.getRoomBoard();
       if (res.success) setRooms(res.data);
     } catch (error: any) {
-      toast.error(error.message || "Failed to synchronize room intelligence ledger");
+      toast.error(error.message || "Failed to update room status");
     } finally {
       setLoading(false);
     }

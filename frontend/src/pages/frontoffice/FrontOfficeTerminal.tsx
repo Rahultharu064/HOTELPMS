@@ -150,13 +150,13 @@ const FrontOfficeTerminal: React.FC = () => {
                 {selectedBooking.guest?.firstName} {selectedBooking.guest?.lastName}
               </h1>
               <p className="text-[10px] font-black text-[#1F7A3A] uppercase tracking-[0.2em] mt-2">
-                Room {selectedBooking.room?.roomNumber} • Terminal Active
+                Room {selectedBooking.room?.roomNumber} • Booking folio
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
              <div className="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-[9px] font-black uppercase tracking-widest border border-emerald-100/50">
-                Verified Session
+                Booking details
              </div>
              <Button 
                 onClick={() => setSelectedBooking(null)}

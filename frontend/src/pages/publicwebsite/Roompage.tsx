@@ -36,7 +36,10 @@ export const Roompage: React.FC = () => {
     /suite/i.test(initialType || "") ? "suites" : "rooms"
   );
   const [typeFilters, setTypeFilters] = useState<string[]>(initialType ? [initialType] : []);
-  const [maxPrice, setMaxPrice] = useState(15000);
+  const requestedMaxPrice = Number(searchParams.get("maxPrice") || 15000);
+  const [maxPrice, setMaxPrice] = useState(
+    requestedMaxPrice >= 100 && requestedMaxPrice <= 15000 ? requestedMaxPrice : 15000
+  );
   const [showFilters, setShowFilters] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
@@ -53,10 +56,9 @@ export const Roompage: React.FC = () => {
       ]);
       if (roomsRes.success) setRooms(roomsRes.data);
       if (typesRes.success) setRoomTypes(typesRes.data.roomTypes);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to fetch room data:", err);
-      const message = err?.message || err?.response?.data?.message || "Failed to load rooms";
-      setError(message);
+      setError(err instanceof Error ? err.message : "Failed to load rooms");
     } finally {
       setLoading(false);
     }
@@ -72,6 +74,8 @@ export const Roompage: React.FC = () => {
       setTypeFilters([t]);
       setStayKind(/suite/i.test(t) ? "suites" : "rooms");
     }
+    const requestedPrice = Number(searchParams.get("maxPrice") || 15000);
+    setMaxPrice(requestedPrice >= 100 && requestedPrice <= 15000 ? requestedPrice : 15000);
   }, [searchParams]);
 
   const toggleType = (t: string) => {

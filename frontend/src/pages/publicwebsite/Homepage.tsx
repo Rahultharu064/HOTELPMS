@@ -43,13 +43,13 @@ export const Homepage: React.FC = () => {
           >
             <p className="mb-4 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.3em] text-primary-gold">
               <span className="h-px w-8 bg-primary-gold/80" />
-              First stay
+              Itahari Namuna
             </p>
             <h2 className="max-w-3xl font-georgia text-3xl font-semibold leading-[1.12] tracking-tight text-white sm:text-4xl md:text-5xl">
               Book a room. <span className="italic text-primary-gold">We’ll have the key ready.</span>
             </h2>
             <p className="mt-5 max-w-2xl text-sm leading-7 text-white/80 sm:text-base md:text-lg">
-              New guests get 20% off the first night. Compare rooms first, or go straight to booking if the dates are set.
+              Browse the rooms, compare your options, and choose what suits your visit.
             </p>
           </motion.div>
           <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
